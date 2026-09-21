@@ -1,0 +1,49 @@
+:root {
+    --os-primary: #d6336c;
+    --os-primary-dark: #b02a5a;
+    --os-bg: #fff8fa;
+
+    --bs-primary: var(--os-primary);
+    --bs-primary-rgb: 214, 51, 108;
+    --bs-link-color: var(--os-primary);
+    --bs-link-hover-color: var(--os-primary-dark);
+}
+
+body {
+    background-color: var(--os-bg);
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--os-primary);
+    --bs-btn-border-color: var(--os-primary);
+    --bs-btn-hover-bg: var(--os-primary-dark);
+    --bs-btn-hover-border-color: var(--os-primary-dark);
+    --bs-btn-active-bg: var(--os-primary-dark);
+    --bs-btn-active-border-color: var(--os-primary-dark);
+    --bs-btn-disabled-bg: var(--os-primary);
+    --bs-btn-disabled-border-color: var(--os-primary);
+}
+
+.os-topbar {
+    background-color: var(--os-primary-dark);
+}
+
+.os-brand {
+    color: var(--os-primary);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.os-hero {
+    background: linear-gradient(135deg, #ffe3ec 0%, #fff 100%);
+}
+
+.os-product-img {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    width: 100%;
+}
+
+.os-product-placeholder {
+    background: #f1e4e9;
+}

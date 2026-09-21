@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+<body>
+<nav th:fragment="navbar" class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+    <div class="container">
+        <a class="navbar-brand os-brand" th:href="@{/}">OneShop</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                aria-controls="mainNav" aria-expanded="false" aria-label="Mở menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" th:href="@{/}">Trang chủ</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/products}">Sản phẩm</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/cart}">Giỏ hàng</a></li>
+            </ul>
+
+            <ul class="navbar-nav align-items-lg-center gap-lg-2">
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="nav-link" th:href="@{/login}">Đăng nhập</a>
+                </li>
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="btn btn-primary btn-sm" th:href="@{/register}">Đăng ký</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <span class="navbar-text me-lg-2" sec:authentication="name">user</span>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-outline-secondary btn-sm">Đăng xuất</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

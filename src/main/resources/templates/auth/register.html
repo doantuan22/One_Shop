@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Đăng ký</title>
+</head>
+<body>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 mb-3">Tạo tài khoản</h1>
+
+                <form th:action="@{/register}" th:object="${registerRequest}" method="post" novalidate>
+                    <div class="mb-3">
+                        <label class="form-label" for="fullName">Họ và tên</label>
+                        <input type="text" class="form-control" id="fullName" th:field="*{fullName}"
+                               th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid'" autocomplete="name">
+                        <div class="invalid-feedback" th:errors="*{fullName}">Vui lòng nhập họ tên</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="email">Email</label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}"
+                               th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" autocomplete="email">
+                        <div class="invalid-feedback" th:errors="*{email}">Email không hợp lệ</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="phone">Số điện thoại</label>
+                        <input type="tel" class="form-control" id="phone" th:field="*{phone}"
+                               th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid'" autocomplete="tel">
+                        <div class="invalid-feedback" th:errors="*{phone}">Số điện thoại không hợp lệ</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="password">Mật khẩu</label>
+                        <input type="password" class="form-control" id="password" th:field="*{password}"
+                               th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
+                               autocomplete="new-password">
+                        <div class="invalid-feedback" th:errors="*{password}">Mật khẩu từ 8 ký tự</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Đăng ký</button>
+                </form>
+
+                <p class="text-center small mt-3 mb-0">
+                    Đã có tài khoản? <a th:href="@{/login}">Đăng nhập</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

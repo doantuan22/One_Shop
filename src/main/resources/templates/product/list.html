@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Sản phẩm</title>
+</head>
+<body>
+<h1 class="h3 mb-4">Sản phẩm</h1>
+
+<div class="alert alert-secondary" th:if="${products.empty}">Chưa có sản phẩm nào.</div>
+
+<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3" th:unless="${products.empty}">
+    <div class="col" th:each="product : ${products.content}">
+        <div class="card h-100">
+            <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" th:alt="${product.name}"
+                 class="card-img-top os-product-img" loading="lazy">
+            <div class="os-product-img os-product-placeholder" th:unless="${product.imageUrl}"></div>
+            <div class="card-body">
+                <h2 class="h6 card-title" th:text="${product.name}">Tên sản phẩm</h2>
+                <p class="card-text fw-semibold text-primary mb-0"
+                   th:text="${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')} + ' ₫'">0 ₫</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<nav class="mt-4" th:if="${products.totalPages > 1}" aria-label="Phân trang">
+    <ul class="pagination justify-content-center">
+        <li class="page-item" th:classappend="${products.first} ? 'disabled'">
+            <a class="page-link" th:href="@{/products(page=${products.number - 1})}">Trước</a>
+        </li>
+        <li class="page-item disabled">
+            <span class="page-link" th:text="${products.number + 1} + ' / ' + ${products.totalPages}">1 / 1</span>
+        </li>
+        <li class="page-item" th:classappend="${products.last} ? 'disabled'">
+            <a class="page-link" th:href="@{/products(page=${products.number + 1})}">Sau</a>
+        </li>
+    </ul>
+</nav>
+</body>
+</html>

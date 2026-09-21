@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Đăng nhập</title>
+</head>
+<body>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 mb-3">Đăng nhập</h1>
+
+                <div class="alert alert-success" th:if="${param.registered}">Đăng ký thành công, hãy đăng nhập.</div>
+                <div class="alert alert-info" th:if="${param.logout}">Bạn đã đăng xuất.</div>
+                <div class="alert alert-danger" th:if="${loginError}" th:text="${loginError}">Lỗi</div>
+
+                <form th:action="@{/login}" th:object="${loginRequest}" method="post" novalidate>
+                    <div class="mb-3">
+                        <label class="form-label" for="email">Email</label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}"
+                               th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" autocomplete="username">
+                        <div class="invalid-feedback" th:errors="*{email}">Email không hợp lệ</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="password">Mật khẩu</label>
+                        <input type="password" class="form-control" id="password" th:field="*{password}"
+                               th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
+                               autocomplete="current-password">
+                        <div class="invalid-feedback" th:errors="*{password}">Vui lòng nhập mật khẩu</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+                </form>
+
+                <p class="text-center small mt-3 mb-0">
+                    Chưa có tài khoản? <a th:href="@{/register}">Đăng ký</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

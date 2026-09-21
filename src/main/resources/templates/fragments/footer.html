@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<footer th:fragment="footer" class="os-footer border-top bg-white py-4 mt-auto">
+    <div class="container d-flex flex-wrap justify-content-between gap-2 text-secondary small">
+        <span>&copy; <span th:text="${#temporals.year(#temporals.createNow())}">2026</span> OneShop &ndash; Hệ thống cửa hàng mỹ phẩm</span>
+        <span>Spring Boot &middot; Thymeleaf &middot; Bootstrap &middot; SiteMesh</span>
+    </div>
+</footer>
+</body>
+</html>
