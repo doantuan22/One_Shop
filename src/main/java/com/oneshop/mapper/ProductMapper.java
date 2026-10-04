@@ -7,8 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductMapper {
 
-    public ProductResponse toResponse(Product product) {
-        return new ProductResponse(product.getId(), product.getName(), product.getDescription(),
-                product.getPrice(), product.getImageUrl());
+    /** Needs {@code category} and {@code brand} to be loaded (repository entity graph) or an open session. */
+    public ProductResponse toResponse(Product product, String imageUrl) {
+        return new ProductResponse(product.getId(), product.getSku(), product.getName(), product.getDescription(),
+                product.getCategory().getName(), product.getBrand().getName(), imageUrl);
     }
 }

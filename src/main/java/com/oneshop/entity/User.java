@@ -2,18 +2,29 @@ package com.oneshop.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User extends BaseEntity {
+public class User extends TimestampedEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Long id;
+
+    /** Eager: the role is needed for every authentication and is a tiny lookup table. */
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -27,14 +38,21 @@ public class User extends BaseEntity {
     @Column(length = 20)
     private String phone;
 
-    @Column(nullable = false)
-    private boolean enabled = true;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private ActiveStatus status = ActiveStatus.ACTIVE;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
+    public Long getId() {
+        return id;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 
     public String getEmail() {
         return email;
@@ -68,19 +86,15 @@ public class User extends BaseEntity {
         this.phone = phone;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public ActiveStatus getStatus() {
+        return status;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setStatus(ActiveStatus status) {
+        this.status = status;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public boolean isActive() {
+        return status == ActiveStatus.ACTIVE;
     }
 }

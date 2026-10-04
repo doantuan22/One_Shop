@@ -1,4 +1,4 @@
-package com.oneshop.controller.web;
+package com.oneshop.controller.client;
 
 import com.oneshop.service.ProductService;
 import org.springframework.data.domain.PageRequest;
@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class ProductWebController {
+public class ProductController {
 
     private static final int PAGE_SIZE = 12;
 
     private final ProductService productService;
 
-    public ProductWebController(ProductService productService) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
     }
 

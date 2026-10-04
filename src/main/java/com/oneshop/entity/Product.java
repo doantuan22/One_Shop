@@ -2,33 +2,77 @@ package com.oneshop.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-import java.math.BigDecimal;
-
+/**
+ * One sellable SKU, shared by the whole chain (BR-01). It has no price or quantity of its own:
+ * those live in {@link StoreProduct}.
+ */
 @Entity
 @Table(name = "products")
-public class Product extends BaseEntity {
+public class Product extends TimestampedEntity {
 
-    @Column(nullable = false, length = 200)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_id")
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "brand_id", nullable = false)
+    private Brand brand;
+
+    @Column(nullable = false, unique = true, length = 50)
+    private String sku;
+
+    @Column(nullable = false, length = 255)
     private String name;
 
-    @Column(length = 2000)
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String description;
 
-    @Column(nullable = false, precision = 18, scale = 2)
-    private BigDecimal price;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private ProductStatus status = ProductStatus.ACTIVE;
 
-    /** Cloudinary delivery URL. Binary image data is never stored in SQL Server. */
-    @Column(name = "image_url", length = 500)
-    private String imageUrl;
+    public Long getId() {
+        return id;
+    }
 
-    /** Cloudinary public id, needed to delete or replace the image later. */
-    @Column(name = "image_public_id")
-    private String imagePublicId;
+    public Category getCategory() {
+        return category;
+    }
 
-    @Column(nullable = false)
-    private boolean active = true;
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Brand getBrand() {
+        return brand;
+    }
+
+    public void setBrand(Brand brand) {
+        this.brand = brand;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
 
     public String getName() {
         return name;
@@ -46,35 +90,11 @@ public class Product extends BaseEntity {
         this.description = description;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public ProductStatus getStatus() {
+        return status;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public String getImagePublicId() {
-        return imagePublicId;
-    }
-
-    public void setImagePublicId(String imagePublicId) {
-        this.imagePublicId = imagePublicId;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setStatus(ProductStatus status) {
+        this.status = status;
     }
 }

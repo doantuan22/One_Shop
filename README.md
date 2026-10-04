@@ -66,9 +66,13 @@ jdbc:sqlserver://${DB_HOST}:${DB_PORT};databaseName=${DB_NAME};encrypt=true;trus
 
 * Kết nối luôn mã hóa (`encrypt=true`), phù hợp SQL Server cloud.
 * SQL Server local dùng chứng chỉ tự ký: đặt `DB_TRUST_SERVER_CERTIFICATE=true` (chỉ cho development).
-* `dev`: `ddl-auto=update`. `prod`: `ddl-auto=none` (Hibernate không tự đổi schema). Khi cần tạo schema lần đầu,
-  đặt `JPA_DDL_AUTO=update` **một lần có chủ đích** rồi bỏ đi; về lâu dài nên dùng Flyway/Liquibase.
-* Chuỗi tiếng Việt được lưu bằng `NVARCHAR` (`hibernate.use_nationalized_character_data=true`); thời gian lưu UTC.
+* Schema do `database/*.sql` (Phase 2, 19 bảng) quản lý; chạy các script đó trước khi khởi động app.
+  `dev`: `ddl-auto=validate` (khởi động thất bại nếu entity lệch schema). `prod`: `ddl-auto=none`.
+  Hibernate không bao giờ tự tạo/sửa schema.
+* Chuỗi tiếng Việt được lưu bằng `NVARCHAR` (`hibernate.use_nationalized_character_data=true`); cột thời gian là
+  `DATETIME2` theo giờ máy chủ SQL (`SYSDATETIME()`), ánh xạ bằng `LocalDateTime`.
+* Test đọc dữ liệu seed thật (`DatabaseFoundationIntegrationTest`) tự chạy khi có `.env` hoặc biến `DB_USERNAME`,
+  nếu không sẽ bị bỏ qua.
 * Ứng dụng vẫn khởi động được khi chưa kết nối được database; chỉ các trang cần dữ liệu mới báo lỗi.
 
 ### JWT
@@ -144,11 +148,14 @@ oneshop/
     │   │   ├── OneShopApplication.java
     │   │   ├── config/        Security, SiteMesh, Cloudinary, Web, JPA, properties
     │   │   ├── controller/
-    │   │   │   ├── web/       Trang Thymeleaf + DecoratorController
+    │   │   │   ├── client/    Trang Thymeleaf của khách (home, products, cart, login/register)
+    │   │   │   ├── staff/     Khu vực /staff/** (khung, Phase 10)
+    │   │   │   ├── admin/     Khu vực /admin/** (khung, Phase 6/11)
+    │   │   │   ├── web/       DecoratorController (cầu nối SiteMesh - Thymeleaf)
     │   │   │   └── api/       REST: /api/auth/**, /health
     │   │   ├── service/       Interface; impl/ chứa cài đặt
     │   │   ├── repository/    Spring Data JPA
-    │   │   ├── entity/        User, Role, Product, Branch (nền tảng)
+    │   │   ├── entity/        19 entity theo schema V2 + enum trạng thái
     │   │   ├── dto/           request/, response/
     │   │   ├── security/      jwt/ (JwtService, filter, cookie), service/ (UserDetailsService)
     │   │   ├── exception/     GlobalExceptionHandler, WebExceptionHandler, ...

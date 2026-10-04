@@ -11,9 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.net.http.HttpResponse;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +39,7 @@ class AuthFlowIntegrationTest extends AbstractIntegrationTest {
         user.setEmail(EMAIL);
         user.setFullName("Test Customer");
         user.setPasswordHash(passwordEncoder.encode(PASSWORD));
-        user.setRoles(new HashSet<>(Set.of(new Role(RoleName.ROLE_CUSTOMER))));
+        user.setRole(new Role(RoleName.CUSTOMER));
         when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(user));
     }
 

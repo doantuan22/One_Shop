@@ -1,6 +1,6 @@
 package com.oneshop.dto.response;
 
-import java.math.BigDecimal;
-
-public record ProductResponse(Long id, String name, String description, BigDecimal price, String imageUrl) {
+/** Chain-wide view of a SKU. No price or stock: those are per Store (see StoreAvailabilityResponse). */
+public record ProductResponse(Long id, String sku, String name, String description, String categoryName,
+                              String brandName, String imageUrl) {
 }

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
 
-import java.math.BigDecimal;
 import java.net.http.HttpResponse;
 import java.util.List;
 
@@ -18,7 +17,7 @@ class WebRoutesIntegrationTest extends AbstractIntegrationTest {
     @BeforeEach
     void stubProducts() {
         when(productService.getActiveProducts(any())).thenReturn(new PageImpl<>(List.of(
-                new ProductResponse(1L, "Kem dưỡng ẩm", "Mô tả", new BigDecimal("199000"), null))));
+                new ProductResponse(1L, "SKU-001", "Kem dưỡng ẩm", "Mô tả", "Dưỡng da", "OneBrand", null))));
     }
 
     @Test
@@ -46,7 +45,7 @@ class WebRoutesIntegrationTest extends AbstractIntegrationTest {
             assertThat(response.statusCode()).as(path).isEqualTo(200);
             assertThat(response.body()).as(path).contains("data-layout=\"sitemesh\"", "os-footer");
         }
-        assertThat(get("/products").body()).contains("Kem dưỡng ẩm", "199.000 ₫");
+        assertThat(get("/products").body()).contains("Kem dưỡng ẩm", "OneBrand");
         assertThat(get("/login").body()).contains("Đăng nhập").contains("name=\"_csrf\"");
         assertThat(get("/cart").body()).contains("Giỏ hàng");
     }

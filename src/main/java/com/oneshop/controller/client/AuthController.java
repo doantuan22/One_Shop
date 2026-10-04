@@ -1,4 +1,4 @@
-package com.oneshop.controller.web;
+package com.oneshop.controller.client;
 
 import com.oneshop.dto.request.LoginRequest;
 import com.oneshop.dto.request.RegisterRequest;
@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 /** Login/registration pages. The JWT is delivered to the browser as an HttpOnly cookie. */
 @Controller
-public class AuthWebController {
+public class AuthController {
 
     private final AuthService authService;
     private final JwtCookieService cookieService;
 
-    public AuthWebController(AuthService authService, JwtCookieService cookieService) {
+    public AuthController(AuthService authService, JwtCookieService cookieService) {
         this.authService = authService;
         this.cookieService = cookieService;
     }

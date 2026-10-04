@@ -1,0 +1,8 @@
+package com.oneshop.dto.request;
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
+public record UpdateCartItemRequest(
+        @NotNull(message = "Vui lòng nhập số lượng") @Min(value = 1, message = "Số lượng tối thiểu là 1") Integer quantity) {
+}

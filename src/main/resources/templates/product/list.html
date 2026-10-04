@@ -16,8 +16,7 @@
             <div class="os-product-img os-product-placeholder" th:unless="${product.imageUrl}"></div>
             <div class="card-body">
                 <h2 class="h6 card-title" th:text="${product.name}">Tên sản phẩm</h2>
-                <p class="card-text fw-semibold text-primary mb-0"
-                   th:text="${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')} + ' ₫'">0 ₫</p>
+                <p class="card-text small text-muted mb-0" th:text="${product.brandName}">Thương hiệu</p>
             </div>
         </div>
     </div>

@@ -20,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     /**
-     * The login identifier is the e-mail address. Roles are fetched eagerly, so no extra transaction is
+     * The login identifier is the e-mail address. The role is fetched eagerly, so no extra transaction is
      * needed beyond the repository call itself.
      */
     @Override
@@ -29,10 +29,8 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return org.springframework.security.core.userdetails.User.withUsername(user.getEmail())
                 .password(user.getPasswordHash())
-                .authorities(user.getRoles().stream()
-                        .map(role -> new SimpleGrantedAuthority(role.getName().name()))
-                        .toList())
-                .disabled(!user.isEnabled())
+                .authorities(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName().name()))
+                .disabled(!user.isActive())
                 .build();
     }
 }

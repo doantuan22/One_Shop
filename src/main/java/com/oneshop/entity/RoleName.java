@@ -1,7 +1,8 @@
 package com.oneshop.entity;
 
+/** Values of {@code roles.name}. Spring Security authorities add the {@code ROLE_} prefix. */
 public enum RoleName {
-    ROLE_ADMIN,
-    ROLE_STAFF,
-    ROLE_CUSTOMER
+    CUSTOMER,
+    STAFF,
+    ADMIN
 }

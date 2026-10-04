@@ -21,9 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.Locale;
-import java.util.Set;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -66,15 +64,16 @@ public class AuthServiceImpl implements AuthService {
         if (userRepository.existsByEmail(email)) {
             throw new BadRequestException("Email đã được sử dụng");
         }
-        Role customerRole = roleRepository.findByName(RoleName.ROLE_CUSTOMER)
-                .orElseGet(() -> roleRepository.save(new Role(RoleName.ROLE_CUSTOMER)));
+        // roles is a fixed lookup table seeded by database/04_seed_data.sql (CHECK limits it to 3 names)
+        Role customerRole = roleRepository.findByName(RoleName.CUSTOMER)
+                .orElseThrow(() -> new IllegalStateException("Role CUSTOMER is missing: run the database scripts"));
 
         User user = new User();
         user.setEmail(email);
         user.setFullName(request.getFullName().trim());
         user.setPhone(request.getPhone() == null || request.getPhone().isBlank() ? null : request.getPhone().trim());
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-        user.setRoles(new HashSet<>(Set.of(customerRole)));
+        user.setRole(customerRole);
         User saved = userRepository.save(user);
         return new UserResponse(saved.getId(), saved.getEmail(), saved.getFullName());
     }
