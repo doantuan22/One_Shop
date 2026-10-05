@@ -16,15 +16,30 @@
 </div>
 
 <!--/* Sidebar / navbar link. `current` is the path of the page being shown (model attribute currentPath). */-->
-<li th:fragment="navItem(href, label, current, enabled)" class="nav-item">
-    <a th:if="${enabled}" class="nav-link os-nav-link" th:classappend="${current == href} ? 'active'"
-       th:href="@{${href}}" th:attr="aria-current=${current == href} ? 'page'" th:text="${label}">Mục</a>
+<li th:fragment="navItem(href, label, current, enabled)" class="nav-item"
+    th:with="active=${current == href or (href != '/admin' and href != '/staff' and current != null and #strings.startsWith(current, href + '/'))}">
+    <a th:if="${enabled}" class="nav-link os-nav-link" th:classappend="${active} ? 'active'"
+       th:href="@{${href}}" th:attr="aria-current=${active} ? 'page'" th:text="${label}">Mục</a>
     <span th:unless="${enabled}" class="nav-link os-nav-link disabled d-flex justify-content-between align-items-center"
           aria-disabled="true">
         <span th:text="${label}">Mục</span>
         <span class="badge text-bg-light border fw-normal">Sắp có</span>
     </span>
 </li>
+
+<!--/* Money in VND, for example 129.000 ₫. */-->
+<span th:fragment="price(value)" class="os-price"
+      th:text="${#numbers.formatDecimal(value, 1, 'POINT', 0, 'COMMA')} + ' ₫'">129.000 ₫</span>
+
+<!--/* What a Client may know about stock: in stock or out of stock, never a quantity (BR-15). */-->
+<span th:fragment="availability(inStock)" class="badge"
+      th:classappend="${inStock} ? 'text-bg-success' : 'text-bg-secondary'"
+      th:text="${inStock} ? 'Còn hàng' : 'Hết hàng'">Còn hàng</span>
+
+<!--/* Status of an Admin record (ACTIVE / INACTIVE / HIDDEN enums). */-->
+<span th:fragment="statusBadge(status)" class="badge" th:with="name=${status.name()}"
+      th:classappend="${name == 'ACTIVE'} ? 'text-bg-success' : (${name == 'HIDDEN'} ? 'text-bg-warning' : 'text-bg-secondary')"
+      th:text="${name == 'ACTIVE'} ? 'Đang hoạt động' : (${name == 'HIDDEN'} ? 'Đang ẩn' : 'Ngừng hoạt động')">Trạng thái</span>
 
 <!--/* Card with a header title; `content` is a fragment expression for the body. */-->
 <section th:fragment="card(title, content)" class="card h-100 shadow-sm">

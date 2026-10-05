@@ -39,10 +39,12 @@
         <nav aria-label="Điều hướng quản trị">
             <ul class="nav nav-pills flex-column gap-1">
                 <li th:replace="~{fragments/components :: navItem('/admin', 'Tổng quan', ${currentPath}, true)}"></li>
-                <li th:replace="~{fragments/components :: navItem('/admin/stores', 'Chi nhánh', ${currentPath}, false)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/admin/stores', 'Chi nhánh', ${currentPath}, true)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/admin/categories', 'Danh mục', ${currentPath}, true)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/admin/brands', 'Thương hiệu', ${currentPath}, true)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/admin/products', 'Sản phẩm / SKU', ${currentPath}, true)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/admin/store-products', 'Sản phẩm theo chi nhánh', ${currentPath}, true)}"></li>
                 <li th:replace="~{fragments/components :: navItem('/admin/staff-assignments', 'Phân công nhân viên', ${currentPath}, false)}"></li>
-                <li th:replace="~{fragments/components :: navItem('/admin/products', 'Sản phẩm / SKU', ${currentPath}, false)}"></li>
-                <li th:replace="~{fragments/components :: navItem('/admin/store-products', 'Sản phẩm theo chi nhánh', ${currentPath}, false)}"></li>
                 <li th:replace="~{fragments/components :: navItem('/admin/inventory', 'Tồn kho toàn chuỗi', ${currentPath}, false)}"></li>
                 <li th:replace="~{fragments/components :: navItem('/admin/orders', 'Đơn hàng', ${currentPath}, false)}"></li>
                 <li th:replace="~{fragments/components :: navItem('/admin/reviews', 'Đánh giá', ${currentPath}, false)}"></li>

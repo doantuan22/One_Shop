@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Sản phẩm / SKU</title>
+</head>
+<body>
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+    <div th:replace="~{fragments/components :: pageHeader('Sản phẩm / SKU', 'Mỗi sản phẩm là một SKU bán được, dùng chung toàn chuỗi. Giá và tồn kho được đặt theo từng chi nhánh.')}"></div>
+    <a class="btn btn-primary" th:href="@{/admin/products/new}">Thêm sản phẩm</a>
+</div>
+
+<div class="alert alert-success" th:if="${param.success}">Đã cập nhật sản phẩm.</div>
+
+<form method="get" th:action="@{/admin/products}" class="row g-2 mb-3" id="product-search">
+    <div class="col-12 col-md-6 col-xl-4">
+        <input type="search" class="form-control" name="q" th:value="${q}" placeholder="Tên sản phẩm hoặc mã SKU"
+               aria-label="Tên sản phẩm hoặc mã SKU" maxlength="100">
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-primary">Tìm</button>
+    </div>
+</form>
+
+<div th:replace="~{fragments/components :: dataTable(~{::#product-head}, ~{::#product-body})}"></div>
+
+<nav class="mt-3" th:if="${products.totalPages > 1}" aria-label="Phân trang">
+    <ul class="pagination justify-content-center">
+        <li class="page-item" th:classappend="${products.first} ? 'disabled'">
+            <a class="page-link" th:href="@{/admin/products(q=${q}, page=${products.number - 1})}">Trước</a>
+        </li>
+        <li class="page-item disabled">
+            <span class="page-link" th:text="${products.number + 1} + ' / ' + ${products.totalPages}">1 / 1</span>
+        </li>
+        <li class="page-item" th:classappend="${products.last} ? 'disabled'">
+            <a class="page-link" th:href="@{/admin/products(q=${q}, page=${products.number + 1})}">Sau</a>
+        </li>
+    </ul>
+</nav>
+
+<th:block th:remove="all">
+    <thead id="product-head">
+    <tr>
+        <th scope="col">SKU</th>
+        <th scope="col">Tên</th>
+        <th scope="col">Danh mục</th>
+        <th scope="col">Thương hiệu</th>
+        <th scope="col">Trạng thái</th>
+        <th scope="col" class="text-end">Thao tác</th>
+    </tr>
+    </thead>
+    <tbody id="product-body">
+    <tr th:each="product : ${products.content}">
+        <td th:text="${product.sku}">SKU-001</td>
+        <td class="fw-semibold" th:text="${product.name}">Tên sản phẩm</td>
+        <td th:text="${product.categoryName}">Chăm sóc da</td>
+        <td th:text="${product.brandName}">Cocoon</td>
+        <td><span th:replace="~{fragments/components :: statusBadge(${product.status})}"></span></td>
+        <td class="text-end text-nowrap">
+            <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/store-products(productId=${product.id})}">Chi nhánh bán</a>
+            <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/products/{id}/edit(id=${product.id})}">Sửa</a>
+        </td>
+    </tr>
+    <tr th:if="${products.isEmpty()}">
+        <td colspan="6" class="text-center text-secondary py-4">Không có sản phẩm nào.</td>
+    </tr>
+    </tbody>
+</th:block>
+</body>
+</html>

@@ -3,6 +3,8 @@ package com.oneshop.repository;
 import com.oneshop.entity.ActiveStatus;
 import com.oneshop.entity.StoreProduct;
 import jakarta.persistence.LockModeType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
@@ -29,7 +31,73 @@ public interface StoreProductRepository extends JpaRepository<StoreProduct, Long
 
     Optional<StoreProduct> findByStoreIdAndProductId(Long storeId, Long productId);
 
-    // ---- Locking, prepared for Phase 8 (Checkout) and Phase 10 (stock adjust). No business logic here. ----
+    boolean existsByStoreIdAndProductId(Long storeId, Long productId);
+
+    // ---- Client catalog. "Sellable" = StoreProduct ACTIVE at an ACTIVE Store (Roadmap V2 6.1). ----
+
+    /**
+     * Where the given SKUs are on sale: one query for a whole catalog page (no N+1). Whether the SKU itself is visible
+     * is decided by the product query that produced the ids.
+     */
+    @Query("""
+            select sp from StoreProduct sp join fetch sp.store s
+            where sp.product.id in :productIds
+              and sp.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and s.status = com.oneshop.entity.ActiveStatus.ACTIVE
+            order by s.name, s.id""")
+    List<StoreProduct> findSellableByProductIds(@Param("productIds") Collection<Long> productIds);
+
+    /**
+     * Catalog of ONE Store (BR-04): only its own ACTIVE StoreProducts, of SKUs the Client may see.
+     *
+     * @param keyword LIKE pattern, see {@link ProductRepository#searchVisible}
+     */
+    @Query(value = """
+            select sp from StoreProduct sp join fetch sp.store s join fetch sp.product p
+              join fetch p.category c join fetch p.brand b
+            where s.id = :storeId
+              and s.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and sp.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and p.status = com.oneshop.entity.ProductStatus.ACTIVE
+              and c.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+              and b.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+              and (:categoryId is null or c.id = :categoryId)
+              and (:brandId is null or b.id = :brandId)
+              and (lower(p.name) like :keyword escape '\\' or lower(p.sku) like :keyword escape '\\')
+            order by p.name, p.id""",
+            countQuery = """
+            select count(sp) from StoreProduct sp join sp.store s join sp.product p join p.category c join p.brand b
+            where s.id = :storeId
+              and s.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and sp.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and p.status = com.oneshop.entity.ProductStatus.ACTIVE
+              and c.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+              and b.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+              and (:categoryId is null or c.id = :categoryId)
+              and (:brandId is null or b.id = :brandId)
+              and (lower(p.name) like :keyword escape '\\' or lower(p.sku) like :keyword escape '\\')""")
+    Page<StoreProduct> searchSellableInStore(@Param("storeId") Long storeId, @Param("keyword") String keyword,
+                                             @Param("categoryId") Long categoryId, @Param("brandId") Long brandId,
+                                             Pageable pageable);
+
+    // ---- Admin: every status, exact quantity. ----
+
+    @Query(value = """
+            select sp from StoreProduct sp join fetch sp.store s join fetch sp.product p
+            where (:storeId is null or s.id = :storeId)
+              and (:productId is null or p.id = :productId)
+            order by s.name, p.name, sp.id""",
+            countQuery = """
+            select count(sp) from StoreProduct sp
+            where (:storeId is null or sp.store.id = :storeId)
+              and (:productId is null or sp.product.id = :productId)""")
+    Page<StoreProduct> searchForAdmin(@Param("storeId") Long storeId, @Param("productId") Long productId,
+                                      Pageable pageable);
+
+    @EntityGraph(attributePaths = {"store", "product"})
+    Optional<StoreProduct> findWithStoreAndProductById(Long id);
+
+    // ---- Locking: used by stock changes (InventoryService) and by Phase 8 Checkout. ----
 
     /**
      * Loads one StoreProduct with {@code PESSIMISTIC_WRITE} (SQL Server: UPDLOCK, ROWLOCK). Must be called inside a

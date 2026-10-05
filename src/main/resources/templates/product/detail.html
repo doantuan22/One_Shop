@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${detail.product.name}">Chi tiết sản phẩm</title>
+</head>
+<body>
+<!--/*
+    Product Detail (Roadmap V2 9.1): price and availability come from the StoreProduct of the selected Store; the other
+    Stores selling the SKU are listed below so the customer can switch. Never an exact quantity (BR-15).
+*/-->
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb small">
+        <li class="breadcrumb-item"><a th:href="@{/products}">Sản phẩm</a></li>
+        <li class="breadcrumb-item active" aria-current="page" th:text="${detail.product.name}">Tên sản phẩm</li>
+    </ol>
+</nav>
+
+<div class="row g-4" th:with="product=${detail.product}">
+    <div class="col-12 col-md-5">
+        <div class="card shadow-sm">
+            <img th:if="${!detail.images.isEmpty()}" th:src="${detail.images[0].imageUrl}" th:alt="${product.name}"
+                 class="card-img-top os-product-img" id="product-main-image">
+            <div class="os-product-img os-product-placeholder" th:if="${detail.images.isEmpty()}"></div>
+        </div>
+        <div class="d-flex flex-wrap gap-2 mt-2" th:if="${detail.images.size() > 1}">
+            <img th:each="image : ${detail.images}" th:src="${image.imageUrl}" th:alt="${product.name}"
+                 class="os-product-thumb rounded border" loading="lazy">
+        </div>
+    </div>
+
+    <div class="col-12 col-md-7">
+        <p class="text-secondary mb-1">
+            <span th:text="${product.brandName}">Cocoon</span> &middot; <span th:text="${product.categoryName}">Chăm sóc da</span>
+        </p>
+        <h1 class="h3" th:text="${product.name}">Tên sản phẩm</h1>
+        <p class="text-secondary small">SKU: <span th:text="${product.sku}">SKU-001</span></p>
+
+        <!--/* ---------- A Store is selected ---------- */-->
+        <section class="card shadow-sm mb-3" id="selected-store-offer" th:if="${selectedStore != null}">
+            <div class="card-body">
+                <p class="mb-2">Chi nhánh đang chọn: <strong th:text="${selectedStore.name}">OneShop Thủ Đức</strong></p>
+
+                <th:block th:if="${detail.atSelectedStore != null}">
+                    <div class="display-6 fw-semibold mb-2" id="selected-store-price">
+                        <span th:replace="~{fragments/components :: price(${detail.atSelectedStore.price})}"></span>
+                    </div>
+                    <p class="mb-0">Tình trạng:
+                        <span th:replace="~{fragments/components :: availability(${detail.atSelectedStore.inStock})}"></span>
+                    </p>
+                </th:block>
+
+                <div class="alert alert-warning mb-0" id="not-sold-here" th:if="${detail.atSelectedStore == null}">
+                    Chi nhánh này hiện không bán sản phẩm này.
+                    <span th:unless="${detail.otherStores.isEmpty()}">Bạn có thể xem tại chi nhánh khác bên dưới.</span>
+                </div>
+            </div>
+        </section>
+
+        <!--/* ---------- Whole chain ---------- */-->
+        <div class="alert alert-info" id="no-store-selected" th:if="${selectedStore == null}">
+            Bạn đang xem <strong>toàn chuỗi</strong>. Chọn một chi nhánh bên dưới để xem giá và mua tại chi nhánh đó.
+        </div>
+
+        <section class="card shadow-sm mb-3" id="other-stores">
+            <div class="card-header bg-white fw-semibold"
+                 th:text="${selectedStore != null} ? 'Xem tại chi nhánh khác' : 'Chi nhánh đang bán sản phẩm này'">Xem tại chi nhánh khác</div>
+            <div class="card-body text-secondary" th:if="${detail.otherStores.isEmpty()}"
+                 th:text="${detail.atSelectedStore != null} ? 'Chưa có chi nhánh nào khác đang bán sản phẩm này.' : 'Hiện chưa có chi nhánh nào đang bán sản phẩm này.'">Chưa có chi nhánh nào khác.</div>
+            <ul class="list-group list-group-flush" th:unless="${detail.otherStores.isEmpty()}">
+                <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center gap-2"
+                    th:each="store : ${detail.otherStores}">
+                    <div>
+                        <div class="fw-semibold" th:text="${store.storeName}">OneShop Gò Vấp</div>
+                        <span th:replace="~{fragments/components :: price(${store.price})}"></span>
+                        <span th:replace="~{fragments/components :: availability(${store.inStock})}"></span>
+                    </div>
+                    <form th:action="@{/stores/select}" method="post">
+                        <input type="hidden" name="storeId" th:value="${store.storeId}">
+                        <input type="hidden" name="returnTo" th:value="@{/products/{id}(id=${product.id})}">
+                        <button type="submit" class="btn btn-outline-primary btn-sm"
+                                th:text="${selectedStore != null} ? 'Đổi sang chi nhánh này' : 'Chọn chi nhánh này'">Đổi sang chi nhánh này</button>
+                    </form>
+                </li>
+            </ul>
+        </section>
+
+        <section th:if="${product.description}">
+            <h2 class="h5">Mô tả</h2>
+            <p class="os-product-description" th:text="${product.description}">Mô tả sản phẩm.</p>
+        </section>
+    </div>
+</div>
+</body>
+</html>

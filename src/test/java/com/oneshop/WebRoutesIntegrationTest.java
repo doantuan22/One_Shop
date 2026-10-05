@@ -1,5 +1,6 @@
 package com.oneshop;
 
+import com.oneshop.dto.response.CatalogItemResponse;
 import com.oneshop.dto.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,8 +17,9 @@ class WebRoutesIntegrationTest extends AbstractIntegrationTest {
 
     @BeforeEach
     void stubProducts() {
-        when(productService.getActiveProducts(any())).thenReturn(new PageImpl<>(List.of(
-                new ProductResponse(1L, "SKU-001", "Kem dưỡng ẩm", "Mô tả", "Dưỡng da", "OneBrand", null))));
+        ProductResponse product = new ProductResponse(1L, "SKU-001", "Kem dưỡng ẩm", "Mô tả", "Dưỡng da", "OneBrand", null);
+        when(storeProductService.getChainCatalog(any(), any())).thenReturn(new PageImpl<>(List.of(
+                new CatalogItemResponse(product, null, List.of()))));
     }
 
     @Test

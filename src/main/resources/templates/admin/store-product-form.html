@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${current == null} ? 'Gắn sản phẩm vào chi nhánh' : 'Sửa sản phẩm tại chi nhánh'">Sản phẩm theo chi nhánh</title>
+</head>
+<body>
+<div th:replace="~{fragments/components :: pageHeader(${current == null} ? 'Gắn sản phẩm vào chi nhánh' : 'Sửa sản phẩm tại chi nhánh', 'Giá, tồn kho và trạng thái ở đây chỉ áp dụng cho chi nhánh này.')}"></div>
+
+<section class="card shadow-sm">
+    <div class="card-body">
+        <form method="post" th:object="${form}" id="store-product-form" novalidate
+              th:action="${current == null} ? @{/admin/store-products} : @{/admin/store-products/{id}(id=${current.storeProductId})}">
+            <div class="alert alert-danger" th:each="message : ${#fields.globalErrors()}" th:text="${message}">Lỗi</div>
+            <div class="row g-3">
+                <!--/* New: choose the Store and the Product. Existing: both are fixed. */-->
+                <th:block th:if="${current == null}">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="storeId">Chi nhánh <span class="text-danger">*</span></label>
+                        <select class="form-select" th:field="*{storeId}" th:errorclass="is-invalid">
+                            <option value="">-- Chọn chi nhánh --</option>
+                            <option th:each="store : ${stores}" th:value="${store.id}"
+                                    th:text="${store.name} + (${store.status.name() == 'INACTIVE'} ? ' (ngừng hoạt động)' : '')">OneShop Thủ Đức</option>
+                        </select>
+                        <div class="invalid-feedback" th:errors="*{storeId}">Lỗi</div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="productId">Sản phẩm <span class="text-danger">*</span></label>
+                        <select class="form-select" th:field="*{productId}" th:errorclass="is-invalid">
+                            <option value="">-- Chọn sản phẩm --</option>
+                            <option th:each="product : ${products}" th:value="${product.id}"
+                                    th:text="${product.sku} + ' - ' + ${product.name}">SKU - Tên</option>
+                        </select>
+                        <div class="invalid-feedback" th:errors="*{productId}">Lỗi</div>
+                    </div>
+                </th:block>
+                <th:block th:if="${current != null}">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Chi nhánh</label>
+                        <p class="form-control-plaintext fw-semibold" th:text="${current.storeName}">OneShop Thủ Đức</p>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Sản phẩm</label>
+                        <p class="form-control-plaintext fw-semibold" th:text="${current.sku} + ' - ' + ${current.productName}">SKU - Tên</p>
+                    </div>
+                </th:block>
+
+                <div class="col-12 col-md-4">
+                    <label class="form-label" for="price">Giá bán (₫) <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" th:field="*{price}" th:errorclass="is-invalid" min="0" step="1">
+                    <div class="invalid-feedback" th:errors="*{price}">Lỗi</div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label class="form-label" for="quantity">Tồn kho <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" th:field="*{quantity}" th:errorclass="is-invalid" min="0" step="1">
+                    <div class="invalid-feedback" th:errors="*{quantity}">Lỗi</div>
+                    <div class="form-text">Mỗi lần đổi tồn kho đều được ghi vào lịch sử biến động kho.</div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label class="form-label" for="status">Trạng thái bán</label>
+                    <select class="form-select" th:field="*{status}">
+                        <option value="ACTIVE">Đang bán</option>
+                        <option value="INACTIVE">Ngừng bán tại chi nhánh</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label" for="note">Ghi chú thay đổi tồn kho</label>
+                    <input type="text" class="form-control" th:field="*{note}" th:errorclass="is-invalid" maxlength="500">
+                    <div class="invalid-feedback" th:errors="*{note}">Lỗi</div>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary" th:text="${current == null} ? 'Gắn sản phẩm' : 'Lưu thay đổi'">Lưu</button>
+                <a class="btn btn-outline-secondary" th:href="@{/admin/store-products}">Hủy</a>
+            </div>
+        </form>
+    </div>
+</section>
+</body>
+</html>

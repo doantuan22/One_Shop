@@ -14,6 +14,7 @@
             <ul class="navbar-nav me-auto">
                 <li class="nav-item"><a class="nav-link" th:href="@{/}">Trang chủ</a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/products}">Sản phẩm</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/stores}">Hệ thống cửa hàng</a></li>
                 <!--/* Shown to guests (leads to login) and customers; /cart itself is restricted in SecurityConfig. */-->
                 <li class="nav-item" sec:authorize="!isAuthenticated() or hasRole('CUSTOMER')">
                     <a class="nav-link" th:href="@{/cart}">Giỏ hàng</a>

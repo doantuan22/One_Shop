@@ -3,6 +3,7 @@ package com.oneshop;
 import com.oneshop.repository.RoleRepository;
 import com.oneshop.repository.UserRepository;
 import com.oneshop.service.ProductService;
+import com.oneshop.service.StoreProductService;
 import com.oneshop.service.StoreService;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -27,6 +28,9 @@ abstract class AbstractIntegrationTest {
 
     @LocalServerPort
     protected int port;
+
+    @MockitoBean
+    protected StoreProductService storeProductService;
 
     @MockitoBean
     protected ProductService productService;

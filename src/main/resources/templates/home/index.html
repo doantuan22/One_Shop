@@ -6,26 +6,32 @@
 <body>
 <section class="os-hero rounded-4 p-5 mb-4 text-center">
     <h1 class="display-5 fw-bold">Chào mừng đến với OneShop</h1>
-    <p class="lead mb-4">Mỹ phẩm chính hãng, hệ thống cửa hàng trên toàn quốc.</p>
-    <a class="btn btn-primary btn-lg" th:href="@{/products}">Xem sản phẩm</a>
+    <p class="lead mb-4">Mỹ phẩm chính hãng, một website cho cả hệ thống cửa hàng.</p>
+    <div class="d-flex flex-wrap justify-content-center gap-2">
+        <a class="btn btn-primary btn-lg" th:href="@{/products}">Xem sản phẩm</a>
+        <a class="btn btn-outline-primary btn-lg" th:href="@{/stores}">Hệ thống cửa hàng</a>
+    </div>
 </section>
 
-<section aria-labelledby="stack-title">
-    <h2 class="h5 mb-3" id="stack-title">Trạng thái hệ thống</h2>
+<section aria-labelledby="how-title">
+    <h2 class="h5 mb-3" id="how-title">Mua sắm theo chi nhánh</h2>
     <div class="row g-3">
-        <div class="col-6 col-md-3" th:each="tech : ${ {'Spring Boot', 'Thymeleaf', 'Bootstrap', 'SiteMesh'} }">
-            <div class="card h-100 text-center">
-                <div class="card-body">
-                    <div class="fw-semibold" th:text="${tech}">Tech</div>
-                    <span class="badge text-bg-success mt-2">Hoạt động</span>
-                </div>
-            </div>
+        <div class="col-12 col-md-4">
+            <div th:replace="~{fragments/components :: card('Xem toàn chuỗi', ~{::#how-chain})}"></div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div th:replace="~{fragments/components :: card('Chọn chi nhánh', ~{::#how-store})}"></div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div th:replace="~{fragments/components :: card('So sánh giữa các chi nhánh', ~{::#how-compare})}"></div>
         </div>
     </div>
-    <p class="text-secondary small mt-3 mb-0">
-        Trang này được Spring MVC render bằng Thymeleaf, định dạng bằng Bootstrap và được SiteMesh
-        bọc trong layout chung (header, navbar, footer).
-    </p>
 </section>
+
+<th:block th:remove="all">
+    <p class="mb-0" id="how-chain">Chưa chọn chi nhánh, bạn thấy mọi sản phẩm của chuỗi và biết sản phẩm đang bán ở những chi nhánh nào.</p>
+    <p class="mb-0" id="how-store">Khi đã chọn một chi nhánh, danh sách sản phẩm, giá và tình trạng hàng là của riêng chi nhánh đó.</p>
+    <p class="mb-0" id="how-compare">Ở trang chi tiết, bạn xem được giá và tình trạng còn hàng của cùng sản phẩm tại các chi nhánh khác.</p>
+</th:block>
 </body>
 </html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chi nhánh</title>
+</head>
+<body>
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+    <div th:replace="~{fragments/components :: pageHeader('Chi nhánh', 'Các cửa hàng của chuỗi. Chi nhánh ngừng hoạt động không còn bán hàng nhưng dữ liệu vẫn được giữ.')}"></div>
+    <a class="btn btn-primary" th:href="@{/admin/stores/new}">Thêm chi nhánh</a>
+</div>
+
+<div class="alert alert-success" th:if="${param.success}"
+     th:text="${param.success[0] == 'created'} ? 'Đã thêm chi nhánh.' : 'Đã cập nhật chi nhánh.'">Đã lưu.</div>
+
+<div th:replace="~{fragments/components :: dataTable(~{::#store-head}, ~{::#store-body})}"></div>
+
+<th:block th:remove="all">
+    <thead id="store-head">
+    <tr>
+        <th scope="col">Mã</th>
+        <th scope="col">Tên</th>
+        <th scope="col">Khu vực</th>
+        <th scope="col">Địa chỉ</th>
+        <th scope="col">Dịch vụ</th>
+        <th scope="col">Trạng thái</th>
+        <th scope="col" class="text-end">Thao tác</th>
+    </tr>
+    </thead>
+    <tbody id="store-body">
+    <tr th:each="store : ${stores}">
+        <td th:text="${store.code}">OS-THUDUC</td>
+        <td class="fw-semibold" th:text="${store.name}">OneShop Thủ Đức</td>
+        <td th:text="${store.area} + ', ' + ${store.provinceCity}">Thủ Đức, TP. Hồ Chí Minh</td>
+        <td class="text-secondary">
+            <div th:text="${store.address}">101 Võ Văn Ngân</div>
+            <div class="small" th:text="${store.phone}">028...</div>
+            <div class="small" th:text="${store.openingHours}">08:00 - 22:00</div>
+        </td>
+        <td>
+            <span class="badge text-bg-light border" th:if="${store.deliveryEnabled}">Giao hàng</span>
+            <span class="badge text-bg-light border" th:if="${store.pickupEnabled}">Nhận tại cửa hàng</span>
+        </td>
+        <td><span th:replace="~{fragments/components :: statusBadge(${store.status})}"></span></td>
+        <td class="text-end text-nowrap">
+            <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/store-products(storeId=${store.id})}">Sản phẩm</a>
+            <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/stores/{id}/edit(id=${store.id})}">Sửa</a>
+        </td>
+    </tr>
+    <tr th:if="${stores.isEmpty()}">
+        <td colspan="7" class="text-center text-secondary py-4">Chưa có chi nhánh nào.</td>
+    </tr>
+    </tbody>
+</th:block>
+</body>
+</html>

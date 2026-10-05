@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Sản phẩm theo chi nhánh</title>
+</head>
+<body>
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+    <div th:replace="~{fragments/components :: pageHeader('Sản phẩm theo chi nhánh', 'Mỗi dòng là một SKU đang gắn với một chi nhánh, có giá, tồn kho và trạng thái bán riêng của chi nhánh đó.')}"></div>
+    <a class="btn btn-primary" th:href="@{/admin/store-products/new(storeId=${storeId})}">Gắn sản phẩm vào chi nhánh</a>
+</div>
+
+<div class="alert alert-success" th:if="${param.success}"
+     th:text="${param.success[0] == 'created'} ? 'Đã gắn sản phẩm vào chi nhánh.' : 'Đã cập nhật.'">Đã lưu.</div>
+
+<form method="get" th:action="@{/admin/store-products}" class="row g-2 mb-3" id="store-product-filter">
+    <div class="col-12 col-md-4">
+        <select class="form-select" name="storeId" aria-label="Chi nhánh">
+            <option value="">Tất cả chi nhánh</option>
+            <option th:each="store : ${stores}" th:value="${store.id}" th:text="${store.name}"
+                    th:selected="${store.id == storeId}">OneShop Thủ Đức</option>
+        </select>
+    </div>
+    <div class="col-12 col-md-5">
+        <select class="form-select" name="productId" aria-label="Sản phẩm">
+            <option value="">Tất cả sản phẩm</option>
+            <option th:each="product : ${products}" th:value="${product.id}"
+                    th:text="${product.sku} + ' - ' + ${product.name}" th:selected="${product.id == productId}">SKU - Tên</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-primary">Lọc</button>
+    </div>
+</form>
+
+<div th:replace="~{fragments/components :: dataTable(~{::#sp-head}, ~{::#sp-body})}"></div>
+
+<nav class="mt-3" th:if="${storeProducts.totalPages > 1}" aria-label="Phân trang">
+    <ul class="pagination justify-content-center">
+        <li class="page-item" th:classappend="${storeProducts.first} ? 'disabled'">
+            <a class="page-link" th:href="@{/admin/store-products(storeId=${storeId}, productId=${productId}, page=${storeProducts.number - 1})}">Trước</a>
+        </li>
+        <li class="page-item disabled">
+            <span class="page-link" th:text="${storeProducts.number + 1} + ' / ' + ${storeProducts.totalPages}">1 / 1</span>
+        </li>
+        <li class="page-item" th:classappend="${storeProducts.last} ? 'disabled'">
+            <a class="page-link" th:href="@{/admin/store-products(storeId=${storeId}, productId=${productId}, page=${storeProducts.number + 1})}">Sau</a>
+        </li>
+    </ul>
+</nav>
+
+<th:block th:remove="all">
+    <thead id="sp-head">
+    <tr>
+        <th scope="col">Chi nhánh</th>
+        <th scope="col">SKU</th>
+        <th scope="col">Sản phẩm</th>
+        <th scope="col" class="text-end">Giá bán</th>
+        <th scope="col" class="text-end">Tồn kho</th>
+        <th scope="col">Trạng thái</th>
+        <th scope="col" class="text-end">Thao tác</th>
+    </tr>
+    </thead>
+    <tbody id="sp-body">
+    <tr th:each="row : ${storeProducts.content}">
+        <td th:text="${row.storeName}">OneShop Thủ Đức</td>
+        <td th:text="${row.sku}">SKU-001</td>
+        <td class="fw-semibold" th:text="${row.productName}">Tên sản phẩm</td>
+        <td class="text-end"><span th:replace="~{fragments/components :: price(${row.price})}"></span></td>
+        <td class="text-end" th:text="${row.quantity}">40</td>
+        <td><span th:replace="~{fragments/components :: statusBadge(${row.status})}"></span></td>
+        <td class="text-end">
+            <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/store-products/{id}/edit(id=${row.storeProductId})}">Sửa</a>
+        </td>
+    </tr>
+    <tr th:if="${storeProducts.isEmpty()}">
+        <td colspan="7" class="text-center text-secondary py-4">Chưa có sản phẩm nào được gắn.</td>
+    </tr>
+    </tbody>
+</th:block>
+</body>
+</html>

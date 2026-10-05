@@ -38,6 +38,8 @@ public class SiteMeshConfig {
 
         @Override
         protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
+            // error pages rendered by a controller (404 of a product, ...) get the layout of their area too
+            builder.setIncludeErrorPages(true);
             builder.setDecoratorPrefix("")
                     .addDecoratorPath("/*", CLIENT_DECORATOR_PATH)
                     .addDecoratorPath("/staff", STAFF_DECORATOR_PATH)

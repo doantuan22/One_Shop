@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh mục</title>
+</head>
+<body>
+<div th:replace="~{fragments/components :: pageHeader('Danh mục', 'Danh mục dùng chung toàn chuỗi. Danh mục đang ẩn sẽ không hiển thị cho khách cùng các sản phẩm của nó.')}"></div>
+
+<div class="alert alert-success" th:if="${param.success}"
+     th:text="${param.success[0] == 'created'} ? 'Đã thêm danh mục.' : 'Đã cập nhật danh mục.'">Đã lưu.</div>
+
+<div class="row g-4">
+    <div class="col-12 col-xl-4 order-xl-2">
+        <section class="card shadow-sm">
+            <div class="card-header bg-white fw-semibold" th:text="${editId == null} ? 'Thêm danh mục' : 'Sửa danh mục'">Thêm danh mục</div>
+            <div class="card-body">
+                <form method="post" th:object="${form}" id="category-form" novalidate
+                      th:action="${editId == null} ? @{/admin/categories} : @{/admin/categories/{id}(id=${editId})}">
+                    <div class="alert alert-danger" th:each="message : ${#fields.globalErrors()}" th:text="${message}">Lỗi</div>
+                    <div class="mb-3">
+                        <label class="form-label" for="name">Tên danh mục <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" th:field="*{name}" th:errorclass="is-invalid" maxlength="150">
+                        <div class="invalid-feedback" th:errors="*{name}">Lỗi</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="description">Mô tả</label>
+                        <textarea class="form-control" rows="3" th:field="*{description}" th:errorclass="is-invalid" maxlength="500"></textarea>
+                        <div class="invalid-feedback" th:errors="*{description}">Lỗi</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="status">Trạng thái</label>
+                        <select class="form-select" th:field="*{status}">
+                            <option value="ACTIVE">Đang hoạt động</option>
+                            <option value="HIDDEN">Đang ẩn</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" th:text="${editId == null} ? 'Thêm' : 'Lưu thay đổi'">Lưu</button>
+                    <a class="btn btn-outline-secondary" th:href="@{/admin/categories}" th:if="${editId != null}">Hủy</a>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <div class="col-12 col-xl-8 order-xl-1">
+        <div th:replace="~{fragments/components :: dataTable(~{::#category-head}, ~{::#category-body})}"></div>
+    </div>
+</div>
+
+<th:block th:remove="all">
+    <thead id="category-head">
+    <tr>
+        <th scope="col">Tên</th>
+        <th scope="col">Mô tả</th>
+        <th scope="col">Trạng thái</th>
+        <th scope="col" class="text-end">Thao tác</th>
+    </tr>
+    </thead>
+    <tbody id="category-body">
+    <tr th:each="category : ${categories}" th:classappend="${category.id == editId} ? 'table-active'">
+        <td class="fw-semibold" th:text="${category.name}">Chăm sóc da</td>
+        <td class="text-secondary" th:text="${category.description}">Mô tả</td>
+        <td><span th:replace="~{fragments/components :: statusBadge(${category.status})}"></span></td>
+        <td class="text-end">
+            <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/categories/{id}/edit(id=${category.id})}">Sửa</a>
+        </td>
+    </tr>
+    <tr th:if="${categories.isEmpty()}">
+        <td colspan="4" class="text-center text-secondary py-4">Chưa có danh mục nào.</td>
+    </tr>
+    </tbody>
+</th:block>
+</body>
+</html>

@@ -37,7 +37,8 @@ import org.springframework.security.web.servlet.util.matcher.PathPatternRequestM
 public class SecurityConfig {
 
     private static final String[] PUBLIC_PATHS = {
-            "/", "/login", "/register", "/products/**", "/health", "/error",
+            // catalog, Store Finder and the choice of the Store being browsed are open to guests (Roadmap V2 5)
+            "/", "/login", "/register", "/products/**", "/stores/**", "/health", "/error",
             "/css/**", "/js/**", "/images/**", "/vendor/**", "/favicon.ico",
             "/api/auth/**"
     };

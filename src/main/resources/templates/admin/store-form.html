@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${editId == null} ? 'Thêm chi nhánh' : 'Sửa chi nhánh'">Chi nhánh</title>
+</head>
+<body>
+<div th:replace="~{fragments/components :: pageHeader(${editId == null} ? 'Thêm chi nhánh' : 'Sửa chi nhánh', 'Thông tin hiển thị trong Hệ thống cửa hàng của khách.')}"></div>
+
+<section class="card shadow-sm">
+    <div class="card-body">
+        <form method="post" th:object="${form}" id="store-form" novalidate
+              th:action="${editId == null} ? @{/admin/stores} : @{/admin/stores/{id}(id=${editId})}">
+            <div class="alert alert-danger" th:each="message : ${#fields.globalErrors()}" th:text="${message}">Lỗi</div>
+            <div class="row g-3">
+                <div class="col-12 col-md-4">
+                    <label class="form-label" for="code">Mã chi nhánh <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" th:field="*{code}" th:errorclass="is-invalid" maxlength="30">
+                    <div class="invalid-feedback" th:errors="*{code}">Lỗi</div>
+                </div>
+                <div class="col-12 col-md-8">
+                    <label class="form-label" for="name">Tên chi nhánh <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" th:field="*{name}" th:errorclass="is-invalid" maxlength="150">
+                    <div class="invalid-feedback" th:errors="*{name}">Lỗi</div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label" for="address">Địa chỉ <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" th:field="*{address}" th:errorclass="is-invalid" maxlength="500">
+                    <div class="invalid-feedback" th:errors="*{address}">Lỗi</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="provinceCity">Tỉnh / Thành phố <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" th:field="*{provinceCity}" th:errorclass="is-invalid" maxlength="100">
+                    <div class="invalid-feedback" th:errors="*{provinceCity}">Lỗi</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="area">Khu vực <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" th:field="*{area}" th:errorclass="is-invalid" maxlength="100">
+                    <div class="invalid-feedback" th:errors="*{area}">Lỗi</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="phone">Điện thoại</label>
+                    <input type="tel" class="form-control" th:field="*{phone}" th:errorclass="is-invalid" maxlength="20">
+                    <div class="invalid-feedback" th:errors="*{phone}">Lỗi</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="openingHours">Giờ mở cửa</label>
+                    <input type="text" class="form-control" th:field="*{openingHours}" th:errorclass="is-invalid" maxlength="200">
+                    <div class="invalid-feedback" th:errors="*{openingHours}">Lỗi</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-check form-switch">
+                        <input type="checkbox" class="form-check-input" th:field="*{deliveryEnabled}">
+                        <label class="form-check-label" for="deliveryEnabled1">Hỗ trợ giao hàng tận nơi</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input type="checkbox" class="form-check-input" th:field="*{pickupEnabled}">
+                        <label class="form-check-label" for="pickupEnabled1">Hỗ trợ nhận tại cửa hàng</label>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="status">Trạng thái</label>
+                    <select class="form-select" th:field="*{status}">
+                        <option value="ACTIVE">Đang hoạt động</option>
+                        <option value="INACTIVE">Ngừng hoạt động</option>
+                    </select>
+                    <div class="form-text">Chi nhánh ngừng hoạt động không hiển thị để khách chọn mua.</div>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary" th:text="${editId == null} ? 'Thêm chi nhánh' : 'Lưu thay đổi'">Lưu</button>
+                <a class="btn btn-outline-secondary" th:href="@{/admin/stores}">Hủy</a>
+            </div>
+        </form>
+    </div>
+</section>
+</body>
+</html>

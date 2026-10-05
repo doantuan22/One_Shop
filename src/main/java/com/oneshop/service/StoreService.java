@@ -1,18 +1,55 @@
 package com.oneshop.service;
 
+import com.oneshop.dto.request.StoreRequest;
 import com.oneshop.dto.response.StoreResponse;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
- * Store Finder, Store metadata and the Store scope of Staff. Phase 6 adds the province/area filter, selectedStoreId
- * handling and Admin CRUD.
+ * Store Finder, Store metadata, the Store a Client has selected and the Store scope of Staff. A Store is never
+ * hard-deleted: INACTIVE takes it out of sale while its history stays (BR-17).
  */
 public interface StoreService {
 
     List<StoreResponse> getActiveStores();
 
+    /** @throws com.oneshop.exception.ResourceNotFoundException if there is no such Store */
     StoreResponse getStore(Long id);
+
+    // ---- Client: Store Finder and selected Store ----
+
+    /**
+     * Store Finder (Roadmap V2 6.1): Stores of every status, optionally filtered by province/city and area. A blank
+     * filter means "any".
+     */
+    List<StoreResponse> findStores(String provinceCity, String area);
+
+    /** Province/city values to choose from in the Store Finder. */
+    List<String> getProvinceCities();
+
+    /** Areas to choose from, limited to one province/city when it is given. */
+    List<String> getAreas(String provinceCity);
+
+    /**
+     * The Store behind a selectedStoreId, if a Client may browse and buy there: it must exist and be ACTIVE. An id that
+     * is {@code null}, unknown or of an INACTIVE Store gives an empty result, which means "whole chain".
+     */
+    Optional<StoreResponse> findSelectableStore(Long storeId);
+
+    /** @throws com.oneshop.exception.BadRequestException if the Store cannot be selected */
+    StoreResponse requireSelectableStore(Long storeId);
+
+    // ---- Admin ----
+
+    List<StoreResponse> getAllStores();
+
+    /** @throws com.oneshop.exception.BadRequestException if the code is already used */
+    StoreResponse createStore(StoreRequest request);
+
+    StoreResponse updateStore(Long id, StoreRequest request);
+
+    // ---- Staff Store scope ----
 
     /**
      * Store scope of a Staff account (BR-14): the ACTIVE Stores it has an ACTIVE assignment to. Empty when the account

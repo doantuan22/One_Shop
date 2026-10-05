@@ -13,6 +13,12 @@ import org.springframework.web.servlet.ModelAndView;
         "com.oneshop.controller.admin", "com.oneshop.controller.web"})
 public class WebExceptionHandler {
 
+    /**
+     * Rendered inside the normal request, so SiteMesh wraps it in the layout of the area (client, staff or admin).
+     * {@code templates/error.html} is a complete page of its own and is only for the container's error dispatch.
+     */
+    private static final String VIEW = "error-message";
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ModelAndView handleNotFound(ResourceNotFoundException ex) {
         return errorView(HttpStatus.NOT_FOUND, ex.getMessage());
@@ -24,7 +30,7 @@ public class WebExceptionHandler {
     }
 
     private ModelAndView errorView(HttpStatus status, String message) {
-        ModelAndView mav = new ModelAndView("error");
+        ModelAndView mav = new ModelAndView(VIEW);
         mav.setStatus(status);
         mav.addObject("status", status.value());
         mav.addObject("error", status.getReasonPhrase());

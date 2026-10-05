@@ -4,34 +4,108 @@
     <title>Sản phẩm</title>
 </head>
 <body>
-<h1 class="h3 mb-4">Sản phẩm</h1>
-
-<div class="alert alert-secondary" th:if="${products.empty}">Chưa có sản phẩm nào.</div>
-
-<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3" th:unless="${products.empty}">
-    <div class="col" th:each="product : ${products.content}">
-        <div class="card h-100">
-            <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" th:alt="${product.name}"
-                 class="card-img-top os-product-img" loading="lazy">
-            <div class="os-product-img os-product-placeholder" th:unless="${product.imageUrl}"></div>
-            <div class="card-body">
-                <h2 class="h6 card-title" th:text="${product.name}">Tên sản phẩm</h2>
-                <p class="card-text small text-muted mb-0" th:text="${product.brandName}">Thương hiệu</p>
-            </div>
-        </div>
+<!--/*
+    Catalog. Without a selected Store every SKU of the chain is listed once, with the Stores selling it; with a selected
+    Store only that Store's StoreProducts are listed, at that Store's price (BR-04). Never an exact quantity (BR-15).
+*/-->
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-1">Sản phẩm</h1>
+        <p class="text-secondary mb-0" id="catalog-context" th:if="${selectedStore != null}">
+            Đang xem sản phẩm tại <strong th:text="${selectedStore.name}">OneShop Thủ Đức</strong>:
+            giá và tình trạng hàng là của chi nhánh này.
+        </p>
+        <p class="text-secondary mb-0" id="catalog-context" th:unless="${selectedStore != null}">
+            Đang xem <strong>toàn chuỗi</strong>: mỗi sản phẩm cho biết đang bán ở những chi nhánh nào.
+            <a th:href="@{/stores}">Chọn chi nhánh</a> để xem giá tại một chi nhánh.
+        </p>
     </div>
 </div>
 
-<nav class="mt-4" th:if="${products.totalPages > 1}" aria-label="Phân trang">
+<form method="get" th:action="@{/products}" class="card card-body shadow-sm mb-4" id="catalog-filter">
+    <div class="row g-3 align-items-end">
+        <div class="col-12 col-md-4">
+            <label class="form-label" for="q">Tên sản phẩm hoặc mã SKU</label>
+            <input type="search" class="form-control" id="q" name="q" th:value="${criteria.keyword}" maxlength="100">
+        </div>
+        <div class="col-6 col-md-3">
+            <label class="form-label" for="categoryId">Danh mục</label>
+            <select class="form-select" id="categoryId" name="categoryId">
+                <option value="">Tất cả</option>
+                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
+                        th:selected="${category.id == criteria.categoryId}">Chăm sóc da</option>
+            </select>
+        </div>
+        <div class="col-6 col-md-3">
+            <label class="form-label" for="brandId">Thương hiệu</label>
+            <select class="form-select" id="brandId" name="brandId">
+                <option value="">Tất cả</option>
+                <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"
+                        th:selected="${brand.id == criteria.brandId}">Cocoon</option>
+            </select>
+        </div>
+        <div class="col-12 col-md-2 d-grid">
+            <button type="submit" class="btn btn-primary">Tìm</button>
+        </div>
+    </div>
+</form>
+
+<div th:if="${catalog.isEmpty()}">
+    <div th:replace="~{fragments/components :: emptyState(${selectedStore != null} ? 'Chi nhánh này chưa có sản phẩm phù hợp.' : 'Không tìm thấy sản phẩm phù hợp.')}"></div>
+</div>
+
+<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3" th:unless="${catalog.isEmpty()}">
+    <div class="col" th:each="item : ${catalog.content}">
+        <article class="card h-100 shadow-sm os-product-card" th:with="product=${item.product}">
+            <a th:href="@{/products/{id}(id=${product.id})}" class="text-decoration-none">
+                <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" th:alt="${product.name}"
+                     class="card-img-top os-product-img" loading="lazy">
+                <div class="os-product-img os-product-placeholder" th:unless="${product.imageUrl}"></div>
+            </a>
+            <div class="card-body d-flex flex-column">
+                <p class="small text-secondary mb-1" th:text="${product.brandName} + ' · ' + ${product.categoryName}">Cocoon · Chăm sóc da</p>
+                <h2 class="h6 card-title">
+                    <a th:href="@{/products/{id}(id=${product.id})}" class="text-decoration-none text-body"
+                       th:text="${product.name}">Tên sản phẩm</a>
+                </h2>
+                <p class="small text-secondary mb-2">SKU: <span th:text="${product.sku}">SKU-001</span></p>
+
+                <!--/* Context of ONE Store: that Store's own price and availability */-->
+                <div class="mt-auto" th:if="${item.atSelectedStore != null}">
+                    <div class="fs-5 fw-semibold"><span th:replace="~{fragments/components :: price(${item.atSelectedStore.price})}"></span></div>
+                    <span th:replace="~{fragments/components :: availability(${item.atSelectedStore.inStock})}"></span>
+                </div>
+
+                <!--/* Whole chain: where the SKU is sold */-->
+                <div class="mt-auto" th:if="${item.atSelectedStore == null}">
+                    <p class="small text-secondary mb-0" th:if="${item.stores.isEmpty()}">Chưa có chi nhánh nào đang bán.</p>
+                    <th:block th:unless="${item.stores.isEmpty()}">
+                        <div class="fw-semibold mb-1">
+                            <span th:unless="${item.samePriceEverywhere()}">Từ </span><span th:replace="~{fragments/components :: price(${item.lowestPrice()})}"></span>
+                        </div>
+                        <ul class="list-unstyled small mb-0 os-store-availability">
+                            <li class="d-flex justify-content-between align-items-center gap-2" th:each="store : ${item.stores}">
+                                <span class="text-truncate" th:text="${store.storeName}">OneShop Thủ Đức</span>
+                                <span th:replace="~{fragments/components :: availability(${store.inStock})}"></span>
+                            </li>
+                        </ul>
+                    </th:block>
+                </div>
+            </div>
+        </article>
+    </div>
+</div>
+
+<nav class="mt-4" th:if="${catalog.totalPages > 1}" aria-label="Phân trang">
     <ul class="pagination justify-content-center">
-        <li class="page-item" th:classappend="${products.first} ? 'disabled'">
-            <a class="page-link" th:href="@{/products(page=${products.number - 1})}">Trước</a>
+        <li class="page-item" th:classappend="${catalog.first} ? 'disabled'">
+            <a class="page-link" th:href="@{/products(q=${criteria.keyword}, categoryId=${criteria.categoryId}, brandId=${criteria.brandId}, page=${catalog.number - 1})}">Trước</a>
         </li>
         <li class="page-item disabled">
-            <span class="page-link" th:text="${products.number + 1} + ' / ' + ${products.totalPages}">1 / 1</span>
+            <span class="page-link" th:text="${catalog.number + 1} + ' / ' + ${catalog.totalPages}">1 / 1</span>
         </li>
-        <li class="page-item" th:classappend="${products.last} ? 'disabled'">
-            <a class="page-link" th:href="@{/products(page=${products.number + 1})}">Sau</a>
+        <li class="page-item" th:classappend="${catalog.last} ? 'disabled'">
+            <a class="page-link" th:href="@{/products(q=${criteria.keyword}, categoryId=${criteria.categoryId}, brandId=${criteria.brandId}, page=${catalog.number + 1})}">Sau</a>
         </li>
     </ul>
 </nav>

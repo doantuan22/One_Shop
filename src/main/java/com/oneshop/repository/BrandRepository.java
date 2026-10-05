@@ -9,4 +9,10 @@ import java.util.List;
 public interface BrandRepository extends JpaRepository<Brand, Long> {
 
     List<Brand> findByStatusOrderByName(VisibilityStatus status);
+
+    List<Brand> findAllByOrderByName();
+
+    boolean existsByName(String name);
+
+    boolean existsByNameAndIdNot(String name, Long id);
 }

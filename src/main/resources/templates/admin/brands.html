@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thương hiệu</title>
+</head>
+<body>
+<div th:replace="~{fragments/components :: pageHeader('Thương hiệu', 'Thương hiệu dùng chung toàn chuỗi. Logo được lưu trên Cloudinary.')}"></div>
+
+<div class="alert alert-success" th:if="${param.success}" th:switch="${param.success[0]}">
+    <span th:case="'created'">Đã thêm thương hiệu. Bạn có thể tải logo lên ngay bên dưới.</span>
+    <span th:case="'logo-uploaded'">Đã tải logo lên.</span>
+    <span th:case="'logo-removed'">Đã xóa logo.</span>
+    <span th:case="*">Đã cập nhật thương hiệu.</span>
+</div>
+<div class="alert alert-danger" th:if="${param.error}" th:switch="${param.error[0]}">
+    <span th:case="'image-invalid'">Tệp không hợp lệ. Vui lòng chọn một tệp hình ảnh.</span>
+    <span th:case="*">Không thể làm việc với Cloudinary. Kiểm tra cấu hình CLOUDINARY_* rồi thử lại.</span>
+</div>
+
+<div class="row g-4">
+    <div class="col-12 col-xl-4 order-xl-2">
+        <section class="card shadow-sm mb-4">
+            <div class="card-header bg-white fw-semibold" th:text="${editId == null} ? 'Thêm thương hiệu' : 'Sửa thương hiệu'">Thêm thương hiệu</div>
+            <div class="card-body">
+                <form method="post" th:object="${form}" id="brand-form" novalidate
+                      th:action="${editId == null} ? @{/admin/brands} : @{/admin/brands/{id}(id=${editId})}">
+                    <div class="alert alert-danger" th:each="message : ${#fields.globalErrors()}" th:text="${message}">Lỗi</div>
+                    <div class="mb-3">
+                        <label class="form-label" for="name">Tên thương hiệu <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" th:field="*{name}" th:errorclass="is-invalid" maxlength="150">
+                        <div class="invalid-feedback" th:errors="*{name}">Lỗi</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="description">Mô tả</label>
+                        <textarea class="form-control" rows="3" th:field="*{description}" th:errorclass="is-invalid" maxlength="500"></textarea>
+                        <div class="invalid-feedback" th:errors="*{description}">Lỗi</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="status">Trạng thái</label>
+                        <select class="form-select" th:field="*{status}">
+                            <option value="ACTIVE">Đang hoạt động</option>
+                            <option value="HIDDEN">Đang ẩn</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" th:text="${editId == null} ? 'Thêm' : 'Lưu thay đổi'">Lưu</button>
+                    <a class="btn btn-outline-secondary" th:href="@{/admin/brands}" th:if="${editId != null}">Hủy</a>
+                </form>
+            </div>
+        </section>
+
+        <section class="card shadow-sm" id="brand-logo" th:if="${editBrand != null}">
+            <div class="card-header bg-white fw-semibold">Logo</div>
+            <div class="card-body">
+                <img th:if="${editBrand.logoUrl}" th:src="${editBrand.logoUrl}" th:alt="${editBrand.name}"
+                     class="os-brand-logo border rounded mb-3">
+                <p class="text-secondary small" th:unless="${editBrand.logoUrl}">Chưa có logo.</p>
+
+                <form method="post" enctype="multipart/form-data" class="mb-2"
+                      th:action="@{/admin/brands/{id}/logo(id=${editId})}">
+                    <div class="input-group">
+                        <input type="file" class="form-control" name="file" accept="image/*" required aria-label="Tệp logo">
+                        <button type="submit" class="btn btn-outline-primary">Tải lên</button>
+                    </div>
+                </form>
+                <form method="post" th:action="@{/admin/brands/{id}/logo/delete(id=${editId})}" th:if="${editBrand.logoUrl}">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">Xóa logo</button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <div class="col-12 col-xl-8 order-xl-1">
+        <div th:replace="~{fragments/components :: dataTable(~{::#brand-head}, ~{::#brand-body})}"></div>
+    </div>
+</div>
+
+<th:block th:remove="all">
+    <thead id="brand-head">
+    <tr>
+        <th scope="col">Logo</th>
+        <th scope="col">Tên</th>
+        <th scope="col">Mô tả</th>
+        <th scope="col">Trạng thái</th>
+        <th scope="col" class="text-end">Thao tác</th>
+    </tr>
+    </thead>
+    <tbody id="brand-body">
+    <tr th:each="brand : ${brands}" th:classappend="${brand.id == editId} ? 'table-active'">
+        <td>
+            <img th:if="${brand.logoUrl}" th:src="${brand.logoUrl}" th:alt="${brand.name}" class="os-brand-logo-sm rounded border">
+            <span class="text-secondary" th:unless="${brand.logoUrl}">—</span>
+        </td>
+        <td class="fw-semibold" th:text="${brand.name}">Cocoon</td>
+        <td class="text-secondary" th:text="${brand.description}">Mô tả</td>
+        <td><span th:replace="~{fragments/components :: statusBadge(${brand.status})}"></span></td>
+        <td class="text-end">
+            <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/brands/{id}/edit(id=${brand.id})}">Sửa</a>
+        </td>
+    </tr>
+    <tr th:if="${brands.isEmpty()}">
+        <td colspan="5" class="text-center text-secondary py-4">Chưa có thương hiệu nào.</td>
+    </tr>
+    </tbody>
+</th:block>
+</body>
+</html>

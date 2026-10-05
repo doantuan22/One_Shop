@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${editId == null} ? 'Thêm sản phẩm' : 'Sửa sản phẩm'">Sản phẩm</title>
+</head>
+<body>
+<div th:replace="~{fragments/components :: pageHeader(${editId == null} ? 'Thêm sản phẩm' : 'Sửa sản phẩm', 'Một sản phẩm là một SKU cụ thể (ví dụ từng màu son). Giá và tồn kho đặt ở mục Sản phẩm theo chi nhánh.')}"></div>
+
+<div class="alert alert-success" th:if="${param.success}" th:switch="${param.success[0]}">
+    <span th:case="'created'">Đã thêm sản phẩm. Bạn có thể tải ảnh lên ngay bên dưới.</span>
+    <span th:case="'image-uploaded'">Đã tải ảnh lên.</span>
+    <span th:case="'image-deleted'">Đã xóa ảnh.</span>
+    <span th:case="'image-primary'">Đã đổi ảnh đại diện.</span>
+    <span th:case="*">Đã lưu.</span>
+</div>
+<div class="alert alert-danger" th:if="${param.error}" th:switch="${param.error[0]}">
+    <span th:case="'image-invalid'">Tệp không hợp lệ. Vui lòng chọn một tệp hình ảnh.</span>
+    <span th:case="*">Không thể làm việc với Cloudinary. Kiểm tra cấu hình CLOUDINARY_* rồi thử lại.</span>
+</div>
+
+<div class="row g-4">
+    <div class="col-12" th:classappend="${editId != null} ? 'col-xl-7'">
+        <section class="card shadow-sm">
+            <div class="card-header bg-white fw-semibold">Thông tin sản phẩm</div>
+            <div class="card-body">
+                <form method="post" th:object="${form}" id="product-form" novalidate
+                      th:action="${editId == null} ? @{/admin/products} : @{/admin/products/{id}(id=${editId})}">
+                    <div class="alert alert-danger" th:each="message : ${#fields.globalErrors()}" th:text="${message}">Lỗi</div>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-4">
+                            <label class="form-label" for="sku">Mã SKU <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" th:field="*{sku}" th:errorclass="is-invalid" maxlength="50">
+                            <div class="invalid-feedback" th:errors="*{sku}">Lỗi</div>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <label class="form-label" for="name">Tên sản phẩm <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" th:field="*{name}" th:errorclass="is-invalid" maxlength="255">
+                            <div class="invalid-feedback" th:errors="*{name}">Lỗi</div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="categoryId">Danh mục <span class="text-danger">*</span></label>
+                            <select class="form-select" th:field="*{categoryId}" th:errorclass="is-invalid">
+                                <option value="">-- Chọn danh mục --</option>
+                                <option th:each="category : ${categories}" th:value="${category.id}"
+                                        th:text="${category.name} + (${category.status.name() == 'HIDDEN'} ? ' (đang ẩn)' : '')">Chăm sóc da</option>
+                            </select>
+                            <div class="invalid-feedback" th:errors="*{categoryId}">Lỗi</div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="brandId">Thương hiệu <span class="text-danger">*</span></label>
+                            <select class="form-select" th:field="*{brandId}" th:errorclass="is-invalid">
+                                <option value="">-- Chọn thương hiệu --</option>
+                                <option th:each="brand : ${brands}" th:value="${brand.id}"
+                                        th:text="${brand.name} + (${brand.status.name() == 'HIDDEN'} ? ' (đang ẩn)' : '')">Cocoon</option>
+                            </select>
+                            <div class="invalid-feedback" th:errors="*{brandId}">Lỗi</div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="description">Mô tả</label>
+                            <textarea class="form-control" rows="5" th:field="*{description}"></textarea>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="status">Trạng thái</label>
+                            <select class="form-select" th:field="*{status}">
+                                <option value="ACTIVE">Đang hoạt động</option>
+                                <option value="HIDDEN">Đang ẩn (tạm không hiển thị cho khách)</option>
+                                <option value="INACTIVE">Ngừng kinh doanh</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary" th:text="${editId == null} ? 'Thêm sản phẩm' : 'Lưu thay đổi'">Lưu</button>
+                        <a class="btn btn-outline-secondary" th:href="@{/admin/products}">Quay lại danh sách</a>
+                        <a class="btn btn-outline-secondary" th:if="${editId != null}"
+                           th:href="@{/admin/store-products(productId=${editId})}">Chi nhánh đang bán</a>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <!--/* Images exist only for a saved product: the file goes to Cloudinary, the database keeps URL + public id. */-->
+    <div class="col-12 col-xl-5" th:if="${editId != null}">
+        <section class="card shadow-sm" id="product-images">
+            <div class="card-header bg-white fw-semibold">Ảnh sản phẩm</div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" class="mb-3"
+                      th:action="@{/admin/products/{id}/images(id=${editId})}">
+                    <div class="input-group">
+                        <input type="file" class="form-control" name="file" accept="image/*" required aria-label="Tệp ảnh">
+                        <button type="submit" class="btn btn-outline-primary">Tải lên</button>
+                    </div>
+                    <div class="form-text">Ảnh được lưu trên Cloudinary. Ảnh đầu tiên sẽ là ảnh đại diện.</div>
+                </form>
+
+                <p class="text-secondary mb-0" th:if="${images.isEmpty()}">Sản phẩm chưa có ảnh.</p>
+                <div class="row g-2" th:unless="${images.isEmpty()}">
+                    <div class="col-6" th:each="image : ${images}">
+                        <div class="card h-100">
+                            <img th:src="${image.imageUrl}" alt="Ảnh sản phẩm" class="card-img-top os-product-img" loading="lazy">
+                            <div class="card-body p-2">
+                                <span class="badge text-bg-primary mb-2" th:if="${image.primary}">Ảnh đại diện</span>
+                                <div class="d-flex flex-wrap gap-1">
+                                    <form method="post" th:unless="${image.primary}"
+                                          th:action="@{/admin/products/{id}/images/{imageId}/primary(id=${editId}, imageId=${image.id})}">
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm">Đặt làm đại diện</button>
+                                    </form>
+                                    <form method="post"
+                                          th:action="@{/admin/products/{id}/images/{imageId}/delete(id=${editId}, imageId=${image.id})}">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">Xóa</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>

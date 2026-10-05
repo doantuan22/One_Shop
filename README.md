@@ -2,7 +2,11 @@
 
 **Xây dựng website bán mỹ phẩm OneShop theo mô hình chuỗi cửa hàng.**
 
-Giai đoạn hiện tại: **Phase 5 – Auth + JWT** (Roadmap V2, mục 12). Các phase đã xong:
+Giai đoạn hiện tại: **Phase 6 – Catalog + Store chain** (Roadmap V2, mục 12). Các phase đã xong:
+
+* **Phase 6 – Catalog + Store chain**: Admin quản lý Danh mục, Thương hiệu, Sản phẩm/SKU, Chi nhánh, Sản phẩm theo
+  chi nhánh và ảnh (Cloudinary); Client có Hệ thống cửa hàng, chọn chi nhánh, catalog toàn chuỗi / theo chi nhánh và
+  trang chi tiết sản phẩm với giá, tình trạng hàng theo từng chi nhánh.
 
 * **Phase 3 – Spring Boot foundation**: 19 Entity JPA khớp schema `database/*.sql` (Phase 2), 19 Repository (kèm
   `PESSIMISTIC_WRITE` cho `StoreProduct`), khung 11 Service, Controller tách `client/staff/admin`, DTO + validation.
@@ -10,7 +14,24 @@ Giai đoạn hiện tại: **Phase 5 – Auth + JWT** (Roadmap V2, mục 12). C�
 * **Phase 5 – Auth + JWT**: đăng ký/đăng nhập/đăng xuất, JWT trong cookie HttpOnly, phân quyền CUSTOMER/STAFF/ADMIN ở
   backend, Store scope của Staff theo `StaffStoreAssignment` ACTIVE, CSRF.
 
-Nghiệp vụ Catalog, Cart, Checkout, Payment, Order, Inventory được triển khai ở các phase sau.
+Nghiệp vụ Cart, Checkout, Payment, Order được triển khai ở các phase sau.
+
+### Catalog và mô hình chuỗi (Phase 6)
+
+* **Product = một SKU** dùng chung toàn chuỗi, không có giá hay tồn kho. **StoreProduct** (SKU tại một chi nhánh) là
+  nguồn duy nhất của giá, tồn kho, trạng thái bán. Một SKU được coi là *đang bán* tại một chi nhánh khi StoreProduct
+  `ACTIVE`, Store `ACTIVE`, Product `ACTIVE` và Danh mục/Thương hiệu của nó `ACTIVE`.
+* **Chi nhánh đang chọn** lưu trong cookie `ONESHOP_STORE` (HttpOnly, SameSite=Lax; ứng dụng không dùng session).
+  `SelectedStoreInterceptor` kiểm tra id với database ở mỗi request; id không tồn tại, không phải số hoặc của chi nhánh
+  đã ngừng hoạt động thì cookie bị xóa và khách quay về "Toàn chuỗi". Đổi chi nhánh chỉ đổi ngữ cảnh duyệt, không động
+  tới giỏ hàng. Chọn bằng `POST /stores/select` (có CSRF), bỏ chọn bằng `POST /stores/clear`.
+* **Catalog** (`/products`): chưa chọn chi nhánh thì mỗi SKU hiện một lần kèm các chi nhánh đang bán; đã chọn thì chỉ
+  hiện StoreProduct của chi nhánh đó với giá của chính chi nhánh đó. Tìm theo tên/SKU, lọc Danh mục, Thương hiệu.
+* **Khách chỉ thấy Còn hàng / Hết hàng**; số tồn chính xác chỉ có ở trang Admin.
+* **Admin** (`/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/stores`, `/admin/store-products`): thêm,
+  sửa, đổi trạng thái; không có xóa cứng. Mỗi lần đổi tồn kho đều ghi một `InventoryMovement` loại `STOCK_ADJUST`.
+* **Ảnh**: tải lên từ trang sửa Sản phẩm / Thương hiệu, lưu trên Cloudinary; database chỉ giữ URL và `public_id`.
+  Cần đặt `CLOUDINARY_*`, nếu không trang sẽ báo lỗi và không lưu gì.
 
 ## 1. Công nghệ sử dụng
 
@@ -60,7 +81,7 @@ Browser -> Thymeleaf + Bootstrap -> Controller -> Service -> Repository (Spring 
 
   | Đường dẫn | Ai được vào |
   |---|---|
-  | `/`, `/login`, `/register`, `/products/**`, `/health` | Mọi người |
+  | `/`, `/login`, `/register`, `/products/**`, `/stores/**`, `/health` | Mọi người |
   | `/cart/**` | `CUSTOMER` |
   | `/staff/**`, `/api/staff/**` | `STAFF` (và phải có Store scope, xem dưới) |
   | `/admin/**`, `/api/admin/**` | `ADMIN` |
@@ -138,7 +159,7 @@ nhưng `CloudinaryService` báo lỗi rõ ràng khi được gọi.
 ./mvnw clean package
 ```
 
-Mở http://localhost:8080. Các route mẫu: `/`, `/login`, `/register`, `/products`, `/cart`, `/health`, `/staff` (Staff/Admin), `/admin` (Admin).
+Mở http://localhost:8080. Các route mẫu: `/`, `/login`, `/register`, `/products`, `/products/{id}`, `/stores`, `/cart` (Customer), `/health`, `/staff` (Staff), `/admin` (Admin).
 
 Test không cần SQL Server hay secret thật (profile `test` dùng secret giả và mock các bean truy cập DB).
 

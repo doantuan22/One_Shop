@@ -7,14 +7,9 @@ import com.oneshop.entity.RoleName;
 import com.oneshop.entity.User;
 import com.oneshop.security.jwt.JwtService;
 import com.oneshop.security.service.CustomUserDetailsService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.net.http.HttpResponse;
 import java.util.List;
@@ -26,26 +21,13 @@ import static org.mockito.Mockito.when;
 
 /**
  * Phase 4: the three SiteMesh layouts (client, staff, admin) wrap their own pages and show the Store context. The
- * selected Store is supplied here by a test-only advice, standing in for the Phase 6 feature that will provide it; the
+ * selected Store comes from the ONESHOP_STORE cookie through SelectedStoreInterceptor and the (mocked) StoreService; the
  * Staff scope comes from the (mocked) StoreService through StaffStoreScopeInterceptor.
  */
 class LayoutsIntegrationTest extends AbstractIntegrationTest {
 
     private static final StoreResponse STORE = new StoreResponse(1L, "TD", "OneShop Thủ Đức", "1 Võ Văn Ngân",
             "TP.HCM", "Thủ Đức", null, null, true, true, ActiveStatus.ACTIVE);
-
-    /** Adds the selected Store to the client decorator model when the page is requested with {@code ?withStore}. */
-    @TestConfiguration
-    @ControllerAdvice
-    static class StoreContextAdvice {
-
-        @ModelAttribute
-        void storeContext(HttpServletRequest request, Model model) {
-            if (request.getParameter("withStore") != null) {
-                model.addAttribute("selectedStore", STORE);
-            }
-        }
-    }
 
     @Autowired
     private JwtService jwtService;
@@ -93,9 +75,11 @@ class LayoutsIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void clientLayoutShowsSelectedStoreWhenOneIsChosen() throws Exception {
-        String html = get("/?withStore=1").body();
+        when(storeService.findSelectableStore(1L)).thenReturn(Optional.of(STORE));
 
-        assertThat(html).contains("data-store-scope=\"store\"", "OneShop Thủ Đức");
+        String html = get("/", "Cookie", "ONESHOP_STORE=1").body();
+
+        assertThat(html).contains("data-store-scope=\"store\"", "OneShop Thủ Đức", "Đổi chi nhánh", "Xem toàn chuỗi");
         assertThat(html).doesNotContain("data-store-scope=\"chain\"");
     }
 
