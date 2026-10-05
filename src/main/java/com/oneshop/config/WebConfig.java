@@ -1,7 +1,9 @@
 package com.oneshop.config;
 
+import com.oneshop.security.StaffStoreScopeInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.CacheControl;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -9,6 +11,19 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+    private final StaffStoreScopeInterceptor staffStoreScopeInterceptor;
+
+    public WebConfig(StaffStoreScopeInterceptor staffStoreScopeInterceptor) {
+        this.staffStoreScopeInterceptor = staffStoreScopeInterceptor;
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        // Runs after Spring Security has authenticated the request and checked the STAFF role.
+        registry.addInterceptor(staffStoreScopeInterceptor)
+                .addPathPatterns("/staff", "/staff/**", "/api/staff/**");
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

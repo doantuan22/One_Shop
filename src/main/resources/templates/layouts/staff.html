@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<!--/* SiteMesh decorator of the STAFF area (/staff/**): top bar + sidebar scoped to the assigned Store(s). */-->
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/assets :: head}"></th:block>
+    <title th:text="${#strings.isEmpty(pageTitle)} ? 'OneShop Staff' : ${pageTitle} + ' | OneShop Staff'">OneShop Staff</title>
+    <th:block th:utext="${pageHead}"></th:block>
+</head>
+<body class="os-app os-app--staff" data-layout="staff">
+<div th:replace="~{fragments/staff :: topbar}"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="~{fragments/staff :: sidebar}"></div>
+        <main class="col-lg-9 col-xl-10 px-3 px-md-4 py-4" id="main-content" th:utext="${pageBody}"></main>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/assets :: scripts}"></th:block>
+</body>
+</html>

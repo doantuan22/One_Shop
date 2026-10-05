@@ -128,6 +128,21 @@ class DatabaseFoundationIntegrationTest {
 
     @Test
     @Transactional(readOnly = true)
+    void storeAndOwnerScopedQueriesNeverCrossTheBoundary() {
+        StoreProduct any = storeProductRepository.findAll().get(0);
+        Long storeId = any.getStore().getId();
+        assertThat(storeProductRepository.findByStoreId(storeId)).isNotEmpty()
+                .allSatisfy(sp -> assertThat(sp.getStore().getId()).isEqualTo(storeId));
+
+        Order order = orderRepository.findAll().get(0);
+        Long ownerId = order.getUser().getId();
+        assertThat(orderRepository.findByIdAndUserId(order.getId(), ownerId)).isPresent();
+        assertThat(orderRepository.findByIdAndUserId(order.getId(), -1L)).isEmpty();
+        assertThat(orderRepository.findByIdAndStoreId(order.getId(), -1L)).isEmpty();
+    }
+
+    @Test
+    @Transactional(readOnly = true)
     void ordersCheckoutAndPaymentsAreMappedPerOrder() {
         // TC-15 data: one checkout whose Orders have different Stores / payment methods
         List<CheckoutSession> sessions = checkoutSessionRepository.findAll();

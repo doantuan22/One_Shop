@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<!--/*
+    Reusable Bootstrap building blocks for every area (client, staff, admin). Call them with th:replace, for example
+      <div th:replace="~{fragments/components :: statCard('Đơn chờ xử lý', '12', 'Hôm nay')}"></div>
+    Fragment parameters (content, body, options, ...) are passed as fragment expressions: ~{::#id} selects an element
+    of the caller (wrap several elements in <th:block id="...">). card/modal bodies are inserted into their wrapper;
+    dataTable head/body must be the caller's own thead/tbody elements.
+*/-->
+<body>
+
+<!--/* Page title row: title, optional subtitle. Extra elements (buttons) can be placed after it by the caller. */-->
+<div th:fragment="pageHeader(title, subtitle)" class="os-page-header mb-4">
+    <h1 class="h3 mb-1" th:text="${title}">Tiêu đề trang</h1>
+    <p class="text-secondary mb-0" th:if="${subtitle}" th:text="${subtitle}">Mô tả ngắn</p>
+</div>
+
+<!--/* Sidebar / navbar link. `current` is the path of the page being shown (model attribute currentPath). */-->
+<li th:fragment="navItem(href, label, current, enabled)" class="nav-item">
+    <a th:if="${enabled}" class="nav-link os-nav-link" th:classappend="${current == href} ? 'active'"
+       th:href="@{${href}}" th:attr="aria-current=${current == href} ? 'page'" th:text="${label}">Mục</a>
+    <span th:unless="${enabled}" class="nav-link os-nav-link disabled d-flex justify-content-between align-items-center"
+          aria-disabled="true">
+        <span th:text="${label}">Mục</span>
+        <span class="badge text-bg-light border fw-normal">Sắp có</span>
+    </span>
+</li>
+
+<!--/* Card with a header title; `content` is a fragment expression for the body. */-->
+<section th:fragment="card(title, content)" class="card h-100 shadow-sm">
+    <div class="card-header bg-white fw-semibold" th:text="${title}">Tiêu đề</div>
+    <div class="card-body" th:insert="${content}"></div>
+</section>
+
+<!--/* KPI tile. Pass '—' as value while no data is connected. */-->
+<div th:fragment="statCard(label, value, hint)" class="card os-stat h-100 shadow-sm">
+    <div class="card-body">
+        <div class="text-secondary small" th:text="${label}">Chỉ số</div>
+        <div class="os-stat__value" th:text="${value}">0</div>
+        <div class="text-secondary small" th:if="${hint}" th:text="${hint}">Ghi chú</div>
+    </div>
+</div>
+
+<!--/* Responsive table wrapper: `head` is a <thead>, `body` is a <tbody> of the caller. */-->
+<div th:fragment="dataTable(head, body)" class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 os-table">
+            <thead class="table-light" th:replace="${head}"></thead>
+            <tbody th:replace="${body}"></tbody>
+        </table>
+    </div>
+</div>
+
+<!--/* Single "no data" row for dataTable bodies. */-->
+<tr th:fragment="emptyRow(colspan, message)">
+    <td th:colspan="${colspan}" class="text-center text-secondary py-4" th:text="${message}">Chưa có dữ liệu.</td>
+</tr>
+
+<!--/* Stand-alone "no data" card. */-->
+<div th:fragment="emptyState(message)" class="card">
+    <div class="card-body text-center text-secondary py-5" th:text="${message}">Chưa có dữ liệu.</div>
+</div>
+
+<!--/* Labelled text input. `error` is an optional validation message shown under the field. */-->
+<div th:fragment="formField(id, name, label, type, required, error)" class="mb-3">
+    <label class="form-label" th:for="${id}">
+        <span th:text="${label}">Nhãn</span><span class="text-danger" th:if="${required}"> *</span>
+    </label>
+    <input class="form-control" th:classappend="${error} ? 'is-invalid'" th:id="${id}" th:name="${name}"
+           th:type="${type}" th:required="${required}">
+    <div class="invalid-feedback" th:if="${error}" th:text="${error}">Lỗi</div>
+</div>
+
+<!--/* Labelled select; `options` is a fragment of <option> elements supplied by the caller. */-->
+<div th:fragment="formSelect(id, name, label, options)" class="mb-3">
+    <label class="form-label" th:for="${id}" th:text="${label}">Nhãn</label>
+    <select class="form-select" th:id="${id}" th:name="${name}">
+        <th:block th:replace="${options}"></th:block>
+    </select>
+</div>
+
+<!--/* Bootstrap modal. `body` and `footer` are fragment expressions; open it with data-bs-toggle="modal". */-->
+<div th:fragment="modal(id, title, body, footer)" class="modal fade" th:id="${id}" tabindex="-1"
+     th:attr="aria-labelledby=${id} + '-title'" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title h5" th:id="${id} + '-title'" th:text="${title}">Tiêu đề</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body" th:insert="${body}"></div>
+            <div class="modal-footer" th:insert="${footer}"></div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

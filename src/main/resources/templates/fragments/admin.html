@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+<body>
+<!--/* Admin layout parts: chain-wide management. Menu items passed `false` are placeholders for later phases. */-->
+<header th:fragment="topbar" class="navbar navbar-dark os-appbar sticky-top px-3">
+    <div class="d-flex align-items-center gap-2">
+        <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#appSidebar"
+                aria-controls="appSidebar" aria-label="Mở menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand mb-0 fw-bold" th:href="@{/admin}">OneShop <span class="fw-normal opacity-75">Admin</span></a>
+    </div>
+
+    <span class="badge os-scope-badge" id="admin-scope-badge">Toàn chuỗi</span>
+
+    <div class="d-flex align-items-center gap-2 ms-auto">
+        <a class="btn btn-outline-light btn-sm d-none d-md-inline" th:href="@{/}">Trang bán hàng</a>
+        <span class="text-white small d-none d-md-inline" sec:authentication="name">admin</span>
+        <form th:action="@{/logout}" method="post" class="d-inline">
+            <button type="submit" class="btn btn-light btn-sm">Đăng xuất</button>
+        </form>
+    </div>
+</header>
+
+<div th:fragment="sidebar" class="os-sidebar offcanvas-lg offcanvas-start col-lg-3 col-xl-2 p-0" tabindex="-1"
+     id="appSidebar" aria-labelledby="appSidebarLabel">
+    <div class="offcanvas-header border-bottom d-lg-none">
+        <h2 class="offcanvas-title h6 mb-0" id="appSidebarLabel">Menu quản trị</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#appSidebar"
+                aria-label="Đóng"></button>
+    </div>
+    <div class="offcanvas-body d-block p-3">
+        <section class="os-store-scope mb-3" id="admin-scope" aria-label="Phạm vi quản trị">
+            <div class="os-store-scope__label">Phạm vi quản trị</div>
+            <strong>Toàn chuỗi cửa hàng</strong>
+        </section>
+
+        <nav aria-label="Điều hướng quản trị">
+            <ul class="nav nav-pills flex-column gap-1">
+                <li th:replace="~{fragments/components :: navItem('/admin', 'Tổng quan', ${currentPath}, true)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/admin/stores', 'Chi nhánh', ${currentPath}, false)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/admin/staff-assignments', 'Phân công nhân viên', ${currentPath}, false)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/admin/products', 'Sản phẩm / SKU', ${currentPath}, false)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/admin/store-products', 'Sản phẩm theo chi nhánh', ${currentPath}, false)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/admin/inventory', 'Tồn kho toàn chuỗi', ${currentPath}, false)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/admin/orders', 'Đơn hàng', ${currentPath}, false)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/admin/reviews', 'Đánh giá', ${currentPath}, false)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/admin/users', 'Người dùng', ${currentPath}, false)}"></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+</body>
+</html>

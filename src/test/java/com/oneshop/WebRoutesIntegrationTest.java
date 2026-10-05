@@ -29,8 +29,8 @@ class WebRoutesIntegrationTest extends AbstractIntegrationTest {
         String html = response.body();
         // content of the page itself (Thymeleaf template home/index.html)
         assertThat(html).contains("Chào mừng đến với OneShop");
-        // wrapper added by the SiteMesh decorator (layouts/main.html + fragments)
-        assertThat(html).contains("data-layout=\"sitemesh\"", "os-topbar", "navbar", "os-footer");
+        // wrapper added by the SiteMesh decorator (layouts/client.html + fragments)
+        assertThat(html).contains("data-layout=\"client\"", "os-topbar", "navbar", "os-footer");
         assertThat(html).contains("<title>Trang chủ | OneShop</title>");
         // Bootstrap is served locally
         assertThat(html).contains("/vendor/bootstrap/bootstrap.min.css");
@@ -39,15 +39,14 @@ class WebRoutesIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void basicPagesRenderInsideTheLayout() throws Exception {
-        for (String path : List.of("/login", "/register", "/products", "/cart")) {
+        for (String path : List.of("/login", "/register", "/products")) {
             HttpResponse<String> response = get(path);
 
             assertThat(response.statusCode()).as(path).isEqualTo(200);
-            assertThat(response.body()).as(path).contains("data-layout=\"sitemesh\"", "os-footer");
+            assertThat(response.body()).as(path).contains("data-layout=\"client\"", "os-footer");
         }
         assertThat(get("/products").body()).contains("Kem dưỡng ẩm", "OneBrand");
         assertThat(get("/login").body()).contains("Đăng nhập").contains("name=\"_csrf\"");
-        assertThat(get("/cart").body()).contains("Giỏ hàng");
     }
 
     @Test
@@ -68,10 +67,12 @@ class WebRoutesIntegrationTest extends AbstractIntegrationTest {
     @Test
     void decoratorIsNotReachableDirectly() throws Exception {
         // never served to the outside world: anonymous users are sent to the login page, nobody gets a 200
-        HttpResponse<String> response = get("/decorators/main");
+        for (String path : List.of("/decorators/client", "/decorators/staff", "/decorators/admin")) {
+            HttpResponse<String> response = get(path);
 
-        assertThat(response.statusCode()).isEqualTo(302);
-        assertThat(response.body()).doesNotContain("data-layout");
+            assertThat(response.statusCode()).as(path).isEqualTo(302);
+            assertThat(response.body()).as(path).doesNotContain("data-layout");
+        }
     }
 
     @Test

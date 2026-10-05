@@ -17,6 +17,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @EntityGraph(attributePaths = "store")
     List<Order> findByUserIdOrderByCreatedAtDesc(Long userId);
 
+    /** A customer may only read their own Order: the user id comes from the authenticated principal. */
+    Optional<Order> findByIdAndUserId(Long orderId, Long userId);
+
     List<Order> findByCheckoutSessionId(Long checkoutId);
 
     // ---- Store-scoped queries for Staff. storeId must come from the Staff assignment, never from a request. ----

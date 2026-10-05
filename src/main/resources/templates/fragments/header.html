@@ -1,10 +1,19 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <body>
+<!--/*
+    Client header. "Chi nhánh đang chọn" reads the model attribute `selectedStore` (a StoreResponse, or absent when the
+    customer browses the whole chain). The attribute is supplied by the Store selection feature (Roadmap V2, Phase 6).
+*/-->
 <header th:fragment="header" class="os-topbar text-white small py-2">
-    <div class="container d-flex flex-wrap justify-content-between gap-2">
-        <span>Chuỗi cửa hàng mỹ phẩm chính hãng</span>
-        <span>Hotline: 1900 0000 &middot; Miễn phí vận chuyển cho đơn từ 500.000&nbsp;₫</span>
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div class="os-store-context" id="store-context"
+             th:attr="data-store-scope=${selectedStore != null} ? 'store' : 'chain'">
+            <span class="opacity-75">Chi nhánh đang chọn:</span>
+            <strong th:if="${selectedStore != null}" th:text="${selectedStore.name}">OneShop Thủ Đức</strong>
+            <strong th:unless="${selectedStore != null}">Toàn chuỗi</strong>
+        </div>
+        <span class="d-none d-md-inline">Hotline: 1900 0000 &middot; Miễn phí vận chuyển cho đơn từ 500.000&nbsp;₫</span>
     </div>
 </header>
 </body>

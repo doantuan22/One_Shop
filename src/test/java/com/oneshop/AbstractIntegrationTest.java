@@ -1,11 +1,14 @@
 package com.oneshop;
 
+import com.oneshop.repository.RoleRepository;
 import com.oneshop.repository.UserRepository;
 import com.oneshop.service.ProductService;
+import com.oneshop.service.StoreService;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.io.IOException;
 import java.net.URI;
@@ -30,6 +33,17 @@ abstract class AbstractIntegrationTest {
 
     @MockitoBean
     protected UserRepository userRepository;
+
+    @MockitoBean
+    protected RoleRepository roleRepository;
+
+    /** There is no database here, so {@code @Transactional} services must not try to open a connection. */
+    @MockitoBean
+    protected PlatformTransactionManager transactionManager;
+
+    /** Unstubbed, a Staff has no assigned Store (empty list). */
+    @MockitoBean
+    protected StoreService storeService;
 
     /** Redirects are not followed so that tests can assert on them. */
     private final HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NEVER).build();

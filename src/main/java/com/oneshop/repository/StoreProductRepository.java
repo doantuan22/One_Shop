@@ -19,6 +19,10 @@ public interface StoreProductRepository extends JpaRepository<StoreProduct, Long
     @EntityGraph(attributePaths = "product")
     List<StoreProduct> findByStoreIdAndStatus(Long storeId, ActiveStatus status);
 
+    /** Every StoreProduct of one Store whatever its status: the Staff/Admin inventory view. */
+    @EntityGraph(attributePaths = "product")
+    List<StoreProduct> findByStoreId(Long storeId);
+
     /** Chain-wide availability of a SKU: one row per Store that sells it. */
     @EntityGraph(attributePaths = "store")
     List<StoreProduct> findByProductIdAndStatus(Long productId, ActiveStatus status);

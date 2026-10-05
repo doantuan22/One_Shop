@@ -47,3 +47,87 @@ body {
 .os-product-placeholder {
     background: #f1e4e9;
 }
+
+/* ---------- Client header: selected Store ---------- */
+.os-store-context strong {
+    margin-left: 0.25rem;
+}
+
+/* ---------- Staff / Admin shell ---------- */
+.os-app {
+    --os-appbar-height: 56px;
+    --os-sidebar-bg: #fff;
+    background-color: #f6f7fb;
+    min-height: 100vh;
+}
+
+.os-appbar {
+    background-color: #2b2d42;
+    min-height: var(--os-appbar-height);
+}
+
+.os-app--admin .os-appbar {
+    background-color: var(--os-primary-dark);
+}
+
+.os-scope-badge {
+    background-color: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    font-weight: 500;
+    padding: 0.45em 0.8em;
+}
+
+.os-sidebar {
+    background-color: var(--os-sidebar-bg);
+}
+
+@media (min-width: 992px) {
+    .os-sidebar {
+        position: sticky;
+        top: var(--os-appbar-height);
+        height: calc(100vh - var(--os-appbar-height));
+        overflow-y: auto;
+        border-right: 1px solid var(--bs-border-color);
+    }
+}
+
+.os-store-scope {
+    background-color: #f6f7fb;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+}
+
+.os-store-scope__label {
+    color: var(--bs-secondary-color);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+
+.os-nav-link {
+    color: var(--bs-body-color);
+    border-radius: 0.5rem;
+}
+
+.nav-pills .os-nav-link.active {
+    background-color: var(--os-primary);
+    color: #fff;
+}
+
+.os-nav-link.disabled {
+    color: var(--bs-secondary-color);
+    cursor: not-allowed;
+}
+
+/* ---------- Shared components ---------- */
+.os-stat__value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.os-table th {
+    white-space: nowrap;
+}

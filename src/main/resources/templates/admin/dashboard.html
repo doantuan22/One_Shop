@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Tổng quan toàn chuỗi</title>
+</head>
+<body>
+<!--/* Sample page of the Admin area: also demonstrates every shared component. No data is connected yet. */-->
+<div th:replace="~{fragments/components :: pageHeader('Tổng quan toàn chuỗi', 'Quản lý chi nhánh, sản phẩm, tồn kho và đơn hàng của cả hệ thống.')}"></div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3">
+        <div th:replace="~{fragments/components :: statCard('Chi nhánh', '—', 'Đang hoạt động')}"></div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div th:replace="~{fragments/components :: statCard('Sản phẩm (SKU)', '—', 'Toàn chuỗi')}"></div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div th:replace="~{fragments/components :: statCard('Đơn hàng', '—', 'Mọi chi nhánh')}"></div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div th:replace="~{fragments/components :: statCard('Nhân viên', '—', 'Đã phân công')}"></div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-12 col-lg-5">
+        <div th:replace="~{fragments/components :: card('Lọc theo chi nhánh', ~{::#filter-form})}"></div>
+    </div>
+    <div class="col-12 col-lg-7">
+        <div th:replace="~{fragments/components :: card('Thao tác nhanh', ~{::#quick-actions})}"></div>
+    </div>
+</div>
+
+<h2 class="h5 mb-3">Đơn hàng mới nhất</h2>
+<div th:replace="~{fragments/components :: dataTable(~{::#orders-head}, ~{::#orders-body})}"></div>
+
+<div th:replace="~{fragments/components :: modal('confirmModal', 'Xác nhận thao tác', ~{::#confirm-body}, ~{::#confirm-footer})}"></div>
+
+<!--/* Parts handed to the shared components above; the originals are removed from the output. */-->
+<th:block th:remove="all">
+    <form id="filter-form" method="get" th:action="@{/admin}">
+        <div th:replace="~{fragments/components :: formSelect('filter-store', 'storeId', 'Chi nhánh', ~{::#store-options})}"></div>
+        <div th:replace="~{fragments/components :: formField('filter-keyword', 'keyword', 'Từ khóa', 'search', false, null)}"></div>
+        <button type="submit" class="btn btn-primary">Lọc</button>
+    </form>
+
+    <th:block id="store-options">
+        <option value="">Tất cả chi nhánh</option>
+    </th:block>
+
+    <div id="quick-actions">
+        <p class="text-secondary">Các thao tác quản trị sẽ xuất hiện tại đây khi từng chức năng được triển khai.</p>
+        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#confirmModal">
+            Xem hộp thoại xác nhận
+        </button>
+    </div>
+
+    <thead id="orders-head">
+    <tr>
+        <th scope="col">Mã đơn</th>
+        <th scope="col">Chi nhánh</th>
+        <th scope="col">Khách hàng</th>
+        <th scope="col">Trạng thái</th>
+        <th scope="col" class="text-end">Tổng tiền</th>
+    </tr>
+    </thead>
+    <tbody id="orders-body">
+    <tr th:replace="~{fragments/components :: emptyRow(5, 'Chưa có đơn hàng nào.')}"></tr>
+    </tbody>
+
+    <th:block id="confirm-body">
+        <p class="mb-0">Đây là hộp thoại mẫu dùng lại cho các thao tác cần xác nhận (hủy đơn, ẩn sản phẩm, ...).</p>
+    </th:block>
+    <th:block id="confirm-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Đóng</button>
+    </th:block>
+</th:block>
+</body>
+</html>

@@ -2,9 +2,15 @@
 
 **Xây dựng website bán mỹ phẩm OneShop theo mô hình chuỗi cửa hàng.**
 
-Giai đoạn hiện tại là **bộ khung (skeleton)** của dự án: cấu hình công nghệ, kiến trúc phân lớp, xác thực JWT,
-layout SiteMesh, tích hợp Cloudinary và cấu hình triển khai Render. Nghiệp vụ OneShop (đơn hàng, kho theo chi nhánh,
-khuyến mãi, ...) sẽ được bổ sung sau khi có ERD chính thức.
+Giai đoạn hiện tại: **Phase 5 – Auth + JWT** (Roadmap V2, mục 12). Các phase đã xong:
+
+* **Phase 3 – Spring Boot foundation**: 19 Entity JPA khớp schema `database/*.sql` (Phase 2), 19 Repository (kèm
+  `PESSIMISTIC_WRITE` cho `StoreProduct`), khung 11 Service, Controller tách `client/staff/admin`, DTO + validation.
+* **Phase 4 – SiteMesh + UI nền**: 3 layout riêng cho Client, Staff, Admin và bộ component Bootstrap dùng lại.
+* **Phase 5 – Auth + JWT**: đăng ký/đăng nhập/đăng xuất, JWT trong cookie HttpOnly, phân quyền CUSTOMER/STAFF/ADMIN ở
+  backend, Store scope của Staff theo `StaffStoreAssignment` ACTIVE, CSRF.
+
+Nghiệp vụ Catalog, Cart, Checkout, Payment, Order, Inventory được triển khai ở các phase sau.
 
 ## 1. Công nghệ sử dụng
 
@@ -27,17 +33,50 @@ Browser -> Thymeleaf + Bootstrap -> Controller -> Service -> Repository (Spring 
 
 * Controller **không** truy cập Repository trực tiếp; luôn đi qua Service.
 * `controller/web`: trang Thymeleaf. `controller/api`: REST/JSON (`/api/**`, `/health`).
-* **SiteMesh**: mọi trang HTML được render bình thường, sau đó SiteMesh gói vào layout
-  `templates/layouts/main.html` (header, navbar, nội dung, footer). `DecoratorController` (`/decorators/main`) là cầu nối
-  giữa SiteMesh và Thymeleaf; đường dẫn này không thể gọi trực tiếp từ bên ngoài. Trang con chỉ cần viết
-  `<title>` và `<body>`, không cần khai báo layout.
+* **SiteMesh**: mọi trang HTML được render bình thường, sau đó SiteMesh gói vào layout của khu vực (cấu hình ở
+  `SiteMeshConfig`):
+
+  | URL | Layout | Nội dung |
+  |---|---|---|
+  | `/staff`, `/staff/**` | `layouts/staff.html` | Top bar + sidebar; khu vực **Chi nhánh được phân công** |
+  | `/admin`, `/admin/**` | `layouts/admin.html` | Top bar + sidebar quản trị, phạm vi **Toàn chuỗi** |
+  | còn lại | `layouts/client.html` | Header (**Chi nhánh đang chọn** / **Toàn chuỗi**), navbar, footer |
+
+  `DecoratorController` (`/decorators/client|staff|admin`) là cầu nối giữa SiteMesh và Thymeleaf; các đường dẫn này
+  không thể gọi trực tiếp từ bên ngoài. Trang con chỉ cần viết `<title>` và `<body>`, không cần khai báo layout.
+  Sidebar của Staff/Admin thu thành menu off-canvas trên màn hình nhỏ.
+* **Ngữ cảnh Store trong layout** chỉ là lớp hiển thị. Layout Client đọc model attribute tùy chọn `selectedStore`
+  (`StoreResponse`, vắng mặt = "Toàn chuỗi"; Phase 6 cấp dữ liệu). Layout Staff đọc `assignedStores`
+  (`List<StoreResponse>`, rỗng = "Chưa được phân công") do `StaffStoreScopeInterceptor` đặt ở mỗi request.
+* **Component UI** trong `templates/fragments/components.html` (dùng bằng `th:replace`): `pageHeader`, `navItem`, `card`,
+  `statCard`, `dataTable` + `emptyRow`, `emptyState`, `formField`, `formSelect`, `modal`. Ví dụ dùng đủ bộ nằm ở
+  `templates/admin/dashboard.html`; `staff/dashboard.html` là trang mẫu của Staff.
 * **JWT**:
   * Luồng web (Thymeleaf): `POST /login` cấp JWT và lưu trong cookie **HttpOnly**, `SameSite=Lax`
     (`Secure` khi chạy HTTPS). Form được bảo vệ CSRF.
   * Luồng API: `POST /api/auth/login` trả `accessToken`; gửi lại bằng header `Authorization: Bearer <token>`.
   * `JwtAuthenticationFilter` chấp nhận cả hai nguồn; session là `STATELESS`.
-* **Phân quyền**: `ROLE_ADMIN` (`/admin/**`), `ROLE_STAFF` hoặc `ROLE_ADMIN` (`/staff/**`), các đường dẫn còn lại
-  ngoài danh sách công khai yêu cầu đăng nhập.
+* **Phân quyền** (quyết định ở backend trong `SecurityConfig`, không dựa vào việc ẩn menu):
+
+  | Đường dẫn | Ai được vào |
+  |---|---|
+  | `/`, `/login`, `/register`, `/products/**`, `/health` | Mọi người |
+  | `/cart/**` | `CUSTOMER` |
+  | `/staff/**`, `/api/staff/**` | `STAFF` (và phải có Store scope, xem dưới) |
+  | `/admin/**`, `/api/admin/**` | `ADMIN` |
+  | còn lại | Đã đăng nhập |
+
+  Chưa đăng nhập: trang web chuyển về `/login`, API trả 401. Sai role: 403. Role được đọc lại từ database ở mỗi
+  request (không tin role trong token), nên tài khoản bị khóa hoặc đổi role mất quyền ngay.
+* **Store scope của Staff (BR-14)**: `StaffStoreScopeInterceptor` chạy trước mọi controller của `/staff/**` và
+  `/api/staff/**`, lấy danh sách Store từ `staff_store_assignments` (assignment `ACTIVE`, Store `ACTIVE`, tài khoản
+  `STAFF` `ACTIVE`) theo email của người đang đăng nhập và đặt vào request attribute `assignedStores`. Store không bao
+  giờ lấy từ tham số, header hay token. Staff chưa có assignment hợp lệ chỉ vào được trang `/staff` (hiện thông báo),
+  mọi URL Staff khác trả 403. Service xử lý dữ liệu của một Store cụ thể gọi `StoreService.requireAssignedStore`.
+* **CSRF**: bật cho mọi request thay đổi dữ liệu đi bằng cookie (form Thymeleaf tự chèn `_csrf`; đăng xuất là
+  `POST /logout`). Chỉ bỏ qua cho `/api/auth/**` và request mang `Authorization: Bearer` (trình duyệt không tự gửi được).
+* **Đăng ký** luôn tạo tài khoản `CUSTOMER`; tài khoản Staff/Admin không tạo được qua form. Sau đăng nhập, mỗi role
+  được chuyển về khu vực của mình (`/`, `/staff`, `/admin`).
 * **Ảnh**: `CloudinaryService` upload/xóa ảnh; database chỉ lưu `imageUrl` và `imagePublicId`, không lưu dữ liệu ảnh.
 
 ## 3. Yêu cầu môi trường
@@ -99,7 +138,7 @@ nhưng `CloudinaryService` báo lỗi rõ ràng khi được gọi.
 ./mvnw clean package
 ```
 
-Mở http://localhost:8080. Các route mẫu: `/`, `/login`, `/register`, `/products`, `/cart`, `/health`.
+Mở http://localhost:8080. Các route mẫu: `/`, `/login`, `/register`, `/products`, `/cart`, `/health`, `/staff` (Staff/Admin), `/admin` (Admin).
 
 Test không cần SQL Server hay secret thật (profile `test` dùng secret giả và mock các bean truy cập DB).
 
@@ -149,20 +188,22 @@ oneshop/
     │   │   ├── config/        Security, SiteMesh, Cloudinary, Web, JPA, properties
     │   │   ├── controller/
     │   │   │   ├── client/    Trang Thymeleaf của khách (home, products, cart, login/register)
-    │   │   │   ├── staff/     Khu vực /staff/** (khung, Phase 10)
-    │   │   │   ├── admin/     Khu vực /admin/** (khung, Phase 6/11)
+    │   │   │   ├── staff/     Khu vực /staff/** (trang mẫu Phase 4; nghiệp vụ Phase 10)
+    │   │   │   ├── admin/     Khu vực /admin/** (trang mẫu Phase 4; nghiệp vụ Phase 6/11)
     │   │   │   ├── web/       DecoratorController (cầu nối SiteMesh - Thymeleaf)
     │   │   │   └── api/       REST: /api/auth/**, /health
     │   │   ├── service/       Interface; impl/ chứa cài đặt
     │   │   ├── repository/    Spring Data JPA
     │   │   ├── entity/        19 entity theo schema V2 + enum trạng thái
     │   │   ├── dto/           request/, response/
-    │   │   ├── security/      jwt/ (JwtService, filter, cookie), service/ (UserDetailsService)
+    │   │   ├── security/      jwt/ (JwtService, filter, cookie), service/ (UserDetailsService),
+    │   │   │                  StaffStoreScopeInterceptor (Store scope của Staff)
     │   │   ├── exception/     GlobalExceptionHandler, WebExceptionHandler, ...
-    │   │   ├── mapper/, util/
+    │   │   ├── mapper/
     │   └── resources/
-    │       ├── templates/     layouts/, fragments/, home/, auth/, product/, cart/,
-    │       │                  order/, user/, staff/, admin/ (đang trống), error.html
+    │       ├── templates/     layouts/ (client, staff, admin), fragments/ (header, navbar, footer, staff, admin,
+    │       │                  assets, components), home/, auth/, product/, cart/, staff/, admin/,
+    │       │                  order/, user/ (đang trống), error.html
     │       ├── static/        css/, js/, images/, vendor/bootstrap/
     │       └── application.properties, application-dev.properties, application-prod.properties
     └── test/                  Test tích hợp (Tomcat thật), JWT, Cloudinary

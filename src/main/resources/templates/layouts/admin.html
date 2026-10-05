@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<!--/* SiteMesh decorator of the ADMIN area (/admin/**): top bar + sidebar for chain-wide management. */-->
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/assets :: head}"></th:block>
+    <title th:text="${#strings.isEmpty(pageTitle)} ? 'OneShop Admin' : ${pageTitle} + ' | OneShop Admin'">OneShop Admin</title>
+    <th:block th:utext="${pageHead}"></th:block>
+</head>
+<body class="os-app os-app--admin" data-layout="admin">
+<div th:replace="~{fragments/admin :: topbar}"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="~{fragments/admin :: sidebar}"></div>
+        <main class="col-lg-9 col-xl-10 px-3 px-md-4 py-4" id="main-content" th:utext="${pageBody}"></main>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/assets :: scripts}"></th:block>
+</body>
+</html>

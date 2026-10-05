@@ -37,7 +37,7 @@ import org.springframework.security.web.servlet.util.matcher.PathPatternRequestM
 public class SecurityConfig {
 
     private static final String[] PUBLIC_PATHS = {
-            "/", "/login", "/register", "/products/**", "/cart/**", "/health", "/error",
+            "/", "/login", "/register", "/products/**", "/health", "/error",
             "/css/**", "/js/**", "/images/**", "/vendor/**", "/favicon.ico",
             "/api/auth/**"
     };
@@ -80,8 +80,13 @@ public class SecurityConfig {
                         .requestMatchers(PUBLIC_PATHS).permitAll()
                         // ...but nobody may request the decorator directly
                         .requestMatchers("/decorators/**").denyAll()
+                        // Admin: chain-wide management
                         .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/staff/**", "/api/staff/**").hasAnyRole("STAFF", "ADMIN")
+                        // Staff: STAFF only, because every page is scoped to the Store(s) the account is assigned
+                        // to (StaffStoreScopeInterceptor). Admin works chain-wide in /admin instead.
+                        .requestMatchers("/staff/**", "/api/staff/**").hasRole("STAFF")
+                        // Client: the cart belongs to a customer account (USER 1--1 CART)
+                        .requestMatchers("/cart/**").hasRole("CUSTOMER")
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
                         .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),

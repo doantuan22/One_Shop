@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+<body>
+<!--/*
+    Staff layout parts. The Store scope reads the model attribute `assignedStores` (List<StoreResponse> of the
+    logged-in Staff's ACTIVE assignments, Roadmap V2 BR-14), set on every Staff request by StaffStoreScopeInterceptor.
+    This is display only: the scope itself is enforced by that interceptor and by StoreService.requireAssignedStore.
+*/-->
+<header th:fragment="topbar" class="navbar navbar-dark os-appbar sticky-top px-3"
+        th:with="stores=${assignedStores}">
+    <div class="d-flex align-items-center gap-2">
+        <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#appSidebar"
+                aria-controls="appSidebar" aria-label="Mở menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand mb-0 fw-bold" th:href="@{/staff}">OneShop <span class="fw-normal opacity-75">Staff</span></a>
+    </div>
+
+    <span class="badge os-scope-badge" id="staff-scope-badge"
+          th:text="${stores == null or stores.isEmpty()} ? 'Chưa được phân công' : (${stores.size() == 1} ? ${stores[0].name} : ${stores.size()} + ' chi nhánh')">Chi nhánh</span>
+
+    <div class="d-flex align-items-center gap-2 ms-auto">
+        <a class="btn btn-outline-light btn-sm d-none d-md-inline" th:href="@{/}">Trang bán hàng</a>
+        <span class="text-white small d-none d-md-inline" sec:authentication="name">staff</span>
+        <form th:action="@{/logout}" method="post" class="d-inline">
+            <button type="submit" class="btn btn-light btn-sm">Đăng xuất</button>
+        </form>
+    </div>
+</header>
+
+<div th:fragment="sidebar" class="os-sidebar offcanvas-lg offcanvas-start col-lg-3 col-xl-2 p-0" tabindex="-1"
+     id="appSidebar" aria-labelledby="appSidebarLabel" th:with="stores=${assignedStores}">
+    <div class="offcanvas-header border-bottom d-lg-none">
+        <h2 class="offcanvas-title h6 mb-0" id="appSidebarLabel">Menu nhân viên</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#appSidebar"
+                aria-label="Đóng"></button>
+    </div>
+    <div class="offcanvas-body d-block p-3">
+        <section class="os-store-scope mb-3" id="staff-store-scope" aria-label="Chi nhánh được phân công">
+            <div class="os-store-scope__label">Chi nhánh được phân công</div>
+            <div th:if="${stores != null and !stores.isEmpty()}">
+                <div class="mb-1" th:each="store : ${stores}">
+                    <strong th:text="${store.name}">OneShop Thủ Đức</strong>
+                    <div class="small text-secondary" th:text="${store.code} + ' · ' + ${store.area}">TD · Thủ Đức</div>
+                </div>
+            </div>
+            <div class="small text-warning-emphasis" th:unless="${stores != null and !stores.isEmpty()}">
+                Tài khoản chưa được phân công chi nhánh nào.
+            </div>
+        </section>
+
+        <nav aria-label="Điều hướng nhân viên">
+            <ul class="nav nav-pills flex-column gap-1">
+                <li th:replace="~{fragments/components :: navItem('/staff', 'Tổng quan', ${currentPath}, true)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/staff/orders', 'Đơn hàng của chi nhánh', ${currentPath}, false)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/staff/pickup', 'Đơn nhận tại cửa hàng', ${currentPath}, false)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/staff/stock', 'Tồn kho chi nhánh', ${currentPath}, false)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/staff/inventory-history', 'Lịch sử tồn kho', ${currentPath}, false)}"></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+</body>
+</html>

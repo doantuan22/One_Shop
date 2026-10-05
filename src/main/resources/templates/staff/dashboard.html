@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Tổng quan chi nhánh</title>
+</head>
+<body>
+<!--/* Sample page of the Staff area: shows how the layout and shared components fit together. No data is connected yet. */-->
+<div th:replace="~{fragments/components :: pageHeader('Tổng quan chi nhánh', 'Chỉ hiển thị dữ liệu của chi nhánh bạn được phân công.')}"></div>
+
+<!--/* A Staff without an ACTIVE assignment has no Store scope: nothing of any Store is shown (BR-14). */-->
+<div class="alert alert-warning" id="no-store-scope" role="alert"
+     th:if="${assignedStores == null or assignedStores.isEmpty()}">
+    Tài khoản của bạn chưa được phân công chi nhánh nào nên chưa thể xem đơn hàng hay tồn kho.
+    Vui lòng liên hệ quản trị viên.
+</div>
+
+<th:block th:unless="${assignedStores == null or assignedStores.isEmpty()}">
+<div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div th:replace="~{fragments/components :: statCard('Đơn cần xử lý', '—', 'Của chi nhánh')}"></div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div th:replace="~{fragments/components :: statCard('Đơn chờ khách nhận tại cửa hàng', '—', 'Pickup queue')}"></div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div th:replace="~{fragments/components :: statCard('Sản phẩm sắp hết hàng', '—', 'Theo tồn kho chi nhánh')}"></div>
+    </div>
+</div>
+
+<h2 class="h5 mb-3">Đơn hàng gần đây</h2>
+<div th:replace="~{fragments/components :: dataTable(~{::#orders-head}, ~{::#orders-body})}"></div>
+</th:block>
+
+<!--/* Table parts handed to the dataTable component above; the originals are removed from the output. */-->
+<th:block th:remove="all">
+<thead id="orders-head">
+<tr>
+    <th scope="col">Mã đơn</th>
+    <th scope="col">Khách hàng</th>
+    <th scope="col">Hình thức nhận</th>
+    <th scope="col">Trạng thái</th>
+    <th scope="col" class="text-end">Tổng tiền</th>
+</tr>
+</thead>
+<tbody id="orders-body">
+<tr th:replace="~{fragments/components :: emptyRow(5, 'Chưa có đơn hàng nào.')}"></tr>
+</tbody>
+</th:block>
+</body>
+</html>

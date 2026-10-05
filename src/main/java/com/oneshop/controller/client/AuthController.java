@@ -43,11 +43,19 @@ public class AuthController {
         try {
             AuthResponse auth = authService.login(request);
             cookieService.addTokenCookie(response, auth.accessToken(), auth.expiresInSeconds());
-            return "redirect:/";
+            return "redirect:" + homeOf(auth);
         } catch (AuthenticationException ex) {
             model.addAttribute("loginError", "Email hoặc mật khẩu không đúng");
             return "auth/login";
         }
+    }
+
+    /** Landing page of each role. Only a convenience: access to these areas is decided by SecurityConfig. */
+    private static String homeOf(AuthResponse auth) {
+        if (auth.roles().contains("ROLE_ADMIN")) {
+            return "/admin";
+        }
+        return auth.roles().contains("ROLE_STAFF") ? "/staff" : "/";
     }
 
     @GetMapping("/register")

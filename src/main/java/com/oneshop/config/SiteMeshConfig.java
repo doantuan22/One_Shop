@@ -10,13 +10,16 @@ import org.springframework.context.annotation.Configuration;
 import java.util.EnumSet;
 
 /**
- * Registers SiteMesh 3 as the decorator (layout) mechanism. Every HTML response is wrapped by the
- * decorator served at {@link #DECORATOR_PATH} (see DecoratorController and templates/layouts/main.html).
+ * Registers SiteMesh 3 as the decorator (layout) mechanism. Every HTML response is wrapped by the decorator of its
+ * area: {@code /staff/**} by the Staff layout, {@code /admin/**} by the Admin layout and everything else by the Client
+ * layout (see DecoratorController and templates/layouts/).
  */
 @Configuration
 public class SiteMeshConfig {
 
-    public static final String DECORATOR_PATH = "/decorators/main";
+    public static final String CLIENT_DECORATOR_PATH = "/decorators/client";
+    public static final String STAFF_DECORATOR_PATH = "/decorators/staff";
+    public static final String ADMIN_DECORATOR_PATH = "/decorators/admin";
 
     /** Runs after Spring Security (order -100) so that security redirects and 401/403 are never decorated. */
     private static final int FILTER_ORDER = 0;
@@ -35,7 +38,12 @@ public class SiteMeshConfig {
 
         @Override
         protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
-            builder.setDecoratorPrefix("").addDecoratorPath("/*", DECORATOR_PATH)
+            builder.setDecoratorPrefix("")
+                    .addDecoratorPath("/*", CLIENT_DECORATOR_PATH)
+                    .addDecoratorPath("/staff", STAFF_DECORATOR_PATH)
+                    .addDecoratorPath("/staff/*", STAFF_DECORATOR_PATH)
+                    .addDecoratorPath("/admin", ADMIN_DECORATOR_PATH)
+                    .addDecoratorPath("/admin/*", ADMIN_DECORATOR_PATH)
                     .addExcludedPath("/decorators/*")
                     .addExcludedPath("/api/*")
                     .addExcludedPath("/health")

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<!--/*
+    SiteMesh decorator of the CLIENT area (shopping site). Every HTML page is rendered on its own first; SiteMesh then
+    extracts its <title>, <head> and <body> and DecoratorController exposes them here as pageTitle/pageHead/pageBody.
+*/-->
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/assets :: head}"></th:block>
+    <title th:text="${#strings.isEmpty(pageTitle)} ? 'OneShop' : ${pageTitle} + ' | OneShop'">OneShop</title>
+    <th:block th:utext="${pageHead}"></th:block>
+</head>
+<body class="d-flex flex-column min-vh-100" data-layout="client">
+<div th:replace="~{fragments/header :: header}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="flex-grow-1 py-4" id="main-content">
+    <div class="container" th:utext="${pageBody}"></div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<th:block th:replace="~{fragments/assets :: scripts}"></th:block>
+</body>
+</html>

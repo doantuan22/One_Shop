@@ -9,7 +9,8 @@ import org.springframework.web.servlet.ModelAndView;
  * Friendly error page for the Thymeleaf controllers. Anything not handled here falls through to
  * the Spring Boot {@code /error} page ({@code templates/error.html}).
  */
-@ControllerAdvice(basePackages = "com.oneshop.controller.web")
+@ControllerAdvice(basePackages = {"com.oneshop.controller.client", "com.oneshop.controller.staff",
+        "com.oneshop.controller.admin", "com.oneshop.controller.web"})
 public class WebExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
