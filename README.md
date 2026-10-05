@@ -2,8 +2,10 @@
 
 **Xây dựng website bán mỹ phẩm OneShop theo mô hình chuỗi cửa hàng.**
 
-Giai đoạn hiện tại: **Phase 6 – Catalog + Store chain** (Roadmap V2, mục 12). Các phase đã xong:
+Giai đoạn hiện tại: **Phase 7 – Cart nhiều Store** (Roadmap V2, mục 12). Các phase đã xong:
 
+* **Phase 7 – Cart nhiều Store**: thêm / sửa số lượng / xóa trong giỏ, giỏ nhóm theo chi nhánh, chọn cả chi nhánh
+  hoặc từng sản phẩm để chuyển sang bước đặt hàng.
 * **Phase 6 – Catalog + Store chain**: Admin quản lý Danh mục, Thương hiệu, Sản phẩm/SKU, Chi nhánh, Sản phẩm theo
   chi nhánh và ảnh (Cloudinary); Client có Hệ thống cửa hàng, chọn chi nhánh, catalog toàn chuỗi / theo chi nhánh và
   trang chi tiết sản phẩm với giá, tình trạng hàng theo từng chi nhánh.
@@ -14,7 +16,21 @@ Giai đoạn hiện tại: **Phase 6 – Catalog + Store chain** (Roadmap V2, m�
 * **Phase 5 – Auth + JWT**: đăng ký/đăng nhập/đăng xuất, JWT trong cookie HttpOnly, phân quyền CUSTOMER/STAFF/ADMIN ở
   backend, Store scope của Staff theo `StaffStoreAssignment` ACTIVE, CSRF.
 
-Nghiệp vụ Cart, Checkout, Payment, Order được triển khai ở các phase sau.
+Nghiệp vụ Checkout, Payment, Order được triển khai ở các phase sau.
+
+### Giỏ hàng nhiều chi nhánh (Phase 7)
+
+* Mỗi dòng giỏ gắn với một **StoreProduct** (SKU tại một chi nhánh), không gắn với Product. Cùng một SKU ở hai chi
+  nhánh là hai dòng riêng; thêm lại đúng StoreProduct đã có thì cộng số lượng vào dòng cũ.
+* Giỏ thuộc về khách đang đăng nhập (lấy từ JWT); không request nào nhận `userId`, giá hay thành tiền. Id dòng giỏ
+  không thuộc giỏ của mình được coi như không tồn tại (404).
+* Giỏ **chỉ kiểm tra** tồn kho mỗi lần thêm / sửa, không giữ hàng, không trừ kho, không ghi `InventoryMovement`. Bước
+  đặt hàng (Phase 8) sẽ kiểm tra lại và mới trừ kho.
+* Trang `/cart` nhóm theo chi nhánh, giá là giá hiện tại của StoreProduct (không lưu trong giỏ), không hiển thị số tồn.
+  Dòng không còn mua được (hết hàng, thiếu hàng, ngừng bán) vẫn nằm trong giỏ, được đánh dấu và không chọn được.
+* Checkbox "Chọn cả chi nhánh" / từng dòng chỉ là trạng thái trên trang; bấm tiếp tục sẽ gửi danh sách `cartItemIds`
+  tới `GET /cart/selection`, nơi máy chủ kiểm tra lại và hiển thị các dòng đã chọn theo chi nhánh. Chưa tạo đơn.
+* Đổi "Chi nhánh đang chọn" không làm thay đổi giỏ hàng.
 
 ### Catalog và mô hình chuỗi (Phase 6)
 
@@ -96,6 +112,7 @@ Browser -> Thymeleaf + Bootstrap -> Controller -> Service -> Repository (Spring 
   mọi URL Staff khác trả 403. Service xử lý dữ liệu của một Store cụ thể gọi `StoreService.requireAssignedStore`.
 * **CSRF**: bật cho mọi request thay đổi dữ liệu đi bằng cookie (form Thymeleaf tự chèn `_csrf`; đăng xuất là
   `POST /logout`). Chỉ bỏ qua cho `/api/auth/**` và request mang `Authorization: Bearer` (trình duyệt không tự gửi được).
+  Token không bị đổi ở mỗi request, nên form trên trang mở từ trước (tab khác, nút Back) vẫn gửi được.
 * **Đăng ký** luôn tạo tài khoản `CUSTOMER`; tài khoản Staff/Admin không tạo được qua form. Sau đăng nhập, mỗi role
   được chuyển về khu vực của mình (`/`, `/staff`, `/admin`).
 * **Ảnh**: `CloudinaryService` upload/xóa ảnh; database chỉ lưu `imageUrl` và `imagePublicId`, không lưu dữ liệu ảnh.

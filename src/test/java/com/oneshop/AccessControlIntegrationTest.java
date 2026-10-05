@@ -249,6 +249,34 @@ class AccessControlIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    void csrfTokenOfALoggedInUserStaysValidAcrossPagesAndSubmits() throws Exception {
+        String jwt = as(CUSTOMER)[1];
+        // a page opened earlier (first tab, or the page the Back button returns to)
+        HttpResponse<String> earlierPage = get("/", "Cookie", jwt);
+        String field = csrfField(earlierPage);
+        String cookies = jwt + "; " + csrfCookie(earlierPage);
+
+        // other pages are viewed in the meantime: the token cookie is not replaced
+        for (String path : List.of("/", "/cart", "/login")) {
+            assertThat(get(path, "Cookie", cookies).headers().allValues("Set-Cookie"))
+                    .as(path).noneMatch(c -> c.startsWith("XSRF-TOKEN="));
+        }
+
+        // the form of the earlier page can still be submitted, more than once
+        for (int i = 0; i < 2; i++) {
+            HttpResponse<String> submit = post("/stores/clear", "application/x-www-form-urlencoded", "_csrf=" + field,
+                    "Cookie", cookies);
+            assertThat(submit.statusCode()).as("submit " + i).isEqualTo(302);
+            assertThat(submit.headers().allValues("Set-Cookie")).noneMatch(c -> c.startsWith("XSRF-TOKEN="));
+        }
+        // and a write without the token is still refused
+        assertThat(post("/stores/clear", "application/x-www-form-urlencoded", "", "Cookie", cookies).statusCode())
+                .isEqualTo(403);
+        assertThat(post("/stores/clear", "application/x-www-form-urlencoded", "_csrf=not-the-token", "Cookie", cookies)
+                .statusCode()).isEqualTo(403);
+    }
+
+    @Test
     void logoutNeedsPostAndClearsTheJwtCookie() throws Exception {
         String jwt = as(CUSTOMER)[1];
         // GET /logout does not log out (and is not a public page)

@@ -80,6 +80,32 @@ public interface StoreProductRepository extends JpaRepository<StoreProduct, Long
                                              @Param("categoryId") Long categoryId, @Param("brandId") Long brandId,
                                              Pageable pageable);
 
+    /**
+     * One StoreProduct, only if a customer may buy it right now: same "on sale" rule as the catalog (StoreProduct,
+     * Store, Product, Category and Brand all ACTIVE). Used when something is put into a cart.
+     */
+    @Query("""
+            select sp from StoreProduct sp join fetch sp.store s join fetch sp.product p
+              join p.category c join p.brand b
+            where sp.id = :id
+              and sp.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and s.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and p.status = com.oneshop.entity.ProductStatus.ACTIVE
+              and c.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+              and b.status = com.oneshop.entity.VisibilityStatus.ACTIVE""")
+    Optional<StoreProduct> findSellableById(@Param("id") Long id);
+
+    /** Which of the given StoreProducts are on sale right now (same rule): one query for a whole cart. */
+    @Query("""
+            select sp.id from StoreProduct sp join sp.store s join sp.product p join p.category c join p.brand b
+            where sp.id in :ids
+              and sp.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and s.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and p.status = com.oneshop.entity.ProductStatus.ACTIVE
+              and c.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+              and b.status = com.oneshop.entity.VisibilityStatus.ACTIVE""")
+    List<Long> findSellableIdsIn(@Param("ids") Collection<Long> ids);
+
     // ---- Admin: every status, exact quantity. ----
 
     @Query(value = """

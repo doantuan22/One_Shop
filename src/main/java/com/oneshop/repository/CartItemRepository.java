@@ -14,4 +14,10 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     List<CartItem> findByCartIdOrderByIdAsc(Long cartId);
 
     Optional<CartItem> findByCartIdAndStoreProductId(Long cartId, Long storeProductId);
+
+    /** A line addressed through its cart, so the id of a line in another cart finds nothing. */
+    @EntityGraph(attributePaths = {"storeProduct", "storeProduct.store", "storeProduct.product"})
+    Optional<CartItem> findByIdAndCartId(Long id, Long cartId);
+
+    long countByCartId(Long cartId);
 }

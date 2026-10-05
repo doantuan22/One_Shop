@@ -182,3 +182,23 @@ body {
 .os-price {
     white-space: nowrap;
 }
+
+/* ---------- Cart ---------- */
+.os-cart-quantity {
+    width: 5.5rem;
+}
+
+.os-cart-item-info {
+    min-width: 12rem;
+}
+
+.os-cart-subtotal {
+    min-width: 6.5rem;
+}
+
+@media (min-width: 992px) {
+    .os-cart-summary {
+        position: sticky;
+        top: 5rem;
+    }
+}

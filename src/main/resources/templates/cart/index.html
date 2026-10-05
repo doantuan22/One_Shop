@@ -4,11 +4,140 @@
     <title>Giỏ hàng</title>
 </head>
 <body>
-<h1 class="h3 mb-4">Giỏ hàng</h1>
-<div class="card">
+<!--/*
+    Cart grouped by Store (BR-06): every line is a StoreProduct, so the same SKU at two Stores is two lines in two
+    groups. Prices are the current StoreProduct prices; no exact stock is shown (BR-15). The checkboxes only build the
+    list of cartItemIds handed to the next step; nothing about them is stored.
+*/-->
+<h1 class="h3 mb-3">Giỏ hàng</h1>
+
+<div class="alert alert-success" th:if="${param.success != null and cartError == null}" th:switch="${param.success[0]}">
+    <span th:case="'added'">Đã thêm sản phẩm vào giỏ hàng.</span>
+    <span th:case="'updated'">Đã cập nhật số lượng.</span>
+    <span th:case="'removed'">Đã xóa sản phẩm khỏi giỏ hàng.</span>
+    <span th:case="*">Đã cập nhật giỏ hàng.</span>
+</div>
+<div class="alert alert-danger" id="cart-error" role="alert" th:if="${cartError != null}" th:text="${cartError}">Lỗi</div>
+
+<div class="card" id="cart-empty" th:if="${cart.isEmpty()}">
     <div class="card-body text-center py-5">
         <p class="text-secondary mb-3">Giỏ hàng của bạn đang trống.</p>
         <a class="btn btn-primary" th:href="@{/products}">Tiếp tục mua sắm</a>
+    </div>
+</div>
+
+<div class="row g-4" th:unless="${cart.isEmpty()}">
+    <div class="col-12 col-lg-8">
+        <p class="text-secondary">
+            Giỏ hàng có sản phẩm từ <strong th:text="${cart.groups.size()}">3</strong> chi nhánh.
+            Mỗi chi nhánh sẽ là một đơn hàng riêng.
+        </p>
+
+        <section class="card shadow-sm mb-3 os-cart-group" th:each="group : ${cart.groups}"
+                 th:attr="data-store-id=${group.storeId}">
+            <div class="card-header bg-white d-flex flex-wrap align-items-center gap-2">
+                <div class="form-check mb-0">
+                    <input type="checkbox" class="form-check-input os-cart-group-toggle"
+                           th:id="'group-' + ${group.storeId}" th:attr="data-store-id=${group.storeId}"
+                           th:disabled="${!group.hasSelectableItems()}">
+                    <label class="form-check-label" th:for="'group-' + ${group.storeId}">Chọn cả chi nhánh</label>
+                </div>
+                <div class="ms-sm-2">
+                    <h2 class="h6 mb-0 os-cart-store-name" th:text="${group.storeName}">OneShop Thủ Đức</h2>
+                    <div class="small text-secondary" th:text="${group.storeAddress}">101 Võ Văn Ngân</div>
+                </div>
+                <span class="badge text-bg-secondary ms-auto" th:unless="${group.storeActive}">Chi nhánh tạm ngừng</span>
+            </div>
+
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item os-cart-item" th:each="item : ${group.items}"
+                    th:attr="data-cart-item-id=${item.cartItemId}, data-store-product-id=${item.storeProductId}, data-status=${item.status}">
+                    <div class="d-flex flex-wrap align-items-start gap-3">
+                        <input type="checkbox" class="form-check-input mt-2 os-cart-item-toggle" name="cartItemIds"
+                               form="cart-selection-form" th:value="${item.cartItemId}"
+                               th:attr="data-store-id=${group.storeId}, aria-label='Chọn ' + ${item.productName}"
+                               th:disabled="${!item.selectable()}">
+
+                        <a th:href="@{/products/{id}(id=${item.productId})}" class="flex-shrink-0">
+                            <img th:if="${item.imageUrl}" th:src="${item.imageUrl}" th:alt="${item.productName}"
+                                 class="os-product-thumb rounded border" loading="lazy">
+                            <span class="os-product-thumb os-product-placeholder rounded border d-block" th:unless="${item.imageUrl}"></span>
+                        </a>
+
+                        <div class="flex-grow-1 os-cart-item-info">
+                            <a th:href="@{/products/{id}(id=${item.productId})}" class="fw-semibold text-decoration-none text-body"
+                               th:text="${item.productName}">Tên sản phẩm</a>
+                            <div class="small text-secondary">SKU: <span th:text="${item.sku}">SKU-001</span></div>
+                            <div class="small">Đơn giá: <span th:replace="~{fragments/components :: price(${item.unitPrice})}"></span></div>
+
+                            <div class="small mt-1" th:switch="${item.status.name()}">
+                                <span class="text-warning-emphasis os-cart-item-problem" th:case="'INSUFFICIENT_STOCK'">
+                                    Chi nhánh không còn đủ số lượng này. Vui lòng giảm số lượng.</span>
+                                <span class="text-danger os-cart-item-problem" th:case="'OUT_OF_STOCK'">
+                                    Đã hết hàng tại chi nhánh này.</span>
+                                <span class="text-danger os-cart-item-problem" th:case="'UNAVAILABLE'">
+                                    Không còn bán tại chi nhánh này.</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap align-items-center gap-2 ms-auto">
+                            <!--/* a line that is no longer on sale can only be removed */-->
+                            <form method="post" class="d-flex align-items-center gap-1 os-cart-quantity-form"
+                                  th:action="@{/cart/items/{id}(id=${item.cartItemId})}"
+                                  th:if="${item.status.name() != 'UNAVAILABLE'}">
+                                <label class="visually-hidden" th:for="'quantity-' + ${item.cartItemId}">Số lượng</label>
+                                <input type="number" class="form-control form-control-sm os-cart-quantity" name="quantity" min="1"
+                                       step="1" required th:id="'quantity-' + ${item.cartItemId}" th:value="${item.quantity}">
+                                <button type="submit" class="btn btn-outline-primary btn-sm">Cập nhật</button>
+                            </form>
+                            <span class="small text-secondary" th:if="${item.status.name() == 'UNAVAILABLE'}"
+                                  th:text="'Số lượng: ' + ${item.quantity}">Số lượng: 1</span>
+
+                            <div class="fw-semibold text-end os-cart-subtotal">
+                                <span th:replace="~{fragments/components :: price(${item.subtotal})}"></span>
+                            </div>
+
+                            <form method="post" th:action="@{/cart/items/{id}/delete(id=${item.cartItemId})}"
+                                  data-confirm="Xóa sản phẩm này khỏi giỏ hàng?">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Xóa</button>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="card-footer bg-white d-flex justify-content-between">
+                <span class="text-secondary">Tạm tính tại chi nhánh</span>
+                <strong><span th:replace="~{fragments/components :: price(${group.subtotal})}"></span></strong>
+            </div>
+        </section>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <section class="card shadow-sm os-cart-summary">
+            <div class="card-body">
+                <h2 class="h6">Tổng giỏ hàng</h2>
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="text-secondary">Số dòng sản phẩm</span>
+                    <span th:text="${cart.itemCount}">3</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="text-secondary">Tạm tính (sản phẩm còn mua được)</span>
+                    <strong id="cart-total"><span th:replace="~{fragments/components :: price(${cart.total})}"></span></strong>
+                </div>
+
+                <!--/* The checked cartItemIds are what the next step receives (form attribute on each checkbox). */-->
+                <form method="get" th:action="@{/cart/selection}" id="cart-selection-form">
+                    <button type="submit" class="btn btn-primary w-100" th:disabled="${!cart.hasSelectableItems()}">
+                        Tiếp tục với sản phẩm đã chọn
+                    </button>
+                </form>
+                <p class="small text-secondary mt-2 mb-0">
+                    Chọn cả chi nhánh hoặc từng sản phẩm. Giá và tình trạng hàng sẽ được kiểm tra lại khi đặt hàng.
+                </p>
+                <a class="btn btn-link w-100 mt-2" th:href="@{/products}">Tiếp tục mua sắm</a>
+            </div>
+        </section>
     </div>
 </div>
 </body>

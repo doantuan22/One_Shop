@@ -1,6 +1,9 @@
 package com.oneshop;
 
+import com.oneshop.dto.response.CartResponse;
 import com.oneshop.repository.RoleRepository;
+import com.oneshop.service.CartService;
+import org.junit.jupiter.api.BeforeEach;
 import com.oneshop.repository.UserRepository;
 import com.oneshop.service.ProductService;
 import com.oneshop.service.StoreProductService;
@@ -18,6 +21,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 /**
  * Runs the real embedded Tomcat (so SiteMesh and the security filter chain are active) with the
  * database-facing beans mocked: no SQL Server is needed to run the tests.
@@ -31,6 +37,15 @@ abstract class AbstractIntegrationTest {
 
     @MockitoBean
     protected StoreProductService storeProductService;
+
+    @MockitoBean
+    protected CartService cartService;
+
+    /** Unstubbed, every customer has an empty cart. */
+    @BeforeEach
+    void emptyCartByDefault() {
+        when(cartService.getCart(any())).thenReturn(CartResponse.empty());
+    }
 
     @MockitoBean
     protected ProductService productService;
