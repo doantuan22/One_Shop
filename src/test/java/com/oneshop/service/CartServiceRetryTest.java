@@ -45,6 +45,7 @@ class CartServiceRetryTest {
     private final PlatformTransactionManager transactionManager = mock(PlatformTransactionManager.class);
     private final StoreProduct storeProduct = mock(StoreProduct.class);
     private final Cart winnersCart = mock(Cart.class);
+    private final User user = mock(User.class);
 
     private CartService cartService;
 
@@ -54,7 +55,8 @@ class CartServiceRetryTest {
         when(storeProduct.getId()).thenReturn(10L);
         when(storeProduct.getQuantity()).thenReturn(5);
         when(storeProductRepository.findSellableById(10L)).thenReturn(Optional.of(storeProduct));
-        when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(new User()));
+        when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(user));
+        when(user.getId()).thenReturn(42L);
         when(winnersCart.getId()).thenReturn(7L);
         cartService = new CartServiceImpl(cartRepository, cartItemRepository, storeProductRepository, userRepository,
                 mock(ProductService.class), transactionManager);
@@ -63,7 +65,7 @@ class CartServiceRetryTest {
     @Test
     void losingTheRaceToCreateTheCartIsRetriedOnTheCartThatWon() {
         // 1st attempt: no cart yet, the insert hits UQ_carts_user. 2nd attempt: the other request's cart is there.
-        when(cartRepository.findByUserEmailForUpdate(EMAIL)).thenReturn(Optional.empty(), Optional.of(winnersCart));
+        when(cartRepository.findByUserIdForUpdate(42L)).thenReturn(Optional.empty(), Optional.of(winnersCart));
         when(cartRepository.saveAndFlush(any(Cart.class))).thenThrow(new DataIntegrityViolationException("UQ_carts_user"));
         when(cartItemRepository.findByCartIdAndStoreProductId(7L, 10L)).thenReturn(Optional.empty());
 
@@ -82,7 +84,7 @@ class CartServiceRetryTest {
     void losingTheRaceToCreateTheLineAddsToTheLineThatWon() {
         CartItem winnersLine = new CartItem();
         winnersLine.setQuantity(1);
-        when(cartRepository.findByUserEmailForUpdate(EMAIL)).thenReturn(Optional.of(winnersCart));
+        when(cartRepository.findByUserIdForUpdate(42L)).thenReturn(Optional.of(winnersCart));
         when(cartItemRepository.findByCartIdAndStoreProductId(7L, 10L))
                 .thenReturn(Optional.empty(), Optional.of(winnersLine));
         when(cartItemRepository.saveAndFlush(any(CartItem.class)))
@@ -99,7 +101,7 @@ class CartServiceRetryTest {
     void theRetryStillChecksStockAgainstTheMergedQuantity() {
         CartItem winnersLine = new CartItem();
         winnersLine.setQuantity(4);                 // stock is 5
-        when(cartRepository.findByUserEmailForUpdate(EMAIL)).thenReturn(Optional.of(winnersCart));
+        when(cartRepository.findByUserIdForUpdate(42L)).thenReturn(Optional.of(winnersCart));
         when(cartItemRepository.findByCartIdAndStoreProductId(7L, 10L))
                 .thenReturn(Optional.empty(), Optional.of(winnersLine));
         when(cartItemRepository.saveAndFlush(any(CartItem.class)))

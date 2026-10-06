@@ -2,7 +2,10 @@
 
 **Xây dựng website bán mỹ phẩm OneShop theo mô hình chuỗi cửa hàng.**
 
-Giai đoạn hiện tại: **Phase 7 – Cart nhiều Store** (Roadmap V2, mục 12). Các phase đã xong:
+Giai đoạn hiện tại: **Phase 8 – Checkout + Orders** (Roadmap V2, mục 12). Các phase đã xong:
+
+* **Phase 8 – Checkout + Orders**: từ các dòng giỏ đã chọn tạo một CheckoutSession và mỗi chi nhánh một Order, lưu
+  snapshot OrderItem, trừ tồn kho có khóa và ghi biến động kho, tất cả trong một transaction.
 
 * **Phase 7 – Cart nhiều Store**: thêm / sửa số lượng / xóa trong giỏ, giỏ nhóm theo chi nhánh, chọn cả chi nhánh
   hoặc từng sản phẩm để chuyển sang bước đặt hàng.
@@ -16,7 +19,23 @@ Giai đoạn hiện tại: **Phase 7 – Cart nhiều Store** (Roadmap V2, mục
 * **Phase 5 – Auth + JWT**: đăng ký/đăng nhập/đăng xuất, JWT trong cookie HttpOnly, phân quyền CUSTOMER/STAFF/ADMIN ở
   backend, Store scope của Staff theo `StaffStoreAssignment` ACTIVE, CSRF.
 
-Nghiệp vụ Checkout, Payment, Order được triển khai ở các phase sau.
+Vòng đời thanh toán và xử lý đơn (Phase 9 trở đi) chưa được triển khai.
+
+### Đặt hàng (Phase 8)
+
+* `GET /checkout?cartItemIds=…` hiện trang đặt hàng: mỗi chi nhánh một khối, tự chọn cách nhận (giao hàng / nhận tại
+  cửa hàng) và thanh toán (COD, tại cửa hàng, trực tuyến) riêng. `POST /checkout` đặt hàng; `GET /checkout/{id}` xem
+  kết quả. Chỉ `CUSTOMER`.
+* Request chỉ mang `cartItemIds` và lựa chọn của từng chi nhánh. Chủ đơn lấy từ người đăng nhập; chi nhánh của đơn
+  lấy từ StoreProduct của các dòng giỏ; giá, thành tiền, trạng thái do máy chủ tính.
+* Trong **một transaction**: khóa giỏ của khách, khóa các StoreProduct (`PESSIMISTIC_WRITE`, theo id tăng dần), đọc lại
+  giá / tồn / trạng thái, kiểm tra mọi dòng và mọi chi nhánh, rồi tạo CheckoutSession, Order, OrderItem (snapshot tên,
+  đơn giá, số lượng, thành tiền), trừ tồn kèm `InventoryMovement` loại `ORDER`, xóa đúng các dòng giỏ đã đặt. Một chỗ
+  không hợp lệ thì không có gì được tạo.
+* Trạng thái đầu của Order: thanh toán `ONLINE` → `PENDING_PAYMENT`; `COD` và `PAY_AT_STORE` → `CONFIRMED`; tất cả
+  `UNPAID`. Chưa tạo dòng `payments`, chưa có mã nhận hàng: đó là việc của Phase 9.
+* Giao hàng chỉ đi với COD hoặc trực tuyến; nhận tại cửa hàng chỉ đi với thanh toán tại cửa hàng hoặc trực tuyến; chi
+  nhánh không bật giao hàng / nhận tại cửa hàng thì không chọn được cách đó.
 
 ### Giỏ hàng nhiều chi nhánh (Phase 7)
 

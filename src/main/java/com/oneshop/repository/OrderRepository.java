@@ -22,6 +22,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByCheckoutSessionId(Long checkoutId);
 
+    /** The Orders created by one checkout, each with its Store. */
+    @EntityGraph(attributePaths = "store")
+    List<Order> findByCheckoutSessionIdOrderByIdAsc(Long checkoutId);
+
     // ---- Store-scoped queries for Staff. storeId must come from the Staff assignment, never from a request. ----
 
     Optional<Order> findByIdAndStoreId(Long orderId, Long storeId);

@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
-import java.util.List;
 
 /**
  * The cart of the logged-in customer ({@code /cart/**} is CUSTOMER only, see SecurityConfig). Whose cart it is always
@@ -74,21 +72,6 @@ public class CartController {
     public String remove(@PathVariable Long cartItemId, Principal principal) {
         cartService.removeItem(principal.getName(), cartItemId);
         return "redirect:/cart?success=removed";
-    }
-
-    /**
-     * The lines chosen with the cart checkboxes, grouped by Store. This is where the cart hands over to checkout;
-     * it only shows the selection and creates nothing.
-     */
-    @GetMapping("/selection")
-    public String selection(@RequestParam(name = "cartItemIds", required = false) List<Long> cartItemIds,
-                            Principal principal, Model model, HttpServletResponse response) {
-        try {
-            model.addAttribute("selection", cartService.getSelection(principal.getName(), cartItemIds));
-        } catch (BadRequestException ex) {
-            return rejected(principal, model, response, ex.getMessage());
-        }
-        return "cart/selection";
     }
 
     /** The request was understood but refused: show the cart as it really is, with the reason. */

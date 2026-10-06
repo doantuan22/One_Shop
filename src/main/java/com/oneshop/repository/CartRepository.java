@@ -17,11 +17,15 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     Optional<Cart> findByUserEmail(String email);
 
     /**
-     * Same cart, locked until the transaction ends, so two requests of one customer change it one after the other
-     * (for example two "add to cart" clicks merging into the same line). This serializes a customer with themselves
-     * only; it reserves no stock.
+     * The cart of one user, locked until the transaction ends, so two requests of one customer change it one after
+     * the other (for example two "add to cart" clicks merging into the same line, or a double "place order").
+     *
+     * <p>It filters on {@code user_id} alone so that SQL Server reaches the row through the unique index
+     * UQ_carts_user and locks that single row. Filtering through a join on the e-mail made it scan the table under
+     * the update lock, which made every customer wait for every other customer. This lock serializes a customer
+     * with themselves only; it reserves no stock.
      */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select c from Cart c where c.user.email = :email")
-    Optional<Cart> findByUserEmailForUpdate(@Param("email") String email);
+    @Query("select c from Cart c where c.user.id = :userId")
+    Optional<Cart> findByUserIdForUpdate(@Param("userId") Long userId);
 }

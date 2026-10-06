@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     initCartSelection();
+    initCheckoutGroups();
 });
 
 // Cart page: "Chọn cả chi nhánh" checks or unchecks the lines of its Store, and reflects them back
@@ -51,5 +52,39 @@ function initCartSelection() {
             item.addEventListener('change', function () { syncGroup(groupToggle); });
         });
         syncGroup(groupToggle);
+    });
+}
+
+// Checkout page: inside each Store block, only the payment methods that fit the chosen way of receiving can be
+// picked, and the shipping address is shown for delivery only. A convenience: the server checks the combination.
+function initCheckoutGroups() {
+    document.querySelectorAll('.os-checkout-group').forEach(function (group) {
+        var address = group.querySelector('.os-checkout-address');
+
+        function sync() {
+            var chosen = group.querySelector('.os-checkout-fulfillment:checked');
+            var fulfillment = chosen ? chosen.value : null;
+            var firstAllowed = null;
+            var checkedAllowed = false;
+            group.querySelectorAll('.os-checkout-payment').forEach(function (payment) {
+                var rule = payment.closest('[data-for]').getAttribute('data-for');
+                var allowed = rule === 'BOTH' || rule === fulfillment;
+                payment.disabled = !allowed;
+                payment.closest('[data-for]').classList.toggle('d-none', !allowed);
+                if (allowed && firstAllowed === null) { firstAllowed = payment; }
+                if (allowed && payment.checked) { checkedAllowed = true; }
+            });
+            if (!checkedAllowed && firstAllowed !== null) {
+                firstAllowed.checked = true;
+            }
+            if (address) {
+                address.classList.toggle('d-none', fulfillment !== 'DELIVERY');
+            }
+        }
+
+        group.querySelectorAll('.os-checkout-fulfillment').forEach(function (radio) {
+            radio.addEventListener('change', sync);
+        });
+        sync();
     });
 }

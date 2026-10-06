@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Đặt hàng</title>
+</head>
+<body>
+<!--/*
+    Checkout: one block per Store, each with its own way to receive and to pay (BR-08); each block becomes one Order.
+    The form sends only the chosen cartItemIds and those choices. Prices and totals shown here are for information:
+    the server reads them again from the database when the order is placed (BR-09).
+*/-->
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb small">
+        <li class="breadcrumb-item"><a th:href="@{/cart}">Giỏ hàng</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Đặt hàng</li>
+    </ol>
+</nav>
+
+<h1 class="h3 mb-2">Đặt hàng</h1>
+<p class="text-secondary" id="checkout-summary" th:with="selection=${preview.selection}">
+    Bạn đang đặt <strong th:text="${selection.itemCount}">3</strong> sản phẩm từ
+    <strong th:text="${selection.groups.size()}">2</strong> chi nhánh.
+    Mỗi chi nhánh sẽ là một đơn hàng riêng, có cách nhận và thanh toán riêng.
+</p>
+
+<div class="alert alert-danger" id="checkout-error" role="alert" th:if="${checkoutError != null}" th:text="${checkoutError}">Lỗi</div>
+
+<form method="post" th:action="@{/checkout}" id="checkout-form" novalidate>
+    <input type="hidden" name="cartItemIds" th:each="id : ${preview.selection.cartItemIds()}" th:value="${id}">
+
+    <div class="row g-4">
+        <div class="col-12 col-lg-8">
+            <section class="card shadow-sm mb-3 os-checkout-group" th:each="group, row : ${preview.selection.groups}"
+                     th:attr="data-store-id=${group.storeId}"
+                     th:with="choice=${choices[group.storeId]},
+                              fulfillment=${choice != null and choice.fulfillmentType != null ? choice.fulfillmentType.name() : (group.deliveryEnabled ? 'DELIVERY' : 'STORE_PICKUP')},
+                              prefix=|groups[${row.index}]|">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0 os-checkout-store-name" th:text="${group.storeName}">OneShop Thủ Đức</h2>
+                    <div class="small text-secondary" th:text="${group.storeAddress}">101 Võ Văn Ngân</div>
+                </div>
+                <!--/* only tells the server which block these choices belong to; the Store of the Order comes from the cart lines */-->
+                <input type="hidden" th:name="${prefix} + '.storeId'" th:value="${group.storeId}">
+
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex flex-wrap justify-content-between gap-2" th:each="item : ${group.items}"
+                        th:attr="data-cart-item-id=${item.cartItemId}">
+                        <div>
+                            <div class="fw-semibold" th:text="${item.productName}">Tên sản phẩm</div>
+                            <div class="small text-secondary">
+                                <span th:replace="~{fragments/components :: price(${item.unitPrice})}"></span>
+                                &times; <span th:text="${item.quantity}">2</span>
+                            </div>
+                        </div>
+                        <strong><span th:replace="~{fragments/components :: price(${item.subtotal})}"></span></strong>
+                    </li>
+                </ul>
+
+                <div class="card-body border-top"
+                     th:with="payment=${choice != null and choice.paymentMethod != null ? choice.paymentMethod.name() : (fulfillment == 'DELIVERY' ? 'COD' : 'PAY_AT_STORE')}">
+                    <div class="row g-3">
+                        <fieldset class="col-12 col-md-6">
+                            <legend class="form-label fs-6 fw-semibold float-none w-auto mb-2">Cách nhận hàng</legend>
+                            <div class="form-check" th:if="${group.deliveryEnabled}">
+                                <input type="radio" class="form-check-input os-checkout-fulfillment" value="DELIVERY"
+                                       th:name="${prefix} + '.fulfillmentType'" th:id="'delivery-' + ${group.storeId}"
+                                       th:checked="${fulfillment == 'DELIVERY'}">
+                                <label class="form-check-label" th:for="'delivery-' + ${group.storeId}">Giao hàng tận nơi</label>
+                            </div>
+                            <div class="form-check" th:if="${group.pickupEnabled}">
+                                <input type="radio" class="form-check-input os-checkout-fulfillment" value="STORE_PICKUP"
+                                       th:name="${prefix} + '.fulfillmentType'" th:id="'pickup-' + ${group.storeId}"
+                                       th:checked="${fulfillment == 'STORE_PICKUP'}">
+                                <label class="form-check-label" th:for="'pickup-' + ${group.storeId}">
+                                    Nhận tại cửa hàng <span class="text-secondary" th:text="'(' + ${group.storeName} + ')'">(OneShop Thủ Đức)</span>
+                                </label>
+                            </div>
+                            <div class="small text-secondary" th:unless="${group.deliveryEnabled}">Chi nhánh này không giao hàng tận nơi.</div>
+                            <div class="small text-secondary" th:unless="${group.pickupEnabled}">Chi nhánh này không hỗ trợ nhận tại cửa hàng.</div>
+                        </fieldset>
+
+                        <fieldset class="col-12 col-md-6">
+                            <legend class="form-label fs-6 fw-semibold float-none w-auto mb-2">Thanh toán</legend>
+                            <div class="form-check" data-for="DELIVERY">
+                                <input type="radio" class="form-check-input os-checkout-payment" value="COD"
+                                       th:name="${prefix} + '.paymentMethod'" th:id="'cod-' + ${group.storeId}"
+                                       th:checked="${payment == 'COD'}">
+                                <label class="form-check-label" th:for="'cod-' + ${group.storeId}">Thanh toán khi nhận hàng (COD)</label>
+                            </div>
+                            <div class="form-check" data-for="STORE_PICKUP">
+                                <input type="radio" class="form-check-input os-checkout-payment" value="PAY_AT_STORE"
+                                       th:name="${prefix} + '.paymentMethod'" th:id="'store-' + ${group.storeId}"
+                                       th:checked="${payment == 'PAY_AT_STORE'}">
+                                <label class="form-check-label" th:for="'store-' + ${group.storeId}">Thanh toán tại cửa hàng</label>
+                            </div>
+                            <div class="form-check" data-for="BOTH">
+                                <input type="radio" class="form-check-input os-checkout-payment" value="ONLINE"
+                                       th:name="${prefix} + '.paymentMethod'" th:id="'online-' + ${group.storeId}"
+                                       th:checked="${payment == 'ONLINE'}">
+                                <label class="form-check-label" th:for="'online-' + ${group.storeId}">Thanh toán trực tuyến</label>
+                            </div>
+                        </fieldset>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" th:for="'receiver-name-' + ${group.storeId}">Người nhận <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" maxlength="150" required
+                                   th:name="${prefix} + '.receiverName'" th:id="'receiver-name-' + ${group.storeId}"
+                                   th:value="${choice != null ? choice.receiverName : preview.receiverName}">
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" th:for="'receiver-phone-' + ${group.storeId}">Số điện thoại <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" maxlength="20" required
+                                   th:name="${prefix} + '.receiverPhone'" th:id="'receiver-phone-' + ${group.storeId}"
+                                   th:value="${choice != null ? choice.receiverPhone : preview.receiverPhone}">
+                        </div>
+                        <div class="col-12 os-checkout-address" th:classappend="${fulfillment != 'DELIVERY'} ? 'd-none'">
+                            <label class="form-label" th:for="'address-' + ${group.storeId}">Địa chỉ giao hàng <span class="text-danger">*</span></label>
+                            <textarea class="form-control" rows="2" maxlength="500"
+                                      th:name="${prefix} + '.shippingAddress'" th:id="'address-' + ${group.storeId}"
+                                      th:text="${choice != null ? choice.shippingAddress : preview.shippingAddress}"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-white d-flex justify-content-between">
+                    <span class="text-secondary">Tạm tính đơn tại chi nhánh</span>
+                    <strong><span th:replace="~{fragments/components :: price(${group.subtotal})}"></span></strong>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <section class="card shadow-sm os-cart-summary">
+                <div class="card-body">
+                    <h2 class="h6">Tổng đặt hàng</h2>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-secondary">Số đơn hàng sẽ tạo</span>
+                        <span th:text="${preview.selection.groups.size()}">3</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-secondary">Tổng tạm tính</span>
+                        <strong id="checkout-total"><span th:replace="~{fragments/components :: price(${preview.selection.total})}"></span></strong>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Xác nhận đặt hàng</button>
+                    <p class="small text-secondary mt-2 mb-0">
+                        Giá và tình trạng hàng được kiểm tra lại tại thời điểm đặt. Nếu một sản phẩm không còn đủ hàng,
+                        cả lần đặt hàng sẽ không được tạo.
+                    </p>
+                    <a class="btn btn-link w-100 mt-2" th:href="@{/cart}">Quay lại giỏ hàng</a>
+                </div>
+            </section>
+        </div>
+    </div>
+</form>
+</body>
+</html>

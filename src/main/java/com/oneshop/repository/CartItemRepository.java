@@ -20,4 +20,10 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     Optional<CartItem> findByIdAndCartId(Long id, Long cartId);
 
     long countByCartId(Long cartId);
+
+    /**
+     * The lines of a cart WITHOUT their StoreProducts. Checkout uses this so that the StoreProducts are first read by
+     * its locking query and therefore carry the stock and price of that moment, not an earlier unlocked read.
+     */
+    List<CartItem> findByCartId(Long cartId);
 }

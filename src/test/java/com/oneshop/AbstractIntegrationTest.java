@@ -3,6 +3,7 @@ package com.oneshop;
 import com.oneshop.dto.response.CartResponse;
 import com.oneshop.repository.RoleRepository;
 import com.oneshop.service.CartService;
+import com.oneshop.service.CheckoutService;
 import org.junit.jupiter.api.BeforeEach;
 import com.oneshop.repository.UserRepository;
 import com.oneshop.service.ProductService;
@@ -40,6 +41,9 @@ abstract class AbstractIntegrationTest {
 
     @MockitoBean
     protected CartService cartService;
+
+    @MockitoBean
+    protected CheckoutService checkoutService;
 
     /** Unstubbed, every customer has an empty cart. */
     @BeforeEach

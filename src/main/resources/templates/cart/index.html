@@ -127,9 +127,9 @@
                 </div>
 
                 <!--/* The checked cartItemIds are what the next step receives (form attribute on each checkbox). */-->
-                <form method="get" th:action="@{/cart/selection}" id="cart-selection-form">
+                <form method="get" th:action="@{/checkout}" id="cart-selection-form">
                     <button type="submit" class="btn btn-primary w-100" th:disabled="${!cart.hasSelectableItems()}">
-                        Tiếp tục với sản phẩm đã chọn
+                        Đặt hàng sản phẩm đã chọn
                     </button>
                 </form>
                 <p class="small text-secondary mt-2 mb-0">

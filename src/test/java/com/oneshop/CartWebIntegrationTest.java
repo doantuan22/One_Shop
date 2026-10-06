@@ -76,9 +76,9 @@ class CartWebIntegrationTest extends AbstractIntegrationTest {
         CartItemResponse gone = new CartItemResponse(13L, 8L, 1L, "BBIA-CHEEK-06", "BBIA Downy Cheek #06", null,
                 new BigDecimal("189000"), 1, new BigDecimal("189000"), CartItemStatus.UNAVAILABLE);
         return new CartResponse(List.of(
-                new CartStoreGroupResponse(2L, "OneShop Gò Vấp", "202 Quang Trung", true, List.of(sameSerumElsewhere), BigDecimal.ZERO),
-                new CartStoreGroupResponse(3L, "OneShop Quận 7", "303 Nguyễn Thị Thập", false, List.of(gone), BigDecimal.ZERO),
-                new CartStoreGroupResponse(1L, "OneShop Thủ Đức", "101 Võ Văn Ngân", true, List.of(serum), new BigDecimal("258000"))),
+                new CartStoreGroupResponse(2L, "OneShop Gò Vấp", "202 Quang Trung", true, true, true, List.of(sameSerumElsewhere), BigDecimal.ZERO),
+                new CartStoreGroupResponse(3L, "OneShop Quận 7", "303 Nguyễn Thị Thập", false, true, true, List.of(gone), BigDecimal.ZERO),
+                new CartStoreGroupResponse(1L, "OneShop Thủ Đức", "101 Võ Văn Ngân", true, true, true, List.of(serum), new BigDecimal("258000"))),
                 3, new BigDecimal("258000"));
     }
 
@@ -99,7 +99,7 @@ class CartWebIntegrationTest extends AbstractIntegrationTest {
         // the line that is no longer on sale can only be removed: no quantity form for it
         assertThat(html).contains("action=\"/cart/items/11\"", "action=\"/cart/items/12\"", "action=\"/cart/items/13/delete\"")
                 .doesNotContain("action=\"/cart/items/13\"");
-        assertThat(html).contains("258.000 ₫", "Tiếp tục với sản phẩm đã chọn");
+        assertThat(html).contains("258.000 ₫", "Đặt hàng sản phẩm đã chọn", "action=\"/checkout\"");
     }
 
     private static String checkbox(String html, long cartItemId) {
@@ -117,12 +117,10 @@ class CartWebIntegrationTest extends AbstractIntegrationTest {
                 .statusCode()).isEqualTo(302);
         assertThat(postAs(jwt, "/cart/items/5", "quantity=4&userId=99").statusCode()).isEqualTo(302);
         assertThat(postAs(jwt, "/cart/items/5/delete", "userId=99").statusCode()).isEqualTo(302);
-        get("/cart/selection?cartItemIds=5&cartItemIds=6&userId=99", "Cookie", jwt);
 
         verify(cartService).addItem(CUSTOMER, new AddCartItemRequest(10L, 2));
         verify(cartService).updateItemQuantity(CUSTOMER, 5L, 4);
         verify(cartService).removeItem(CUSTOMER, 5L);
-        verify(cartService).getSelection(CUSTOMER, List.of(5L, 6L));
     }
 
     @Test
@@ -167,7 +165,6 @@ class CartWebIntegrationTest extends AbstractIntegrationTest {
         assertThat(postAs(null, "/cart/items", "storeProductId=10&quantity=1").statusCode()).isEqualTo(302);
         for (String role : List.of(staff, admin)) {
             assertThat(get("/cart", "Cookie", role).statusCode()).isEqualTo(403);
-            assertThat(get("/cart/selection?cartItemIds=1", "Cookie", role).statusCode()).isEqualTo(403);
             assertThat(postAs(role, "/cart/items", "storeProductId=10&quantity=1").statusCode()).isEqualTo(403);
             assertThat(postAs(role, "/cart/items/5", "quantity=1").statusCode()).isEqualTo(403);
             assertThat(postAs(role, "/cart/items/5/delete", "").statusCode()).isEqualTo(403);

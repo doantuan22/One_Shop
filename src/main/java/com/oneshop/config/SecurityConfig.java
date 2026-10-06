@@ -92,8 +92,9 @@ public class SecurityConfig {
                         // Staff: STAFF only, because every page is scoped to the Store(s) the account is assigned
                         // to (StaffStoreScopeInterceptor). Admin works chain-wide in /admin instead.
                         .requestMatchers("/staff/**", "/api/staff/**").hasRole("STAFF")
-                        // Client: the cart belongs to a customer account (USER 1--1 CART)
-                        .requestMatchers("/cart/**").hasRole("CUSTOMER")
+                        // Client: the cart belongs to a customer account (USER 1--1 CART), and only a customer
+                        // can turn it into orders
+                        .requestMatchers("/cart/**", "/checkout/**").hasRole("CUSTOMER")
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
                         .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),

@@ -199,7 +199,7 @@ class CartHttpDatabaseIntegrationTest {
     @Test
     void guestsAreSentToLoginAndCannotChangeAnything() throws Exception {
         assertThat(get("/cart").statusCode()).isEqualTo(302);
-        assertThat(get("/cart/selection?cartItemIds=1").statusCode()).isEqualTo(302);
+        assertThat(get("/checkout?cartItemIds=1").statusCode()).isEqualTo(302);
 
         // a guest with a valid CSRF token still has no cart to write to
         HttpResponse<String> page = get("/login");
@@ -315,7 +315,7 @@ class CartHttpDatabaseIntegrationTest {
             assertThat(Pattern.compile("<input type=\"checkbox\"[^>]*name=\"cartItemIds\"[^>]*form=\"cart-selection-form\"[^>]*value=\""
                     + cartItemId + "\"").matcher(html).find()).as("checkbox of line " + cartItemId).isTrue();
         }
-        assertThat(html).contains("id=\"cart-selection-form\"", "action=\"/cart/selection\"");
+        assertThat(html).contains("id=\"cart-selection-form\"", "action=\"/checkout\"");
     }
 
     @Test
@@ -414,7 +414,7 @@ class CartHttpDatabaseIntegrationTest {
             assertThat(update.body()).contains("Không tìm thấy sản phẩm này trong giỏ hàng của bạn.");
 
             assertThat(postAs(ALICE, "/cart/items/" + bobsLine + "/delete", "").statusCode()).isEqualTo(404);
-            assertThat(get("/cart/selection?cartItemIds=" + bobsLine, "Cookie", login(ALICE)).statusCode()).isEqualTo(400);
+            assertThat(get("/checkout?cartItemIds=" + bobsLine, "Cookie", login(ALICE)).statusCode()).isEqualTo(400);
         }
         // and Alice's cart page shows nothing of Bob's
         assertThat(cartPage(ALICE)).contains("id=\"cart-empty\"").doesNotContain("INNI-TONER-200", "BBIA-CHEEK");
@@ -443,27 +443,27 @@ class CartHttpDatabaseIntegrationTest {
     // ================================================================= hand-over to checkout
 
     @Test
-    void selectedCartItemIdsAreHandedOverGroupedByStoreAndNothingIsCreated() throws Exception {
+    void selectedCartItemIdsOpenTheCheckoutPageGroupedByStoreAndNothingIsCreated() throws Exception {
         long orders = orderRepository.count();
         long checkouts = checkoutSessionRepository.count();
         long movements = movementRepository.count();
         List<Long> lines = new ArrayList<>(bobsCartBefore.keySet());
 
         // what the cart form sends when two checkboxes are ticked
-        HttpResponse<String> two = get("/cart/selection?cartItemIds=" + lines.get(0) + "&cartItemIds=" + lines.get(1),
+        HttpResponse<String> two = get("/checkout?cartItemIds=" + lines.get(0) + "&cartItemIds=" + lines.get(1),
                 "Cookie", login(BOB));
         assertThat(two.statusCode()).isEqualTo(200);
-        assertThat(count(two.body(), "os-selection-group\"")).isEqualTo(2);
+        assertThat(count(two.body(), "os-checkout-group\"")).isEqualTo(2);
         assertThat(two.body()).contains("data-cart-item-id=\"" + lines.get(0) + "\"", "data-cart-item-id=\"" + lines.get(1) + "\"")
                 .doesNotContain("data-cart-item-id=\"" + lines.get(2) + "\"");
 
-        HttpResponse<String> all = get("/cart/selection?" + lines.stream().map(id -> "cartItemIds=" + id)
+        HttpResponse<String> all = get("/checkout?" + lines.stream().map(id -> "cartItemIds=" + id)
                 .collect(Collectors.joining("&")), "Cookie", login(BOB));
-        assertThat(count(all.body(), "os-selection-group\"")).isEqualTo(3);
+        assertThat(count(all.body(), "os-checkout-group\"")).isEqualTo(3);
         assertThat(all.body()).contains("828.000 ₫", "<strong>3</strong> sản phẩm");
 
         // nothing ticked
-        HttpResponse<String> none = get("/cart/selection", "Cookie", login(BOB));
+        HttpResponse<String> none = get("/checkout", "Cookie", login(BOB));
         assertThat(none.statusCode()).isEqualTo(400);
         assertThat(none.body()).contains("id=\"cart-error\"", "Vui lòng chọn ít nhất một sản phẩm");
 

@@ -120,7 +120,9 @@ public class CartServiceImpl implements CartService {
             throw new BadRequestException("storeProductId", NOT_ON_SALE);
         }
 
-        Cart cart = cartRepository.findByUserEmailForUpdate(customerEmail).orElseGet(() -> createCart(customerEmail));
+        User user = userRepository.findByEmail(customerEmail)
+                .orElseThrow(() -> new IllegalStateException("Authenticated user not found: " + customerEmail));
+        Cart cart = cartRepository.findByUserIdForUpdate(user.getId()).orElseGet(() -> createCart(user));
         CartItem item = cartItemRepository.findByCartIdAndStoreProductId(cart.getId(), storeProduct.getId()).orElse(null);
         long resulting = (item == null ? 0L : item.getQuantity()) + quantity;
 
@@ -141,9 +143,7 @@ public class CartServiceImpl implements CartService {
         cartItemRepository.saveAndFlush(item);
     }
 
-    private Cart createCart(String customerEmail) {
-        User user = userRepository.findByEmail(customerEmail)
-                .orElseThrow(() -> new IllegalStateException("Authenticated user not found: " + customerEmail));
+    private Cart createCart(User user) {
         Cart cart = new Cart();
         cart.setUser(user);
         return cartRepository.saveAndFlush(cart);
@@ -176,7 +176,8 @@ public class CartServiceImpl implements CartService {
 
     /** The line, only if it is in the cart of this customer; the cart row is locked for the rest of the transaction. */
     private CartItem ownItem(String customerEmail, Long cartItemId) {
-        return cartRepository.findByUserEmailForUpdate(customerEmail)
+        return userRepository.findByEmail(customerEmail)
+                .flatMap(user -> cartRepository.findByUserIdForUpdate(user.getId()))
                 .flatMap(cart -> cartItemRepository.findByIdAndCartId(cartItemId, cart.getId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm này trong giỏ hàng của bạn."));
     }
@@ -210,6 +211,7 @@ public class CartServiceImpl implements CartService {
         List<CartStoreGroupResponse> groups = byStore.entrySet().stream()
                 .map(entry -> new CartStoreGroupResponse(entry.getKey().getId(), entry.getKey().getName(),
                         entry.getKey().getAddress(), entry.getKey().getStatus() == ActiveStatus.ACTIVE,
+                        entry.getKey().isDeliveryEnabled(), entry.getKey().isPickupEnabled(),
                         entry.getValue(), purchasableSum(entry.getValue())))
                 .toList();
         BigDecimal total = groups.stream().map(CartStoreGroupResponse::subtotal).reduce(BigDecimal.ZERO, BigDecimal::add);

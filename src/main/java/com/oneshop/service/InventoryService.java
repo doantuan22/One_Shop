@@ -1,11 +1,14 @@
 package com.oneshop.service;
 
+import com.oneshop.entity.Order;
+import com.oneshop.entity.StoreProduct;
+
 /**
  * Deduct, restore and adjust StoreProduct stock, always with an InventoryMovement (BR-09, BR-12).
  *
- * <p>Phase 6 only provides {@link #adjustStock}, which the Admin StoreProduct form needs. ORDER (negative) and
- * CANCEL_ORDER (positive) movements arrive with Phases 8 and 12; the Staff stock screen of Phase 10 reuses
- * {@code adjustStock} after checking the Staff's Store scope. Quantity must never go below zero.
+ * <p>{@link #adjustStock} (STOCK_ADJUST) serves the Admin StoreProduct form and, from Phase 10, the Staff stock
+ * screen after its Store scope check. {@link #deductForOrder} (ORDER) is used by checkout. CANCEL_ORDER (positive)
+ * arrives with order cancellation in a later phase. Quantity must never go below zero.
  */
 public interface InventoryService {
 
@@ -21,4 +24,17 @@ public interface InventoryService {
      * @throws com.oneshop.exception.BadRequestException if {@code newQuantity} is negative
      */
     void adjustStock(Long storeProductId, int newQuantity, String userEmail, String note);
+
+    /**
+     * Takes the quantity of an Order line out of the stock of its StoreProduct and records it as an ORDER
+     * InventoryMovement (negative change, before / after, the Order). Runs inside the caller's transaction and never
+     * commits on its own.
+     *
+     * @param lockedStoreProduct the StoreProduct, already loaded with a write lock in the current transaction, so the
+     *                           quantity read here cannot change before the transaction ends
+     * @param order              the saved Order the stock is taken for
+     * @throws com.oneshop.exception.BadRequestException if the quantity is not positive or exceeds the stock; the
+     *                                                   stock is then left untouched
+     */
+    void deductForOrder(StoreProduct lockedStoreProduct, int quantity, Order order);
 }

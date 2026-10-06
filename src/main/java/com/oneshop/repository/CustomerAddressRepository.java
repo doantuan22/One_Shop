@@ -8,4 +8,7 @@ import java.util.List;
 public interface CustomerAddressRepository extends JpaRepository<CustomerAddress, Long> {
 
     List<CustomerAddress> findByUserIdOrderByDefaultAddressDescCreatedAtDesc(Long userId);
+
+    /** Addresses of the authenticated customer, default first. */
+    List<CustomerAddress> findByUserEmailOrderByDefaultAddressDescCreatedAtDesc(String email);
 }

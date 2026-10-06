@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Đặt hàng thành công</title>
+</head>
+<body>
+<!--/*
+    What one checkout created: one Order per Store. Item names and prices are the snapshots stored in the Order, not
+    the current catalog values.
+*/-->
+<div class="alert alert-success" th:if="${param.success}">
+    Đặt hàng thành công. Hệ thống đã tạo <strong th:text="${checkout.orders.size()}">3</strong> đơn hàng, mỗi chi nhánh một đơn.
+</div>
+
+<h1 class="h3 mb-1">Lần đặt hàng #<span id="checkout-id" th:text="${checkout.checkoutId}">100</span></h1>
+<p class="text-secondary">
+    <span th:text="${#temporals.format(checkout.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</span>
+    &middot; <span th:text="${checkout.orders.size()}">3</span> đơn hàng
+    &middot; Tổng cộng <strong id="checkout-total"><span th:replace="~{fragments/components :: price(${checkout.totalAmount})}"></span></strong>
+</p>
+
+<section class="card shadow-sm mb-3 os-order" th:each="order : ${checkout.orders}"
+         th:attr="data-order-id=${order.orderId}, data-store-id=${order.storeId}, data-status=${order.orderStatus},
+                  data-fulfillment=${order.fulfillmentType}, data-payment=${order.paymentMethod}">
+    <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div>
+            <h2 class="h6 mb-0">Đơn hàng #<span th:text="${order.orderId}">1001</span> &middot;
+                <span class="os-order-store" th:text="${order.storeName}">OneShop Thủ Đức</span></h2>
+            <div class="small text-secondary" th:text="${order.storeAddress}">101 Võ Văn Ngân</div>
+        </div>
+        <span class="badge os-order-status" th:switch="${order.orderStatus.name()}"
+              th:classappend="${order.orderStatus.name() == 'PENDING_PAYMENT'} ? 'text-bg-warning' : 'text-bg-success'">
+            <span th:case="'PENDING_PAYMENT'">Chờ thanh toán</span>
+            <span th:case="'CONFIRMED'">Đã xác nhận</span>
+            <span th:case="*" th:text="${order.orderStatus}">Trạng thái</span>
+        </span>
+    </div>
+
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item d-flex flex-wrap justify-content-between gap-2 os-order-item" th:each="item : ${order.items}">
+            <div>
+                <div class="fw-semibold" th:text="${item.productName}">Tên sản phẩm</div>
+                <div class="small text-secondary">
+                    <span th:replace="~{fragments/components :: price(${item.unitPrice})}"></span>
+                    &times; <span th:text="${item.quantity}">2</span>
+                </div>
+            </div>
+            <strong><span th:replace="~{fragments/components :: price(${item.subtotal})}"></span></strong>
+        </li>
+    </ul>
+
+    <div class="card-body border-top">
+        <dl class="row small mb-0">
+            <dt class="col-sm-4">Cách nhận hàng</dt>
+            <dd class="col-sm-8 os-order-fulfillment"
+                th:text="${order.fulfillmentType.name() == 'DELIVERY'} ? 'Giao hàng tận nơi' : 'Nhận tại cửa hàng ' + ${order.storeName}">Giao hàng tận nơi</dd>
+            <dt class="col-sm-4">Thanh toán</dt>
+            <dd class="col-sm-8 os-order-payment" th:switch="${order.paymentMethod.name()}">
+                <span th:case="'COD'">Thanh toán khi nhận hàng (COD)</span>
+                <span th:case="'PAY_AT_STORE'">Thanh toán tại cửa hàng</span>
+                <span th:case="'ONLINE'">Thanh toán trực tuyến</span>
+                &middot; <span th:text="${order.paymentStatus.name() == 'PAID'} ? 'Đã thanh toán' : 'Chưa thanh toán'">Chưa thanh toán</span>
+            </dd>
+            <dt class="col-sm-4">Người nhận</dt>
+            <dd class="col-sm-8"><span th:text="${order.receiverName}">Nguyễn Văn A</span> &middot; <span th:text="${order.receiverPhone}">0900000000</span></dd>
+            <dt class="col-sm-4" th:if="${order.shippingAddress}">Địa chỉ giao hàng</dt>
+            <dd class="col-sm-8" th:if="${order.shippingAddress}" th:text="${order.shippingAddress}">12 Võ Văn Ngân</dd>
+        </dl>
+    </div>
+
+    <div class="card-footer bg-white d-flex justify-content-between">
+        <span class="text-secondary">Tổng đơn hàng</span>
+        <strong class="os-order-total"><span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></strong>
+    </div>
+</section>
+
+<a class="btn btn-outline-primary" th:href="@{/products}">Tiếp tục mua sắm</a>
+<a class="btn btn-link" th:href="@{/cart}">Xem giỏ hàng</a>
+</body>
+</html>
