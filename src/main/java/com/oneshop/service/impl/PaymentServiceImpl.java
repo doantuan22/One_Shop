@@ -81,9 +81,12 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy lần thanh toán của đơn hàng này."));
         requireConsistent(payment, order);
         if (payment.getStatus() == result) {
+            // Repeated success stays idempotent after fulfillment advances; never rewind the Order.
             // Repeated results return the same record without repeating stock or history writes.
             boolean matchingOrder = result == PaymentStatus.SUCCESS
-                    ? order.getPaymentStatus() == OrderPaymentStatus.PAID && order.getOrderStatus() == OrderStatus.CONFIRMED
+                    ? order.getPaymentStatus() == OrderPaymentStatus.PAID
+                        && order.getOrderStatus() != null
+                        && order.getOrderStatus() != OrderStatus.PENDING_PAYMENT && order.getOrderStatus() != OrderStatus.CANCELLED
                     : order.getPaymentStatus() == OrderPaymentStatus.FAILED && order.getOrderStatus() == OrderStatus.CANCELLED;
             if (!matchingOrder) {
                 throw new BadRequestException("Kết quả thanh toán không nhất quán với đơn hàng.");
@@ -98,9 +101,11 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setTransactionCode("PAY-" + UUID.randomUUID());
         payment.setPaidAt(result == PaymentStatus.SUCCESS ? LocalDateTime.now().withNano(0) : null);
         if (result == PaymentStatus.SUCCESS) {
+            order.setPaymentStatus(OrderPaymentStatus.PAID);
             orderService.confirmAfterOnlinePayment(order);
         } else {
             inventoryService.restoreForCancelledOrder(order);
+            order.setPaymentStatus(OrderPaymentStatus.FAILED);
             orderService.cancelAfterOnlinePaymentFailure(order);
         }
         paymentRepository.flush(); // Check constraints before returning; every change shares this transaction.

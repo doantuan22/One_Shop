@@ -2,7 +2,10 @@
 
 **Xây dựng website bán mỹ phẩm OneShop theo mô hình chuỗi cửa hàng.**
 
-Giai đoạn hiện tại: **Phase 9.1 – Payment Foundation** (phần đầu của Phase 9 trong Roadmap V2). Các phần đã triển khai:
+Giai đoạn hiện tại: **Phase 9.2 – Order State Machine + History Foundation** (Phase 9 trong Roadmap V2). Các phần đã triển khai:
+
+* **Phase 9.2 – Order State Machine + History Foundation**: policy chung cho DELIVERY/STORE_PICKUP; primitive nội bộ
+  khóa Order, kiểm trạng thái kỳ vọng, cập nhật trạng thái và ghi history nguyên tử. Payment tái sử dụng foundation này.
 
 * **Phase 9.1 – Payment Foundation**: Payment ONLINE theo từng Order; tạo attempt PENDING; SUCCESS xác nhận đơn;
   FAILED hủy đúng đơn, hoàn tồn và ghi audit trong một transaction. COD/PAY_AT_STORE vẫn UNPAID.
@@ -22,7 +25,44 @@ Giai đoạn hiện tại: **Phase 9.1 – Payment Foundation** (phần đầu c
 * **Phase 5 – Auth + JWT**: đăng ký/đăng nhập/đăng xuất, JWT trong cookie HttpOnly, phân quyền CUSTOMER/STAFF/ADMIN ở
   backend, Store scope của Staff theo `StaffStoreAssignment` ACTIVE, CSRF.
 
-Phase 9.2–9.5 (state machine tổng quát và fulfillment) chưa được triển khai.
+Phase 9.3–9.5 (các action fulfillment và phần còn lại của Phase 9) chưa được triển khai.
+
+### State machine và history nội bộ (Phase 9.2)
+
+`OrderTransitionPolicy` là nguồn luật chung; `canTransition(current, target, fulfillment)` mô tả graph,
+overload nhận `Cause` phân biệt fulfillment với PAYMENT_SUCCESS/PAYMENT_FAILURE. Không dùng string để so sánh trạng thái.
+
+| Trạng thái hiện tại | DELIVERY: đích hợp lệ | STORE_PICKUP: đích hợp lệ |
+|---|---|---|
+| PENDING_PAYMENT | CONFIRMED (Payment SUCCESS); CANCELLED (Payment FAILED) | CONFIRMED (Payment SUCCESS); CANCELLED (Payment FAILED) |
+| CONFIRMED | PREPARING | PREPARING |
+| PREPARING | PACKED | READY_FOR_PICKUP |
+| PACKED | SHIPPING | Không có |
+| SHIPPING | COMPLETED | Không có |
+| READY_FOR_PICKUP | Không có | COMPLETED |
+| COMPLETED | Không có | Không có |
+| CANCELLED | Không có | Không có |
+
+* `OrderService.transition(orderId, expectedStatus, targetStatus, actor, note)` là primitive Java nội bộ,
+  không có endpoint/UI. Nó khóa đúng Order bằng truy vấn PK `PESSIMISTIC_WRITE`, đọc trạng thái trong transaction,
+  từ chối trạng thái kỳ vọng đã cũ và cạnh không hợp lệ, flush Order rồi ghi history trong cùng transaction.
+  Same-state, backward, skip-state, sai nhánh và mọi cạnh ra khỏi terminal trả `BadRequestException`, không ghi history.
+* Primitive fulfillment không được dùng hai cạnh từ PENDING_PAYMENT. Hai helper payment `MANDATORY` tái sử dụng
+  policy/history và yêu cầu caller PaymentService giữ khóa Order. PaymentService quản lý `Payment.status` và
+  `Order.payment_status`; FAILED vẫn hoàn kho trước khi hủy trong cùng transaction, theo thứ tự khóa Order rồi StoreProduct.
+* History lưu old/new, actor do orchestration đã xác thực cung cấp (`NULL` nếu hệ thống), thời điểm do JPA auditing,
+  note tùy chọn tối đa 500 đơn vị UTF-16 để khớp NVARCHAR(500). Caller chỉ cung cấp nội dung audit an toàn,
+  không token, secret hoặc dữ liệu nhạy cảm. Note không quyết định luật. History tạo đơn NULL → initial state ở Checkout giữ nguyên.
+* Foundation chỉ đổi trạng thái và history. Caller tương lai phải kiểm role/Staff Store assignment, quyền truy cập,
+  payment guard và thực hiện side effects trong transaction bao ngoài trước khi dùng primitive.
+  Policy không truy vấn assignment và không xử lý thanh toán, kho, mã pickup hay thời điểm nhận hàng.
+* READY_FOR_PICKUP/COMPLETED được mô hình hóa trong graph. Chưa có action production tạo mã pickup, ready_at,
+  picked_up_at, thu COD/PAY_AT_STORE hoặc hoàn tất đơn. Schema vẫn yêu cầu mã và ready_at khi vào READY_FOR_PICKUP;
+  graph hợp lệ không thay thế các điều kiện của schema hoặc orchestration ở phase sau.
+* Concurrent duplicate bị từ chối sau khi khóa được giải phóng, đúng một history. Payment duplicate giữ cơ chế
+  idempotent của Phase 9.1; SUCCESS lặp sau khi fulfillment tiến lên vẫn trả receipt cũ, không kéo trạng thái về CONFIRMED.
+
+Ma trận đầy đủ, kiểm thử SQL Server, cleanup và phạm vi phase sau: [Báo cáo Phase 9.2](docs/Phase9_2_OrderStateMachine_Report.md).
 
 ### Thanh toán nội bộ theo Order (Phase 9.1)
 
@@ -46,7 +86,7 @@ Phase 9.2–9.5 (state machine tổng quát và fulfillment) chưa được tri�
   tăng dần như checkout. Payment, Order, tồn kho, InventoryMovement và OrderStatusHistory cùng transaction;
   lỗi bất kỳ bước nào rollback toàn bộ. Kết quả trùng trả lại Payment đã kết thúc, không ghi audit/hoàn kho lần nữa;
   đổi SUCCESS thành FAILED hoặc ngược lại bị từ chối.
-* History chỉ thêm PENDING_PAYMENT → CONFIRMED/CANCELLED; `changed_by_user_id=NULL` vì hệ thống đổi trạng thái từ
+* History do payment chỉ thêm PENDING_PAYMENT → CONFIRMED/CANCELLED; `changed_by_user_id=NULL` vì hệ thống đổi trạng thái từ
   kết quả thanh toán, nhất quán history tạo đơn Phase 8. Movement tự động có `staff_id=NULL`.
 * COD/PAY_AT_STORE giữ CONFIRMED + UNPAID, không tự tạo Payment SUCCESS, pickup code hay fulfillment. CheckoutSession
   vẫn chỉ nhóm Order; kết quả một Order không đổi Order khác hoặc status của CheckoutSession trong phase này.
@@ -231,7 +271,8 @@ nhưng `CloudinaryService` báo lỗi rõ ràng khi được gọi.
 
 Mở http://localhost:8080. Các route mẫu: `/`, `/login`, `/register`, `/products`, `/products/{id}`, `/stores`, `/cart` (Customer), `/health`, `/staff` (Staff), `/admin` (Admin).
 
-Test không cần SQL Server hay secret thật (profile `test` dùng secret giả và mock các bean truy cập DB).
+Các test profile `test` dùng secret giả và mock các bean truy cập DB. Khi có `.env` hoặc `DB_USERNAME`, các integration
+test database chạy profile `dev` với SQL Server thật và `ddl-auto=validate`; fixture được khôi phục sau test.
 
 ## 6. Triển khai lên Render
 

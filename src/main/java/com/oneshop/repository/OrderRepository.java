@@ -19,7 +19,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Optional<Order> findByIdAndUserEmail(Long orderId, String email);
 
-    /** Serialize all payment attempts/results on this Order before reading any Payment or stock. */
+    /** Serialize state transitions and payment attempts/results on this Order before reading Payment or stock. */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select o from Order o where o.id = :id")
     Optional<Order> findByIdForUpdate(@Param("id") Long id);

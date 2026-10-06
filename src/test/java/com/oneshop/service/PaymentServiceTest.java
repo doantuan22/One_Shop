@@ -25,7 +25,8 @@ class PaymentServiceTest {
     private final PaymentRepository payments = mock(PaymentRepository.class);
     private final OrderStatusHistoryRepository history = mock(OrderStatusHistoryRepository.class);
     private final InventoryService inventory = mock(InventoryService.class);
-    private final PaymentService service = new PaymentServiceImpl(payments, orders, new OrderServiceImpl(history), inventory);
+    private final PaymentService service = new PaymentServiceImpl(payments, orders,
+            new OrderServiceImpl(orders, history, new OrderTransitionPolicy()), inventory);
     private Order order;
     private Payment payment;
 
@@ -37,6 +38,7 @@ class PaymentServiceTest {
         ReflectionTestUtils.setField(order, "id", 10L);
         order.setUser(owner);
         order.setPaymentMethod(PaymentMethod.ONLINE);
+        order.setFulfillmentType(FulfillmentType.DELIVERY);
         order.setOrderStatus(OrderStatus.PENDING_PAYMENT);
         order.setTotalAmount(new BigDecimal("200000.00"));
         payment = new Payment();
