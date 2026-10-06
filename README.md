@@ -2,7 +2,14 @@
 
 **Xây dựng website bán mỹ phẩm OneShop theo mô hình chuỗi cửa hàng.**
 
-Giai đoạn hiện tại: **Phase 9.3 – DELIVERY Flow** (Phase 9 trong Roadmap V2). Các phần đã triển khai:
+Giai đoạn hiện tại: **Phase 9.5 – Integration + Verification**. **PHASE 9 – PAYMENT + FULFILLMENT COMPLETED** (Roadmap V2). Các phần đã triển khai:
+
+* **Phase 9.5 – Integration + Verification**: TC-15 full E2E ba Store với DELIVERY/COD, PICKUP/ONLINE và
+  PICKUP/PAY_AT_STORE; payment failure chỉ hủy/hoàn kho target Order; ownership, Staff scope, CSRF,
+  snapshot, concurrency và rollback trên SQL Server thật. Không thêm nghiệp vụ hoặc sửa schema.
+
+* **Phase 9.4 – STORE_PICKUP Flow**: Staff chuẩn bị, sinh mã khi READY và xác minh mã khi khách nhận;
+  PAY_AT_STORE thu tiền nguyên tử cùng completion/history; Customer xem snapshot, timeline và mã của đơn mình.
 
 * **Phase 9.3 – DELIVERY Flow**: Staff của assigned Store xử lý chuẩn bị/đóng gói/giao/hoàn tất đơn DELIVERY;
   ONLINE cần PAID, COD được ghi nhận SUCCESS + PAID khi giao thành công, nguyên tử với trạng thái và history.
@@ -28,7 +35,73 @@ Giai đoạn hiện tại: **Phase 9.3 – DELIVERY Flow** (Phase 9 trong Roadma
 * **Phase 5 – Auth + JWT**: đăng ký/đăng nhập/đăng xuất, JWT trong cookie HttpOnly, phân quyền CUSTOMER/STAFF/ADMIN ở
   backend, Store scope của Staff theo `StaffStoreAssignment` ACTIVE, CSRF.
 
-Phase 9.4 (STORE_PICKUP), 9.5 và Staff Store Operations đầy đủ của Phase 10 chưa được triển khai.
+Phase 9 đã hoàn tất. Staff Store Operations đầy đủ của Phase 10 chưa được triển khai.
+
+### Kiểm chứng tích hợp và đóng Phase 9 (Phase 9.5)
+
+CheckoutSession chỉ nhóm Orders, không aggregate status sau payment/fulfillment. Mỗi Order giữ đúng Store,
+payment method, fulfillment, receipt và timeline riêng. TC-15 kiểm đến kết quả cuối cả ba đơn, đồng thời
+kiểm mixed failure với một Order CANCELLED/FAILED và hai sibling tiếp tục COMPLETED/PAID.
+
+`Phase9IntegrationWebDatabaseTest` dùng Tomcat/Security/controllers/services/repositories/SQL Server thật,
+không mock repository hoặc transaction. Có 19 test mới, gồm exact sibling/stock/history isolation, catalog snapshot,
+matrix business + DB CHECK, scope/ownership/CSRF, bốn rollback representative, năm race cùng Order,
+hai Order cùng checkout commit độc lập và kiểm số query list/detail. Test cũ giữ nguyên.
+
+Standalone verifier chạy trên JAR dev riêng, sau ba verifier payment/delivery/pickup cũ:
+
+```powershell
+mvn package dependency:build-classpath '-Dmdep.outputFile=target/payment-classpath.txt'
+java -jar target/oneshop.jar --spring.profiles.active=dev --server.port=18081
+# Terminal khác, sau khi app sẵn sàng; dùng DB dev không có writer khác:
+$phase9Classpath = 'target/test-classes;target/classes;' + (Get-Content target/payment-classpath.txt -Raw).Trim()
+java -cp $phase9Classpath com.oneshop.PaymentLiveSmoke http://localhost:18081
+java -cp $phase9Classpath com.oneshop.DeliveryLiveSmoke http://localhost:18081
+java -cp $phase9Classpath com.oneshop.PickupLiveSmoke http://localhost:18081
+java -cp $phase9Classpath com.oneshop.Phase9IntegrationLiveSmoke http://localhost:18081
+```
+
+Verifiers cleanup trong finally và so sánh exact rows, không reseed IDENTITY. Dừng app thử sau khi chạy.
+Kết quả/audit và ranh giới Phase 10: [Báo cáo Phase 9.5](docs/Phase9_5_IntegrationVerification_Report.md).
+
+### Nhận tại cửa hàng (Phase 9.4)
+
+Customer mở **Đơn hàng của tôi** (`GET /orders`) và `GET /orders/{orderId}`. Backend dùng principal và ownership DB,
+không tin userId hoặc selected Store. Chi tiết dùng OrderItem snapshot, Store/address, payment/status và history theo
+changed_at/id. Mã chỉ xuất hiện khi READY_FOR_PICKUP hoặc COMPLETED; mã của đơn đã hoàn tất không dùng lại được.
+Customer không có action nhận hàng. Checkout result có link sang chi tiết từng Order.
+
+Staff mở **Đơn nhận tại cửa hàng** (`GET /staff/orders/pickup`) và chi tiết `/{orderId}`. List chỉ STORE_PICKUP thuộc
+ACTIVE assignments/Stores của ACTIVE Staff; hỗ trợ nhiều Store. Staff nhập mã khách cung cấp, không nhìn thấy mã lưu DB.
+
+| Action POST | Expected | Target |
+|---|---|---|
+| `/staff/orders/pickup/{orderId}/prepare` | CONFIRMED | PREPARING |
+| `/staff/orders/pickup/{orderId}/ready` | PREPARING | READY_FOR_PICKUP |
+| `/staff/orders/pickup/{orderId}/complete` | READY_FOR_PICKUP | COMPLETED |
+
+* `PickupFulfillmentService` khóa PK Order trước, kiểm scope/actor, STORE_PICKUP, method/payment và trạng thái cố định;
+  gọi `OrderService.transition` foundation 9.2 cho status/history. Không nhận targetStatus, storeId, money hoặc timestamps.
+* ONLINE cần PAID ở mọi bước. PAY_AT_STORE cần UNPAID và chưa có receipt SUCCESS; không repair dữ liệu inconsistent.
+  COD và DELIVERY bị chặn. Stock, movements, OrderItem, Store và CheckoutSession giữ nguyên trong fulfillment.
+* READY sinh mã **8 ký tự** uppercase từ `ABCDEFGHJKLMNPQRSTUVWXYZ23456789` bằng SecureRandom (40 bit ngẫu nhiên).
+  Mã và ready_at giờ server chính xác giây được set **trước** flush READY để giữ CHECK hiện hữu. Không đổi schema/constraints.
+  Action trùng trả 400 sau lock, không regenerate mã hoặc rewrite ready_at.
+* Verification chỉ dùng code của Order đang khóa và thuộc assigned Store. Trim ngoài, normalize uppercase,
+  so sánh String bằng MessageDigest.isEqual; không parse integer, log, đưa code vào URL hoặc error. Mã seed cũ 6 ký tự
+  A-Z/0-9 được chấp nhận chỉ khi chính Order đó giữ format này, không rewrite code cũ. Không global lookup/UNIQUE;
+  cặp Order ID + code đã có scope là định danh nhận hàng. Không SMS/email/QR hoặc external service.
+* Complete form chỉ gửi pickupCode và CSRF. Với PAY_AT_STORE, Staff chỉ bấm xác nhận sau khi đã thu đủ tổng tiền.
+  Mã sai/malformed trả 400 an toàn, không ghi dữ liệu. Mã đúng và guards hợp lệ: PaymentService.recordPayAtStoreCollected
+  (MANDATORY) ghi một SUCCESS, amount = Order.total_amount snapshot, PAY-UUID, paid_at server và PAID; đặt picked_up_at;
+  foundation chuyển COMPLETED và ghi Staff history. Tất cả cùng transaction REQUIRED, không REQUIRES_NEW.
+* ONLINE complete chỉ đặt picked_up_at, status/history; giữ nguyên receipt/code/paid_at. Lỗi ghi rollback toàn bộ.
+  Order lock serialize READY/complete: một winner, request còn lại reject; không double collect/history.
+* POST pickup cần STAFF, assigned Store và CSRF, kể cả Bearer hoặc encoded path (parsed path matcher).
+  ADMIN/CUSTOMER không có quyền. Wrong-scope detail 404, mutation 403, business/duplicate 400, DB/lock 409 an toàn.
+  GET action trả 405; không generic transition endpoint. UI chỉ đủ demo flow, chưa làm full Phase 10.
+
+Audit, kết quả SQL/HTTP/concurrency/rollback và cleanup: [Báo cáo Phase 9.4](docs/Phase9_4_StorePickupFlow_Report.md).
 
 ### Giao hàng theo chi nhánh (Phase 9.3)
 
@@ -60,8 +133,7 @@ Chi tiết hiển thị người nhận, địa chỉ, tổng tiền, snapshot s
   Wrong-scope detail/unknown Order trả 404, mutation sai scope trả 403, guard sai trả 400, lỗi lock/database trả 409 thân thiện.
 * Fulfillment không đổi tồn, không tạo InventoryMovement, không sửa snapshot, Store, phương thức hoặc CheckoutSession.
   Giá/tên catalog đổi sau mua không làm thay đổi chi tiết hay amount thu COD.
-* SHIPPING là trạng thái nội bộ. Chưa tích hợp vận chuyển, gateway, cancel/return/refund, pickup code/timestamps,
-  thu PAY_AT_STORE, pickup queue hoặc dashboard/stock UI của Phase 10.
+* SHIPPING là trạng thái nội bộ. Chưa tích hợp vận chuyển, gateway, cancel/return/refund hoặc dashboard/stock UI của Phase 10.
 
 Audit, kiểm thử và cleanup: [Báo cáo Phase 9.3](docs/Phase9_3_DeliveryFlow_Report.md).
 
@@ -95,7 +167,7 @@ overload nhận `Cause` phân biệt fulfillment với PAYMENT_SUCCESS/PAYMENT_F
   payment guard và thực hiện side effects trong transaction bao ngoài trước khi dùng primitive.
   Policy không truy vấn assignment và không xử lý thanh toán, kho, mã pickup hay thời điểm nhận hàng.
 * READY_FOR_PICKUP/COMPLETED được mô hình hóa trong graph. Phase 9.3 đã có action hoàn tất DELIVERY và ghi nhận thu COD.
-  Chưa có action production tạo mã pickup, ready_at, picked_up_at, thu PAY_AT_STORE hoặc hoàn tất pickup.
+  Phase 9.4 bổ sung action production pickup, mã, timestamps và thu PAY_AT_STORE qua orchestration riêng.
   Schema vẫn yêu cầu mã và ready_at khi vào READY_FOR_PICKUP;
   graph hợp lệ không thay thế các điều kiện của schema hoặc orchestration ở phase sau.
 * Concurrent duplicate bị từ chối sau khi khóa được giải phóng, đúng một history. Payment duplicate giữ cơ chế

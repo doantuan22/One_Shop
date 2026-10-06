@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Đơn nhận tại cửa hàng</title></head>
+<body th:with="order=${orderDetail.order}">
+<a class="btn btn-outline-secondary btn-sm mb-3" th:href="@{/staff/orders/pickup}">Danh sách đơn nhận tại cửa hàng</a>
+<div th:replace="~{orders/fragments :: detail(${orderDetail})}"></div>
+<form class="card card-body mt-3" th:if="${order.nextAction != null}" method="post"
+      th:action="@{/staff/orders/pickup/{id}/{action}(id=${order.orderId},action=${order.nextAction.path})}">
+    <div th:if="${order.nextAction.path == 'complete'}">
+        <label for="pickupCode" class="form-label">Mã nhận hàng khách cung cấp</label>
+        <input id="pickupCode" name="pickupCode" type="text" class="form-control mb-2 font-monospace" minlength="6" maxlength="20" required autocomplete="off" autocapitalize="characters" aria-describedby="pickup-help">
+        <p id="pickup-help" class="small text-secondary">Nhập mã hiển thị trong chi tiết đơn hàng của khách để xác nhận nhận hàng.</p>
+        <p class="alert alert-warning" th:if="${order.paymentMethod.name() == 'PAY_AT_STORE'}">Chỉ bấm xác nhận sau khi đã thu đủ tổng tiền của đơn tại cửa hàng.</p>
+    </div>
+    <button class="btn btn-primary" type="submit" th:text="${order.nextAction.label}"></button>
+</form>
+<p class="text-secondary mt-3" th:if="${order.nextAction == null}">Không có thao tác nhận hàng ở trạng thái này.</p>
+</body></html>

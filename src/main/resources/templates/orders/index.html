@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Đơn hàng của tôi</title></head><body>
+<h1 class="h3">Đơn hàng của tôi</h1><p th:if="${customerOrders.isEmpty()}">Bạn chưa có đơn hàng.</p>
+<div class="card mb-3" th:each="order : ${customerOrders}" th:attr="data-order-id=${order.orderId}"><div class="card-body">
+    <h2 class="h5"><a th:href="@{/orders/{id}(id=${order.orderId})}" th:text="'Đơn #' + ${order.orderId}"></a> · <span th:text="${order.storeName}"></span></h2>
+    <p th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></p>
+    <p th:text="${order.fulfillmentType.name() == 'STORE_PICKUP'} ? 'Nhận tại cửa hàng' : 'Giao tận nơi'"></p>
+    <span th:replace="~{staff/delivery/fragments :: state(${order.orderStatus})}"></span> · <span th:replace="~{staff/delivery/fragments :: payment(${order.paymentStatus})}"></span>
+    <p class="fw-bold mt-2 mb-0"><span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></p>
+</div></div>
+</body></html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"><body>
+<div th:fragment="detail(detail)" th:with="order=${detail.order}">
+    <h1 class="h3" th:text="'Đơn hàng #' + ${order.orderId}"></h1>
+    <p class="mb-1" th:text="${order.storeName}"></p><p class="text-secondary" th:text="${order.storeAddress}"></p>
+    <dl class="row">
+        <dt class="col-sm-4">Ngày tạo</dt><dd class="col-sm-8" th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm:ss')}"></dd>
+        <dt class="col-sm-4">Hình thức nhận</dt><dd class="col-sm-8" th:text="${order.fulfillmentType.name() == 'STORE_PICKUP'} ? 'Nhận tại cửa hàng' : 'Giao tận nơi'"></dd>
+        <dt class="col-sm-4">Người nhận</dt><dd class="col-sm-8" th:text="${order.receiverName}"></dd>
+        <dt class="col-sm-4">Điện thoại</dt><dd class="col-sm-8" th:text="${order.receiverPhone}"></dd>
+        <dt class="col-sm-4" th:if="${order.shippingAddress}">Địa chỉ giao hàng</dt><dd class="col-sm-8" th:if="${order.shippingAddress}" th:text="${order.shippingAddress}"></dd>
+        <dt class="col-sm-4">Phương thức thanh toán</dt><dd class="col-sm-8"><span th:replace="~{staff/delivery/fragments :: method(${order.paymentMethod})}"></span></dd>
+        <dt class="col-sm-4">Thanh toán</dt><dd class="col-sm-8" id="order-payment-status" th:attr="data-status=${order.paymentStatus}"><span th:replace="~{staff/delivery/fragments :: payment(${order.paymentStatus})}"></span></dd>
+        <dt class="col-sm-4">Trạng thái đơn</dt><dd class="col-sm-8" id="order-status" th:attr="data-status=${order.orderStatus}"><span th:replace="~{staff/delivery/fragments :: state(${order.orderStatus})}"></span></dd>
+        <dt class="col-sm-4" th:if="${order.readyAt}">Sẵn sàng nhận lúc</dt><dd class="col-sm-8" th:if="${order.readyAt}" th:text="${#temporals.format(order.readyAt, 'dd/MM/yyyy HH:mm:ss')}"></dd>
+        <dt class="col-sm-4" th:if="${order.pickedUpAt}">Đã nhận lúc</dt><dd class="col-sm-8" th:if="${order.pickedUpAt}" th:text="${#temporals.format(order.pickedUpAt, 'dd/MM/yyyy HH:mm:ss')}"></dd>
+    </dl>
+    <div class="alert alert-info" th:if="${order.pickupCode != null}">
+        Mã nhận hàng: <strong id="pickup-code" class="fs-4 font-monospace" th:text="${order.pickupCode}"></strong>
+        <p class="mb-0" th:if="${order.orderStatus.name() == 'READY_FOR_PICKUP'}">Cung cấp mã này cho nhân viên tại chi nhánh để nhận hàng.</p>
+        <p class="mb-0" th:if="${order.orderStatus.name() == 'COMPLETED'}">Đơn đã nhận. Mã này không còn sử dụng được.</p>
+    </div>
+    <h2 class="h5">Sản phẩm đã đặt</h2>
+    <div class="table-responsive"><table class="table"><thead><tr><th>Sản phẩm</th><th>Đơn giá</th><th>Số lượng</th><th>Thành tiền</th></tr></thead>
+        <tbody><tr th:each="item : ${detail.items}"><td th:text="${item.productName}"></td>
+            <td><span th:replace="~{fragments/components :: price(${item.unitPrice})}"></span></td><td th:text="${item.quantity}"></td>
+            <td><span th:replace="~{fragments/components :: price(${item.subtotal})}"></span></td></tr></tbody></table></div>
+    <p class="fw-bold">Tổng đơn: <span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></p>
+    <h2 class="h5">Thanh toán</h2><p th:if="${detail.payments.isEmpty()}">Chưa ghi nhận thanh toán.</p>
+    <div class="card mb-2" th:each="payment : ${detail.payments}"><div class="card-body">
+        <span th:text="${payment.method} + ' · ' + ${payment.status}"></span> · <span th:replace="~{fragments/components :: price(${payment.amount})}"></span>
+        <p class="small mb-0" th:if="${payment.transactionCode}">Mã giao dịch: <span th:text="${payment.transactionCode}"></span></p>
+        <p class="small mb-0" th:if="${payment.paidAt}">Đã thu lúc: <span th:text="${#temporals.format(payment.paidAt, 'dd/MM/yyyy HH:mm:ss')}"></span></p>
+    </div></div>
+    <h2 class="h5 mt-4">Lịch sử trạng thái</h2><ol class="list-group list-group-numbered">
+        <li class="list-group-item" th:each="entry : ${detail.history}">
+            <span th:if="${entry.oldStatus != null}"><span th:replace="~{staff/delivery/fragments :: state(${entry.oldStatus})}"></span> → </span>
+            <span th:replace="~{staff/delivery/fragments :: state(${entry.newStatus})}"></span>
+            <div class="small"><span th:text="${entry.actorName}"></span> · <span th:text="${#temporals.format(entry.changedAt, 'dd/MM/yyyy HH:mm:ss')}"></span></div>
+            <div class="small text-secondary" th:if="${entry.note}" th:text="${entry.note}"></div>
+        </li></ol>
+</div>
+</body></html>

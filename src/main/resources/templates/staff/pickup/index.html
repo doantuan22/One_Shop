@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Đơn nhận tại cửa hàng</title></head><body>
+<h1 class="h3">Đơn nhận tại cửa hàng</h1>
+<p class="text-secondary">Các đơn thuộc chi nhánh được phân công.</p>
+<p th:if="${pickupOrders.isEmpty()}">Chưa có đơn nhận tại cửa hàng.</p>
+<div class="table-responsive"><table class="table align-middle"><thead><tr><th>Đơn / Chi nhánh</th><th>Ngày tạo</th><th>Người nhận</th><th>Thanh toán</th><th>Trạng thái</th><th>Sẵn sàng lúc</th><th>Tổng tiền</th><th>Thao tác</th></tr></thead>
+<tbody><tr th:each="order : ${pickupOrders}" th:attr="data-order-id=${order.orderId}">
+    <td><a th:href="@{/staff/orders/pickup/{id}(id=${order.orderId})}" th:text="'#' + ${order.orderId}"></a><div th:text="${order.storeName}"></div></td>
+    <td th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></td><td th:text="${order.receiverName}"></td>
+    <td><span th:replace="~{staff/delivery/fragments :: method(${order.paymentMethod})}"></span><br><span th:replace="~{staff/delivery/fragments :: payment(${order.paymentStatus})}"></span></td>
+    <td><span th:replace="~{staff/delivery/fragments :: state(${order.orderStatus})}"></span></td>
+    <td th:text="${order.readyAt != null} ? ${#temporals.format(order.readyAt, 'dd/MM/yyyy HH:mm')} : '—'"></td>
+    <td><span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></td>
+    <td><a class="btn btn-outline-primary btn-sm" th:href="@{/staff/orders/pickup/{id}(id=${order.orderId})}" th:text="${order.nextAction != null} ? ${order.nextAction.label} : 'Xem chi tiết'"></a></td>
+</tr></tbody></table></div>
+</body></html>

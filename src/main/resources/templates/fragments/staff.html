@@ -54,7 +54,7 @@
             <ul class="nav nav-pills flex-column gap-1">
                 <li th:replace="~{fragments/components :: navItem('/staff', 'Tổng quan', ${currentPath}, true)}"></li>
                 <li th:replace="~{fragments/components :: navItem('/staff/orders/delivery', 'Đơn giao hàng', ${currentPath}, true)}"></li>
-                <li th:replace="~{fragments/components :: navItem('/staff/pickup', 'Đơn nhận tại cửa hàng', ${currentPath}, false)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/staff/orders/pickup', 'Đơn nhận tại cửa hàng', ${currentPath}, true)}"></li>
                 <li th:replace="~{fragments/components :: navItem('/staff/stock', 'Tồn kho chi nhánh', ${currentPath}, false)}"></li>
                 <li th:replace="~{fragments/components :: navItem('/staff/inventory-history', 'Lịch sử tồn kho', ${currentPath}, false)}"></li>
             </ul>

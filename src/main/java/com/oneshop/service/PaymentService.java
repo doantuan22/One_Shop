@@ -21,4 +21,7 @@ public interface PaymentService {
 
     /** Internal primitive: caller holds the managed Order write lock and DELIVERY completion transaction. */
     PaymentResponse recordCodCollected(Order lockedOrder);
+
+    /** Internal primitive: caller verified the pickup code and holds the Order lock/completion transaction. */
+    PaymentResponse recordPayAtStoreCollected(Order lockedOrder);
 }

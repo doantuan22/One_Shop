@@ -4,6 +4,7 @@
 <span th:fragment="state(status)" class="badge text-bg-secondary" th:switch="${status.name()}">
     <span th:case="'PENDING_PAYMENT'">Chờ thanh toán</span><span th:case="'CONFIRMED'">Đã xác nhận</span>
     <span th:case="'PREPARING'">Đang chuẩn bị</span><span th:case="'PACKED'">Đã đóng gói</span>
+    <span th:case="'READY_FOR_PICKUP'">Sẵn sàng nhận tại cửa hàng</span>
     <span th:case="'SHIPPING'">Đang giao hàng</span><span th:case="'COMPLETED'">Hoàn tất</span>
     <span th:case="'CANCELLED'">Đã hủy</span><span th:case="*" th:text="${status}"></span>
 </span>
@@ -13,6 +14,7 @@
 </span>
 <span th:fragment="method(method)" th:switch="${method.name()}">
     <span th:case="'ONLINE'">Trực tuyến</span><span th:case="'COD'">COD · Thu khi giao thành công</span>
+    <span th:case="'PAY_AT_STORE'">Thanh toán tại cửa hàng</span>
     <span th:case="*" th:text="${method}"></span>
 </span>
 <div th:fragment="action(order)">

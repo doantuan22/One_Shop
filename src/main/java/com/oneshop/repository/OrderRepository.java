@@ -20,6 +20,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Optional<Order> findByIdAndUserEmail(Long orderId, String email);
 
+    @EntityGraph(attributePaths = "store")
+    List<Order> findByUserEmailOrderByCreatedAtDescIdDesc(String email);
+
     /** Serialize state transitions and payment attempts/results on this Order before reading Payment or stock. */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select o from Order o where o.id = :id")

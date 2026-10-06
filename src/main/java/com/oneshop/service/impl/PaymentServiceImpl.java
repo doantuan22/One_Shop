@@ -86,12 +86,28 @@ public class PaymentServiceImpl implements PaymentService {
                 || order.getTotalAmount() == null || order.getTotalAmount().signum() < 0) {
             throw new BadRequestException("Chỉ ghi nhận thu COD cho đơn giao hàng đang SHIPPING và chưa thanh toán.");
         }
+        return collectOffline(order);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
+    public PaymentResponse recordPayAtStoreCollected(Order order) {
+        if (order == null || order.getId() == null || order.getFulfillmentType() != FulfillmentType.STORE_PICKUP
+                || order.getPaymentMethod() != PaymentMethod.PAY_AT_STORE || order.getOrderStatus() != OrderStatus.READY_FOR_PICKUP
+                || order.getPaymentStatus() != OrderPaymentStatus.UNPAID || order.getPickupCode() == null
+                || order.getReadyAt() == null || order.getTotalAmount() == null || order.getTotalAmount().signum() < 0) {
+            throw new BadRequestException("Chỉ ghi nhận thu tại cửa hàng cho đơn pickup sẵn sàng nhận và chưa thanh toán.");
+        }
+        return collectOffline(order);
+    }
+
+    private PaymentResponse collectOffline(Order order) {
         if (paymentRepository.findFirstByOrderIdAndStatusOrderByIdAsc(order.getId(), PaymentStatus.SUCCESS).isPresent()) {
-            throw new BadRequestException("Đơn hàng đã có thanh toán thành công; không thể thu COD lần nữa.");
+            throw new BadRequestException("Đơn hàng đã có thanh toán thành công; không thể thu tiền lần nữa.");
         }
         Payment payment = new Payment();
         payment.setOrder(order);
-        payment.setMethod(PaymentMethod.COD);
+        payment.setMethod(order.getPaymentMethod());
         payment.setAmount(order.getTotalAmount());
         payment.setStatus(PaymentStatus.SUCCESS);
         payment.setTransactionCode(transactionCode());
