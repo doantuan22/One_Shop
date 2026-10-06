@@ -23,7 +23,7 @@ public class OrderViewService {
                 .map(i -> new OrderItemResponse(i.getProductName(), i.getUnitPrice(), i.getQuantity(), i.getSubtotal())).toList(),
                 histories.findByOrderIdOrderByChangedAtAscIdAsc(id).stream().map(h -> new OrderHistoryResponse(
                         h.getOldStatus(), h.getNewStatus(), h.getChangedBy() == null ? "Hệ thống" : h.getChangedBy().getFullName(),
-                        h.getNote(), h.getChangedAt())).toList(),
+                        historyNote(order, h.getNote(), showCustomerCode), h.getChangedAt())).toList(),
                 payments.findByOrderIdOrderByIdAsc(id).stream().map(p -> new PaymentResponse(p.getId(), id, p.getMethod(),
                         p.getAmount(), p.getStatus(), p.getTransactionCode(), p.getPaidAt(), p.getCreatedAt())).toList());
     }
@@ -34,5 +34,15 @@ public class OrderViewService {
                 o.getCreatedAt(), o.getFulfillmentType(), o.getPaymentMethod(), o.getPaymentStatus(), o.getOrderStatus(),
                 o.getReceiverName(), o.getReceiverPhone(), o.getShippingAddress(), o.getTotalAmount(), o.getReadyAt(),
                 o.getPickedUpAt(), visible ? o.getPickupCode() : null, action);
+    }
+
+    /** Legacy history notes may contain a stored code; hiding the summary field alone would still expose it to Staff. */
+    private String historyNote(Order order, String note, boolean showCustomerCode) {
+        String code = order.getPickupCode();
+        if (!showCustomerCode && order.getFulfillmentType() == FulfillmentType.STORE_PICKUP
+                && note != null && code != null && !code.isEmpty()) {
+            return note.replace(code, "[ẩn mã nhận hàng]");
+        }
+        return note;
     }
 }

@@ -55,4 +55,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findByStoreIdAndOrderStatusIn(Long storeId, Collection<OrderStatus> statuses, Pageable pageable);
 
     long countByStoreIdAndOrderStatusIn(Long storeId, Collection<OrderStatus> statuses);
+
+    long countByStoreIdAndFulfillmentTypeAndOrderStatus(Long storeId, FulfillmentType type, OrderStatus status);
+
+    /** Bounded, stable queue of ALL fulfillment/status types within the authenticated Staff's assignments. */
+    @EntityGraph(attributePaths = {"store", "user"})
+    Page<Order> findByStoreIdInOrderByCreatedAtDescIdDesc(Collection<Long> storeIds, Pageable pageable);
 }

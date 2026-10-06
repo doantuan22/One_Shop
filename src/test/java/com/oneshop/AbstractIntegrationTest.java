@@ -9,6 +9,11 @@ import com.oneshop.repository.UserRepository;
 import com.oneshop.service.ProductService;
 import com.oneshop.service.StoreProductService;
 import com.oneshop.service.StoreService;
+import com.oneshop.service.StaffOperationsService;
+import com.oneshop.dto.response.StaffDashboardResponse;
+import com.oneshop.dto.response.StaffStoreDashboardResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
@@ -67,6 +72,18 @@ abstract class AbstractIntegrationTest {
     /** Unstubbed, a Staff has no assigned Store (empty list). */
     @MockitoBean
     protected StoreService storeService;
+
+    /** Layout/security tests stay independent of SQL; actual scope/data reads are covered by database tests. */
+    @MockitoBean
+    protected StaffOperationsService staffOperationsService;
+
+    @BeforeEach
+    void staffReadModelsByDefault() {
+        when(staffOperationsService.getDashboard()).thenAnswer(invocation -> new StaffDashboardResponse(
+                storeService.getAssignedStores(SecurityContextHolder.getContext().getAuthentication().getName()).stream()
+                        .map(s -> new StaffStoreDashboardResponse(s, 0, 0, 0, 0)).toList(), 5, java.util.List.of()));
+        when(staffOperationsService.getOrders(org.mockito.ArgumentMatchers.anyInt())).thenReturn(Page.empty());
+    }
 
     /** Redirects are not followed so that tests can assert on them. */
     private final HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NEVER).build();

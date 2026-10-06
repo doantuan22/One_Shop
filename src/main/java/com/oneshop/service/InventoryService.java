@@ -19,6 +19,9 @@ public interface InventoryService {
      * already {@code newQuantity}.
      *
      * <p>The caller decides whether the user may touch that Store; this method does not check a Store scope.
+     * Future Staff callers use {@link StaffStoreScopeService#requireStoreProduct} for scoped reads and
+     * {@link StaffStoreScopeService#requireAssignedStore} on the locked resource's actual Store before a mutation,
+     * in the same transaction. Request store_id is never authorization. Phase 10.1 adds no Staff stock mutation.
      *
      * @param userEmail e-mail of the authenticated Admin or Staff making the change
      * @param note      reason of the change; a default text is stored when it is blank

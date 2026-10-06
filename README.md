@@ -2,7 +2,13 @@
 
 **Xây dựng website bán mỹ phẩm OneShop theo mô hình chuỗi cửa hàng.**
 
-Giai đoạn hiện tại: **Phase 9.5 – Integration + Verification**. **PHASE 9 – PAYMENT + FULFILLMENT COMPLETED** (Roadmap V2). Các phần đã triển khai:
+Giai đoạn hiện tại: **Phase 10.2 – Staff Dashboard + Order Operations**. **PHASE 9 – PAYMENT + FULFILLMENT COMPLETED** (Roadmap V2). Các phần đã triển khai:
+
+* **Phase 10.2 – Staff Dashboard + Order Operations**: Dashboard thống kê nhỏ theo từng assigned Store;
+  Order Queue phân trang và Order Detail chỉ đọc; reuse Store scope 10.1 và Order snapshot/payment/history reader.
+
+* **Phase 10.1 – Staff Store Scope Foundation**: Service scope dùng chung từ SecurityContext, reuse ACTIVE assignment
+  resolver; lookup Order/StoreProduct chỉ trong assigned Stores, cùng nền tảng scope cho Inventory.
 
 * **Phase 9.5 – Integration + Verification**: TC-15 full E2E ba Store với DELIVERY/COD, PICKUP/ONLINE và
   PICKUP/PAY_AT_STORE; payment failure chỉ hủy/hoàn kho target Order; ownership, Staff scope, CSRF,
@@ -35,7 +41,50 @@ Giai đoạn hiện tại: **Phase 9.5 – Integration + Verification**. **PHASE
 * **Phase 5 – Auth + JWT**: đăng ký/đăng nhập/đăng xuất, JWT trong cookie HttpOnly, phân quyền CUSTOMER/STAFF/ADMIN ở
   backend, Store scope của Staff theo `StaffStoreAssignment` ACTIVE, CSRF.
 
-Phase 9 đã hoàn tất. Staff Store Operations đầy đủ của Phase 10 chưa được triển khai.
+Phase 9 đã hoàn tất. Phase 10 có nền tảng Store scope 10.1 và Dashboard/Order Queue/Order Detail 10.2.
+Các phần Staff Operations sau 10.2 chưa triển khai.
+
+### Staff Dashboard và Order Operations (Phase 10.2)
+
+* `GET /staff` (hoặc `/staff/`): Dashboard thật nếu có scope; giữ thông báo không có dữ liệu cho Staff chưa phân công.
+* `GET /staff/dashboard`: Dashboard cần ACTIVE assignment; không có scope trả 403.
+* `GET /staff/orders?page=0`: danh sách Order mọi fulfillment/status trong scope, 20 đơn/trang;
+  sắp xếp `createdAt DESC, id DESC`, tổng số cũng lấy bằng scoped query.
+* `GET /staff/orders/{orderId}`: Order + Store, khách hàng/người nhận, snapshot items, payment/status,
+  pickup timestamps và timeline. Cross-Store hoặc không tồn tại cùng trả 404 trước khi đọc child data.
+
+`StaffOperationsService` chỉ đọc, tái sử dụng `StaffStoreScopeService` → SecurityContext → ACTIVE assignments → assigned
+Store ids. Dashboard dùng SQL COUNT theo từng assigned Store, giữ nhiều assignment và không gộp lẫn thống kê Store:
+đơn cần xử lý = CONFIRMED/PREPARING/PACKED/SHIPPING; chờ khách nhận = STORE_PICKUP + READY_FOR_PICKUP.
+Inventory chỉ đếm StoreProduct ACTIVE: sắp hết = tồn 1–5, hết = 0, không trùng hai nhóm.
+Dashboard hiển thị tối đa năm Order gần đây bằng chính scoped queue query. Không nhận Store selector từ request.
+
+Order Detail reuse `OrderViewService` và shared Thymeleaf fragment. Mã pickup vẫn ẩn với Staff, kể cả trong ghi chú
+history seed cũ; dữ liệu DB và Customer hiển thị mã của đơn mình giữ nguyên. Không có action/state transition mới.
+SiteMesh/Bootstrap/sidebar hiện có được dùng lại. Audit và kiểm thử:
+[Báo cáo Phase 10.2](docs/Phase10_2_StaffDashboardOrderOperations_Report.md). Dừng trước Phase 10.3.
+
+### Staff Store scope dùng chung (Phase 10.1)
+
+`StaffStoreScopeService` lấy STAFF đã xác thực từ `SecurityContextHolder`, không nhận staffEmail/userId của request.
+Service tái sử dụng `StoreService.getAssignedStores` → `StaffStoreAssignmentRepository.findActiveStoresByStaffEmail`:
+User ACTIVE/STAFF, assignment ACTIVE và Store ACTIVE. Không có assignment hợp lệ trả AccessDenied.
+Giữ hỗ trợ nhiều assignment: scope là toàn bộ assigned Store ids, không tự chọn Store đầu tiên.
+
+* `getAssignedStores/getAssignedStoreIds`: resolve scope từ DB mỗi lần, không cache quyền trong JWT/request.
+* `requireAssignedStore`: kiểm Store của resource hoặc subset được yêu cầu thuộc scope; request không cấp quyền mới.
+* `requireOrder`: query Order id + assigned Store ids hiện hữu.
+* `requireStoreProduct`: query StoreProduct id + assigned Store ids, fetch Store/Product; đây cũng là resource scope
+  cho Inventory, chưa thêm Stock Adjustment hoặc Inventory History.
+
+Các lookup là primitive nội bộ cho Service, không serialize entity ra Client. Mutation trong phase sau phải giữ resource
+lock rồi kiểm actual Store bằng `requireAssignedStore` trong cùng transaction. Delivery/Pickup đã có principal/StoreService
+scope checks ở mọi action và giữ nguyên; `StaffStoreScopeInterceptor` vẫn chặn Staff data routes khi không có scope,
+riêng `/staff` landing chỉ thông báo chưa phân công như trước.
+
+Riêng Phase 10.1 không thêm Dashboard/Order queue/Pickup queue/Stock/Inventory UI/API. Test HTTP StoreProduct dùng adapter **chỉ trong
+Spring test context**, không có trong JAR production. Audit và kết quả:
+[Báo cáo Phase 10.1](docs/Phase10_1_StaffStoreScopeFoundation_Report.md). Dashboard/Order reads tiếp tục ở Phase 10.2 phía trên.
 
 ### Kiểm chứng tích hợp và đóng Phase 9 (Phase 9.5)
 
@@ -133,7 +182,7 @@ Chi tiết hiển thị người nhận, địa chỉ, tổng tiền, snapshot s
   Wrong-scope detail/unknown Order trả 404, mutation sai scope trả 403, guard sai trả 400, lỗi lock/database trả 409 thân thiện.
 * Fulfillment không đổi tồn, không tạo InventoryMovement, không sửa snapshot, Store, phương thức hoặc CheckoutSession.
   Giá/tên catalog đổi sau mua không làm thay đổi chi tiết hay amount thu COD.
-* SHIPPING là trạng thái nội bộ. Chưa tích hợp vận chuyển, gateway, cancel/return/refund hoặc dashboard/stock UI của Phase 10.
+* SHIPPING là trạng thái nội bộ. Chưa tích hợp vận chuyển, gateway, cancel/return/refund hoặc Stock UI của Phase 10.
 
 Audit, kiểm thử và cleanup: [Báo cáo Phase 9.3](docs/Phase9_3_DeliveryFlow_Report.md).
 
@@ -432,7 +481,7 @@ oneshop/
     │   │   ├── config/        Security, SiteMesh, Cloudinary, Web, JPA, properties
     │   │   ├── controller/
     │   │   │   ├── client/    Trang Thymeleaf của khách (home, products, cart, login/register)
-    │   │   │   ├── staff/     Khu vực /staff/** (trang mẫu Phase 4; nghiệp vụ Phase 10)
+    │   │   │   ├── staff/     Khu vực /staff/** (Dashboard/Order reads 10.2 và Delivery/Pickup 9.3/9.4)
     │   │   │   ├── admin/     Khu vực /admin/** (trang mẫu Phase 4; nghiệp vụ Phase 6/11)
     │   │   │   ├── web/       DecoratorController (cầu nối SiteMesh - Thymeleaf)
     │   │   │   └── api/       REST: /api/auth/**, /health

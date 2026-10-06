@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head><title>Danh sách đơn hàng</title></head>
+<body>
+<div th:replace="~{fragments/components :: pageHeader('Danh sách đơn hàng', 'Chỉ hiển thị đơn thuộc chi nhánh được phân công.')}"></div>
+<p class="text-secondary">Tổng số đơn: <strong id="order-count" th:text="${orders.totalElements}"></strong></p>
+<div th:replace="~{staff/orders/fragments :: table(${orders.content})}"></div>
+<nav aria-label="Phân trang đơn hàng" class="d-flex align-items-center gap-3" th:if="${orders.totalPages > 1}">
+    <a class="btn btn-outline-secondary" th:if="${orders.hasPrevious()}" th:href="@{/staff/orders(page=${orders.number - 1})}">Trang trước</a>
+    <span th:text="'Trang ' + ${orders.number + 1} + ' / ' + ${orders.totalPages}"></span>
+    <a class="btn btn-outline-secondary" th:if="${orders.hasNext()}" th:href="@{/staff/orders(page=${orders.number + 1})}">Trang sau</a>
+</nav>
+</body></html>

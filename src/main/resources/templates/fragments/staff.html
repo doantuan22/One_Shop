@@ -52,7 +52,8 @@
 
         <nav aria-label="Điều hướng nhân viên">
             <ul class="nav nav-pills flex-column gap-1">
-                <li th:replace="~{fragments/components :: navItem('/staff', 'Tổng quan', ${currentPath}, true)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/staff', 'Tổng quan', ${currentPath == '/staff/dashboard' or currentPath == '/staff/'} ? '/staff' : ${currentPath}, true)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/staff/orders', 'Danh sách đơn hàng', ${currentPath != null and (#strings.startsWith(currentPath, '/staff/orders/delivery') or #strings.startsWith(currentPath, '/staff/orders/pickup'))} ? null : ${currentPath}, true)}"></li>
                 <li th:replace="~{fragments/components :: navItem('/staff/orders/delivery', 'Đơn giao hàng', ${currentPath}, true)}"></li>
                 <li th:replace="~{fragments/components :: navItem('/staff/orders/pickup', 'Đơn nhận tại cửa hàng', ${currentPath}, true)}"></li>
                 <li th:replace="~{fragments/components :: navItem('/staff/stock', 'Tồn kho chi nhánh', ${currentPath}, false)}"></li>

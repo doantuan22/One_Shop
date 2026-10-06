@@ -196,8 +196,8 @@ class AccessControlIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void assignedStaffPassesTheScopeCheckOnInnerPages() throws Exception {
-        // no such page yet (Phase 10): the request gets past security and the scope check and ends as 404, not 403
-        assertThat(status("/staff/orders", as(STAFF))).isEqualTo(404);
+        // Phase 10.2 now provides the read-only queue; the authenticated assignment passes the same scope check.
+        assertThat(status("/staff/orders", as(STAFF))).isEqualTo(200);
     }
 
     @Test

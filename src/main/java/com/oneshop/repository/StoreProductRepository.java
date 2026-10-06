@@ -123,6 +123,15 @@ public interface StoreProductRepository extends JpaRepository<StoreProduct, Long
     @EntityGraph(attributePaths = {"store", "product"})
     Optional<StoreProduct> findWithStoreAndProductById(Long id);
 
+    /** Staff lookup: allowed Store ids are resolved by the service from ACTIVE assignments, never browser input. */
+    @EntityGraph(attributePaths = {"store", "product"})
+    Optional<StoreProduct> findByIdAndStoreIdIn(Long id, Collection<Long> storeIds);
+
+    /** Dashboard inventory counts of active StoreProducts at an assigned Store. Zero is counted separately. */
+    long countByStoreIdAndStatusAndQuantityBetween(Long storeId, ActiveStatus status, int min, int max);
+
+    long countByStoreIdAndStatusAndQuantity(Long storeId, ActiveStatus status, int quantity);
+
     // ---- Locking: used by stock changes (InventoryService) and by Phase 8 Checkout. ----
 
     /**

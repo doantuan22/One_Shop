@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head><title>Chi tiết đơn hàng</title></head>
+<body>
+<a class="btn btn-outline-secondary mb-3" th:href="@{/staff/orders}">Danh sách đơn hàng</a>
+<p>Khách hàng: <strong id="order-customer" th:text="${customerName}"></strong></p>
+<div th:replace="~{orders/fragments :: detail(${detail})}"></div>
+</body></html>
