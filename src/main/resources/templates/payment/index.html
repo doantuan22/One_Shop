@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head><title>Thanh toán đơn hàng</title></head>
+<body>
+<h1 class="h3">Thanh toán đơn hàng #<span id="payment-order-id" th:text="${paymentOrder.orderId}">1001</span></h1>
+<p class="text-secondary" th:text="${paymentOrder.storeName}">OneShop Thủ Đức</p>
+<div class="card mb-3"><div class="card-body">
+    <dl class="row mb-0">
+        <dt class="col-sm-4">Tổng đơn hàng</dt>
+        <dd class="col-sm-8" id="payment-order-total"><span th:replace="~{fragments/components :: price(${paymentOrder.totalAmount})}"></span></dd>
+        <dt class="col-sm-4">Phương thức</dt>
+        <dd class="col-sm-8" th:switch="${paymentOrder.paymentMethod.name()}">
+            <span th:case="'ONLINE'">Thanh toán trực tuyến</span><span th:case="'COD'">Thanh toán khi nhận hàng</span>
+            <span th:case="'PAY_AT_STORE'">Thanh toán tại cửa hàng</span>
+        </dd>
+        <dt class="col-sm-4">Trạng thái thanh toán</dt>
+        <dd class="col-sm-8" id="payment-order-status" th:attr="data-status=${paymentOrder.paymentStatus}" th:switch="${paymentOrder.paymentStatus.name()}">
+            <span th:case="'UNPAID'">Chưa thanh toán</span><span th:case="'PAID'">Đã thanh toán</span><span th:case="'FAILED'">Thanh toán thất bại</span>
+        </dd>
+        <dt class="col-sm-4">Trạng thái đơn hàng</dt>
+        <dd class="col-sm-8" id="payment-order-state" th:attr="data-status=${paymentOrder.orderStatus}" th:switch="${paymentOrder.orderStatus.name()}">
+            <span th:case="'PENDING_PAYMENT'">Chờ thanh toán</span><span th:case="'CONFIRMED'">Đã xác nhận</span>
+            <span th:case="'CANCELLED'">Đã hủy</span><span th:case="*" th:text="${paymentOrder.orderStatus}"></span>
+        </dd>
+    </dl>
+</div></div>
+<div class="alert alert-info" th:if="${paymentOrder.paymentMethod.name() == 'ONLINE'}">
+    Đây là thanh toán trực tuyến mô phỏng, không thu tiền thật. Chọn kết quả để kiểm tra luồng thanh toán.
+    Nếu thanh toán thất bại, đơn hàng sẽ bị hủy. Bạn có thể đặt đơn mới để mua lại.
+</div>
+<form th:if="${paymentOrder.payable() and !paymentOrder.hasPendingAttempt()}" method="post"
+      th:action="@{/orders/{id}/payments/attempts(id=${paymentOrder.orderId})}">
+    <button id="start-payment" class="btn btn-primary mb-3" type="submit">Tiến hành thanh toán online</button>
+</form>
+<p th:if="${paymentOrder.attempts.isEmpty()}" class="text-secondary">Chưa có lần thanh toán nào.</p>
+<section class="card mb-3 os-payment-attempt" th:each="attempt : ${paymentOrder.attempts}"
+         th:attr="data-payment-id=${attempt.paymentId},data-status=${attempt.status}">
+    <div class="card-body">
+        <h2 class="h6">Lần thanh toán #<span th:text="${attempt.paymentId}"></span></h2>
+        <p><span th:replace="~{fragments/components :: price(${attempt.amount})}"></span> &middot;
+            <span th:switch="${attempt.status.name()}"><span th:case="'PENDING'">Đang chờ</span>
+                <span th:case="'SUCCESS'">Thành công</span><span th:case="'FAILED'">Thất bại</span></span>
+        </p>
+        <p class="small mb-1" th:if="${attempt.transactionCode}">Mã giao dịch: <span class="payment-transaction-code" th:text="${attempt.transactionCode}"></span></p>
+        <p class="small mb-1" th:if="${attempt.paidAt}">Đã thanh toán lúc: <span class="payment-paid-at" th:text="${#temporals.format(attempt.paidAt, 'dd/MM/yyyy HH:mm:ss')}"></span></p>
+        <div class="d-flex flex-wrap gap-2 mt-2" th:if="${paymentOrder.payable() and attempt.status.name() == 'PENDING'}">
+            <form method="post" th:action="@{/orders/{oid}/payments/{pid}/success(oid=${paymentOrder.orderId},pid=${attempt.paymentId})}">
+                <button class="btn btn-success" type="submit">Mô phỏng thành công</button>
+            </form>
+            <form method="post" th:action="@{/orders/{oid}/payments/{pid}/failure(oid=${paymentOrder.orderId},pid=${attempt.paymentId})}">
+                <button class="btn btn-outline-danger" type="submit">Mô phỏng thất bại và hủy đơn</button>
+            </form>
+        </div>
+    </div>
+</section>
+<a class="btn btn-outline-primary" th:href="@{/checkout/{id}(id=${paymentOrder.checkoutId})}">Xem lần đặt hàng</a>
+</body></html>

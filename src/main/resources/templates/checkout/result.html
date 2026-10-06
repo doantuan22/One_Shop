@@ -32,6 +32,7 @@
               th:classappend="${order.orderStatus.name() == 'PENDING_PAYMENT'} ? 'text-bg-warning' : 'text-bg-success'">
             <span th:case="'PENDING_PAYMENT'">Chờ thanh toán</span>
             <span th:case="'CONFIRMED'">Đã xác nhận</span>
+            <span th:case="'CANCELLED'">Đã hủy</span>
             <span th:case="*" th:text="${order.orderStatus}">Trạng thái</span>
         </span>
     </div>
@@ -59,13 +60,16 @@
                 <span th:case="'COD'">Thanh toán khi nhận hàng (COD)</span>
                 <span th:case="'PAY_AT_STORE'">Thanh toán tại cửa hàng</span>
                 <span th:case="'ONLINE'">Thanh toán trực tuyến</span>
-                &middot; <span th:text="${order.paymentStatus.name() == 'PAID'} ? 'Đã thanh toán' : 'Chưa thanh toán'">Chưa thanh toán</span>
+                &middot; <span th:switch="${order.paymentStatus.name()}"><span th:case="'PAID'">Đã thanh toán</span>
+                    <span th:case="'FAILED'">Thanh toán thất bại</span><span th:case="*">Chưa thanh toán</span></span>
             </dd>
             <dt class="col-sm-4">Người nhận</dt>
             <dd class="col-sm-8"><span th:text="${order.receiverName}">Nguyễn Văn A</span> &middot; <span th:text="${order.receiverPhone}">0900000000</span></dd>
             <dt class="col-sm-4" th:if="${order.shippingAddress}">Địa chỉ giao hàng</dt>
             <dd class="col-sm-8" th:if="${order.shippingAddress}" th:text="${order.shippingAddress}">12 Võ Văn Ngân</dd>
         </dl>
+        <a th:if="${order.paymentMethod.name() == 'ONLINE'}" class="btn btn-outline-primary mt-2"
+           th:href="@{/orders/{id}/payments(id=${order.orderId})}">Xem thanh toán trực tuyến</a>
     </div>
 
     <div class="card-footer bg-white d-flex justify-content-between">

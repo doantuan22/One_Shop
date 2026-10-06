@@ -7,8 +7,9 @@ import com.oneshop.entity.StoreProduct;
  * Deduct, restore and adjust StoreProduct stock, always with an InventoryMovement (BR-09, BR-12).
  *
  * <p>{@link #adjustStock} (STOCK_ADJUST) serves the Admin StoreProduct form and, from Phase 10, the Staff stock
- * screen after its Store scope check. {@link #deductForOrder} (ORDER) is used by checkout. CANCEL_ORDER (positive)
- * arrives with order cancellation in a later phase. Quantity must never go below zero.
+ * screen after its Store scope check. {@link #deductForOrder} (ORDER) is used by checkout.
+ * {@link #restoreForCancelledOrder} (positive CANCEL_ORDER) supports ONLINE failure in Phase 9.1.
+ * Quantity must never go below zero.
  */
 public interface InventoryService {
 
@@ -37,4 +38,8 @@ public interface InventoryService {
      *                                                   stock is then left untouched
      */
     void deductForOrder(StoreProduct lockedStoreProduct, int quantity, Order order);
+
+    /** Restore every snapshot line under ascending StoreProduct write locks, with CANCEL_ORDER movements.
+     * Caller holds the Order lock and validates its transition; shares that transaction without committing. */
+    void restoreForCancelledOrder(Order lockedOrder);
 }

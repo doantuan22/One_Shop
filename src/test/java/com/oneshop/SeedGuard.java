@@ -3,6 +3,7 @@ package com.oneshop;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,11 +19,13 @@ import java.util.stream.Collectors;
  */
 final class SeedGuard {
 
-    private record StoreProductState(long id, int quantity, BigDecimal price, String status) {
+    private record StoreProductState(long id, int quantity, BigDecimal price, String status, LocalDateTime updatedAt) {
     }
 
-    private record CartLine(long id, long cartId, long storeProductId, int quantity) {
+    private record CartLine(long id, long cartId, long storeProductId, int quantity, LocalDateTime createdAt, LocalDateTime updatedAt) {
     }
+
+    private record CartState(long id, LocalDateTime createdAt, LocalDateTime updatedAt) { }
 
     private final JdbcTemplate jdbc;
     private long maxOrder;
@@ -31,6 +34,7 @@ final class SeedGuard {
     private long maxHistory;
     private List<StoreProductState> storeProducts;
     private List<CartLine> cartLines;
+    private List<CartState> carts;
 
     SeedGuard(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
@@ -41,10 +45,14 @@ final class SeedGuard {
         maxCheckout = max("checkout_sessions", "checkout_id");
         maxMovement = max("inventory_movements", "movement_id");
         maxHistory = max("order_status_history", "history_id");
-        storeProducts = jdbc.query("select store_product_id, quantity, price, status from dbo.store_products",
-                (rs, i) -> new StoreProductState(rs.getLong(1), rs.getInt(2), rs.getBigDecimal(3), rs.getString(4)));
-        cartLines = jdbc.query("select cart_item_id, cart_id, store_product_id, quantity from dbo.cart_items",
-                (rs, i) -> new CartLine(rs.getLong(1), rs.getLong(2), rs.getLong(3), rs.getInt(4)));
+        storeProducts = jdbc.query("select store_product_id, quantity, price, status, updated_at from dbo.store_products",
+                (rs, i) -> new StoreProductState(rs.getLong(1), rs.getInt(2), rs.getBigDecimal(3), rs.getString(4),
+                        rs.getTimestamp(5).toLocalDateTime()));
+        cartLines = jdbc.query("select cart_item_id, cart_id, store_product_id, quantity, created_at, updated_at from dbo.cart_items",
+                (rs, i) -> new CartLine(rs.getLong(1), rs.getLong(2), rs.getLong(3), rs.getInt(4),
+                        rs.getTimestamp(5).toLocalDateTime(), rs.getTimestamp(6).toLocalDateTime()));
+        carts = jdbc.query("select cart_id, created_at, updated_at from dbo.carts",
+                (rs, i) -> new CartState(rs.getLong(1), rs.getTimestamp(2).toLocalDateTime(), rs.getTimestamp(3).toLocalDateTime()));
     }
 
     void restore() {
@@ -56,9 +64,10 @@ final class SeedGuard {
         jdbc.update("delete from dbo.checkout_sessions where checkout_id > ?", maxCheckout);
 
         for (StoreProductState state : storeProducts) {
-            jdbc.update("update dbo.store_products set quantity = ?, price = ?, status = ? "
-                            + "where store_product_id = ? and (quantity <> ? or price <> ? or status <> ?)",
-                    state.quantity(), state.price(), state.status(), state.id(), state.quantity(), state.price(), state.status());
+            jdbc.update("update dbo.store_products set quantity = ?, price = ?, status = ?, updated_at = ? "
+                            + "where store_product_id = ? and (quantity <> ? or price <> ? or status <> ? or updated_at <> ?)",
+                    state.quantity(), state.price(), state.status(), state.updatedAt(), state.id(), state.quantity(),
+                    state.price(), state.status(), state.updatedAt());
         }
 
         Set<Long> remembered = cartLines.stream().map(CartLine::id).collect(Collectors.toSet());
@@ -67,15 +76,23 @@ final class SeedGuard {
                 .forEach(id -> jdbc.update("delete from dbo.cart_items where cart_item_id = ?", id));
         for (CartLine line : cartLines) {
             if (present.contains(line.id())) {
-                jdbc.update("update dbo.cart_items set quantity = ? where cart_item_id = ? and quantity <> ?",
-                        line.quantity(), line.id(), line.quantity());
+                jdbc.update("update dbo.cart_items set quantity = ?, created_at = ?, updated_at = ? where cart_item_id = ?",
+                        line.quantity(), line.createdAt(), line.updatedAt(), line.id());
             } else {
                 // one batch = one connection, which IDENTITY_INSERT needs
                 jdbc.execute("SET IDENTITY_INSERT dbo.cart_items ON; "
-                        + "INSERT INTO dbo.cart_items (cart_item_id, cart_id, store_product_id, quantity) VALUES ("
-                        + line.id() + ", " + line.cartId() + ", " + line.storeProductId() + ", " + line.quantity() + "); "
+                        + "INSERT INTO dbo.cart_items (cart_item_id, cart_id, store_product_id, quantity, created_at, updated_at) VALUES ("
+                        + line.id() + ", " + line.cartId() + ", " + line.storeProductId() + ", " + line.quantity() + ", '"
+                        + line.createdAt() + "', '" + line.updatedAt() + "'); "
                         + "SET IDENTITY_INSERT dbo.cart_items OFF;");
             }
+        }
+        Set<Long> rememberedCarts = carts.stream().map(CartState::id).collect(Collectors.toSet());
+        jdbc.queryForList("select cart_id from dbo.carts", Long.class).stream().filter(id -> !rememberedCarts.contains(id))
+                .forEach(id -> jdbc.update("delete from dbo.carts where cart_id = ?", id));
+        for (CartState state : carts) {
+            jdbc.update("update dbo.carts set created_at = ?, updated_at = ? where cart_id = ?",
+                    state.createdAt(), state.updatedAt(), state.id());
         }
     }
 

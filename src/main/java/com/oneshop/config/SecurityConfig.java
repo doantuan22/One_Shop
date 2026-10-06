@@ -59,10 +59,12 @@ public class SecurityConfig {
                                                    JwtCookieService cookieService,
                                                    CustomUserDetailsService userDetailsService) throws Exception {
         PathPatternRequestMatcher.Builder paths = PathPatternRequestMatcher.withDefaults();
-        // Requests that carry a Bearer token cannot be forged by a browser, so they need no CSRF token.
+        // Bearer API requests need no CSRF token. The Client payment demo always requires it.
         RequestMatcher bearerRequest = request -> {
             String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-            return header != null && header.startsWith("Bearer ");
+            // The internal payment demo is a Client form workflow and always requires CSRF.
+            String path = request.getRequestURI().substring(request.getContextPath().length());
+            return header != null && header.startsWith("Bearer ") && !path.startsWith("/orders/");
         };
 
         http
@@ -94,7 +96,7 @@ public class SecurityConfig {
                         .requestMatchers("/staff/**", "/api/staff/**").hasRole("STAFF")
                         // Client: the cart belongs to a customer account (USER 1--1 CART), and only a customer
                         // can turn it into orders
-                        .requestMatchers("/cart/**", "/checkout/**").hasRole("CUSTOMER")
+                        .requestMatchers("/cart/**", "/checkout/**", "/orders/**").hasRole("CUSTOMER")
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
                         .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),

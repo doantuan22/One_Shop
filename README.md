@@ -2,7 +2,10 @@
 
 **Xây dựng website bán mỹ phẩm OneShop theo mô hình chuỗi cửa hàng.**
 
-Giai đoạn hiện tại: **Phase 8 – Checkout + Orders** (Roadmap V2, mục 12). Các phase đã xong:
+Giai đoạn hiện tại: **Phase 9.1 – Payment Foundation** (phần đầu của Phase 9 trong Roadmap V2). Các phần đã triển khai:
+
+* **Phase 9.1 – Payment Foundation**: Payment ONLINE theo từng Order; tạo attempt PENDING; SUCCESS xác nhận đơn;
+  FAILED hủy đúng đơn, hoàn tồn và ghi audit trong một transaction. COD/PAY_AT_STORE vẫn UNPAID.
 
 * **Phase 8 – Checkout + Orders**: từ các dòng giỏ đã chọn tạo một CheckoutSession và mỗi chi nhánh một Order, lưu
   snapshot OrderItem, trừ tồn kho có khóa và ghi biến động kho, tất cả trong một transaction.
@@ -19,7 +22,37 @@ Giai đoạn hiện tại: **Phase 8 – Checkout + Orders** (Roadmap V2, mục 
 * **Phase 5 – Auth + JWT**: đăng ký/đăng nhập/đăng xuất, JWT trong cookie HttpOnly, phân quyền CUSTOMER/STAFF/ADMIN ở
   backend, Store scope của Staff theo `StaffStoreAssignment` ACTIVE, CSRF.
 
-Vòng đời thanh toán và xử lý đơn (Phase 9 trở đi) chưa được triển khai.
+Phase 9.2–9.5 (state machine tổng quát và fulfillment) chưa được triển khai.
+
+### Thanh toán nội bộ theo Order (Phase 9.1)
+
+* Từ `/checkout/{id}`, mở **Xem thanh toán trực tuyến** của từng Order ONLINE. `GET /orders/{orderId}/payments`
+  hiển thị Order, chi nhánh, tổng tiền, trạng thái và các Payment attempt. Chỉ CUSTOMER sở hữu Order được truy cập;
+  sai ownership/Order/Payment id trả 404. GET không tạo hay thay đổi Payment.
+* `POST /orders/{orderId}/payments/attempts` bắt đầu thanh toán: Order phải ONLINE, PENDING_PAYMENT + UNPAID.
+  Amount và method lấy từ Order trong DB; request không nhận owner, amount, method, status hay transaction code.
+  PENDING có `paid_at=NULL`, `transaction_code=NULL`. Bấm nhiều lần trả lại attempt PENDING hiện có.
+* Đây là **workflow mô phỏng nội bộ, không thu tiền thật**. Hai form CSRF gọi riêng
+  `POST /orders/{orderId}/payments/{paymentId}/success` và `/failure`. Backend vẫn kiểm ownership, Payment thuộc
+  đúng Order, method/amount khớp và state guard. Các route này luôn cần CSRF, kể cả khi có Bearer header.
+* SUCCESS: Payment SUCCESS, `paid_at` là giờ server hiện tại (độ chính xác giây); Order PAID + CONFIRMED.
+  Không trừ kho thêm và không sửa OrderItem. FAILED: Payment FAILED, `paid_at=NULL`; Order FAILED + CANCELLED;
+  hoàn số lượng snapshot của mỗi OrderItem về đúng StoreProduct, ghi một CANCEL_ORDER movement dương mỗi item.
+* `transaction_code` chỉ sinh khi nhận kết quả, cho cả SUCCESS/FAILED: `PAY-<UUID>` do server sinh, phục vụ audit/demo,
+  không phải mã giao dịch gateway. Schema hiện tại không có UNIQUE cho mã này; UUID cung cấp độ duy nhất thực tế.
+* Quan hệ **Order 1–N Payment** giữ nguyên. Phase 9.1 chỉ có một attempt đang chờ trên luồng ứng dụng; FAILED là
+  kết quả cuối, hủy và hoàn tồn ngay nên **không retry đơn đã CANCELLED**. Muốn mua lại phải tạo Order mới.
+* Mọi thao tác ghi khóa Order bằng PESSIMISTIC_WRITE trước khi đọc Payment. Hoàn tồn khóa các StoreProduct theo id
+  tăng dần như checkout. Payment, Order, tồn kho, InventoryMovement và OrderStatusHistory cùng transaction;
+  lỗi bất kỳ bước nào rollback toàn bộ. Kết quả trùng trả lại Payment đã kết thúc, không ghi audit/hoàn kho lần nữa;
+  đổi SUCCESS thành FAILED hoặc ngược lại bị từ chối.
+* History chỉ thêm PENDING_PAYMENT → CONFIRMED/CANCELLED; `changed_by_user_id=NULL` vì hệ thống đổi trạng thái từ
+  kết quả thanh toán, nhất quán history tạo đơn Phase 8. Movement tự động có `staff_id=NULL`.
+* COD/PAY_AT_STORE giữ CONFIRMED + UNPAID, không tự tạo Payment SUCCESS, pickup code hay fulfillment. CheckoutSession
+  vẫn chỉ nhóm Order; kết quả một Order không đổi Order khác hoặc status của CheckoutSession trong phase này.
+* Không sửa schema, enum hay cấu hình Hibernate. Profile dev vẫn `ddl-auto=validate`; prod giữ cấu hình hiện có.
+
+Kiểm chứng và danh sách file: [Báo cáo Phase 9.1](docs/Phase9_1_PaymentFoundation_Report.md).
 
 ### Đặt hàng (Phase 8)
 
@@ -33,7 +66,8 @@ Vòng đời thanh toán và xử lý đơn (Phase 9 trở đi) chưa được t
   đơn giá, số lượng, thành tiền), trừ tồn kèm `InventoryMovement` loại `ORDER`, xóa đúng các dòng giỏ đã đặt. Một chỗ
   không hợp lệ thì không có gì được tạo.
 * Trạng thái đầu của Order: thanh toán `ONLINE` → `PENDING_PAYMENT`; `COD` và `PAY_AT_STORE` → `CONFIRMED`; tất cả
-  `UNPAID`. Chưa tạo dòng `payments`, chưa có mã nhận hàng: đó là việc của Phase 9.
+  `UNPAID`. Checkout không tạo dòng `payments`; Phase 9.1 tạo Payment khi khách bắt đầu thanh toán.
+  Chưa có mã nhận hàng (phần STORE_PICKUP ở phase sau).
 * Giao hàng chỉ đi với COD hoặc trực tuyến; nhận tại cửa hàng chỉ đi với thanh toán tại cửa hàng hoặc trực tuyến; chi
   nhánh không bật giao hàng / nhận tại cửa hàng thì không chọn được cách đó.
 
@@ -47,8 +81,8 @@ Vòng đời thanh toán và xử lý đơn (Phase 9 trở đi) chưa được t
   đặt hàng (Phase 8) sẽ kiểm tra lại và mới trừ kho.
 * Trang `/cart` nhóm theo chi nhánh, giá là giá hiện tại của StoreProduct (không lưu trong giỏ), không hiển thị số tồn.
   Dòng không còn mua được (hết hàng, thiếu hàng, ngừng bán) vẫn nằm trong giỏ, được đánh dấu và không chọn được.
-* Checkbox "Chọn cả chi nhánh" / từng dòng chỉ là trạng thái trên trang; bấm tiếp tục sẽ gửi danh sách `cartItemIds`
-  tới `GET /cart/selection`, nơi máy chủ kiểm tra lại và hiển thị các dòng đã chọn theo chi nhánh. Chưa tạo đơn.
+* Checkbox "Chọn cả chi nhánh" / từng dòng chỉ là trạng thái trên trang; bấm tiếp tục gửi danh sách `cartItemIds`
+  tới `GET /checkout`, nơi máy chủ kiểm tra lại và hiển thị các dòng đã chọn theo chi nhánh. Chưa tạo đơn.
 * Đổi "Chi nhánh đang chọn" không làm thay đổi giỏ hàng.
 
 ### Catalog và mô hình chuỗi (Phase 6)
