@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head><title>Chi tiết đơn giao hàng</title></head>
+<body th:with="order=${deliveryDetail.order}">
+<a class="btn btn-outline-secondary btn-sm mb-3" th:href="@{/staff/orders/delivery}">Danh sách đơn giao hàng</a>
+<h1 class="h3" th:text="'Đơn giao hàng #' + ${order.orderId}"></h1>
+<p class="text-secondary" th:text="${order.storeName}"></p>
+<div class="card mb-3"><div class="card-body">
+    <dl class="row mb-0">
+        <dt class="col-sm-4">Ngày tạo</dt><dd class="col-sm-8" th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm:ss')}"></dd>
+        <dt class="col-sm-4">Hình thức nhận</dt><dd class="col-sm-8">Giao tận nơi</dd>
+        <dt class="col-sm-4">Người nhận</dt><dd class="col-sm-8" th:text="${order.receiverName}"></dd>
+        <dt class="col-sm-4">Điện thoại</dt><dd class="col-sm-8" th:text="${order.receiverPhone}"></dd>
+        <dt class="col-sm-4">Địa chỉ giao</dt><dd class="col-sm-8" th:text="${order.shippingAddress}"></dd>
+        <dt class="col-sm-4">Phương thức thanh toán</dt><dd class="col-sm-8"><span th:replace="~{staff/delivery/fragments :: method(${order.paymentMethod})}"></span></dd>
+        <dt class="col-sm-4">Thanh toán</dt><dd class="col-sm-8" id="delivery-payment-status" th:attr="data-status=${order.paymentStatus}"><span th:replace="~{staff/delivery/fragments :: payment(${order.paymentStatus})}"></span></dd>
+        <dt class="col-sm-4">Trạng thái đơn</dt><dd class="col-sm-8" id="delivery-order-status" th:attr="data-status=${order.orderStatus}"><span th:replace="~{staff/delivery/fragments :: state(${order.orderStatus})}"></span></dd>
+    </dl>
+    <div class="mt-3" th:replace="~{staff/delivery/fragments :: action(${order})}"></div>
+</div></div>
+<h2 class="h5">Sản phẩm đã đặt</h2>
+<div class="table-responsive"><table class="table">
+    <thead><tr><th>Sản phẩm</th><th>Đơn giá</th><th>Số lượng</th><th>Thành tiền</th></tr></thead>
+    <tbody><tr th:each="item : ${deliveryDetail.items}">
+        <td th:text="${item.productName}"></td><td><span th:replace="~{fragments/components :: price(${item.unitPrice})}"></span></td>
+        <td th:text="${item.quantity}"></td><td><span th:replace="~{fragments/components :: price(${item.subtotal})}"></span></td>
+    </tr></tbody>
+</table></div>
+<p class="fw-bold">Tổng đơn: <span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></p>
+<h2 class="h5 mt-4">Thanh toán</h2>
+<p class="text-secondary" th:if="${deliveryDetail.payments.isEmpty()}">Chưa ghi nhận thanh toán.</p>
+<div class="card mb-2" th:each="payment : ${deliveryDetail.payments}"><div class="card-body">
+    <p class="mb-1"><span th:text="${payment.method} + ' · ' + ${payment.status}"></span> · <span th:replace="~{fragments/components :: price(${payment.amount})}"></span></p>
+    <p class="small mb-1" th:if="${payment.transactionCode}">Mã giao dịch: <span th:text="${payment.transactionCode}"></span></p>
+    <p class="small mb-0" th:if="${payment.paidAt}">Đã thu lúc: <span th:text="${#temporals.format(payment.paidAt, 'dd/MM/yyyy HH:mm:ss')}"></span></p>
+</div></div>
+<h2 class="h5 mt-4">Lịch sử trạng thái</h2>
+<ol class="list-group list-group-numbered">
+    <li class="list-group-item" th:each="entry : ${deliveryDetail.history}">
+        <span th:if="${entry.oldStatus != null}"><span th:replace="~{staff/delivery/fragments :: state(${entry.oldStatus})}"></span> → </span>
+        <span th:replace="~{staff/delivery/fragments :: state(${entry.newStatus})}"></span>
+        <div class="small mt-1"><span th:text="${entry.actorName}"></span> · <span th:text="${#temporals.format(entry.changedAt, 'dd/MM/yyyy HH:mm:ss')}"></span></div>
+        <div class="small text-secondary" th:if="${entry.note}" th:text="${entry.note}"></div>
+    </li>
+</ol>
+</body>
+</html>

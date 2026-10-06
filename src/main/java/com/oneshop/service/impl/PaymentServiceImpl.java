@@ -3,6 +3,7 @@ package com.oneshop.service.impl;
 import com.oneshop.dto.response.OrderPaymentResponse;
 import com.oneshop.dto.response.PaymentResponse;
 import com.oneshop.entity.Order;
+import com.oneshop.entity.FulfillmentType;
 import com.oneshop.entity.OrderPaymentStatus;
 import com.oneshop.entity.OrderStatus;
 import com.oneshop.entity.Payment;
@@ -17,11 +18,12 @@ import com.oneshop.service.OrderService;
 import com.oneshop.service.PaymentService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Propagation;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/** Internal ONLINE workflow. Every mutation starts with the Order lock, including attempt creation. */
+/** ONLINE workflow and COD collection. Every mutation starts with the caller's or this service's Order lock. */
 @Service
 @Transactional
 public class PaymentServiceImpl implements PaymentService {
@@ -75,6 +77,29 @@ public class PaymentServiceImpl implements PaymentService {
         return complete(customerEmail, orderId, paymentId, PaymentStatus.FAILED);
     }
 
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
+    public PaymentResponse recordCodCollected(Order order) {
+        if (order == null || order.getId() == null || order.getFulfillmentType() != FulfillmentType.DELIVERY
+                || order.getPaymentMethod() != PaymentMethod.COD || order.getOrderStatus() != OrderStatus.SHIPPING
+                || order.getPaymentStatus() != OrderPaymentStatus.UNPAID
+                || order.getTotalAmount() == null || order.getTotalAmount().signum() < 0) {
+            throw new BadRequestException("Chỉ ghi nhận thu COD cho đơn giao hàng đang SHIPPING và chưa thanh toán.");
+        }
+        if (paymentRepository.findFirstByOrderIdAndStatusOrderByIdAsc(order.getId(), PaymentStatus.SUCCESS).isPresent()) {
+            throw new BadRequestException("Đơn hàng đã có thanh toán thành công; không thể thu COD lần nữa.");
+        }
+        Payment payment = new Payment();
+        payment.setOrder(order);
+        payment.setMethod(PaymentMethod.COD);
+        payment.setAmount(order.getTotalAmount());
+        payment.setStatus(PaymentStatus.SUCCESS);
+        payment.setTransactionCode(transactionCode());
+        payment.setPaidAt(LocalDateTime.now().withNano(0));
+        order.setPaymentStatus(OrderPaymentStatus.PAID);
+        return response(paymentRepository.saveAndFlush(payment));
+    }
+
     private PaymentResponse complete(String customerEmail, Long orderId, Long paymentId, PaymentStatus result) {
         Order order = ownLockedOrder(customerEmail, orderId);
         Payment payment = paymentRepository.findByIdAndOrderId(paymentId, orderId)
@@ -98,7 +123,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
         requirePayable(order);
         payment.setStatus(result);
-        payment.setTransactionCode("PAY-" + UUID.randomUUID());
+        payment.setTransactionCode(transactionCode());
         payment.setPaidAt(result == PaymentStatus.SUCCESS ? LocalDateTime.now().withNano(0) : null);
         if (result == PaymentStatus.SUCCESS) {
             order.setPaymentStatus(OrderPaymentStatus.PAID);
@@ -140,6 +165,8 @@ public class PaymentServiceImpl implements PaymentService {
     private static ResourceNotFoundException orderNotFound() {
         return new ResourceNotFoundException("Không tìm thấy đơn hàng của bạn.");
     }
+
+    private static String transactionCode() { return "PAY-" + UUID.randomUUID(); }
 
     private static PaymentResponse response(Payment payment) {
         return new PaymentResponse(payment.getId(), payment.getOrder().getId(), payment.getMethod(), payment.getAmount(),

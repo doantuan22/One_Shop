@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<span th:fragment="state(status)" class="badge text-bg-secondary" th:switch="${status.name()}">
+    <span th:case="'PENDING_PAYMENT'">Chờ thanh toán</span><span th:case="'CONFIRMED'">Đã xác nhận</span>
+    <span th:case="'PREPARING'">Đang chuẩn bị</span><span th:case="'PACKED'">Đã đóng gói</span>
+    <span th:case="'SHIPPING'">Đang giao hàng</span><span th:case="'COMPLETED'">Hoàn tất</span>
+    <span th:case="'CANCELLED'">Đã hủy</span><span th:case="*" th:text="${status}"></span>
+</span>
+<span th:fragment="payment(status)" th:switch="${status.name()}">
+    <span th:case="'UNPAID'">Chưa thanh toán</span><span th:case="'PAID'">Đã thanh toán</span>
+    <span th:case="'FAILED'">Thanh toán thất bại</span>
+</span>
+<span th:fragment="method(method)" th:switch="${method.name()}">
+    <span th:case="'ONLINE'">Trực tuyến</span><span th:case="'COD'">COD · Thu khi giao thành công</span>
+    <span th:case="*" th:text="${method}"></span>
+</span>
+<div th:fragment="action(order)">
+    <form th:if="${order.nextAction != null}" method="post"
+          th:action="@{/staff/orders/delivery/{id}/{action}(id=${order.orderId},action=${order.nextAction.path})}">
+        <p class="small text-secondary mb-2" th:if="${order.nextAction.path == 'complete' and order.paymentMethod.name() == 'COD'}">
+            Chỉ xác nhận khi đã giao hàng và thu đủ tiền COD.
+        </p>
+        <button class="btn btn-primary btn-sm" type="submit" th:text="${order.nextAction.label}">Thao tác</button>
+    </form>
+    <p class="small text-secondary mb-0" th:if="${order.nextAction == null}">Không có thao tác giao hàng ở trạng thái này.</p>
+</div>
+</body>
+</html>

@@ -1,6 +1,7 @@
 package com.oneshop.repository;
 
 import com.oneshop.entity.Order;
+import com.oneshop.entity.FulfillmentType;
 import com.oneshop.entity.OrderStatus;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
@@ -40,6 +41,13 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     // ---- Store-scoped queries for Staff. storeId must come from the Staff assignment, never from a request. ----
 
     Optional<Order> findByIdAndStoreId(Long orderId, Long storeId);
+
+    /** Store ids come exclusively from ACTIVE Staff assignments, never from browser input. */
+    @EntityGraph(attributePaths = "store")
+    List<Order> findByStoreIdInAndFulfillmentTypeOrderByCreatedAtDescIdDesc(Collection<Long> storeIds, FulfillmentType fulfillmentType);
+
+    @EntityGraph(attributePaths = "store")
+    Optional<Order> findByIdAndStoreIdIn(Long orderId, Collection<Long> storeIds);
 
     Page<Order> findByStoreIdAndOrderStatusIn(Long storeId, Collection<OrderStatus> statuses, Pageable pageable);
 

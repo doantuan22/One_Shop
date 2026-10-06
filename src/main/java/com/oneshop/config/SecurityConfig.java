@@ -59,12 +59,15 @@ public class SecurityConfig {
                                                    JwtCookieService cookieService,
                                                    CustomUserDetailsService userDetailsService) throws Exception {
         PathPatternRequestMatcher.Builder paths = PathPatternRequestMatcher.withDefaults();
-        // Bearer API requests need no CSRF token. The Client payment demo always requires it.
+        RequestMatcher paymentForms = paths.matcher("/orders/**");
+        RequestMatcher deliveryForms = paths.matcher("/staff/orders/delivery/**");
+        // Bearer API requests need no CSRF token. Payment and Staff DELIVERY forms always require it.
         RequestMatcher bearerRequest = request -> {
             String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-            // The internal payment demo is a Client form workflow and always requires CSRF.
-            String path = request.getRequestURI().substring(request.getContextPath().length());
-            return header != null && header.startsWith("Bearer ") && !path.startsWith("/orders/");
+            // Protected form workflows require CSRF even if a Bearer header is also supplied.
+            // Match parsed paths like Spring MVC, including percent-encoded segment characters.
+            return header != null && header.startsWith("Bearer ") && !paymentForms.matches(request)
+                    && !deliveryForms.matches(request);
         };
 
         http
