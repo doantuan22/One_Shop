@@ -2,7 +2,10 @@
 
 **Xây dựng website bán mỹ phẩm OneShop theo mô hình chuỗi cửa hàng.**
 
-Giai đoạn hiện tại: **Phase 10.4 – Store Inventory Operations**. **PHASE 9 – PAYMENT + FULFILLMENT COMPLETED** (Roadmap V2). Các phần đã triển khai:
+Giai đoạn hiện tại: **Phase 10.5 – Integration + Verification DONE**. **PHASE 10 – STAFF STORE OPERATIONS DONE** (Roadmap V2). Các phần đã triển khai:
+
+* **Phase 10.5 – Integration + Verification**: kiểm chứng Staff scope, Dashboard/Order/Pickup/Inventory xuyên suốt
+  một checkout nhiều Store bằng endpoint production và SQL Server thật; TC-11/TC-13, rollback/race và full regression PASS.
 
 * **Phase 10.4 – Store Inventory Operations**: Staff xem exact stock theo assigned Store, điều chỉnh tồn thực tế
   qua InventoryService và xem history theo StoreProduct; scope/locking/transaction bảo vệ quantity + STOCK_ADJUST.
@@ -47,8 +50,25 @@ Giai đoạn hiện tại: **Phase 10.4 – Store Inventory Operations**. **PHAS
 * **Phase 5 – Auth + JWT**: đăng ký/đăng nhập/đăng xuất, JWT trong cookie HttpOnly, phân quyền CUSTOMER/STAFF/ADMIN ở
   backend, Store scope của Staff theo `StaffStoreAssignment` ACTIVE, CSRF.
 
-Phase 9 đã hoàn tất. Phase 10 có Store scope 10.1, Dashboard/Order reads 10.2, Fulfillment/Pickup Operations 10.3
-và Store Inventory Operations 10.4. Dừng trước Phase 10.5.
+Phase 9 và Phase 10 đã hoàn tất. Phase 10 có Store scope 10.1, Dashboard/Order reads 10.2, Fulfillment/Pickup Operations 10.3,
+Store Inventory Operations 10.4 và Integration/Verification 10.5. Dừng trước Phase 11.
+
+### Kiểm chứng Staff Store Operations (Phase 10.5)
+
+`Phase10IntegrationWebDatabaseTest` thêm 12 test dùng Tomcat/JWT/CSRF/controllers/services/repositories và SQL Server thật,
+không mock nghiệp vụ hoặc dùng test-only HTTP adapter. Một checkout ba Store đi xuyên suốt Dashboard/Order Queue,
+DELIVERY/COD, PICKUP/ONLINE, PICKUP/PAY_AT_STORE và exact-stock/history; metric/IDs/total đối chiếu SQL trước/sau mutation.
+
+TC-11: Order Detail cross-Store trả 404; fulfillment/stock mutation cross-Store trả 403, không lộ resource hoặc đổi DB.
+URL/query/form/body/cookie không mở rộng quyền; assignment absent/inactive/revoked bị chặn ngay với JWT cũ.
+TC-13: điều chỉnh tồn ghi đúng một STOCK_ADJUST với before/after/change/authenticated staff/note/time;
+Dashboard và exact-stock read phản ánh dữ liệu mới. Rollback/race suites 10.3/10.4 giữ nguyên,
+thêm race HTTP adjustment với checkout và duplicate pickup completion. Fixture cleanup kiểm exact rows/timestamps.
+
+Kiểm chứng 07/10/2026: **117/117 test Phase 10 PASS**, không skip. Full clean package: **864 tests,
+863 PASS, 0 failures/errors, 1 conditional Cloudinary skip cũ, BUILD SUCCESS** (42 suites).
+Không sửa production code, test cũ, schema/domain hoặc thêm feature. Suite acceptance 10.5 bắt buộc SQL Server thật,
+không skip khi thiếu DB/seed. Báo cáo: [Phase 10.5 Integration + Verification](docs/Phase10_5_IntegrationVerification_Report.md).
 
 ### Store Inventory Operations (Phase 10.4)
 
@@ -72,7 +92,7 @@ Giữ quy tắc hiện có: gửi lại quantity hiện tại là no-op, không 
 UI thông báo rõ trường hợp này. Form có CSRF cả cookie/Bearer/encoded paths. Dùng Thymeleaf/Bootstrap/SiteMesh và sidebar
 hiện có, bật Stock/Inventory History; không sửa core InventoryService, Checkout hoặc fulfillment/pickup 10.3.
 
-Audit: [Báo cáo Phase 10.4](docs/Phase10_4_StoreInventoryOperations_Report.md). Không tự chuyển Phase 10.5.
+Audit: [Báo cáo Phase 10.4](docs/Phase10_4_StoreInventoryOperations_Report.md). Integration 10.5 đã kiểm chứng ở mục phía trên.
 
 ### Fulfillment và Pickup Operations (Phase 10.3)
 
@@ -487,6 +507,8 @@ Mở http://localhost:8080. Các route mẫu: `/`, `/login`, `/register`, `/prod
 
 Các test profile `test` dùng secret giả và mock các bean truy cập DB. Khi có `.env` hoặc `DB_USERNAME`, các integration
 test database chạy profile `dev` với SQL Server thật và `ddl-auto=validate`; fixture được khôi phục sau test.
+Riêng `Phase10IntegrationWebDatabaseTest` là suite acceptance bắt buộc DB/seed thật, không có conditional skip;
+full `test`/`package` cần cấu hình SQL Server để kiểm chứng Phase 10.5.
 
 ## 6. Triển khai lên Render
 
