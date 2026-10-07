@@ -127,6 +127,10 @@ public interface StoreProductRepository extends JpaRepository<StoreProduct, Long
     @EntityGraph(attributePaths = {"store", "product"})
     Optional<StoreProduct> findByIdAndStoreIdIn(Long id, Collection<Long> storeIds);
 
+    /** Exact Staff stock, all statuses, restricted to server-resolved assignments before pagination/count. */
+    @EntityGraph(attributePaths = {"store", "product"})
+    Page<StoreProduct> findByStoreIdInOrderByStoreNameAscProductNameAscIdAsc(Collection<Long> storeIds, Pageable pageable);
+
     /** Dashboard inventory counts of active StoreProducts at an assigned Store. Zero is counted separately. */
     long countByStoreIdAndStatusAndQuantityBetween(Long storeId, ActiveStatus status, int min, int max);
 

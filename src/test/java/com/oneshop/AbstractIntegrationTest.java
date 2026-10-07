@@ -77,12 +77,17 @@ abstract class AbstractIntegrationTest {
     @MockitoBean
     protected StaffOperationsService staffOperationsService;
 
+    @MockitoBean
+    protected com.oneshop.service.StaffInventoryService staffInventoryService;
+
     @BeforeEach
     void staffReadModelsByDefault() {
         when(staffOperationsService.getDashboard()).thenAnswer(invocation -> new StaffDashboardResponse(
                 storeService.getAssignedStores(SecurityContextHolder.getContext().getAuthentication().getName()).stream()
                         .map(s -> new StaffStoreDashboardResponse(s, 0, 0, 0, 0)).toList(), 5, java.util.List.of()));
         when(staffOperationsService.getOrders(org.mockito.ArgumentMatchers.anyInt())).thenReturn(Page.empty());
+        when(staffOperationsService.getPickupQueue(org.mockito.ArgumentMatchers.anyInt())).thenReturn(Page.empty());
+        when(staffInventoryService.getStock(org.mockito.ArgumentMatchers.anyInt())).thenReturn(Page.empty());
     }
 
     /** Redirects are not followed so that tests can assert on them. */

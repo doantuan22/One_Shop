@@ -178,7 +178,10 @@ class StaffOperationsDatabaseIntegrationTest {
         assertThat(detail.payments()).hasSize(scenario.receipts(id).size()); assertThat(detail.history()).hasSize(scenario.history(id).size());
         var page = scenario.get("/staff/orders/" + id, scenario.account(email)); assertThat(page.statusCode()).isEqualTo(200);
         assertThat(page.body()).contains("data-layout=\"staff\"", response.customerName(), detail.order().storeName(), detail.order().receiverName(), "Sản phẩm đã đặt")
-                .doesNotContain("id=\"pickup-code\"", "/prepare", "/pack", "/ship", "/ready", "/complete");
+                .doesNotContain("id=\"pickup-code\"");
+        // Phase 10.3 adds only the valid action, while the Phase 10.2 resource/snapshot/privacy assertions stay intact.
+        assertThat(page.body()).contains("/staff/orders/" + id + (id == 1 ? "/delivery/complete" : "/pickup/complete"))
+                .doesNotContain("/staff/orders/" + id + "/delivery/prepare", "/staff/orders/" + id + "/pickup/ready");
         for (var item : detail.items()) assertThat(page.body()).contains(item.productName());
         if (id == 2) {
             assertThat(detail.order().readyAt()).isNotNull();

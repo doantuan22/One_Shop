@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head><title>Hàng chờ nhận tại cửa hàng</title></head>
+<body>
+<div th:replace="~{fragments/components :: pageHeader('Hàng chờ nhận tại cửa hàng', 'Đơn nhận tại cửa hàng đã xác nhận, đang chuẩn bị hoặc chờ khách nhận trong chi nhánh được phân công.')}"></div>
+<p class="text-secondary">Tổng số đơn: <strong id="pickup-queue-count" th:text="${orders.totalElements}"></strong></p>
+<div th:replace="~{staff/orders/fragments :: table(${orders.content})}"></div>
+<nav aria-label="Phân trang đơn nhận tại cửa hàng" class="d-flex align-items-center gap-3" th:if="${orders.totalPages > 1}">
+    <a class="btn btn-outline-secondary" th:if="${orders.hasPrevious()}" th:href="@{/staff/pickup(page=${orders.number - 1})}">Trang trước</a>
+    <span th:text="'Trang ' + ${orders.number + 1} + ' / ' + ${orders.totalPages}"></span>
+    <a class="btn btn-outline-secondary" th:if="${orders.hasNext()}" th:href="@{/staff/pickup(page=${orders.number + 1})}">Trang sau</a>
+</nav>
+</body></html>

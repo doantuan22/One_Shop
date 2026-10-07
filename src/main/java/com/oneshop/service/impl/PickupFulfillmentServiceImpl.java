@@ -40,6 +40,11 @@ public class PickupFulfillmentServiceImpl implements PickupFulfillmentService {
         requirePickup(order);
         return views.detail(order, false, nextAction(order));
     }
+    @Override
+    public PickupAction getNextAction(Order order) {
+        if (order.getFulfillmentType() != FulfillmentType.STORE_PICKUP || alreadyCollected(order)) return null;
+        return nextAction(order);
+    }
     @Transactional
     public void startPreparingPickup(String email, Long id) { perform(email, id, PickupAction.PREPARE, null); }
     @Transactional
@@ -58,8 +63,7 @@ public class PickupFulfillmentServiceImpl implements PickupFulfillmentService {
             throw new BadRequestException("Trạng thái đơn hàng đã thay đổi hoặc không phù hợp. Vui lòng tải lại trang.");
         }
         if (!paymentAllows(order)) throw new BadRequestException("Trạng thái thanh toán không hợp lệ để xử lý nhận tại cửa hàng.");
-        if (order.getPaymentMethod() == PaymentMethod.PAY_AT_STORE
-                && receipts.findFirstByOrderIdAndStatusOrderByIdAsc(id, PaymentStatus.SUCCESS).isPresent()) {
+        if (alreadyCollected(order)) {
             throw new BadRequestException("Đơn hàng đã có thanh toán thành công; không thể thu tiền lần nữa.");
         }
         if (action == PickupAction.READY) {
@@ -91,6 +95,10 @@ public class PickupFulfillmentServiceImpl implements PickupFulfillmentService {
     private static boolean paymentAllows(Order order) {
         return order.getPaymentMethod() == PaymentMethod.ONLINE && order.getPaymentStatus() == OrderPaymentStatus.PAID
                 || order.getPaymentMethod() == PaymentMethod.PAY_AT_STORE && order.getPaymentStatus() == OrderPaymentStatus.UNPAID;
+    }
+    private boolean alreadyCollected(Order order) {
+        return order.getPaymentMethod() == PaymentMethod.PAY_AT_STORE
+                && receipts.findFirstByOrderIdAndStatusOrderByIdAsc(order.getId(), PaymentStatus.SUCCESS).isPresent();
     }
     private static PickupAction nextAction(Order order) {
         return paymentAllows(order) ? Arrays.stream(PickupAction.values())

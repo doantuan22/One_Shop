@@ -61,4 +61,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     /** Bounded, stable queue of ALL fulfillment/status types within the authenticated Staff's assignments. */
     @EntityGraph(attributePaths = {"store", "user"})
     Page<Order> findByStoreIdInOrderByCreatedAtDescIdDesc(Collection<Long> storeIds, Pageable pageable);
+
+    /** Operational pickup queue: assigned Stores, pickup fulfillment and explicitly open states in SQL. */
+    @EntityGraph(attributePaths = {"store", "user"})
+    Page<Order> findByStoreIdInAndFulfillmentTypeAndOrderStatusInOrderByCreatedAtDescIdDesc(
+            Collection<Long> storeIds, FulfillmentType type, Collection<OrderStatus> statuses, Pageable pageable);
 }

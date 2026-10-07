@@ -108,10 +108,11 @@ class LayoutsIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void staffMenuMarksCurrentPageAndDisablesPagesNotBuiltYet() throws Exception {
+    void staffMenuMarksCurrentPageAndEnablesCompletedStockAndHistoryPages() throws Exception {
         String html = asStaff("/staff").body();
 
-        assertThat(html).contains("os-nav-link active", "aria-current=\"page\"", "aria-disabled=\"true\"", "Sắp có");
+        assertThat(html).contains("os-nav-link active", "aria-current=\"page\"", "href=\"/staff/stock\"", "href=\"/staff/inventory-history\"")
+                .doesNotContain("aria-disabled=\"true\"", "Sắp có");
         assertThat(count(html, "aria-current=\"page\"")).isEqualTo(1);
     }
 

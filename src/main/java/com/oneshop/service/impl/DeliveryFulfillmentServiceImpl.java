@@ -130,12 +130,18 @@ public class DeliveryFulfillmentServiceImpl implements DeliveryFulfillmentServic
                 || (order.getPaymentMethod() == PaymentMethod.COD && order.getPaymentStatus() == OrderPaymentStatus.UNPAID);
     }
 
-    private static DeliveryOrderResponse summary(Order order) {
-        DeliveryAction next = order.getFulfillmentType() == FulfillmentType.DELIVERY && paymentAllowsFulfillment(order)
+    @Override
+    public DeliveryAction getNextAction(Order order) { return nextAction(order); }
+
+    private static DeliveryAction nextAction(Order order) {
+        return order.getFulfillmentType() == FulfillmentType.DELIVERY && paymentAllowsFulfillment(order)
                 ? Arrays.stream(DeliveryAction.values()).filter(action -> action.getExpectedStatus() == order.getOrderStatus()).findFirst().orElse(null)
                 : null;
+    }
+
+    private static DeliveryOrderResponse summary(Order order) {
         return new DeliveryOrderResponse(order.getId(), order.getStore().getId(), order.getStore().getName(), order.getCreatedAt(),
                 order.getFulfillmentType(), order.getPaymentMethod(), order.getPaymentStatus(), order.getOrderStatus(),
-                order.getReceiverName(), order.getReceiverPhone(), order.getShippingAddress(), order.getTotalAmount(), next);
+                order.getReceiverName(), order.getReceiverPhone(), order.getShippingAddress(), order.getTotalAmount(), nextAction(order));
     }
 }

@@ -56,8 +56,9 @@
                 <li th:replace="~{fragments/components :: navItem('/staff/orders', 'Danh sách đơn hàng', ${currentPath != null and (#strings.startsWith(currentPath, '/staff/orders/delivery') or #strings.startsWith(currentPath, '/staff/orders/pickup'))} ? null : ${currentPath}, true)}"></li>
                 <li th:replace="~{fragments/components :: navItem('/staff/orders/delivery', 'Đơn giao hàng', ${currentPath}, true)}"></li>
                 <li th:replace="~{fragments/components :: navItem('/staff/orders/pickup', 'Đơn nhận tại cửa hàng', ${currentPath}, true)}"></li>
-                <li th:replace="~{fragments/components :: navItem('/staff/stock', 'Tồn kho chi nhánh', ${currentPath}, false)}"></li>
-                <li th:replace="~{fragments/components :: navItem('/staff/inventory-history', 'Lịch sử tồn kho', ${currentPath}, false)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/staff/pickup', 'Hàng chờ nhận', ${currentPath}, true)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/staff/stock', 'Tồn kho chi nhánh', ${currentPath}, true)}"></li>
+                <li th:replace="~{fragments/components :: navItem('/staff/inventory-history', 'Lịch sử tồn kho', ${currentPath}, true)}"></li>
             </ul>
         </nav>
     </div>

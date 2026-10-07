@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head><title th:text="${historySelection} ? 'Lịch sử tồn kho' : 'Tồn kho chi nhánh'"></title></head>
+<body>
+<div th:replace="~{fragments/components :: pageHeader(${historySelection} ? 'Lịch sử tồn kho' : 'Tồn kho chi nhánh', ${historySelection} ? 'Chọn sản phẩm để xem biến động tồn của chi nhánh được phân công.' : 'Tồn thực tế của các sản phẩm thuộc chi nhánh được phân công.')}"></div>
+<p class="text-secondary">Số SKU tại chi nhánh: <strong id="stock-count" th:text="${stock.totalElements}"></strong></p>
+<div class="table-responsive"><table class="table os-table align-middle">
+    <thead><tr><th>Chi nhánh</th><th>SKU / Sản phẩm</th><th>Giá</th><th>Trạng thái</th><th>Tồn thực tế</th><th>Thao tác</th></tr></thead>
+    <tbody>
+    <tr th:each="item : ${stock.content}" th:attr="data-store-product-id=${item.storeProductId},data-store-id=${item.storeId}">
+        <td th:text="${item.storeName}"></td><td><strong th:text="${item.sku}"></strong><div th:text="${item.productName}"></div></td>
+        <td><span th:replace="~{fragments/components :: price(${item.price})}"></span></td>
+        <td th:text="${item.status.name() == 'ACTIVE'} ? 'Đang kinh doanh' : 'Ngừng kinh doanh'"></td>
+        <td class="fw-bold" data-field="exact-quantity" th:text="${item.quantity}"></td>
+        <td><a class="btn btn-outline-primary btn-sm" th:unless="${historySelection}" th:href="@{/staff/stock/{id}/adjust(id=${item.storeProductId})}">Điều chỉnh tồn</a>
+            <a class="btn btn-outline-secondary btn-sm" th:href="@{/staff/inventory-history/{id}(id=${item.storeProductId})}">Lịch sử</a></td>
+    </tr>
+    <tr th:if="${stock.isEmpty()}"><td colspan="6" class="text-center text-secondary">Chưa có sản phẩm tại chi nhánh.</td></tr>
+    </tbody>
+</table></div>
+<nav aria-label="Phân trang tồn kho" class="d-flex align-items-center gap-3" th:if="${stock.totalPages > 1}">
+    <a class="btn btn-outline-secondary" th:if="${stock.hasPrevious()}" th:href="@{${listPath}(page=${stock.number - 1})}">Trang trước</a>
+    <span th:text="'Trang ' + ${stock.number + 1} + ' / ' + ${stock.totalPages}"></span>
+    <a class="btn btn-outline-secondary" th:if="${stock.hasNext()}" th:href="@{${listPath}(page=${stock.number + 1})}">Trang sau</a>
+</nav>
+</body></html>

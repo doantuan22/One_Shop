@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head><title>Điều chỉnh tồn kho</title></head>
+<body>
+<div th:replace="~{fragments/components :: pageHeader('Điều chỉnh tồn kho', 'Ghi nhận tồn thực tế và lý do điều chỉnh.')}"></div>
+<a class="btn btn-outline-secondary mb-3" th:href="@{/staff/stock}">Tồn kho chi nhánh</a>
+<h2 class="h5" th:text="${stock.productName}"></h2>
+<p><span th:text="${stock.sku}"></span> · <span th:text="${stock.storeName}"></span></p>
+<p>Tồn hiện tại: <strong id="current-quantity" th:text="${stock.quantity}"></strong></p>
+<form class="card card-body" th:action="@{/staff/stock/{id}/adjust(id=${stock.storeProductId})}" th:object="${form}" method="post">
+    <label for="newQuantity" class="form-label">Số lượng tồn thực tế</label>
+    <input id="newQuantity" type="number" class="form-control" th:field="*{newQuantity}" min="0" max="2147483647" required>
+    <p class="text-danger small" th:if="${#fields.hasErrors('newQuantity')}" th:errors="*{newQuantity}"></p>
+    <label for="note" class="form-label mt-3">Lý do điều chỉnh</label>
+    <textarea id="note" class="form-control" th:field="*{note}" maxlength="500" required rows="3"></textarea>
+    <p class="text-danger small" th:if="${#fields.hasErrors('note')}" th:errors="*{note}"></p>
+    <p class="small text-secondary mt-3">Nhập số lượng sau khi kiểm đếm. Khi số lượng không đổi, hệ thống không ghi biến động mới.</p>
+    <button class="btn btn-primary align-self-start" type="submit">Lưu điều chỉnh</button>
+</form>
+</body></html>

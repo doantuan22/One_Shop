@@ -5,4 +5,22 @@
 <a class="btn btn-outline-secondary mb-3" th:href="@{/staff/orders}">Danh sách đơn hàng</a>
 <p>Khách hàng: <strong id="order-customer" th:text="${customerName}"></strong></p>
 <div th:replace="~{orders/fragments :: detail(${detail})}"></div>
+<div class="card card-body mt-3" id="fulfillment-action">
+    <form th:if="${deliveryAction != null}" method="post"
+          th:action="@{/staff/orders/{id}/delivery/{action}(id=${detail.order.orderId},action=${deliveryAction.path})}">
+        <p class="small text-secondary" th:if="${deliveryAction.path == 'complete' and detail.order.paymentMethod.name() == 'COD'}">Chỉ xác nhận sau khi đã giao hàng và thu đủ tiền COD.</p>
+        <button class="btn btn-primary" type="submit" th:text="${deliveryAction.label}"></button>
+    </form>
+    <form th:if="${pickupAction != null}" method="post"
+          th:action="@{/staff/orders/{id}/pickup/{action}(id=${detail.order.orderId},action=${pickupAction.path})}">
+        <div th:if="${pickupAction.path == 'complete'}">
+            <label for="pickupCode" class="form-label">Mã nhận hàng khách cung cấp</label>
+            <input id="pickupCode" name="pickupCode" type="text" class="form-control mb-2 font-monospace" minlength="6" maxlength="20" required autocomplete="off" autocapitalize="characters" aria-describedby="pickup-help">
+            <p id="pickup-help" class="small text-secondary">Nhập mã khách cung cấp để xác nhận nhận hàng.</p>
+            <p class="alert alert-warning" th:if="${detail.order.paymentMethod.name() == 'PAY_AT_STORE'}">Chỉ xác nhận sau khi đã thu đủ tổng tiền của đơn tại cửa hàng.</p>
+        </div>
+        <button class="btn btn-primary" type="submit" th:text="${pickupAction.label}"></button>
+    </form>
+    <p class="text-secondary mb-0" th:if="${deliveryAction == null and pickupAction == null}">Không có thao tác xử lý ở trạng thái này.</p>
+</div>
 </body></html>

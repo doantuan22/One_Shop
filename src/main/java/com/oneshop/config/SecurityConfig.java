@@ -62,13 +62,16 @@ public class SecurityConfig {
         RequestMatcher paymentForms = paths.matcher("/orders/**");
         RequestMatcher deliveryForms = paths.matcher("/staff/orders/delivery/**");
         RequestMatcher pickupForms = paths.matcher("/staff/orders/pickup/**");
+        RequestMatcher staffOrderForms = paths.matcher("/staff/orders/**");
+        RequestMatcher staffStockForms = paths.matcher("/staff/stock/**");
         // Bearer API requests need no CSRF token. Payment and Staff fulfillment forms always require it.
         RequestMatcher bearerRequest = request -> {
             String header = request.getHeader(HttpHeaders.AUTHORIZATION);
             // Protected form workflows require CSRF even if a Bearer header is also supplied.
             // Match parsed paths like Spring MVC, including percent-encoded segment characters.
             return header != null && header.startsWith("Bearer ") && !paymentForms.matches(request)
-                    && !deliveryForms.matches(request) && !pickupForms.matches(request);
+                    && !deliveryForms.matches(request) && !pickupForms.matches(request) && !staffOrderForms.matches(request)
+                    && !staffStockForms.matches(request);
         };
 
         http

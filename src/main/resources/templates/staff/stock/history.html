@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head><title>Lịch sử biến động tồn kho</title></head>
+<body>
+<div th:replace="~{fragments/components :: pageHeader('Lịch sử biến động tồn kho', 'Biến động của sản phẩm thuộc chi nhánh được phân công.')}"></div>
+<div class="alert alert-success" role="alert" th:if="${param.success != null and param.success[0] == 'adjusted'}">Đã cập nhật tồn kho và ghi biến động.</div>
+<div class="alert alert-info" role="alert" th:if="${param.success != null and param.success[0] == 'unchanged'}">Số lượng không thay đổi; không có biến động mới.</div>
+<a class="btn btn-outline-secondary mb-3" th:href="@{/staff/inventory-history}">Chọn sản phẩm khác</a>
+<a class="btn btn-outline-primary mb-3" th:href="@{/staff/stock/{id}/adjust(id=${stock.storeProductId})}">Điều chỉnh tồn</a>
+<h2 class="h5" th:text="${stock.productName}"></h2><p><span th:text="${stock.sku}"></span> · <span th:text="${stock.storeName}"></span></p>
+<p>Tồn hiện tại: <strong id="current-quantity" th:text="${stock.quantity}"></strong></p>
+<p>Số biến động: <strong id="movement-count" th:text="${movements.totalElements}"></strong></p>
+<div class="table-responsive"><table class="table os-table align-middle">
+    <thead><tr><th>Loại</th><th>Trước</th><th>Sau</th><th>Thay đổi</th><th>Người ghi nhận</th><th>Ghi chú</th><th>Thời gian</th></tr></thead>
+    <tbody><tr th:each="movement : ${movements.content}" th:attr="data-movement-id=${movement.id},data-type=${movement.type}">
+        <td th:text="${movement.type}"></td><td th:text="${movement.quantityBefore}"></td><td th:text="${movement.quantityAfter}"></td>
+        <td th:text="${movement.quantityChange > 0} ? '+' + ${movement.quantityChange} : ${movement.quantityChange}"></td>
+        <td th:text="${movement.staffName}"></td><td th:text="${movement.note}"></td>
+        <td th:text="${#temporals.format(movement.createdAt, 'dd/MM/yyyy HH:mm:ss')}"></td>
+    </tr><tr th:if="${movements.isEmpty()}"><td colspan="7" class="text-center text-secondary">Chưa có biến động tồn kho.</td></tr></tbody>
+</table></div>
+<nav aria-label="Phân trang biến động tồn" class="d-flex align-items-center gap-3" th:if="${movements.totalPages > 1}">
+    <a class="btn btn-outline-secondary" th:if="${movements.hasPrevious()}" th:href="@{/staff/inventory-history/{id}(id=${stock.storeProductId},page=${movements.number - 1})}">Trang trước</a>
+    <span th:text="'Trang ' + ${movements.number + 1} + ' / ' + ${movements.totalPages}"></span>
+    <a class="btn btn-outline-secondary" th:if="${movements.hasNext()}" th:href="@{/staff/inventory-history/{id}(id=${stock.storeProductId},page=${movements.number + 1})}">Trang sau</a>
+</nav>
+</body></html>
