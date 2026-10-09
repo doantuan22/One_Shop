@@ -130,22 +130,18 @@ class LayoutsIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void adminSampleRendersEverySharedComponent() throws Exception {
+    void adminOverviewUsesSharedComponentsAndEnablesChainOperations() throws Exception {
+        when(adminOperationsService.getOverview(null)).thenReturn(List.of(
+                new com.oneshop.dto.response.AdminStoreOverviewResponse(STORE, 3, 1, 2, 0, 5, 1, 0, 1)));
         String html = asAdmin("/admin").body();
 
         // card + stat card
         assertThat(html).contains("card-header", "os-stat__value", "Lọc theo chi nhánh");
-        // form field + select (options handed in by the page)
-        assertThat(html).contains("id=\"filter-keyword\"", "name=\"keyword\"", "id=\"filter-store\"", "name=\"storeId\"",
+        assertThat(html).contains("id=\"filter-store\"", "name=\"storeId\"",
                 "<option value=\"\">Tất cả chi nhánh</option>");
-        // responsive table + empty row
-        assertThat(html).contains("table-responsive", "os-table", "Chưa có đơn hàng nào.");
-        // modal with its body and footer
-        assertThat(html).contains("class=\"modal fade\"", "id=\"confirmModal\"", "aria-labelledby=\"confirmModal-title\"",
-                "modal-body", "modal-footer", "data-bs-target=\"#confirmModal\"");
-        // the parts handed to the components appear only inside the shared component, not as stray copies
-        assertThat(count(html, "id=\"orders-head\"")).isEqualTo(1);
-        assertThat(count(html, "<table")).isEqualTo(1);
+        assertThat(html).contains("data-overview-store-id=\"1\"", "href=\"/admin/staff-assignments\"",
+                "href=\"/admin/inventory\"", "href=\"/admin/orders\"", "href=\"/admin/users\"", "href=\"/admin/reviews\"")
+                .doesNotContain("Sắp có", "aria-disabled=\"true\"");
         assertThat(count(html, "<form")).isEqualTo(2); // filter form + logout form
     }
 

@@ -9,6 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface StaffStoreAssignmentRepository extends JpaRepository<StaffStoreAssignment, Long> {
 
@@ -17,6 +20,22 @@ public interface StaffStoreAssignmentRepository extends JpaRepository<StaffStore
     List<StaffStoreAssignment> findByUserIdAndStatus(Long userId, ActiveStatus status);
 
     boolean existsByUserIdAndStoreIdAndStatus(Long userId, Long storeId, ActiveStatus status);
+
+    Optional<StaffStoreAssignment> findByUserIdAndStoreId(Long userId, Long storeId);
+
+    List<StaffStoreAssignment> findByUserId(Long userId);
+
+    @EntityGraph(attributePaths = {"user", "user.role", "store"})
+    @Query("select a from StaffStoreAssignment a where (:storeId is null or a.store.id = :storeId) order by a.id")
+    Page<StaffStoreAssignment> searchAdmin(@Param("storeId") Long storeId, Pageable pageable);
+
+    @Query("""
+            select count(a) from StaffStoreAssignment a where a.store.id = :storeId
+            and a.status = com.oneshop.entity.ActiveStatus.ACTIVE
+            and a.user.status = com.oneshop.entity.ActiveStatus.ACTIVE
+            and a.user.role.name = com.oneshop.entity.RoleName.STAFF
+            and a.store.status = com.oneshop.entity.ActiveStatus.ACTIVE""")
+    long countEffectiveStaff(@Param("storeId") Long storeId);
 
     /**
      * The Store scope of a Staff account (BR-14): Stores with an ACTIVE assignment to this ACTIVE STAFF user. An

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Quản lý người dùng</title></head><body>
+<h1 class="h3" th:text="${current == null} ? 'Tạo tài khoản' : 'Cập nhật người dùng'"></h1>
+<form th:object="${form}" method="post" th:action="${current == null} ? @{/admin/users} : @{/admin/users/{id}(id=${current.id})}" class="card card-body">
+    <div class="alert alert-danger" th:if="${#fields.hasAnyErrors()}"><ul class="mb-0"><li th:each="e : ${#fields.allErrors()}" th:text="${e}"></li></ul></div>
+    <label for="email" class="form-label">Email</label><input id="email" type="email" class="form-control mb-3" th:field="*{email}" th:readonly="${current != null}" maxlength="255" required>
+    <label for="fullName" class="form-label">Họ tên</label><input id="fullName" class="form-control mb-3" th:field="*{fullName}" maxlength="150" required>
+    <label for="phone" class="form-label">Điện thoại</label><input id="phone" class="form-control mb-3" th:field="*{phone}" maxlength="20">
+    <label for="role" class="form-label">Vai trò</label><select id="role" th:field="*{role}" class="form-select mb-3"><option th:each="r : ${roles}" th:value="${r}" th:text="${r}"></option></select>
+    <label for="status" class="form-label">Trạng thái</label><select id="status" th:field="*{status}" class="form-select mb-3"><option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option></select>
+    <div th:if="${current == null}"><label for="password" class="form-label">Mật khẩu ban đầu</label>
+        <input id="password" name="password" type="password" class="form-control mb-3" minlength="8" maxlength="72" autocomplete="new-password" required></div>
+    <p class="small text-secondary">Đổi Staff sang vai trò khác sẽ tắt các phân công hiện có. Email giữ nguyên sau khi tạo tài khoản.</p>
+    <div><button class="btn btn-primary">Lưu</button> <a class="btn btn-outline-secondary" th:href="@{/admin/users}">Quay lại</a></div>
+</form>
+</body></html>

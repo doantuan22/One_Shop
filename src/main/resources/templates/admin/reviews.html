@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Đánh giá</title></head><body>
+<div th:replace="~{fragments/components :: pageHeader('Đánh giá', 'Xem nội dung đánh giá và bật / ẩn theo trạng thái hiện có.')}"></div>
+<div class="alert alert-success" th:if="${param.success}">Đã cập nhật đánh giá.</div>
+<div class="table-responsive"><table class="table table-hover"><thead><tr><th>Khách hàng</th><th>SKU / Sản phẩm</th><th>Điểm</th><th>Nội dung</th><th>Trạng thái</th><th></th></tr></thead>
+<tbody><tr th:each="r : ${reviews.content}" th:attr="data-review-id=${r.id}">
+    <td><span th:text="${r.customerName}"></span><div class="small" th:text="${r.customerEmail}"></div></td>
+    <td><span th:text="${r.sku}"></span><div th:text="${r.productName}"></div></td><td th:text="${r.rating} + ' / 5'"></td>
+    <td><span th:text="${r.comment}"></span><div class="small" th:text="${#temporals.format(r.createdAt, 'dd/MM/yyyy HH:mm')}"></div></td>
+    <td th:text="${r.status}"></td><td><form th:action="@{/admin/reviews/{id}/status(id=${r.id})}" method="post">
+        <input type="hidden" name="status" th:value="${r.status.name() == 'ACTIVE'} ? 'HIDDEN' : 'ACTIVE'">
+        <button class="btn btn-sm btn-outline-primary" th:text="${r.status.name() == 'ACTIVE'} ? 'Ẩn' : 'Hiện'"></button></form></td>
+</tr><tr th:if="${reviews.empty}"><td colspan="6">Chưa có đánh giá.</td></tr></tbody></table></div>
+<p>Tổng số: <strong th:text="${reviews.totalElements}"></strong></p>
+<nav th:replace="~{admin/fragments :: pagination(${reviews}, '/admin/reviews', 'storeId', ${null})}"></nav>
+</body></html>

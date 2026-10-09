@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"><body>
+<form th:fragment="storeFilter(path)" method="get" th:action="@{${path}}" class="row g-2 mb-3">
+    <div class="col-md-6"><label for="filter-store" class="form-label">Chi nhánh</label>
+        <select id="filter-store" name="storeId" class="form-select">
+            <option value="">Tất cả chi nhánh</option>
+            <option th:each="s : ${stores}" th:value="${s.id}" th:selected="${s.id == storeId}"
+                    th:text="${s.name} + ' · ' + ${s.status}"></option>
+        </select></div>
+    <div class="col-auto align-self-end"><button class="btn btn-primary">Lọc</button></div>
+</form>
+<nav th:fragment="pagination(page, path, filterName, filterValue)" th:if="${page.totalPages > 1}" class="mt-3" aria-label="Phân trang">
+    <ul class="pagination">
+        <li class="page-item" th:classappend="${page.first} ? 'disabled'"><a class="page-link"
+            th:href="@{${path}(page=${page.number - 1}, __${filterName}__=${filterValue})}">Trước</a></li>
+        <li class="page-item disabled"><span class="page-link" th:text="${page.number + 1} + ' / ' + ${page.totalPages}"></span></li>
+        <li class="page-item" th:classappend="${page.last} ? 'disabled'"><a class="page-link"
+            th:href="@{${path}(page=${page.number + 1}, __${filterName}__=${filterValue})}">Sau</a></li>
+    </ul>
+</nav>
+</body></html>

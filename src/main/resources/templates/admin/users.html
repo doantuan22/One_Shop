@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Người dùng</title></head><body>
+<div th:replace="~{fragments/components :: pageHeader('Người dùng', 'Quản lý tài khoản, vai trò và trạng thái hoạt động.')}"></div>
+<a class="btn btn-primary mb-3" th:href="@{/admin/users/new}">Tạo tài khoản / Staff</a>
+<div class="alert alert-success" th:if="${param.success}">Đã lưu người dùng.</div>
+<form method="get" th:action="@{/admin/users}" class="d-flex gap-2 mb-3">
+    <select name="role" class="form-select w-auto" aria-label="Vai trò"><option value="">Tất cả vai trò</option>
+        <option th:each="r : ${roles}" th:value="${r}" th:text="${r}" th:selected="${r == role}"></option></select>
+    <button class="btn btn-outline-primary">Lọc</button>
+</form>
+<div class="table-responsive"><table class="table table-hover"><thead><tr><th>Họ tên</th><th>Email</th><th>Điện thoại</th><th>Vai trò</th><th>Trạng thái</th><th></th></tr></thead>
+<tbody><tr th:each="u : ${users.content}" th:attr="data-user-id=${u.id}">
+    <td th:text="${u.fullName}"></td><td th:text="${u.email}"></td><td th:text="${u.phone}"></td><td th:text="${u.role}"></td>
+    <td><span th:replace="~{fragments/components :: statusBadge(${u.status})}"></span></td>
+    <td><a class="btn btn-sm btn-outline-primary" th:href="@{/admin/users/{id}/edit(id=${u.id})}">Sửa</a></td>
+</tr><tr th:if="${users.empty}"><td colspan="6">Chưa có người dùng.</td></tr></tbody></table></div>
+<p>Tổng số: <strong id="user-count" th:text="${users.totalElements}"></strong></p>
+<nav th:replace="~{admin/fragments :: pagination(${users}, '/admin/users', 'role', ${role})}"></nav>
+</body></html>

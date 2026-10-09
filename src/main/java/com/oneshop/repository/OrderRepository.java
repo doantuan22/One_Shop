@@ -18,6 +18,15 @@ import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
+    /** Admin sees every status, including historical orders of inactive Stores. */
+    @EntityGraph(attributePaths = {"store", "user"})
+    @Query("select o from Order o where (:storeId is null or o.store.id = :storeId) order by o.createdAt desc, o.id desc")
+    Page<Order> searchAdmin(@Param("storeId") Long storeId, Pageable pageable);
+
+    long countByStoreId(Long storeId);
+
+    long countByStoreIdAndOrderStatus(Long storeId, OrderStatus status);
+
     Optional<Order> findByIdAndUserEmail(Long orderId, String email);
 
     @EntityGraph(attributePaths = "store")

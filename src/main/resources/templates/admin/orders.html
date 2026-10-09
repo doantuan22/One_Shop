@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Đơn hàng toàn hệ thống</title></head><body>
+<div th:replace="~{fragments/components :: pageHeader('Đơn hàng toàn hệ thống', 'Xem đơn của mọi chi nhánh, bao gồm lịch sử chi nhánh ngừng hoạt động.')}"></div>
+<form th:replace="~{admin/fragments :: storeFilter('/admin/orders')}"></form>
+<div class="table-responsive"><table class="table table-hover"><thead><tr><th>Mã đơn</th><th>Chi nhánh</th><th>Khách hàng</th><th>Hình thức nhận</th><th>Trạng thái</th><th>Thanh toán</th><th>Tổng tiền</th></tr></thead>
+<tbody><tr th:each="row : ${orders.content}" th:with="o=${row.order}" th:attr="data-order-id=${o.orderId},data-store-id=${o.storeId}">
+    <td><a th:href="@{/admin/orders/{id}(id=${o.orderId})}" th:text="'#' + ${o.orderId}"></a><div class="small" th:text="${#temporals.format(o.createdAt, 'dd/MM/yyyy HH:mm')}"></div></td>
+    <td th:text="${o.storeName}"></td><td><span th:text="${row.customerName}"></span><div class="small" th:text="${row.customerEmail}"></div></td>
+    <td th:text="${o.fulfillmentType}"></td><td><span th:replace="~{staff/delivery/fragments :: state(${o.orderStatus})}"></span></td>
+    <td th:text="${o.paymentMethod} + ' · ' + ${o.paymentStatus}"></td><td><span th:replace="~{fragments/components :: price(${o.totalAmount})}"></span></td>
+</tr><tr th:if="${orders.empty}"><td colspan="7">Chưa có đơn hàng nào.</td></tr></tbody></table></div>
+<p>Tổng số: <strong id="order-count" th:text="${orders.totalElements}"></strong></p>
+<nav th:replace="~{admin/fragments :: pagination(${orders}, '/admin/orders', 'storeId', ${storeId})}"></nav>
+</body></html>

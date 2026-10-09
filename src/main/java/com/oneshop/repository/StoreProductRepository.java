@@ -17,6 +17,8 @@ import java.util.Optional;
 
 public interface StoreProductRepository extends JpaRepository<StoreProduct, Long> {
 
+    long countByStoreId(Long storeId);
+
     /** Catalog of one Store (BR-04): only the StoreProducts of that Store with the given status. */
     @EntityGraph(attributePaths = "product")
     List<StoreProduct> findByStoreIdAndStatus(Long storeId, ActiveStatus status);

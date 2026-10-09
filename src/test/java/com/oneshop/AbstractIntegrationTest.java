@@ -80,6 +80,10 @@ abstract class AbstractIntegrationTest {
     @MockitoBean
     protected com.oneshop.service.StaffInventoryService staffInventoryService;
 
+    /** Admin dashboard became a real reader in Phase 11; layout tests remain independent of SQL. */
+    @MockitoBean
+    protected com.oneshop.service.AdminOperationsService adminOperationsService;
+
     @BeforeEach
     void staffReadModelsByDefault() {
         when(staffOperationsService.getDashboard()).thenAnswer(invocation -> new StaffDashboardResponse(

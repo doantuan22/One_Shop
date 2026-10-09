@@ -270,7 +270,8 @@ class Phase10IntegrationWebDatabaseTest {
                 .containsEntry("quantity_before", original).containsEntry("quantity_after", actual)
                 .containsEntry("quantity_change", actual - original).containsEntry("staff_id", actor(STAFF_A))
                 .containsEntry("note", "Phase 10.5 TC-13 count").containsEntry("reference_order_id", null);
-        assertThat((Timestamp) movements.get(0).get("created_at")).isBetween(started, finished);
+        // DATETIME2(0) can round up exactly to finished; that endpoint belongs to the allowed precision window.
+        assertThat((Timestamp) movements.get(0).get("created_at")).isAfterOrEqualTo(started).isBeforeOrEqualTo(finished);
         var after = scenario.snapshot();
         for (String table : Phase9IntegrationScenario.TABLES) if (!Set.of("store_products", "inventory_movements").contains(table))
             assertThat(after.get(table)).as(table).isEqualTo(before.get(table));

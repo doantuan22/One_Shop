@@ -2,7 +2,13 @@
 
 **Xây dựng website bán mỹ phẩm OneShop theo mô hình chuỗi cửa hàng.**
 
-Giai đoạn hiện tại: **Phase 10.5 – Integration + Verification DONE**. **PHASE 10 – STAFF STORE OPERATIONS DONE** (Roadmap V2). Các phần đã triển khai:
+Giai đoạn hiện tại: **PHASE 11 – ADMIN TOÀN CHUỖI DONE** (Roadmap V2). Các phần đã triển khai:
+
+* **Phase 11 – Admin toàn chuỗi**: tái sử dụng CRUD Store/Store Finder, Category/Brand/Product/SKU/Image/StoreProduct Phase 6;
+  bổ sung User/Role, Staff assignment ACTIVE/INACTIVE, inventory overview, Order toàn hệ thống + filter Store + detail,
+  Review ACTIVE/HIDDEN và overview đơn giản theo Store. Giữ nguyên schema và Staff scope Phase 10.
+  Audit trước code: [Phase 11 Admin audit](docs/Phase11_AdminChain_Audit.md).
+  Kết quả kiểm chứng: [Phase 11 Admin toàn chuỗi](docs/Phase11_AdminChain_Report.md).
 
 * **Phase 10.5 – Integration + Verification**: kiểm chứng Staff scope, Dashboard/Order/Pickup/Inventory xuyên suốt
   một checkout nhiều Store bằng endpoint production và SQL Server thật; TC-11/TC-13, rollback/race và full regression PASS.
@@ -51,7 +57,32 @@ Giai đoạn hiện tại: **Phase 10.5 – Integration + Verification DONE**. *
   backend, Store scope của Staff theo `StaffStoreAssignment` ACTIVE, CSRF.
 
 Phase 9 và Phase 10 đã hoàn tất. Phase 10 có Store scope 10.1, Dashboard/Order reads 10.2, Fulfillment/Pickup Operations 10.3,
-Store Inventory Operations 10.4 và Integration/Verification 10.5. Dừng trước Phase 11.
+Store Inventory Operations 10.4 và Integration/Verification 10.5. Phase 11 bổ sung quản trị toàn chuỗi; không triển khai Phase 12.
+
+### Admin toàn chuỗi (Phase 11)
+
+* `/admin?storeId=…`: overview từ SQL theo từng Store, kể cả INACTIVE; tổng đơn, đơn cần xử lý/hoàn tất/hủy,
+  số StoreProduct, SKU sắp hết/hết hàng và số Staff có phân công hiệu lực. Link đến Order/inventory/assignment cùng Store.
+* `/admin/users?role=…&page=…`, `/admin/users/new`, `/admin/users/{id}/edit`: tạo tài khoản, sửa họ tên/phone/role/status;
+  password ban đầu BCrypt, không trả hash/password về UI. Email cố định sau khi tạo, không tự bỏ quyền Admin đang dùng.
+* `/admin/staff-assignments?storeId=…&page=…`: gán/reactivate cặp Staff–Store hoặc soft-unassign; ID/assignedAt được giữ khi gán lại.
+  Active assignment chỉ cho ACTIVE STAFF + ACTIVE Store. Đổi role rời STAFF sẽ tắt assignment cũ;
+  JWT cũ phản ánh role/status/assignment hiện tại qua resolver Phase 5/10, không dùng cookie chọn Store để cấp quyền.
+* `/admin/inventory?storeId=…&productId=…&page=…`: reuse list/DTO/query/template StoreProduct Phase 6,
+  exact quantity, price/status/SKU theo Store; link sửa về CRUD đã có. Không có stock writer hoặc model mới.
+* `/admin/orders?storeId=…&page=…`, `/admin/orders/{id}`: mọi Order của toàn hệ thống, filter/count trong SQL,
+  detail reuse snapshot/payment/history reader Phase 9. Không thêm action fulfillment/cancel của Admin.
+* `/admin/reviews?page=…`: xem nội dung, rating, customer/SKU và bật/ẩn ACTIVE/HIDDEN; giữ nguyên tác giả/nội dung lịch sử.
+
+New list pages phân trang 20 rows, sort ổn định. SecurityConfig bảo vệ toàn bộ `/admin/**` bằng ROLE_ADMIN;
+service Admin mới bổ sung `@PreAuthorize`. Tất cả form web dùng CSRF, SiteMesh/Thymeleaf/Bootstrap hiện có.
+`Phase11AdminDatabaseIntegrationTest` chạy bắt buộc SQL Server thật, kiểm HTTP production, scope với JWT cũ,
+filter/pagination, basic User/Review, TC-18 và exact fixture cleanup; TC-17 reuse test Cloudinary Phase 6.
+
+Kiểm chứng 09/10/2026: **30/30 test Phase 11 PASS**, không skip. Full `clean package`: **894 tests,
+893 PASS, 0 failures/errors, 1 conditional Cloudinary skip cũ, BUILD SUCCESS** (43 suites).
+Trong regression đã sửa riêng assertion biên thời gian của test TC-13 Phase 10 để khớp SQL Server DATETIME2(0);
+không đổi production logic Phase 1–10. Chi tiết và giới hạn kiểm chứng Cloudinary trong báo cáo Phase 11.
 
 ### Kiểm chứng Staff Store Operations (Phase 10.5)
 
