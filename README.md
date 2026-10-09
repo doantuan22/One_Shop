@@ -2,7 +2,12 @@
 
 **Xây dựng website bán mỹ phẩm OneShop theo mô hình chuỗi cửa hàng.**
 
-Giai đoạn hiện tại: **PHASE 11 – ADMIN TOÀN CHUỖI DONE** (Roadmap V2). Các phần đã triển khai:
+Giai đoạn hiện tại: **PHASE 12 – HISTORY + HARDENING DONE** (Roadmap V2). Các phần đã triển khai:
+
+* **Phase 12 – History + Hardening**: audit và tái sử dụng Phase 1–11; customer cancel trước PREPARING khi chưa
+  thanh toán, atomic restore/movement/history; sửa stale quantity khi Admin update stock, kiểm SQL concurrency/security.
+  TC-01–TC-18 PASS, 34/34 test mới PASS, có Cloudinary live HTTP verification; full clean package 928 tests,
+  927 PASS, 1 conditional SKIP cũ, BUILD SUCCESS. [Báo cáo Phase 12](docs/Phase12_HistoryHardening_Report.md).
 
 * **Phase 11 – Admin toàn chuỗi**: tái sử dụng CRUD Store/Store Finder, Category/Brand/Product/SKU/Image/StoreProduct Phase 6;
   bổ sung User/Role, Staff assignment ACTIVE/INACTIVE, inventory overview, Order toàn hệ thống + filter Store + detail,
@@ -57,7 +62,39 @@ Giai đoạn hiện tại: **PHASE 11 – ADMIN TOÀN CHUỖI DONE** (Roadmap V2
   backend, Store scope của Staff theo `StaffStoreAssignment` ACTIVE, CSRF.
 
 Phase 9 và Phase 10 đã hoàn tất. Phase 10 có Store scope 10.1, Dashboard/Order reads 10.2, Fulfillment/Pickup Operations 10.3,
-Store Inventory Operations 10.4 và Integration/Verification 10.5. Phase 11 bổ sung quản trị toàn chuỗi; không triển khai Phase 12.
+Store Inventory Operations 10.4 và Integration/Verification 10.5. Phase 11 bổ sung quản trị toàn chuỗi;
+Phase 12 kiểm chứng history, cancellation, transaction/concurrency và security.
+
+### History + Hardening (Phase 12)
+
+Khách hàng hủy đơn của chính mình tại `POST /orders/{orderId}/cancel`, khi chưa PREPARING và chưa thanh toán:
+COD/PAY_AT_STORE ở CONFIRMED + UNPAID; ONLINE ở PENDING_PAYMENT + UNPAID. Backend khóa Order,
+kết thúc pending payments hiện có, hoàn đúng StoreProduct từ snapshot, ghi CANCEL_ORDER và status history
+trong cùng transaction. Request lặp lại không hoàn tồn hai lần; PAID hoặc đã PREPARING trở đi bị chặn.
+Trang chi tiết đơn hiển thị form có CSRF theo policy. Không có refund hoặc cancellation mới cho Staff/Admin.
+
+Admin update StoreProduct được sửa điểm khóa lên trước lần load entity để movement không dùng quantity cũ
+khi transaction khác vừa commit. Giữ nguyên stock writer, schema và Staff Store scope.
+
+`Phase12HistoryHardeningDatabaseIntegrationTest` có 33 test SQL Server/HTTP bắt buộc, gồm rollback sau SQL flush,
+duplicate/concurrent cancellation, payment/prepare/stock races và audit toàn bộ history/ledger hiện có.
+`Phase12CloudinaryLiveVerification` là một test opt-in với credentials/network thật: multipart Admin/JWT/CSRF,
+Cloudinary upload/CDN/provider metadata, SQL URL/public_id và xóa đúng fixture, không mock/skip.
+
+Kiểm chứng 09/10/2026: **TC-01–TC-18 PASS**, **34/34 test Phase 12 PASS**; full acceptance clean package:
+**928 tests, 927 PASS, 0 FAIL/ERROR, 1 Cloudinary conditional SKIP cũ, BUILD SUCCESS** (45 suites).
+SKIP cũ dành cho nhánh unconfigured; nhánh configured đã được kiểm chứng live. Không triển khai Phase 13/deploy.
+
+```powershell
+# Full acceptance, bao gồm mọi default Surefire pattern và live Cloudinary
+mvn -o '-Dmaven.repo.local=C:/Users/Admin/.m2/repository' '-Dtest=Test*,*Test,*Tests,*TestCase,Phase12CloudinaryLiveVerification' clean package
+
+# Regression mặc định không tự upload vào tài khoản Cloudinary
+mvn clean package
+```
+
+Audit: [Phase 12 audit](docs/Phase12_HistoryHardening_Audit.md).
+Kết quả TC-01–TC-18, build và giới hạn kiểm chứng: [Phase 12 report](docs/Phase12_HistoryHardening_Report.md).
 
 ### Admin toàn chuỗi (Phase 11)
 

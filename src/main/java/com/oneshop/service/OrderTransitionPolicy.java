@@ -2,6 +2,8 @@ package com.oneshop.service;
 
 import com.oneshop.entity.FulfillmentType;
 import com.oneshop.entity.OrderStatus;
+import com.oneshop.entity.PaymentMethod;
+import com.oneshop.entity.OrderPaymentStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -9,9 +11,20 @@ import java.util.Set;
 
 import static com.oneshop.entity.OrderStatus.*;
 
-/** Pure graph: no persistence, authorization, payment or fulfillment side effects. */
+/** Transition rules: pure checks without persistence, authorization or payment/fulfillment side effects. */
 @Component
 public class OrderTransitionPolicy {
+    /** Customer-only cancellation: before preparation and before collection; no refund workflow exists. */
+    public boolean canCustomerCancel(OrderStatus status, FulfillmentType type, PaymentMethod method,
+                                     OrderPaymentStatus payment) {
+        if (payment != OrderPaymentStatus.UNPAID || type == null || method == null) return false;
+        boolean validMethod = type == FulfillmentType.DELIVERY
+                ? method == PaymentMethod.COD || method == PaymentMethod.ONLINE
+                : method == PaymentMethod.PAY_AT_STORE || method == PaymentMethod.ONLINE;
+        return validMethod && (method == PaymentMethod.ONLINE
+                ? status == OrderStatus.PENDING_PAYMENT : status == OrderStatus.CONFIRMED);
+    }
+
     public enum Cause { FULFILLMENT, PAYMENT_SUCCESS, PAYMENT_FAILURE }
 
     private static final Map<FulfillmentType, Map<OrderStatus, Set<OrderStatus>>> GRAPH = Map.of(

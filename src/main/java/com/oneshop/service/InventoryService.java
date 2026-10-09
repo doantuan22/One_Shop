@@ -46,4 +46,7 @@ public interface InventoryService {
     /** Restore every snapshot line under ascending StoreProduct write locks, with CANCEL_ORDER movements.
      * Caller holds the Order lock and validates its transition; shares that transaction without committing. */
     void restoreForCancelledOrder(Order lockedOrder);
+
+    /** Same restoration/audit primitive with a server-supplied cancellation reason. */
+    void restoreForCancelledOrder(Order lockedOrder, String note);
 }

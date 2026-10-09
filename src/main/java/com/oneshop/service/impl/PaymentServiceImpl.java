@@ -116,6 +116,31 @@ public class PaymentServiceImpl implements PaymentService {
         return response(paymentRepository.saveAndFlush(payment));
     }
 
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void closePendingForCustomerCancellation(Order order) {
+        if (order == null || order.getPaymentStatus() != OrderPaymentStatus.UNPAID) {
+            throw new BadRequestException("Chỉ hủy đơn chưa thanh toán.");
+        }
+        var attempts = paymentRepository.findByOrderIdOrderByIdAsc(order.getId());
+        // Refuse inconsistent/collected data before any side effect, rather than repairing payment records.
+        for (var attempt : attempts) {
+            if (attempt.getStatus() == PaymentStatus.SUCCESS || attempt.getPaidAt() != null
+                    || attempt.getMethod() != order.getPaymentMethod() || attempt.getAmount() == null
+                    || attempt.getAmount().compareTo(order.getTotalAmount()) != 0) {
+                throw new BadRequestException("Thanh toán của đơn hàng không nhất quán để hủy.");
+            }
+        }
+        for (var attempt : attempts) {
+            if (attempt.getStatus() == PaymentStatus.PENDING) {
+                attempt.setStatus(PaymentStatus.FAILED);
+                attempt.setTransactionCode(transactionCode());
+                // Customer cancellation is not a collection. Order remains UNPAID; no receipt or paid_at is added.
+            }
+        }
+        paymentRepository.flush();
+    }
+
     private PaymentResponse complete(String customerEmail, Long orderId, Long paymentId, PaymentStatus result) {
         Order order = ownLockedOrder(customerEmail, orderId);
         Payment payment = paymentRepository.findByIdAndOrderId(paymentId, orderId)

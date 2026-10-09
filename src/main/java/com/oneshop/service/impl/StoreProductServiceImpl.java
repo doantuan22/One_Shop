@@ -152,7 +152,9 @@ public class StoreProductServiceImpl implements StoreProductService {
     @Override
     @Transactional
     public StoreProductStockResponse updateStoreProduct(Long id, StoreProductRequest request, String adminEmail) {
-        StoreProduct storeProduct = storeProduct(id);
+        // Lock before the first entity load: a later lock cannot refresh an already cached JPA quantity.
+        StoreProduct storeProduct = storeProductRepository.findByIdForUpdate(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm tại chi nhánh #" + id));
         inventoryService.adjustStock(id, request.getQuantity(), adminEmail,
                 noteOr(request.getNote(), ADMIN_ADJUST_NOTE));
         storeProduct.setPrice(request.getPrice());

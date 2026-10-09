@@ -18,4 +18,7 @@ public interface OrderService {
     void confirmAfterOnlinePayment(Order lockedOrder);
 
     void cancelAfterOnlinePaymentFailure(Order lockedOrder);
+
+    /** Customer cancellation primitive: caller owns Order lock, payment/stock side effects and transaction. */
+    void cancelByCustomer(Order lockedOrder, User customer);
 }

@@ -98,6 +98,15 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
     public void restoreForCancelledOrder(Order order) {
+        restoreForCancelledOrder(order, "Hoàn tồn do thanh toán ONLINE thất bại - Order #" + order.getId());
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void restoreForCancelledOrder(Order order, String note) {
+        if (!StringUtils.hasText(note) || note.length() > 500) {
+            throw new BadRequestException("Ghi chú hoàn tồn cần có nội dung và tối đa 500 ký tự.");
+        }
         List<OrderItem> items = orderItemRepository.findByOrderId(order.getId()).stream()
                 .sorted(Comparator.comparing((OrderItem item) -> item.getStoreProduct().getId())
                         .thenComparing(OrderItem::getId)).toList();
@@ -131,7 +140,7 @@ public class InventoryServiceImpl implements InventoryService {
             movement.setQuantityAfter(after);
             movement.setReferenceOrder(order);
             movement.setStaff(null);
-            movement.setNote("Hoàn tồn do thanh toán ONLINE thất bại - Order #" + order.getId());
+            movement.setNote(note);
             movementRepository.save(movement);
         }
     }

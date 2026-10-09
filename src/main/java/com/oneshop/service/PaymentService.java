@@ -24,4 +24,7 @@ public interface PaymentService {
 
     /** Internal primitive: caller verified the pickup code and holds the Order lock/completion transaction. */
     PaymentResponse recordPayAtStoreCollected(Order lockedOrder);
+
+    /** Caller owns the unpaid Order lock and cancellation transaction; closes existing pending attempts. */
+    void closePendingForCustomerCancellation(Order lockedOrder);
 }

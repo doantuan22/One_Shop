@@ -5,6 +5,7 @@ import com.oneshop.entity.OrderStatus;
 import com.oneshop.entity.OrderStatusHistory;
 import com.oneshop.entity.PaymentMethod;
 import com.oneshop.entity.User;
+import com.oneshop.entity.RoleName;
 import com.oneshop.exception.BadRequestException;
 import com.oneshop.exception.ResourceNotFoundException;
 import com.oneshop.repository.OrderRepository;
@@ -60,6 +61,22 @@ public class OrderServiceImpl implements OrderService {
                 || !policy.canTransition(order.getOrderStatus(), target, order.getFulfillmentType(), cause)) {
             throw new BadRequestException("Chuyển trạng thái đơn hàng không hợp lệ hoặc trạng thái đã thay đổi.");
         }
+        writeStatusAndHistory(order, target, actor, note);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void cancelByCustomer(Order order, User customer) {
+        if (order == null || customer == null || !customer.isActive() || customer.getRole().getName() != RoleName.CUSTOMER
+                || !customer.getId().equals(order.getUser().getId())
+                || !policy.canCustomerCancel(order.getOrderStatus(), order.getFulfillmentType(),
+                        order.getPaymentMethod(), order.getPaymentStatus())) {
+            throw new BadRequestException("Đơn hàng không còn đủ điều kiện để khách hủy.");
+        }
+        writeStatusAndHistory(order, OrderStatus.CANCELLED, customer, "Khách hàng hủy đơn trước khi chuẩn bị hàng");
+    }
+
+    private void writeStatusAndHistory(Order order, OrderStatus target, User actor, String note) {
         if (note != null && note.length() > 500) {
             throw new BadRequestException("Ghi chú lịch sử không được vượt quá 500 ký tự.");
         }
