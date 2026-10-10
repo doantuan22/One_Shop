@@ -1,0 +1,4956 @@
+{
+  "totals": {
+    "tests": 927,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1,
+    "pass": 926
+  },
+  "suites": [
+    {
+      "name": "com.oneshop.AccessControlIntegrationTest",
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.AuthDatabaseIntegrationTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.AuthFlowIntegrationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.CartDatabaseIntegrationTest",
+      "tests": 23,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.CartHttpDatabaseIntegrationTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.CartWebIntegrationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "tests": 30,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "tests": 29,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    {
+      "name": "com.oneshop.CatalogWebIntegrationTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.CheckoutConcurrencyDatabaseIntegrationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "tests": 23,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.CheckoutHttpDatabaseIntegrationTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.CheckoutWebIntegrationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.DatabaseFoundationIntegrationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "tests": 57,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.DeliveryWebIntegrationTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.LayoutsIntegrationTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.OneShopApplicationTests",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "tests": 31,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.PaymentWebIntegrationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.Phase10IntegrationWebDatabaseTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "tests": 30,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "tests": 33,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "tests": 19,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.PickupDatabaseIntegrationTest",
+      "tests": 62,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.PickupWebIntegrationTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.security.jwt.JwtServiceTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.service.CartServiceRetryTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.service.CloudinaryServiceTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.service.CodPaymentServiceTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "tests": 55,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.service.InventoryRestoreTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.service.OrderServiceTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.service.OrderTransitionPolicyTest",
+      "tests": 129,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.service.OrderViewServiceTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.service.PayAtStorePaymentServiceTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.service.PaymentServiceTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "tests": 53,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "tests": 36,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "tests": 29,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "tests": 23,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.StaffStoreScopeDatabaseIntegrationTest",
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.oneshop.WebRoutesIntegrationTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "methods": [
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "staffWithoutActiveAssignmentGetsNoStoreData",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "publicPagesNeedNoLogin",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "adminReachesTheAdminAreaOnly",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "jwtCookieIsHttpOnlyAndNeverExposedInThePage",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "stateChangingRequestWithTheJwtCookieButNoCsrfTokenIsRejected",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "assignedStaffPassesTheScopeCheckOnInnerPages",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "forbiddenPagesRenderTheErrorPageNotTheProtectedContent",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "customerReachesTheClientAreaOnly",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "staffCannotChooseTheirStoreThroughTheRequest",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "webLoginSendsEachRoleToItsArea",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "csrfTokenOfALoggedInUserStaysValidAcrossPagesAndSubmits",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "guestsAreSentToLoginForEveryProtectedArea",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "decoratorsCannotBeRequestedDirectlyEvenByAdmin",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "staffReachesTheStaffAreaOnly",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "logoutNeedsPostAndClearsTheJwtCookie",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "registrationRejectsATakenEmailAndWeakInput",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "roleInsideTheTokenIsNotTrusted",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "disabledAccountLosesAccessEvenWithAStillValidToken",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "assignedStaffSeesTheirStore",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AccessControlIntegrationTest",
+      "name": "registrationAlwaysCreatesACustomerWithAHashedPassword",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AuthDatabaseIntegrationTest",
+      "name": "staffScopeIsExactlyTheStoreOfTheActiveAssignment",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AuthDatabaseIntegrationTest",
+      "name": "registrationStoresACustomerThatCanLogIn",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AuthDatabaseIntegrationTest",
+      "name": "inactiveAssignmentGivesNoStoreScope",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AuthDatabaseIntegrationTest",
+      "name": "inactiveAccountCannotLogIn",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AuthDatabaseIntegrationTest",
+      "name": "seedAccountsLogInWithTheirRoleFromTheDatabase",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AuthDatabaseIntegrationTest",
+      "name": "inactiveStoreOrInactiveStaffAccountGivesNoStoreScope",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AuthDatabaseIntegrationTest",
+      "name": "wrongPasswordAndUnknownAccountAreRejectedTheSameWay",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AuthDatabaseIntegrationTest",
+      "name": "accountsThatAreNotStaffHaveNoStoreScope",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AuthFlowIntegrationTest",
+      "name": "webLoginSetsHttpOnlyJwtCookieAndCookieAuthenticatesPages",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AuthFlowIntegrationTest",
+      "name": "apiLoginRejectsWrongPassword",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AuthFlowIntegrationTest",
+      "name": "apiLoginReturnsBearerTokenThatAuthenticatesLaterRequests",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AuthFlowIntegrationTest",
+      "name": "tamperedTokenIsIgnored",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AuthFlowIntegrationTest",
+      "name": "webLoginWithoutCsrfTokenIsRejected",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.AuthFlowIntegrationTest",
+      "name": "apiLoginValidatesInput",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "theCartIsCreatedOnTheFirstAddAndThereIsOnlyEverOne",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "aCustomerCannotTouchAnotherCustomersLines",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "changingTheSelectedStoreNeverChangesTheCart",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "sameSkuAtTwoStoresIsTwoIndependentLines",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "tc05_cartWithLinesOfThreeStoresIsShownAsThreeGroups",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "cartRequestsCarryNoUserPriceOrStoreAndCartViewsCarryNoStock",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "quantityMustBeAtLeastOne",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "databaseRejectsANonPositiveQuantity",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "selectionReturnsExactlyTheChosenLinesGroupedByStore",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "databaseRejectsASecondLineForTheSameStoreProductInOneCart",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "updateSetsTheQuantityAfterCheckingStock",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "updateReadsTheLatestStockNotTheOneThePageWasRenderedWith",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "whatIsNotOnSaleCannotBeAdded",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "tc05_aCustomerBuildsACartAcrossThreeStores",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "whatIsAlreadyInTheCartCountsTowardsTheStockCheck",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "tc04_addingTheSameStoreProductTwiceGivesOneLineWithTheSummedQuantity",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "lineWhoseStoreProductIsNoLongerOnSaleStaysButCanOnlyBeRemoved",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "priceShownIsTheCurrentStoreProductPriceNotASnapshot",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "cartOperationsNeverChangeStockOrCreateOrdersOrMovements",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "removeDeletesOnlyThatLine",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "stockDroppingBelowTheCartQuantityIsFlaggedButTheLineIsNotChanged",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "sellabilityFollowsTheCatalogConvention",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartDatabaseIntegrationTest",
+      "name": "addingMoreThanTheStoreHasIsRefusedAndChangesNothing",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartHttpDatabaseIntegrationTest",
+      "name": "userPriceAndStoreSentByTheClientAreIgnored",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartHttpDatabaseIntegrationTest",
+      "name": "tc05_cartPageShowsOneGroupPerStoreWithItsOwnLines",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartHttpDatabaseIntegrationTest",
+      "name": "aCustomerCannotChangeAnotherCustomersLineByItsId",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartHttpDatabaseIntegrationTest",
+      "name": "cartWritesNeedACsrfToken",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartHttpDatabaseIntegrationTest",
+      "name": "staffAndAdminHaveNoCart",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartHttpDatabaseIntegrationTest",
+      "name": "updateAndRemoveThroughTheCartForms",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartHttpDatabaseIntegrationTest",
+      "name": "guestsAreSentToLoginAndCannotChangeAnything",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartHttpDatabaseIntegrationTest",
+      "name": "tc04_addingTheSameStoreProductTwiceShowsOneLineWithTheSummedQuantity",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartHttpDatabaseIntegrationTest",
+      "name": "sameProductAtTwoStoresIsTwoLinesInTwoGroups",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartHttpDatabaseIntegrationTest",
+      "name": "selectedCartItemIdsOpenTheCheckoutPageGroupedByStoreAndNothingIsCreated",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartHttpDatabaseIntegrationTest",
+      "name": "addingToTheCartDoesNotChangeStockAndTheCartPageDoesNotShowIt",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartHttpDatabaseIntegrationTest",
+      "name": "addIsRefusedForWhatCannotBeBoughtAndTheReasonIsShown",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartHttpDatabaseIntegrationTest",
+      "name": "productDetailOffersAddToCartOnlyForAConcreteStoreProduct",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartHttpDatabaseIntegrationTest",
+      "name": "changingTheSelectedStoreLeavesTheCartExactlyAsItWas",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartHttpDatabaseIntegrationTest",
+      "name": "tc04_twoSimultaneousAddsOfTheSameStoreProductStillGiveOneLine",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartWebIntegrationTest",
+      "name": "refusalsOfTheServiceAreShownOnTheCartPage",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartWebIntegrationTest",
+      "name": "invalidInputNeverReachesTheService",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartWebIntegrationTest",
+      "name": "onlyCustomersHaveACart",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartWebIntegrationTest",
+      "name": "cartPageRendersGroupsCheckboxesAndItemStates",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CartWebIntegrationTest",
+      "name": "everyCartActionIsDoneForTheAuthenticatedCustomerOnly",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "imageOfAnotherProductCannotBeAddressedThroughAProduct",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "tc02_storeCatalogOnlyReflectsTheStoreProductsOfThatStore",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "storeFinderFiltersByProvinceAndArea",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "productThatIsNotVisibleHasNoDetailPage",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "catalogIsPaged",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "adminPutsASkuOnSaleAtAStoreWithItsOwnPriceQuantityAndStatus",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "clientViewsCarryNoQuantity",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "storeCatalogKeepsTheStoreContextWhenSearchingAndFiltering",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "productNeedsAnExistingCategoryAndBrand",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "tc18_inactiveStoreCannotBeSelectedOrSoldFromButItsDataStays",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "tc03_productDetailFollowsTheSelectedStoreAndLeavesCartsAlone",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "tc17_productImageGoesToCloudinaryAndTheDatabaseKeepsOnlyUrlAndPublicId",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "productDetailAtAStoreThatDoesNotSellTheSku",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "tc18_deactivatingAStoreTakesItOutOfSaleWithoutDeletingAnything",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "hiddenCategoryOrBrandHidesItsProductsFromClients",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "chainCatalogSearchesByNameAndSkuAndFiltersByCategoryAndBrand",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "cloudinaryRefusingADeleteKeepsTheImageRow",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "storeProductNeedsAnExistingStoreAndProductAndAValidQuantity",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "storeCatalogOfAnInactiveOrUnknownStoreIsEmpty",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "duplicateStoreProductIsRejected",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "duplicateSkuIsRejected",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "tc17_brandLogoIsStoredAsUrlAndPublicIdAndTheOldFileIsRemoved",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "productDetailWithoutSelectedStoreListsEveryStoreSellingTheSku",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "tc01_chainCatalogShowsEachSkuOnceWithPriceAndAvailabilityPerStore",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "adminCreatesAndUpdatesAProduct",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "updatingOnlyThePriceWritesNoStockMovement",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "chainCatalogLeavesOutWhatIsNotOnSale",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "selectedStoreMustExistAndBeActive",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "failedUploadStoresNothing",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogDatabaseIntegrationTest",
+      "name": "adminCreatesAStoreAndCodeMustBeUnique",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "clientPagesNeverShowTheExactQuantity",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "productDetailWithoutAStoreListsWhereTheSkuIsSold",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "duplicateStoreCodeAndBadPhoneAreShownOnTheStoreForm",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "clearingTheStoreGoesBackToTheWholeChain",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "storeProductFormRejectsNegativePriceAndQuantity",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "invalidSelectedStoreFallsBackToTheWholeChainAndDropsTheCookie",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "imageUploadReachesCloudinaryServiceThroughTheMultipartFormWithCsrf",
+      "status": "SKIP"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "aStoreThatCannotBeSelectedIsRefused",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "storeCannotBeChosenWithARequestParameter",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "storeFinderShowsMetadataAndFiltersByProvinceAndArea",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "duplicateStoreProductIsShownOnTheForm",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "adminPagesAreClosedToEveryoneElse",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "theSelectedStoreIsMarkedInTheFinder",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "tc18_inactiveStoreIsShownAsNotOperatingAndCannotBeChosen",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "switchingStoreFromTheDetailPageReturnsToItAndLeavesTheCartAlone",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "selectingAStoreNeedsACsrfTokenAndOnlyRedirectsInsideTheSite",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "duplicateCategoryAndBrandNamesAreShownOnTheirForms",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "tc02_selectingAStoreSwitchesTheCatalogToThatStoreOnly",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "duplicateSkuIsShownOnTheProductForm",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "searchAndFiltersStayInsideTheSelectedStore",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "productDetailAtAStoreThatDoesNotSellIt",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "productFormValidatesRequiredFields",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "chainCatalogSearchAndFilters",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "productsThatAreNotVisibleAnswer404InsideTheClientLayout",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "adminWritesNeedACsrfToken",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "adminWritesAreRefusedForOtherRolesEvenWithAValidCsrfToken",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "adminPagesRenderInTheAdminLayoutForAdmin",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "tc03_productDetailChangesPriceAndAvailabilityWithTheSelectedStore",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogHttpDatabaseIntegrationTest",
+      "name": "tc01_chainCatalogPageListsEachSkuOnceWithItsStores",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogWebIntegrationTest",
+      "name": "adminCatalogPagesNeedTheAdminRole",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogWebIntegrationTest",
+      "name": "aValidCookiePutsTheCatalogInThatStore",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogWebIntegrationTest",
+      "name": "selectingAStoreSetsTheCookieOnlyAfterTheServiceAcceptedIt",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogWebIntegrationTest",
+      "name": "unknownProductIs404",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogWebIntegrationTest",
+      "name": "selectingAStoreWithoutCsrfTokenIsRejected",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogWebIntegrationTest",
+      "name": "productDetailReceivesTheValidatedStoreOnly",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogWebIntegrationTest",
+      "name": "withoutACookieTheCatalogIsTheWholeChain",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogWebIntegrationTest",
+      "name": "anUnknownOrMalformedCookieIsDroppedAndTheCatalogIsTheWholeChain",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogWebIntegrationTest",
+      "name": "adminCatalogWritesNeedTheAdminRoleAndACsrfToken",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CatalogWebIntegrationTest",
+      "name": "storeFinderIsPublicAndPassesTheFiltersToTheService",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutConcurrencyDatabaseIntegrationTest",
+      "name": "theSameCheckoutSubmittedTwiceAtOnceIsPlacedOnce",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutConcurrencyDatabaseIntegrationTest",
+      "name": "afterAFailedCheckoutTheSameCartCanBeCheckedOutSuccessfully",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutConcurrencyDatabaseIntegrationTest",
+      "name": "failureAfterTheFirstStoreGroupWasWrittenRollsBackTheWholeCheckout",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutConcurrencyDatabaseIntegrationTest",
+      "name": "customersBuyingTheSameSkusInOppositeOrderBothSucceedWithoutDeadlock",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutConcurrencyDatabaseIntegrationTest",
+      "name": "tc07_twoCustomersRacingForTheLastUnitNeverOversell",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutConcurrencyDatabaseIntegrationTest",
+      "name": "tc07_whenStockCoversOnlyOneOfTwoLargerOrdersOnlyOneIsPlaced",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "everyOrderStartsItsTimelineWithACreationEntryWrittenByTheSystem",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "checkoutIsRefusedWhenStockDroppedSinceTheLineWasAdded",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "stockIsDeductedWithOneOrderMovementPerLine",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "databaseRejectsNegativeStock",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "oneInvalidStoreGroupRefusesTheWholeCheckout",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "storeOfAnOrderComesFromTheCartLinesNotFromTheRequest",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "databaseRejectsAnOrderItemWhoseSubtotalIsNotPriceTimesQuantity",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "tc08_checkoutRequestCannotCarryAPriceTotalStatusOrOwner",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "tc14_orderItemsKeepTheirSnapshotWhenPriceAndProductNameChangeLater",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "checkoutIsRefusedWhenALineIsNoLongerOnSale",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "databaseRejectsAnOrderWithAForbiddenFulfillmentAndPaymentCombination",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "aCustomerCannotCheckOutAnotherCustomersLines",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "buyingTheWholeStockLeavesZeroNeverLess",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "onlyTheCheckedOutLinesLeaveTheCart",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "fulfillmentAndPaymentCombinationsAreChecked",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "preparingShowsTheChosenLinesByStoreAndSuggestsTheDefaultAddress",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "aStoreOnlyOffersTheWaysOfReceivingItSupports",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "tc06_checkoutOfThreeStoresCreatesOneSessionAndOneOrderPerStore",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "tc08_priceComesFromTheStoreProductAtTheMomentOfCheckoutNotFromTheCartPage",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "deliveryNeedsAnAddressAndEveryOrderNeedsAReceiver",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "aCheckoutCanOnlyBeReadByItsOwner",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "duplicateCartItemIdsAreOrderedOnce",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutDatabaseIntegrationTest",
+      "name": "checkoutOfOneStoreCreatesOneSessionOneOrderAndItsSnapshots",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutHttpDatabaseIntegrationTest",
+      "name": "tc14_resultPageKeepsShowingTheSnapshotAfterThePriceChanges",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutHttpDatabaseIntegrationTest",
+      "name": "aStoreThatDoesNotDeliverOffersPickupOnly",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutHttpDatabaseIntegrationTest",
+      "name": "oneLineOutOfStockRefusesTheWholeCheckoutAndShowsWhy",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutHttpDatabaseIntegrationTest",
+      "name": "invalidChoicesAreRefusedAndThePageKeepsWhatWasChosen",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutHttpDatabaseIntegrationTest",
+      "name": "theSameFormSubmittedAgainDoesNotOrderTwice",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutHttpDatabaseIntegrationTest",
+      "name": "anotherCustomersLinesCannotBeCheckedOut",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutHttpDatabaseIntegrationTest",
+      "name": "tc06_tc08_checkoutOfThreeStoresThroughTheFormWithTamperedPrices",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutHttpDatabaseIntegrationTest",
+      "name": "onlyCustomersReachCheckout",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutHttpDatabaseIntegrationTest",
+      "name": "linesThatCannotBeCheckedOutLeadBackToTheCartWithTheReason",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutHttpDatabaseIntegrationTest",
+      "name": "checkoutPageShowsOneBlockPerStoreWithItsOwnChoicesAndNoPriceFields",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutWebIntegrationTest",
+      "name": "checkoutPageHasOneBlockPerStoreWithSuggestedReceiverAndOnlySupportedOptions",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutWebIntegrationTest",
+      "name": "onlyCustomersWithACsrfTokenCanCheckOut",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutWebIntegrationTest",
+      "name": "aRefusalShowsTheCheckoutPageAgainWithTheReasonAndTheChoicesMade",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutWebIntegrationTest",
+      "name": "invalidFormValuesNeverReachTheService",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutWebIntegrationTest",
+      "name": "aLockConflictIsReportedAsBusyNotAsAnError",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.CheckoutWebIntegrationTest",
+      "name": "theFormIsBoundToOneChoicePerStoreAndPlacedForTheAuthenticatedCustomer",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DatabaseFoundationIntegrationTest",
+      "name": "ordersCheckoutAndPaymentsAreMappedPerOrder",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DatabaseFoundationIntegrationTest",
+      "name": "oneSkuIsSoldAtSeveralStoresWithItsOwnPriceAndQuantity",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DatabaseFoundationIntegrationTest",
+      "name": "all19TablesAreMappedAndEveryRepositoryCanReadItsSeedData",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DatabaseFoundationIntegrationTest",
+      "name": "storeAndOwnerScopedQueriesNeverCrossTheBoundary",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DatabaseFoundationIntegrationTest",
+      "name": "seedDataIsReadThroughJpa",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DatabaseFoundationIntegrationTest",
+      "name": "storeProductRowsAreLockedWithPessimisticWrite",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "inconsistentOnlineUnpaidAtAnyStageIsRejected(DeliveryAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "inconsistentOnlineUnpaidAtAnyStageIsRejected(DeliveryAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "inconsistentOnlineUnpaidAtAnyStageIsRejected(DeliveryAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "inconsistentOnlineUnpaidAtAnyStageIsRejected(DeliveryAction)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "codPaidBeforeCompletionCannotBeFulfilledOrCollectedAgain(DeliveryAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "codPaidBeforeCompletionCannotBeFulfilledOrCollectedAgain(DeliveryAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "codPaidBeforeCompletionCannotBeFulfilledOrCollectedAgain(DeliveryAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "codPaidBeforeCompletionCannotBeFulfilledOrCollectedAgain(DeliveryAction)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "onlinePendingCannotBeFulfilledOrConfirmedByStaff(DeliveryAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "onlinePendingCannotBeFulfilledOrConfirmedByStaff(DeliveryAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "onlinePendingCannotBeFulfilledOrConfirmedByStaff(DeliveryAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "onlinePendingCannotBeFulfilledOrConfirmedByStaff(DeliveryAction)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "inactiveAssignmentStoreOrStaffRevokesReadAndMutationScope(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "inactiveAssignmentStoreOrStaffRevokesReadAndMutationScope(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "inactiveAssignmentStoreOrStaffRevokesReadAndMutationScope(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "readScopeSupportsMultipleAssignmentsAndOnlyDeliverySnapshots",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "realSqlServerConcurrentRequestsProduceOneTransitionAndAtMostOneCollection(DeliveryAction, int)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "realSqlServerConcurrentRequestsProduceOneTransitionAndAtMostOneCollection(DeliveryAction, int)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "realSqlServerConcurrentRequestsProduceOneTransitionAndAtMostOneCollection(DeliveryAction, int)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "realSqlServerConcurrentRequestsProduceOneTransitionAndAtMostOneCollection(DeliveryAction, int)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "realSqlServerConcurrentRequestsProduceOneTransitionAndAtMostOneCollection(DeliveryAction, int)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "realSqlServerConcurrentRequestsProduceOneTransitionAndAtMostOneCollection(DeliveryAction, int)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "realSqlServerConcurrentRequestsProduceOneTransitionAndAtMostOneCollection(DeliveryAction, int)[7]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "realSqlServerConcurrentRequestsProduceOneTransitionAndAtMostOneCollection(DeliveryAction, int)[8]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "realSqlServerConcurrentRequestsProduceOneTransitionAndAtMostOneCollection(DeliveryAction, int)[9]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "onlineDeliveryNeverRewritesItsReceiptAndKeepsInventoryAndItemSnapshots",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "storeScopeIsRecheckedInServiceForEveryAction(DeliveryAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "storeScopeIsRecheckedInServiceForEveryAction(DeliveryAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "storeScopeIsRecheckedInServiceForEveryAction(DeliveryAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "storeScopeIsRecheckedInServiceForEveryAction(DeliveryAction)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "tc09CodLifecyclePreservesInventorySnapshotsAndCreatesPaymentOnlyAtCompletion",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "pickupOrderCannotUseAnyDeliveryAction(DeliveryAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "pickupOrderCannotUseAnyDeliveryAction(DeliveryAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "pickupOrderCannotUseAnyDeliveryAction(DeliveryAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "pickupOrderCannotUseAnyDeliveryAction(DeliveryAction)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "codCollectionHelperRequiresSurroundingTransaction",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "inconsistentSuccessfulCodReceiptCannotBeCollectedAgain",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "codCompletionRollsBackEveryWriteAtAllFailurePoints(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "codCompletionRollsBackEveryWriteAtAllFailurePoints(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "codCompletionRollsBackEveryWriteAtAllFailurePoints(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "codCompletionRollsBackEveryWriteAtAllFailurePoints(String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "codCompletionRollsBackEveryWriteAtAllFailurePoints(String)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "detailAndCodCollectionUsePurchaseSnapshotsAfterCatalogNameAndPriceChange",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "realHttpStaffCanRunFullFlowWithSnapshotsAndForgedFieldsIgnored(PaymentMethod)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "realHttpStaffCanRunFullFlowWithSnapshotsAndForgedFieldsIgnored(PaymentMethod)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "cancelledOnlineOrderCannotRunAnyDeliveryAction",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "realHttpRejectsCrossStorePickupPendingMissingCsrfAndGetMutations",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "skipBackwardAndDuplicateActionsCannotWrite(OrderStatus, DeliveryAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "skipBackwardAndDuplicateActionsCannotWrite(OrderStatus, DeliveryAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "skipBackwardAndDuplicateActionsCannotWrite(OrderStatus, DeliveryAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "skipBackwardAndDuplicateActionsCannotWrite(OrderStatus, DeliveryAction)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "skipBackwardAndDuplicateActionsCannotWrite(OrderStatus, DeliveryAction)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "skipBackwardAndDuplicateActionsCannotWrite(OrderStatus, DeliveryAction)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "skipBackwardAndDuplicateActionsCannotWrite(OrderStatus, DeliveryAction)[7]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "skipBackwardAndDuplicateActionsCannotWrite(OrderStatus, DeliveryAction)[8]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "skipBackwardAndDuplicateActionsCannotWrite(OrderStatus, DeliveryAction)[9]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryDatabaseIntegrationTest",
+      "name": "skipBackwardAndDuplicateActionsCannotWrite(OrderStatus, DeliveryAction)[10]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryWebIntegrationTest",
+      "name": "blockedPaymentOrTerminalHasNoAction(OrderStatus)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryWebIntegrationTest",
+      "name": "blockedPaymentOrTerminalHasNoAction(OrderStatus)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryWebIntegrationTest",
+      "name": "blockedPaymentOrTerminalHasNoAction(OrderStatus)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryWebIntegrationTest",
+      "name": "blockedPaymentOrTerminalHasNoAction(OrderStatus)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryWebIntegrationTest",
+      "name": "unknownOrderScopeAndDatabaseFailuresShowFriendlyErrorsWithoutSql",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryWebIntegrationTest",
+      "name": "fixedPostsUsePrincipalAndIgnoreClientStoreActorStatusAmountMethodCode",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryWebIntegrationTest",
+      "name": "customerAdminGuestAndStaffWithoutAssignmentCannotReadOrMutate",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryWebIntegrationTest",
+      "name": "showsOnlyFixedNextActionAndCsrf(DeliveryAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryWebIntegrationTest",
+      "name": "showsOnlyFixedNextActionAndCsrf(DeliveryAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryWebIntegrationTest",
+      "name": "showsOnlyFixedNextActionAndCsrf(DeliveryAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryWebIntegrationTest",
+      "name": "showsOnlyFixedNextActionAndCsrf(DeliveryAction)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryWebIntegrationTest",
+      "name": "getCannotMutateAndThereIsNoGenericTransitionEndpoint",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryWebIntegrationTest",
+      "name": "listAndDetailUseStaffLayoutSnapshotsAuditAndSafeHtml",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.DeliveryWebIntegrationTest",
+      "name": "everyWriteRequiresCsrfEvenWithBearer",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.LayoutsIntegrationTest",
+      "name": "adminAreaUsesTheAdminLayoutWithChainWideScope",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.LayoutsIntegrationTest",
+      "name": "staffMenuMarksCurrentPageAndEnablesCompletedStockAndHistoryPages",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.LayoutsIntegrationTest",
+      "name": "staffAreaUsesTheStaffLayout",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.LayoutsIntegrationTest",
+      "name": "clientLayoutShowsWholeChainByDefault",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.LayoutsIntegrationTest",
+      "name": "layoutsAreResponsive",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.LayoutsIntegrationTest",
+      "name": "adminOverviewUsesSharedComponentsAndEnablesChainOperations",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.LayoutsIntegrationTest",
+      "name": "clientLayoutShowsSelectedStoreWhenOneIsChosen",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.LayoutsIntegrationTest",
+      "name": "staffLayoutShowsTheAssignedStore",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.LayoutsIntegrationTest",
+      "name": "staffAndAdminAreasKeepTheirAccessRules",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OneShopApplicationTests",
+      "name": "passwordsAreHashedWithBcrypt",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OneShopApplicationTests",
+      "name": "contextLoadsWithoutDatabase",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "concurrentDuplicateHasOneWinnerAndExactlyOneAudit()[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "concurrentDuplicateHasOneWinnerAndExactlyOneAudit()[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "concurrentDuplicateHasOneWinnerAndExactlyOneAudit()[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "genericPrimitiveCannotUsePaymentEdgesAndPaymentHelpersRequireTransaction",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "invalidSameBackwardSkipTerminalAndWrongBranchLeaveNoHistory(FulfillmentType, OrderStatus, OrderStatus)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "invalidSameBackwardSkipTerminalAndWrongBranchLeaveNoHistory(FulfillmentType, OrderStatus, OrderStatus)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "invalidSameBackwardSkipTerminalAndWrongBranchLeaveNoHistory(FulfillmentType, OrderStatus, OrderStatus)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "invalidSameBackwardSkipTerminalAndWrongBranchLeaveNoHistory(FulfillmentType, OrderStatus, OrderStatus)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "invalidSameBackwardSkipTerminalAndWrongBranchLeaveNoHistory(FulfillmentType, OrderStatus, OrderStatus)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "invalidSameBackwardSkipTerminalAndWrongBranchLeaveNoHistory(FulfillmentType, OrderStatus, OrderStatus)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "invalidSameBackwardSkipTerminalAndWrongBranchLeaveNoHistory(FulfillmentType, OrderStatus, OrderStatus)[7]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "invalidSameBackwardSkipTerminalAndWrongBranchLeaveNoHistory(FulfillmentType, OrderStatus, OrderStatus)[8]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "invalidSameBackwardSkipTerminalAndWrongBranchLeaveNoHistory(FulfillmentType, OrderStatus, OrderStatus)[9]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "invalidSameBackwardSkipTerminalAndWrongBranchLeaveNoHistory(FulfillmentType, OrderStatus, OrderStatus)[10]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "invalidSameBackwardSkipTerminalAndWrongBranchLeaveNoHistory(FulfillmentType, OrderStatus, OrderStatus)[11]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "paymentOutcomesUseCentralPolicyAndKeepSystemHistory(boolean)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "paymentOutcomesUseCentralPolicyAndKeepSystemHistory(boolean)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "packedVersusShippingCannotSkipFromStalePreparingIntent",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "validTransitionHasOneHistoryActorTimestampNoteAndNoSideEffects(FulfillmentType)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "validTransitionHasOneHistoryActorTimestampNoteAndNoSideEffects(FulfillmentType)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "noteLimitIsCheckedBeforeWritesAndNullSystemActorIsStored",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "historyFailureRollsBackAlreadyFlushedOrderAndOptionalFlushedHistory(boolean)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "historyFailureRollsBackAlreadyFlushedOrderAndOptionalFlushedHistory(boolean)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.OrderStateDatabaseIntegrationTest",
+      "name": "repeatedPaymentSuccessAfterPreparingDoesNotRepeatHistoryOrRewindOrder",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "historyFailureRollsBackWholeResult(boolean)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "historyFailureRollsBackWholeResult(boolean)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "failureCancelsAndRestoresEverySnapshotToItsOwnStoreProduct",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "repeatedStartReusesPendingAndSchemaRemainsOneToMany",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "duplicateResultDoesNotRepeatAnyWrites(boolean)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "duplicateResultDoesNotRepeatAnyWrites(boolean)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "clientPaymentRoutesAreCustomerOnly(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "clientPaymentRoutesAreCustomerOnly(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "clientPaymentRoutesAreCustomerOnly(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "concurrentFailuresOfDifferentOrdersSharingStockDoNotLoseRestores",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "secondRestoreFailureRollsBackFirstFlushedItemPaymentOrderAndAudit",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "ownershipAndMissingIdsAreCheckedForEveryOperation",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "httpWorkflowIgnoresForgedFieldsAndShowsResult(boolean)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "httpWorkflowIgnoresForgedFieldsAndShowsResult(boolean)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "pendingBelongsToOrderAndUsesItsAmountAndMethod",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "paymentDoesNotChangeOtherOrdersInSameCheckout(boolean)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "paymentDoesNotChangeOtherOrdersInSameCheckout(boolean)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "successConfirmsOrderWithAuditAndDoesNotTouchStockOrSnapshots",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "offlineOrdersStayConfirmedUnpaid(PaymentMethod)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "offlineOrdersStayConfirmedUnpaid(PaymentMethod)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "inconsistentPaymentIsRefusedWithoutMutation(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "inconsistentPaymentIsRefusedWithoutMutation(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "concurrentSameResultTransitionsAndRestoresAtMostOnce(boolean)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "concurrentSameResultTransitionsAndRestoresAtMostOnce(boolean)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "concurrentStartCreatesOnePendingAttempt",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "csrfRequiredForStartAndBothResultsEvenWithBearer",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "httpOwnershipAndPaymentOrderMismatchReturn404",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "orderNoLongerPendingCannotCompletePayment",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "conflictingConcurrentResultsHaveOneWinner",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "httpOfflineOrderHasNoOnlineControlsAndCannotStart(PaymentMethod)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentDatabaseIntegrationTest",
+      "name": "httpOfflineOrderHasNoOnlineControlsAndCannotStart(PaymentMethod)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentWebIntegrationTest",
+      "name": "viewHasOrderStoreTotalAndPendingControls",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentWebIntegrationTest",
+      "name": "csrfIsRequiredOnEveryWrite",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentWebIntegrationTest",
+      "name": "lockConflictAndConstraintFailureDoNotExposeSqlToUi",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentWebIntegrationTest",
+      "name": "formsUsePrincipalAndIgnoreAllClientPaymentData",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentWebIntegrationTest",
+      "name": "unknownOwnerOrAttemptGetsFriendly404",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PaymentWebIntegrationTest",
+      "name": "staffAdminAndGuestCannotUseClientFlow",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase10IntegrationWebDatabaseTest",
+      "name": "tc13PhysicalCountCreatesOneCompleteAuditAndImmediatelyUpdatesDashboardAndExactStock",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase10IntegrationWebDatabaseTest",
+      "name": "tc11PeerOrderAndInventoryCannotBeReadOrMutatedByForgingAnyStoreSource(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase10IntegrationWebDatabaseTest",
+      "name": "tc11PeerOrderAndInventoryCannotBeReadOrMutatedByForgingAnyStoreSource(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase10IntegrationWebDatabaseTest",
+      "name": "tc11PeerOrderAndInventoryCannotBeReadOrMutatedByForgingAnyStoreSource(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase10IntegrationWebDatabaseTest",
+      "name": "tc11PeerOrderAndInventoryCannotBeReadOrMutatedByForgingAnyStoreSource(String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase10IntegrationWebDatabaseTest",
+      "name": "failedOnlineSiblingUpdatesOnlyItsStoreDashboardAndInventoryWhileOtherStaffOrdersContinue",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase10IntegrationWebDatabaseTest",
+      "name": "racingHttpPickupCompletionCollectsPayAtStoreOnceAndRejectsTheDuplicateWithoutStockChanges",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase10IntegrationWebDatabaseTest",
+      "name": "absentOrInactiveAssignmentBlocksEveryStaffModuleAndMutationWithForgedStore(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase10IntegrationWebDatabaseTest",
+      "name": "absentOrInactiveAssignmentBlocksEveryStaffModuleAndMutationWithForgedStore(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase10IntegrationWebDatabaseTest",
+      "name": "racingHttpAdjustmentAndCheckoutMaintainOneSerialStockLedgerAndCorrectSnapshot",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase10IntegrationWebDatabaseTest",
+      "name": "staffOperationsFollowOneMultiStoreCheckoutThroughInventoryDashboardDeliveryAndBothPickups",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase10IntegrationWebDatabaseTest",
+      "name": "revokingOneOfMultipleAssignmentsImmediatelyRemovesPeerReadsAndWritesAcrossAllModules",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "adminOrderFilterMatchesSqlAcrossAllStoresAndDetailReusesSnapshotPaymentHistory",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "customerAndStaffCannotWriteAdminAndNoBusinessRowsChange",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "orderStockUserAssignmentReviewPaginationKeepsFiltersAndStableTotals",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "multipleAssignmentsAndStoreChangeDoNotTrustBrowserSelector",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "tc18InactiveStoreRejectsNewCheckoutButAdminAndCustomerKeepHistoricalOrders",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "inventoryUsesExistingExactStockQueryAndFiltersEveryStoreIncludingInactive",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "userCreateUsesBcryptAndNeverRendersPasswordOrHash",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "customerAndStaffCannotReadAnyAdminPage(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "customerAndStaffCannotReadAnyAdminPage(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "customerAndStaffCannotReadAnyAdminPage(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "customerAndStaffCannotReadAnyAdminPage(String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "customerAndStaffCannotReadAnyAdminPage(String)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "customerAndStaffCannotReadAnyAdminPage(String)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "customerAndStaffCannotReadAnyAdminPage(String)[7]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "customerAndStaffCannotReadAnyAdminPage(String)[8]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "customerAndStaffCannotReadAnyAdminPage(String)[9]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "customerAndStaffCannotReadAnyAdminPage(String)[10]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "customerAndStaffCannotReadAnyAdminPage(String)[11]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "newAdminServicesEnforceRoleEvenWithoutHttp",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "invalidUserFormsDuplicateEmailAndInvalidEnumDoNotWriteOrReflectPassword",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "adminGetsEveryPageAndFormsUseAdminLayoutCsrf",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "userCannotChangeEmailPasswordOrDisableOwnAdmin",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "reuseStoreCrudCreatesAndEditsFinderMetadata",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "overviewMatchesIndependentSqlForEveryStoreIncludingInactive",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "assignmentsRejectCustomerAdminInactiveStaffAndInactiveStore",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "userRoleStatusChangesRevokeOldJwtAndDoNotRestoreOldAssignments",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "reviewManagementOnlyChangesVisibilityAndEscapesContent",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "productStoreAndStoreProductWithHistoryAreSoftDisabledAndNotHardDeleted",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "writesRequireCsrfForCookieAndInvalidRequestsDoNotMutate",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase11AdminDatabaseIntegrationTest",
+      "name": "assignmentRevocationAndReactivationAffectTheSameOldJwtImmediately",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "cancellationRejectsPreparingAndLaterAndPaidOrdersWithoutAnyWrite(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "cancellationRejectsPreparingAndLaterAndPaidOrdersWithoutAnyWrite(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "cancellationRejectsPreparingAndLaterAndPaidOrdersWithoutAnyWrite(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "cancellationRejectsPreparingAndLaterAndPaidOrdersWithoutAnyWrite(String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "cancellationRejectsPreparingAndLaterAndPaidOrdersWithoutAnyWrite(String)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "cancellationRejectsPreparingAndLaterAndPaidOrdersWithoutAnyWrite(String)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "existingSqlDataHasCompleteTimelinesConservedStockAndNoDuplicateOrderMovements",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "cancellationRacesSerializePaymentFulfillmentAndInventoryWithoutDuplicateAudit(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "cancellationRacesSerializePaymentFulfillmentAndInventoryWithoutDuplicateAudit(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "cancellationRacesSerializePaymentFulfillmentAndInventoryWithoutDuplicateAudit(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "cancellationRacesSerializePaymentFulfillmentAndInventoryWithoutDuplicateAudit(String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "stockOverflowRejectsCancellationAndRollsBackClosedPendingAttempt",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "inconsistentSuccessfulReceiptBlocksCustomerCancellationAtomically",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "cancellationAfterStoreIsInactiveStillRestoresTheOriginalStockAndPreservesHistory",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "customerCancellationRestoresOnlyItsStoreAndKeepsSnapshotsAndSiblings(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "customerCancellationRestoresOnlyItsStoreAndKeepsSnapshotsAndSiblings(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "customerCancellationRestoresOnlyItsStoreAndKeepsSnapshotsAndSiblings(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "customerCancellationRestoresOnlyItsStoreAndKeepsSnapshotsAndSiblings(String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "customerCancellationRestoresOnlyItsStoreAndKeepsSnapshotsAndSiblings(String)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "customerCancellationRestoresOnlyItsStoreAndKeepsSnapshotsAndSiblings(String)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "customerCancellationRestoresOnlyItsStoreAndKeepsSnapshotsAndSiblings(String)[7]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "internalCancellationPrimitivesRequireAnExistingTransaction",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "simultaneousDuplicateHttpCancellationsRestoreExactlyOnce",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "adminStockEditMustLockBeforeLoadingQuantityToPreserveConcurrentMovementLedger",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "cancellationRequiresOwnedActiveCustomerAndCsrfEvenForBearerAndEncodedPaths",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "inactiveCustomerCannotCancelUsingAnAlreadyIssuedJwt",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "concurrentCancellationsOfMultiItemOrdersWithOppositeItemOrderRestoreEverySnapshotExactlyOnce",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "failureOnSecondItemRestorationRollsBackFirstItemAndPaymentClosure",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "cancellingDifferentStoreCanCommitWhileFirstCancellationTransactionRemainsOpen",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "cancellationRollsBackRealFlushedPaymentStockOrderAndAuditAndCanRetry(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "cancellationRollsBackRealFlushedPaymentStockOrderAndAuditAndCanRetry(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "cancellationRollsBackRealFlushedPaymentStockOrderAndAuditAndCanRetry(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase12HistoryHardeningDatabaseIntegrationTest",
+      "name": "cancellationRollsBackRealFlushedPaymentStockOrderAndAuditAndCanRetry(String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "name": "invalidMatrixPairingsAreRejectedByBusinessAndActualSqlChecks(String, String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "name": "invalidMatrixPairingsAreRejectedByBusinessAndActualSqlChecks(String, String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "name": "csrfEncodedPathsRolesAndCrossFlowPrepareAreEnforcedOverHttp",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "name": "allThreeStaffScopesAndOtherCustomerStayIsolatedWithinSameCheckout",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "name": "mixedFailedPaymentRestoresOnlyItsOrderAndSiblingsStillCompleteOverHttp",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "name": "multipleAssignmentsAllowOnlyActiveStoreAndUseAuthenticatedActor",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "name": "composedSubsystemWritesRollbackTogetherIncludingSiblings(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "name": "composedSubsystemWritesRollbackTogetherIncludingSiblings(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "name": "composedSubsystemWritesRollbackTogetherIncludingSiblings(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "name": "composedSubsystemWritesRollbackTogetherIncludingSiblings(String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "name": "sameOrderRepresentativeRacesKeepSiblingAggregatesAndNeverDuplicateReceiptsOrHistory(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "name": "sameOrderRepresentativeRacesKeepSiblingAggregatesAndNeverDuplicateReceiptsOrHistory(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "name": "sameOrderRepresentativeRacesKeepSiblingAggregatesAndNeverDuplicateReceiptsOrHistory(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "name": "sameOrderRepresentativeRacesKeepSiblingAggregatesAndNeverDuplicateReceiptsOrHistory(String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "name": "sameOrderRepresentativeRacesKeepSiblingAggregatesAndNeverDuplicateReceiptsOrHistory(String)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "name": "tc15FullHttpLifecycleWithOptionalCatalogChanges(boolean)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "name": "tc15FullHttpLifecycleWithOptionalCatalogChanges(boolean)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "name": "listQueryCountsStayConstantWhenThreeMoreStoreOrdersAreAddedAndDetailsRemainBounded",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.Phase9IntegrationWebDatabaseTest",
+      "name": "pickupSiblingCommitsWhileDeliveryPackTransactionRemainsOpen",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "skipBackwardAndDuplicateRejectWithoutChangingRows(OrderStatus, PickupAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "skipBackwardAndDuplicateRejectWithoutChangingRows(OrderStatus, PickupAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "skipBackwardAndDuplicateRejectWithoutChangingRows(OrderStatus, PickupAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "skipBackwardAndDuplicateRejectWithoutChangingRows(OrderStatus, PickupAction)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "skipBackwardAndDuplicateRejectWithoutChangingRows(OrderStatus, PickupAction)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "skipBackwardAndDuplicateRejectWithoutChangingRows(OrderStatus, PickupAction)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "codeVisibilityOwnerAndReadOnlyListsAreEnforced",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "mixedCheckoutPickupDoesNotMutateNeighborOrdersOrPayments",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "sqlServerRaceSerializesReadyAndBothCompletionMethods(PaymentMethod, PickupAction, int)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "sqlServerRaceSerializesReadyAndBothCompletionMethods(PaymentMethod, PickupAction, int)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "sqlServerRaceSerializesReadyAndBothCompletionMethods(PaymentMethod, PickupAction, int)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "sqlServerRaceSerializesReadyAndBothCompletionMethods(PaymentMethod, PickupAction, int)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "sqlServerRaceSerializesReadyAndBothCompletionMethods(PaymentMethod, PickupAction, int)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "sqlServerRaceSerializesReadyAndBothCompletionMethods(PaymentMethod, PickupAction, int)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "sqlServerRaceSerializesReadyAndBothCompletionMethods(PaymentMethod, PickupAction, int)[7]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "sqlServerRaceSerializesReadyAndBothCompletionMethods(PaymentMethod, PickupAction, int)[8]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "sqlServerRaceSerializesReadyAndBothCompletionMethods(PaymentMethod, PickupAction, int)[9]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "inconsistentPaymentStatusAtEveryStageIsRejected(PaymentMethod, PickupAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "inconsistentPaymentStatusAtEveryStageIsRejected(PaymentMethod, PickupAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "inconsistentPaymentStatusAtEveryStageIsRejected(PaymentMethod, PickupAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "inconsistentPaymentStatusAtEveryStageIsRejected(PaymentMethod, PickupAction)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "inconsistentPaymentStatusAtEveryStageIsRejected(PaymentMethod, PickupAction)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "inconsistentPaymentStatusAtEveryStageIsRejected(PaymentMethod, PickupAction)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "successfulOfflineReceiptCannotBeCollectedOrRepairedAtAnyStage(PickupAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "successfulOfflineReceiptCannotBeCollectedOrRepairedAtAnyStage(PickupAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "successfulOfflineReceiptCannotBeCollectedOrRepairedAtAnyStage(PickupAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "purchaseSnapshotsRemainAfterCatalogueChange",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "existingSeedCodeConventionWorksWithoutRewritingHistoricalCode",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "pendingOnlineWrongFlowScopeAndOwnershipAreProtected(PickupAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "pendingOnlineWrongFlowScopeAndOwnershipAreProtected(PickupAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "pendingOnlineWrongFlowScopeAndOwnershipAreProtected(PickupAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "inactiveScopeRejectsReadAndEveryAction(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "inactiveScopeRejectsReadAndEveryAction(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "inactiveScopeRejectsReadAndEveryAction(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "wrongAndMalformedCodeDoNotMutateAnyRows(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "wrongAndMalformedCodeDoNotMutateAnyRows(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "wrongAndMalformedCodeDoNotMutateAnyRows(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "wrongAndMalformedCodeDoNotMutateAnyRows(String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "wrongAndMalformedCodeDoNotMutateAnyRows(String)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "wrongAndMalformedCodeDoNotMutateAnyRows(String)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "wrongAndMalformedCodeDoNotMutateAnyRows(String)[7]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "wrongAndMalformedCodeDoNotMutateAnyRows(String)[8]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "readyFieldsAndHistoryRollBackAtEveryFailurePoint(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "readyFieldsAndHistoryRollBackAtEveryFailurePoint(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "readyFieldsAndHistoryRollBackAtEveryFailurePoint(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "readyFieldsAndHistoryRollBackAtEveryFailurePoint(String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "onlineCompletionRollsBackTimeStatusAndHistoryWithoutTouchingReceipt(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "onlineCompletionRollsBackTimeStatusAndHistoryWithoutTouchingReceipt(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "onlineCompletionRollsBackTimeStatusAndHistoryWithoutTouchingReceipt(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "payAtStoreHelperRequiresExistingTransaction",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "cancelledOnlinePickupIsTerminal",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "payAtStoreCompletionRollsBackEveryWrite(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "payAtStoreCompletionRollsBackEveryWrite(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "payAtStoreCompletionRollsBackEveryWrite(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "payAtStoreCompletionRollsBackEveryWrite(String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "payAtStoreCompletionRollsBackEveryWrite(String)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "payAtStoreCompletionRollsBackEveryWrite(String)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "payAtStoreCompletionRollsBackEveryWrite(String)[7]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "realHttpPickupCustomerCodeWrongCodeAndForgedFields(PaymentMethod)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "realHttpPickupCustomerCodeWrongCodeAndForgedFields(PaymentMethod)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "tc10AndOnlineLifecyclePreserveInventoryAndSnapshots(PaymentMethod)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupDatabaseIntegrationTest",
+      "name": "tc10AndOnlineLifecyclePreserveInventoryAndSnapshots(PaymentMethod)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupWebIntegrationTest",
+      "name": "customerDetailShowsCodeAndTimelineAndOffersNoCompletion",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupWebIntegrationTest",
+      "name": "roleAndAssignmentBoundariesBlockCustomerAdminGuestAndUnassignedStaff",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupWebIntegrationTest",
+      "name": "blockedOrTerminalOrderHasNoStaffAction(OrderStatus)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupWebIntegrationTest",
+      "name": "blockedOrTerminalOrderHasNoStaffAction(OrderStatus)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupWebIntegrationTest",
+      "name": "blockedOrTerminalOrderHasNoStaffAction(OrderStatus)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupWebIntegrationTest",
+      "name": "blockedOrTerminalOrderHasNoStaffAction(OrderStatus)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupWebIntegrationTest",
+      "name": "staffSeesSnapshotsHistoryAndOnlyNextFixedActionWithCsrf(PickupAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupWebIntegrationTest",
+      "name": "staffSeesSnapshotsHistoryAndOnlyNextFixedActionWithCsrf(PickupAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupWebIntegrationTest",
+      "name": "staffSeesSnapshotsHistoryAndOnlyNextFixedActionWithCsrf(PickupAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupWebIntegrationTest",
+      "name": "fixedPostsBindOnlyPrincipalOrderAndPickupCode",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupWebIntegrationTest",
+      "name": "customerOwnership404AndRoleBoundariesPreventLeaks",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupWebIntegrationTest",
+      "name": "safeErrorsHideDatabaseDetailsAndPickupCode",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupWebIntegrationTest",
+      "name": "getCannotMutateAndGenericTransitionDoesNotExist",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupWebIntegrationTest",
+      "name": "staffListHasWorkingSidebarAndNoCode",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.PickupWebIntegrationTest",
+      "name": "allMutationsRequireCsrfForCookiesBearerAndEncodedPaths",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.security.jwt.JwtServiceTest",
+      "name": "missingOrWeakSecretFailsFast",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.security.jwt.JwtServiceTest",
+      "name": "generatedTokenIsValidAndCarriesTheUsername",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.security.jwt.JwtServiceTest",
+      "name": "tokenOfAnotherUserIsRejected",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.security.jwt.JwtServiceTest",
+      "name": "tokenSignedWithAnotherSecretIsRejected",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.security.jwt.JwtServiceTest",
+      "name": "expiredTokenIsRejected",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CartServiceRetryTest",
+      "name": "losingTheRaceToCreateTheCartIsRetriedOnTheCartThatWon",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CartServiceRetryTest",
+      "name": "losingTheRaceToCreateTheLineAddsToTheLineThatWon",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CartServiceRetryTest",
+      "name": "aBusinessRefusalIsNotRetried",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CartServiceRetryTest",
+      "name": "theRetryStillChecksStockAgainstTheMergedQuantity",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CloudinaryServiceTest",
+      "name": "applicationCanBeBuiltWithoutCredentialsButUploadFailsClearly",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CloudinaryServiceTest",
+      "name": "configurationIsBuiltFromProperties",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CodPaymentServiceTest",
+      "name": "cannotCollectEarlyOrAtTerminalState(OrderStatus)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CodPaymentServiceTest",
+      "name": "cannotCollectEarlyOrAtTerminalState(OrderStatus)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CodPaymentServiceTest",
+      "name": "cannotCollectEarlyOrAtTerminalState(OrderStatus)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CodPaymentServiceTest",
+      "name": "cannotCollectEarlyOrAtTerminalState(OrderStatus)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CodPaymentServiceTest",
+      "name": "cannotCollectEarlyOrAtTerminalState(OrderStatus)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CodPaymentServiceTest",
+      "name": "cannotCollectEarlyOrAtTerminalState(OrderStatus)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CodPaymentServiceTest",
+      "name": "cannotCollectEarlyOrAtTerminalState(OrderStatus)[7]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CodPaymentServiceTest",
+      "name": "collectedPaymentUsesLockedOrderSnapshotAndDoesNotTransitionOrTouchInventory",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CodPaymentServiceTest",
+      "name": "cannotCollectPaidOrFailedOrder(OrderPaymentStatus)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CodPaymentServiceTest",
+      "name": "cannotCollectPaidOrFailedOrder(OrderPaymentStatus)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CodPaymentServiceTest",
+      "name": "successfulReceiptAlreadyPresentCannotBeCollectedAgainEvenIfOrderSaysUnpaid",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CodPaymentServiceTest",
+      "name": "cannotCollectOtherMethods(PaymentMethod)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CodPaymentServiceTest",
+      "name": "cannotCollectOtherMethods(PaymentMethod)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.CodPaymentServiceTest",
+      "name": "cannotCollectPickupOrMalformedOrder",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "paidOnlineNeverCollectsOrRewritesPayment(DeliveryAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "paidOnlineNeverCollectsOrRewritesPayment(DeliveryAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "paidOnlineNeverCollectsOrRewritesPayment(DeliveryAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "paidOnlineNeverCollectsOrRewritesPayment(DeliveryAction)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "inactiveOrNonStaffActorIsRejectedEvenWithMockedScope",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "malformedDeliveryPayAtStoreIsRejectedWithoutChangingMethod(DeliveryAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "malformedDeliveryPayAtStoreIsRejectedWithoutChangingMethod(DeliveryAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "malformedDeliveryPayAtStoreIsRejectedWithoutChangingMethod(DeliveryAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "malformedDeliveryPayAtStoreIsRejectedWithoutChangingMethod(DeliveryAction)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "scopeRejectionCannotBeBypassedByCallingServiceDirectly(DeliveryAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "scopeRejectionCannotBeBypassedByCallingServiceDirectly(DeliveryAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "scopeRejectionCannotBeBypassedByCallingServiceDirectly(DeliveryAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "scopeRejectionCannotBeBypassedByCallingServiceDirectly(DeliveryAction)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "unknownOrderIs404AndNullOrderIs400",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "listIsFilteredByTrustedAssignmentIdsAndDelivery",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[7]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[8]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[9]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[10]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[11]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[12]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[13]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[14]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[15]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[16]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[17]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[18]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[19]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[20]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[21]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[22]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[23]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[24]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[25]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[26]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[27]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "wrongSkipBackwardSameAndTerminalRequestsNeverReachStateMachineOrPayment(DeliveryAction, OrderStatus)[28]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "unpaidOnlineIsRejectedAtEveryStage(DeliveryAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "unpaidOnlineIsRejectedAtEveryStage(DeliveryAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "unpaidOnlineIsRejectedAtEveryStage(DeliveryAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "unpaidOnlineIsRejectedAtEveryStage(DeliveryAction)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "pickupFlowIsRejectedForEveryDeliveryAction(DeliveryAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "pickupFlowIsRejectedForEveryDeliveryAction(DeliveryAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "pickupFlowIsRejectedForEveryDeliveryAction(DeliveryAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "pickupFlowIsRejectedForEveryDeliveryAction(DeliveryAction)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "fixedActionsLockScopeAndUseStateMachineWithTrustedActor(DeliveryAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "fixedActionsLockScopeAndUseStateMachineWithTrustedActor(DeliveryAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "fixedActionsLockScopeAndUseStateMachineWithTrustedActor(DeliveryAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.DeliveryFulfillmentServiceTest",
+      "name": "fixedActionsLockScopeAndUseStateMachineWithTrustedActor(DeliveryAction)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.InventoryRestoreTest",
+      "name": "restoreLocksAscendingIdsBeforeWritingAndAuditsPositiveChanges",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.InventoryRestoreTest",
+      "name": "stockIntegerOverflowIsRefused",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.InventoryRestoreTest",
+      "name": "noItemsIsRefused",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.InventoryRestoreTest",
+      "name": "missingStockRefusesBeforeAnyWrite",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderServiceTest",
+      "name": "missingOrderOrNullInputDoesNotWrite",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderServiceTest",
+      "name": "rejectsLongNoteBeforeMutatingAndAcceptsBoundary",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderServiceTest",
+      "name": "invalidSameOrStaleRequestsDoNotWrite",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderServiceTest",
+      "name": "preservesActorNoteAndOnlyChangesStatusAfterLock",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderServiceTest",
+      "name": "genericPrimitiveCannotConfirmOrCancelPendingOnlineOrder",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[7]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[8]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[9]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[10]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[11]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[12]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[13]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[14]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[15]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[16]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[17]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[18]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[19]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[20]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[21]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[22]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[23]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[24]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[25]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[26]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[27]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[28]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[29]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[30]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[31]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[32]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[33]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[34]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[35]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[36]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[37]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[38]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[39]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[40]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[41]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[42]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[43]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[44]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[45]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[46]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[47]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[48]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[49]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[50]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[51]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[52]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[53]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[54]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[55]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[56]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[57]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[58]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[59]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[60]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[61]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[62]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[63]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[64]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[65]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[66]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[67]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[68]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[69]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[70]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[71]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[72]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[73]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[74]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[75]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[76]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[77]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[78]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[79]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[80]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[81]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[82]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[83]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[84]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[85]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[86]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[87]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[88]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[89]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[90]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[91]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[92]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[93]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[94]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[95]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[96]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[97]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[98]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[99]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[100]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[101]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[102]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[103]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[104]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[105]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[106]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[107]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[108]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[109]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[110]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[111]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[112]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[113]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[114]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[115]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[116]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[117]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[118]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[119]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[120]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[121]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[122]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[123]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[124]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[125]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[126]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[127]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "completeMatrixAndPaymentCauseIsolation(FulfillmentType, OrderStatus, OrderStatus)[128]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderTransitionPolicyTest",
+      "name": "nullIsNotACreationTransitionOrValidContext",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderViewServiceTest",
+      "name": "visibilityIsDeterminedByOwnerViewFulfillmentAndStage(OrderStatus)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderViewServiceTest",
+      "name": "visibilityIsDeterminedByOwnerViewFulfillmentAndStage(OrderStatus)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderViewServiceTest",
+      "name": "visibilityIsDeterminedByOwnerViewFulfillmentAndStage(OrderStatus)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderViewServiceTest",
+      "name": "visibilityIsDeterminedByOwnerViewFulfillmentAndStage(OrderStatus)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderViewServiceTest",
+      "name": "visibilityIsDeterminedByOwnerViewFulfillmentAndStage(OrderStatus)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderViewServiceTest",
+      "name": "visibilityIsDeterminedByOwnerViewFulfillmentAndStage(OrderStatus)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderViewServiceTest",
+      "name": "visibilityIsDeterminedByOwnerViewFulfillmentAndStage(OrderStatus)[7]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.OrderViewServiceTest",
+      "name": "visibilityIsDeterminedByOwnerViewFulfillmentAndStage(OrderStatus)[8]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PayAtStorePaymentServiceTest",
+      "name": "cannotCollectEarlyOrAtTerminalState(OrderStatus)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PayAtStorePaymentServiceTest",
+      "name": "cannotCollectEarlyOrAtTerminalState(OrderStatus)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PayAtStorePaymentServiceTest",
+      "name": "cannotCollectEarlyOrAtTerminalState(OrderStatus)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PayAtStorePaymentServiceTest",
+      "name": "cannotCollectEarlyOrAtTerminalState(OrderStatus)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PayAtStorePaymentServiceTest",
+      "name": "cannotCollectEarlyOrAtTerminalState(OrderStatus)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PayAtStorePaymentServiceTest",
+      "name": "cannotCollectEarlyOrAtTerminalState(OrderStatus)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PayAtStorePaymentServiceTest",
+      "name": "cannotCollectEarlyOrAtTerminalState(OrderStatus)[7]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PayAtStorePaymentServiceTest",
+      "name": "collectedPaymentUsesLockedOrderSnapshotAndDoesNotTransitionOrTouchInventory",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PayAtStorePaymentServiceTest",
+      "name": "cannotCollectPaidOrFailedOrder(OrderPaymentStatus)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PayAtStorePaymentServiceTest",
+      "name": "cannotCollectPaidOrFailedOrder(OrderPaymentStatus)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PayAtStorePaymentServiceTest",
+      "name": "successfulReceiptAlreadyPresentCannotBeCollectedAgainEvenIfOrderSaysUnpaid",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PayAtStorePaymentServiceTest",
+      "name": "cannotCollectOtherMethods(PaymentMethod)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PayAtStorePaymentServiceTest",
+      "name": "cannotCollectOtherMethods(PaymentMethod)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PayAtStorePaymentServiceTest",
+      "name": "cannotCollectPickupOrMalformedOrder",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PaymentServiceTest",
+      "name": "ownershipIsCheckedBeforeAccessingPayments",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PaymentServiceTest",
+      "name": "failedCannotBecomeSuccessful",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PaymentServiceTest",
+      "name": "inconsistentAmountOrMethodDoesNotChangeState",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PaymentServiceTest",
+      "name": "attemptUsesDatabaseOrderFieldsAndReusesPending",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PaymentServiceTest",
+      "name": "nonPayableOrderCannotCompleteAPendingAttempt",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PaymentServiceTest",
+      "name": "failureIsIdempotentAndRestoresOnce",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PaymentServiceTest",
+      "name": "successIsIdempotentAndNeverRestoresOrDeductsStock",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PaymentServiceTest",
+      "name": "missingOrderOrAttemptIsNotFound",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PaymentServiceTest",
+      "name": "offlineMethodsCannotEnterOnlineWorkflow(PaymentMethod)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PaymentServiceTest",
+      "name": "offlineMethodsCannotEnterOnlineWorkflow(PaymentMethod)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PaymentServiceTest",
+      "name": "conflictingResultsAreRefused",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "existingReadyFieldsNeverGetOverwritten",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[7]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[8]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[9]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[10]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[11]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[12]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[13]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[14]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[15]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[16]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[17]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[18]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[19]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[20]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "wrongStaleTerminalStateDoesNotGenerateOrCollect(PickupAction, OrderStatus)[21]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "onlineCodeAcceptsOuterSpacesAndLowercaseAndPreservesReceipt",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "missingStoredCodeRejectsCompletion",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "existingSixCharacterSeedCodeCanBeVerifiedOnlyOnItsOwnOrder",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "fixedEdgesAuthorizeActorAndDelegateStatus(PickupAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "fixedEdgesAuthorizeActorAndDelegateStatus(PickupAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "fixedEdgesAuthorizeActorAndDelegateStatus(PickupAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "deliveryOrCodPickupAreRejectedEvenOnSharedPrepareEdge(PickupAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "deliveryOrCodPickupAreRejectedEvenOnSharedPrepareEdge(PickupAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "deliveryOrCodPickupAreRejectedEvenOnSharedPrepareEdge(PickupAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "missingOrderOrIdFailsSafely",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "receiptAlreadyExistsCannotBeCollectedOrRepaired(PickupAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "receiptAlreadyExistsCannotBeCollectedOrRepaired(PickupAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "receiptAlreadyExistsCannotBeCollectedOrRepaired(PickupAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "scopeAndActiveStaffAreCheckedBeforeCodeVerificationOrMutation",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "everyActionRequiresPaidOnlineOrUnpaidPayAtStore(PickupAction)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "everyActionRequiresPaidOnlineOrUnpaidPayAtStore(PickupAction)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "everyActionRequiresPaidOnlineOrUnpaidPayAtStore(PickupAction)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "invalidCodeNeverChangesPaymentTimeOrFields(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "invalidCodeNeverChangesPaymentTimeOrFields(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "invalidCodeNeverChangesPaymentTimeOrFields(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "invalidCodeNeverChangesPaymentTimeOrFields(String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "invalidCodeNeverChangesPaymentTimeOrFields(String)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "invalidCodeNeverChangesPaymentTimeOrFields(String)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "invalidCodeNeverChangesPaymentTimeOrFields(String)[7]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "invalidCodeNeverChangesPaymentTimeOrFields(String)[8]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "invalidCodeNeverChangesPaymentTimeOrFields(String)[9]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "invalidCodeNeverChangesPaymentTimeOrFields(String)[10]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "invalidCodeNeverChangesPaymentTimeOrFields(String)[11]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "invalidCodeNeverChangesPaymentTimeOrFields(String)[12]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "readyFieldsExistBeforeStateMachineFlush",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.service.PickupFulfillmentServiceTest",
+      "name": "generatedCodesAreShortRandomAndKeepStringRepresentation",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "everyCrossStoreMutationIsDeniedBeforeBusinessRulesOrWrites(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "everyCrossStoreMutationIsDeniedBeforeBusinessRulesOrWrites(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "everyCrossStoreMutationIsDeniedBeforeBusinessRulesOrWrites(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "everyCrossStoreMutationIsDeniedBeforeBusinessRulesOrWrites(String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "everyCrossStoreMutationIsDeniedBeforeBusinessRulesOrWrites(String)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "everyCrossStoreMutationIsDeniedBeforeBusinessRulesOrWrites(String)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "everyCrossStoreMutationIsDeniedBeforeBusinessRulesOrWrites(String)[7]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "absentAssignmentDeniesQueueAndMutationsUsingTheExistingJwt",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "jumpingAheadOfConfirmedIsRejectedRegardlessOfForgedTargetStatus(FulfillmentType, String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "jumpingAheadOfConfirmedIsRejectedRegardlessOfForgedTargetStatus(FulfillmentType, String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "jumpingAheadOfConfirmedIsRejectedRegardlessOfForgedTargetStatus(FulfillmentType, String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "jumpingAheadOfConfirmedIsRejectedRegardlessOfForgedTargetStatus(FulfillmentType, String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "jumpingAheadOfConfirmedIsRejectedRegardlessOfForgedTargetStatus(FulfillmentType, String)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "otherRolesCannotReachNewQueueOrMutateOrders(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "otherRolesCannotReachNewQueueOrMutateOrders(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "pickupQueueUsesAssignedStoreTypeOpenStatesPaginationAndHidesAllCodes",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "deliveryHttpUiFollowsEveryStateAndUsesExistingPaymentHistoryRules(PaymentMethod)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "deliveryHttpUiFollowsEveryStateAndUsesExistingPaymentHistoryRules(PaymentMethod)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "actionsOfOtherFulfillmentCannotMutateAnOwnOrder(FulfillmentType)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "actionsOfOtherFulfillmentCannotMutateAnOwnOrder(FulfillmentType)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "wrongOrMissingPickupCodeCannotCollectPaymentOrComplete(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "wrongOrMissingPickupCodeCannotCollectPaymentOrComplete(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "wrongOrMissingPickupCodeCannotCollectPaymentOrComplete(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "wrongOrMissingPickupCodeCannotCollectPaymentOrComplete(String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "wrongOrMissingPickupCodeCannotCollectPaymentOrComplete(String)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "missingOrderActionReturns404WithoutMutation",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "wrapperKeepsScopeFulfillmentReceiptHistoryAndTimestampsInOneRollbackTransaction(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "wrapperKeepsScopeFulfillmentReceiptHistoryAndTimestampsInOneRollbackTransaction(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "wrapperKeepsScopeFulfillmentReceiptHistoryAndTimestampsInOneRollbackTransaction(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "payAtStoreInconsistentPriorPaidStateOrDuplicateReceiptCannotCompleteAgain",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "multipleAssignmentsAllowPeerPickupThenRevocationBlocksTheNextMutationImmediately",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "newActionsRequireCsrfForCookieBearerAndEncodedPaths(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "newActionsRequireCsrfForCookieBearerAndEncodedPaths(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "pickupHttpUiVerifiesCustomerCodeAndCompletesPaymentBeforeHistory(PaymentMethod)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "pickupHttpUiVerifiesCustomerCodeAndCompletesPaymentBeforeHistory(PaymentMethod)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffFulfillmentOperationsDatabaseIntegrationTest",
+      "name": "racingPickupCompletionCreatesOnePaymentAndOneCompletionWithNoInventoryWrites",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "invalidOrNegativeQuantityIsRejectedOnBackendWithoutAnyWrite(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "invalidOrNegativeQuantityIsRejectedOnBackendWithoutAnyWrite(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "invalidOrNegativeQuantityIsRejectedOnBackendWithoutAnyWrite(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "invalidOrNegativeQuantityIsRejectedOnBackendWithoutAnyWrite(String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "invalidOrNegativeQuantityIsRejectedOnBackendWithoutAnyWrite(String)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "outerRollbackAlsoRestoresCommittedLookingStockAuditAndTimestampRows",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "crossStoreAndMissingStockFormsOrHistoryReturnNoResource(long)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "crossStoreAndMissingStockFormsOrHistoryReturnNoResource(long)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "guestsAndCustomerCatalogCannotReadExactInventory",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "stockFormsRequireCsrfForCookieBearerAndEncodedPaths",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "noActiveAssignmentDeniesStockHistoryAndAdjustmentWithTheSameJwt",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "concurrentAdjustmentsKeepSerialBeforeAfterValuesAndOneMovementPerActualChange",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "customerAndAdminCannotUseStaffInventoryRoutes(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "customerAndAdminCannotUseStaffInventoryRoutes(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "stockPaginationAndTotalStayScopedWhenMoreThanTwentyProductsExist",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "staffAdjustmentRequiresAnAuditNoteWithinTheExistingColumnLimit(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "staffAdjustmentRequiresAnAuditNoteWithinTheExistingColumnLimit(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "staffAdjustmentRequiresAnAuditNoteWithinTheExistingColumnLimit(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "historyIncludesSystemOrderCancellationAndStaffAdjustmentWithAccurateActors",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "multipleActiveAssignmentsAllowOnlyTheirStockAndRevocationBlocksFurtherWrites",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "validHttpAdjustmentWritesExactlyOneAccurateMovementAndKeepsOtherResourcesUnchanged(int)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "validHttpAdjustmentWritesExactlyOneAccurateMovementAndKeepsOtherResourcesUnchanged(int)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "validHttpAdjustmentWritesExactlyOneAccurateMovementAndKeepsOtherResourcesUnchanged(int)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "stockAndHistorySelectionShowOnlyOwnSkusAllStatusesAndExactQuantity",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "postingTheCurrentQuantityIsAnExplicitNoChangeWithNoZeroMovement",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "writeFailureRollsBackRealSqlStockAndMovementTogether(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "writeFailureRollsBackRealSqlStockAndMovementTogether(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "serviceValidationAlsoRejectsNegativeMissingQuantityAndMissingNote",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffInventoryDatabaseIntegrationTest",
+      "name": "inventoryHistoryPaginationHasStableOrderAndCountsOnlyTheScopedProduct",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "forgedQueryHeaderCookieAndGetBodyCannotChangeAssignedScope",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "noActiveAssignmentDeniesAllDataRoutesEvenWithOldJwtAndForgedStore",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "lowStockBoundariesInactiveSkusAndOtherStoreInventoryAreCountedSeparately",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "dashboardAndLandingShowOnlyAssignedStoreWithExactSqlCounts",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "otherRolesCannotOpenAnyStaffOperationsPage(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "otherRolesCannotOpenAnyStaffOperationsPage(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "multipleAssignmentsKeepPerStoreCountsAndRevocationImmediatelyRemovesPeerResources",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "queueHasOnlyAssignedOrdersAllRequiredColumnsAndNoTransitionControls",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "eachOrderStateCountsOnlyInTheCorrectDashboardMetricAndStore(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "eachOrderStateCountsOnlyInTheCorrectDashboardMetricAndStore(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "eachOrderStateCountsOnlyInTheCorrectDashboardMetricAndStore(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "eachOrderStateCountsOnlyInTheCorrectDashboardMetricAndStore(String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "eachOrderStateCountsOnlyInTheCorrectDashboardMetricAndStore(String)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "eachOrderStateCountsOnlyInTheCorrectDashboardMetricAndStore(String)[6]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "eachOrderStateCountsOnlyInTheCorrectDashboardMetricAndStore(String)[7]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "eachOrderStateCountsOnlyInTheCorrectDashboardMetricAndStore(String)[8]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "ownDeliveryAndPickupDetailReuseSnapshotsPaymentsTimelineAndHideStoredPickupCode(long)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "ownDeliveryAndPickupDetailReuseSnapshotsPaymentsTimelineAndHideStoredPickupCode(long)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "crossStoreAndMissingDetailReturnSame404WithoutOrderResource(long)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "crossStoreAndMissingDetailReturnSame404WithoutOrderResource(long)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "crossStoreAndMissingDetailReturnSame404WithoutOrderResource(long)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "crossStoreAndMissingDetailReturnSame404WithoutOrderResource(long)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffOperationsDatabaseIntegrationTest",
+      "name": "paginationAndTotalAreScopedInSqlWithStableOrderingAndBoundedPages",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffStoreScopeDatabaseIntegrationTest",
+      "name": "ownOrderAndStoreProductAreAllowedIncludingInventoryScope",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffStoreScopeDatabaseIntegrationTest",
+      "name": "activeStaffResolvesActualAssignmentAndStore",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffStoreScopeDatabaseIntegrationTest",
+      "name": "forgingStoreIdOnHttpCannotChangeScopeOrExposePeerStock(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffStoreScopeDatabaseIntegrationTest",
+      "name": "forgingStoreIdOnHttpCannotChangeScopeOrExposePeerStock(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffStoreScopeDatabaseIntegrationTest",
+      "name": "forgingStoreIdOnHttpCannotChangeScopeOrExposePeerStock(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffStoreScopeDatabaseIntegrationTest",
+      "name": "forgingStoreIdOnHttpCannotChangeScopeOrExposePeerStock(String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffStoreScopeDatabaseIntegrationTest",
+      "name": "nonStaffCannotUseFoundationEvenWithAnAssignedStaffEmail(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffStoreScopeDatabaseIntegrationTest",
+      "name": "nonStaffCannotUseFoundationEvenWithAnAssignedStaffEmail(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffStoreScopeDatabaseIntegrationTest",
+      "name": "absentOrInvalidAssignmentDeniesServiceAndRealStaffHttp(String)[1]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffStoreScopeDatabaseIntegrationTest",
+      "name": "absentOrInvalidAssignmentDeniesServiceAndRealStaffHttp(String)[2]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffStoreScopeDatabaseIntegrationTest",
+      "name": "absentOrInvalidAssignmentDeniesServiceAndRealStaffHttp(String)[3]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffStoreScopeDatabaseIntegrationTest",
+      "name": "absentOrInvalidAssignmentDeniesServiceAndRealStaffHttp(String)[4]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffStoreScopeDatabaseIntegrationTest",
+      "name": "absentOrInvalidAssignmentDeniesServiceAndRealStaffHttp(String)[5]",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffStoreScopeDatabaseIntegrationTest",
+      "name": "crossStoreAndUnknownResourcesAreIndistinguishablyDenied",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffStoreScopeDatabaseIntegrationTest",
+      "name": "unauthenticatedServiceCallIsDeniedBeforeResourceLookup",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffStoreScopeDatabaseIntegrationTest",
+      "name": "multipleAssignmentsPreserveOnlyActiveScopeAndResolveFreshAfterRevocation",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.StaffStoreScopeDatabaseIntegrationTest",
+      "name": "existingOrderUrlsStillEnforceStoreScopeWithForgedRequestStore",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.WebRoutesIntegrationTest",
+      "name": "healthEndpointIsPublicAndNotDecorated",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.WebRoutesIntegrationTest",
+      "name": "protectedWebRoutesRedirectAnonymousUsersToLogin",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.WebRoutesIntegrationTest",
+      "name": "decoratorIsNotReachableDirectly",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.WebRoutesIntegrationTest",
+      "name": "staticAssetsAreServed",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.WebRoutesIntegrationTest",
+      "name": "protectedApiRoutesAnswer401ForAnonymousUsers",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.WebRoutesIntegrationTest",
+      "name": "basicPagesRenderInsideTheLayout",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.oneshop.WebRoutesIntegrationTest",
+      "name": "homePageIsRenderedByThymeleafAndDecoratedBySiteMesh",
+      "status": "PASS"
+    }
+  ]
+}

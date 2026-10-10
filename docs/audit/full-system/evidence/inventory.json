@@ -1,0 +1,1452 @@
+{
+  "commit": "88c22132955b9c7a88be5a7a6ea08ff167d83776",
+  "endpoints": [
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminBrandController.java",
+      "line": 36,
+      "verb": "GET",
+      "paths": [
+        "/admin/brands"
+      ],
+      "method": "list"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminBrandController.java",
+      "line": 42,
+      "verb": "GET",
+      "paths": [
+        "/admin/brands/{id}/edit"
+      ],
+      "method": "edit"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminBrandController.java",
+      "line": 53,
+      "verb": "POST",
+      "paths": [
+        "/admin/brands"
+      ],
+      "method": "create"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminBrandController.java",
+      "line": 67,
+      "verb": "POST",
+      "paths": [
+        "/admin/brands/{id}"
+      ],
+      "method": "update"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminBrandController.java",
+      "line": 81,
+      "verb": "POST",
+      "paths": [
+        "/admin/brands/{id}/logo"
+      ],
+      "method": "uploadLogo"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminBrandController.java",
+      "line": 95,
+      "verb": "POST",
+      "paths": [
+        "/admin/brands/{id}/logo/delete"
+      ],
+      "method": "removeLogo"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminCategoryController.java",
+      "line": 30,
+      "verb": "GET",
+      "paths": [
+        "/admin/categories"
+      ],
+      "method": "list"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminCategoryController.java",
+      "line": 36,
+      "verb": "GET",
+      "paths": [
+        "/admin/categories/{id}/edit"
+      ],
+      "method": "edit"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminCategoryController.java",
+      "line": 47,
+      "verb": "POST",
+      "paths": [
+        "/admin/categories"
+      ],
+      "method": "create"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminCategoryController.java",
+      "line": 61,
+      "verb": "POST",
+      "paths": [
+        "/admin/categories/{id}"
+      ],
+      "method": "update"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminDashboardController.java",
+      "line": 25,
+      "verb": "GET",
+      "paths": [
+        "/admin"
+      ],
+      "method": "dashboard"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminInventoryController.java",
+      "line": 18,
+      "verb": "GET",
+      "paths": [
+        "/admin/inventory"
+      ],
+      "method": "list"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminOrderController.java",
+      "line": 15,
+      "verb": "GET",
+      "paths": [
+        "/admin/orders"
+      ],
+      "method": "list"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminOrderController.java",
+      "line": 20,
+      "verb": "GET",
+      "paths": [
+        "/admin/orders/{id}"
+      ],
+      "method": "detail"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminProductController.java",
+      "line": 39,
+      "verb": "GET",
+      "paths": [
+        "/admin/products"
+      ],
+      "method": "list"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminProductController.java",
+      "line": 48,
+      "verb": "GET",
+      "paths": [
+        "/admin/products/new"
+      ],
+      "method": "createForm"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminProductController.java",
+      "line": 54,
+      "verb": "GET",
+      "paths": [
+        "/admin/products/{id}/edit"
+      ],
+      "method": "editForm"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminProductController.java",
+      "line": 68,
+      "verb": "POST",
+      "paths": [
+        "/admin/products"
+      ],
+      "method": "create"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminProductController.java",
+      "line": 83,
+      "verb": "POST",
+      "paths": [
+        "/admin/products/{id}"
+      ],
+      "method": "update"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminProductController.java",
+      "line": 99,
+      "verb": "POST",
+      "paths": [
+        "/admin/products/{id}/images"
+      ],
+      "method": "uploadImage"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminProductController.java",
+      "line": 113,
+      "verb": "POST",
+      "paths": [
+        "/admin/products/{id}/images/{imageId}/primary"
+      ],
+      "method": "setPrimaryImage"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminProductController.java",
+      "line": 119,
+      "verb": "POST",
+      "paths": [
+        "/admin/products/{id}/images/{imageId}/delete"
+      ],
+      "method": "deleteImage"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminReviewController.java",
+      "line": 14,
+      "verb": "GET",
+      "paths": [
+        "/admin/reviews"
+      ],
+      "method": "list"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminReviewController.java",
+      "line": 18,
+      "verb": "POST",
+      "paths": [
+        "/admin/reviews/{id}/status"
+      ],
+      "method": "status"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminStaffAssignmentController.java",
+      "line": 22,
+      "verb": "GET",
+      "paths": [
+        "/admin/staff-assignments"
+      ],
+      "method": "list"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminStaffAssignmentController.java",
+      "line": 27,
+      "verb": "POST",
+      "paths": [
+        "/admin/staff-assignments"
+      ],
+      "method": "assign"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminStaffAssignmentController.java",
+      "line": 35,
+      "verb": "POST",
+      "paths": [
+        "/admin/staff-assignments/{id}/status"
+      ],
+      "method": "status"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminStoreController.java",
+      "line": 30,
+      "verb": "GET",
+      "paths": [
+        "/admin/stores"
+      ],
+      "method": "list"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminStoreController.java",
+      "line": 36,
+      "verb": "GET",
+      "paths": [
+        "/admin/stores/new"
+      ],
+      "method": "createForm"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminStoreController.java",
+      "line": 43,
+      "verb": "GET",
+      "paths": [
+        "/admin/stores/{id}/edit"
+      ],
+      "method": "editForm"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminStoreController.java",
+      "line": 62,
+      "verb": "POST",
+      "paths": [
+        "/admin/stores"
+      ],
+      "method": "create"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminStoreController.java",
+      "line": 76,
+      "verb": "POST",
+      "paths": [
+        "/admin/stores/{id}"
+      ],
+      "method": "update"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminStoreProductController.java",
+      "line": 45,
+      "verb": "GET",
+      "paths": [
+        "/admin/store-products"
+      ],
+      "method": "list"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminStoreProductController.java",
+      "line": 57,
+      "verb": "GET",
+      "paths": [
+        "/admin/store-products/new"
+      ],
+      "method": "createForm"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminStoreProductController.java",
+      "line": 65,
+      "verb": "GET",
+      "paths": [
+        "/admin/store-products/{id}/edit"
+      ],
+      "method": "editForm"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminStoreProductController.java",
+      "line": 78,
+      "verb": "POST",
+      "paths": [
+        "/admin/store-products"
+      ],
+      "method": "create"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminStoreProductController.java",
+      "line": 92,
+      "verb": "POST",
+      "paths": [
+        "/admin/store-products/{id}"
+      ],
+      "method": "update"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminUserController.java",
+      "line": 20,
+      "verb": "GET",
+      "paths": [
+        "/admin/users"
+      ],
+      "method": "list"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminUserController.java",
+      "line": 24,
+      "verb": "GET",
+      "paths": [
+        "/admin/users/new"
+      ],
+      "method": "createForm"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminUserController.java",
+      "line": 29,
+      "verb": "GET",
+      "paths": [
+        "/admin/users/{id}/edit"
+      ],
+      "method": "editForm"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminUserController.java",
+      "line": 36,
+      "verb": "POST",
+      "paths": [
+        "/admin/users"
+      ],
+      "method": "create"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/admin/AdminUserController.java",
+      "line": 44,
+      "verb": "POST",
+      "paths": [
+        "/admin/users/{id}"
+      ],
+      "method": "update"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/api/AuthApiController.java",
+      "line": 27,
+      "verb": "POST",
+      "paths": [
+        "/api/auth/login"
+      ],
+      "method": "login"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/api/AuthApiController.java",
+      "line": 32,
+      "verb": "POST",
+      "paths": [
+        "/api/auth/register"
+      ],
+      "method": "register"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/api/HealthController.java",
+      "line": 12,
+      "verb": "GET",
+      "paths": [
+        "/health"
+      ],
+      "method": "?"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/AuthController.java",
+      "line": 31,
+      "verb": "GET",
+      "paths": [
+        "/login"
+      ],
+      "method": "loginForm"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/AuthController.java",
+      "line": 37,
+      "verb": "POST",
+      "paths": [
+        "/login"
+      ],
+      "method": "login"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/AuthController.java",
+      "line": 61,
+      "verb": "GET",
+      "paths": [
+        "/register"
+      ],
+      "method": "registerForm"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/AuthController.java",
+      "line": 67,
+      "verb": "POST",
+      "paths": [
+        "/register"
+      ],
+      "method": "register"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/CartController.java",
+      "line": 38,
+      "verb": "GET",
+      "paths": [
+        "/cart"
+      ],
+      "method": "view"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/CartController.java",
+      "line": 43,
+      "verb": "POST",
+      "paths": [
+        "/cart/items"
+      ],
+      "method": "add"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/CartController.java",
+      "line": 57,
+      "verb": "POST",
+      "paths": [
+        "/cart/items/{cartItemId}"
+      ],
+      "method": "update"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/CartController.java",
+      "line": 71,
+      "verb": "POST",
+      "paths": [
+        "/cart/items/{cartItemId}/delete"
+      ],
+      "method": "remove"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/CheckoutController.java",
+      "line": 49,
+      "verb": "GET",
+      "paths": [
+        "/checkout"
+      ],
+      "method": "form"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/CheckoutController.java",
+      "line": 56,
+      "verb": "POST",
+      "paths": [
+        "/checkout"
+      ],
+      "method": "placeOrder"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/CheckoutController.java",
+      "line": 81,
+      "verb": "GET",
+      "paths": [
+        "/checkout/{checkoutId}"
+      ],
+      "method": "result"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/CustomerOrderController.java",
+      "line": 19,
+      "verb": "GET",
+      "paths": [
+        "/orders"
+      ],
+      "method": "list"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/CustomerOrderController.java",
+      "line": 23,
+      "verb": "GET",
+      "paths": [
+        "/orders/{orderId}"
+      ],
+      "method": "detail"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/CustomerOrderController.java",
+      "line": 32,
+      "verb": "POST",
+      "paths": [
+        "/orders/{orderId}/cancel"
+      ],
+      "method": "cancel"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/HomeController.java",
+      "line": 9,
+      "verb": "GET",
+      "paths": [
+        "/"
+      ],
+      "method": "home"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/PaymentController.java",
+      "line": 28,
+      "verb": "GET",
+      "paths": [
+        "/orders/{orderId}/payments"
+      ],
+      "method": "view"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/PaymentController.java",
+      "line": 34,
+      "verb": "POST",
+      "paths": [
+        "/orders/{orderId}/payments/attempts"
+      ],
+      "method": "start"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/PaymentController.java",
+      "line": 40,
+      "verb": "POST",
+      "paths": [
+        "/orders/{orderId}/payments/{paymentId}/success"
+      ],
+      "method": "success"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/PaymentController.java",
+      "line": 46,
+      "verb": "POST",
+      "paths": [
+        "/orders/{orderId}/payments/{paymentId}/failure"
+      ],
+      "method": "failure"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/ProductController.java",
+      "line": 34,
+      "verb": "GET",
+      "paths": [
+        "/products"
+      ],
+      "method": "list"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/ProductController.java",
+      "line": 54,
+      "verb": "GET",
+      "paths": [
+        "/products/{id}"
+      ],
+      "method": "detail"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/StoreController.java",
+      "line": 30,
+      "verb": "GET",
+      "paths": [
+        "/stores"
+      ],
+      "method": "finder"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/StoreController.java",
+      "line": 42,
+      "verb": "POST",
+      "paths": [
+        "/stores/select"
+      ],
+      "method": "select"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/client/StoreController.java",
+      "line": 54,
+      "verb": "POST",
+      "paths": [
+        "/stores/clear"
+      ],
+      "method": "clear"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffDashboardController.java",
+      "line": 23,
+      "verb": "GET",
+      "paths": [
+        "/staff",
+        "/staff/"
+      ],
+      "method": "landing"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffDashboardController.java",
+      "line": 30,
+      "verb": "GET",
+      "paths": [
+        "/staff/dashboard"
+      ],
+      "method": "dashboard"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffDeliveryController.java",
+      "line": 23,
+      "verb": "GET",
+      "paths": [
+        "/staff/orders/delivery"
+      ],
+      "method": "list"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffDeliveryController.java",
+      "line": 29,
+      "verb": "GET",
+      "paths": [
+        "/staff/orders/delivery/{orderId}"
+      ],
+      "method": "detail"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffDeliveryController.java",
+      "line": 35,
+      "verb": "POST",
+      "paths": [
+        "/staff/orders/delivery/{orderId}/prepare"
+      ],
+      "method": "prepare"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffDeliveryController.java",
+      "line": 41,
+      "verb": "POST",
+      "paths": [
+        "/staff/orders/delivery/{orderId}/pack"
+      ],
+      "method": "pack"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffDeliveryController.java",
+      "line": 47,
+      "verb": "POST",
+      "paths": [
+        "/staff/orders/delivery/{orderId}/ship"
+      ],
+      "method": "ship"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffDeliveryController.java",
+      "line": 53,
+      "verb": "POST",
+      "paths": [
+        "/staff/orders/delivery/{orderId}/complete"
+      ],
+      "method": "complete"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffOrderController.java",
+      "line": 21,
+      "verb": "GET",
+      "paths": [
+        "/staff/orders"
+      ],
+      "method": "orders"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffOrderController.java",
+      "line": 27,
+      "verb": "GET",
+      "paths": [
+        "/staff/orders/{orderId}"
+      ],
+      "method": "order"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffOrderController.java",
+      "line": 37,
+      "verb": "POST",
+      "paths": [
+        "/staff/orders/{orderId}/delivery/prepare"
+      ],
+      "method": "prepareDelivery"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffOrderController.java",
+      "line": 39,
+      "verb": "POST",
+      "paths": [
+        "/staff/orders/{orderId}/delivery/pack"
+      ],
+      "method": "packDelivery"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffOrderController.java",
+      "line": 41,
+      "verb": "POST",
+      "paths": [
+        "/staff/orders/{orderId}/delivery/ship"
+      ],
+      "method": "shipDelivery"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffOrderController.java",
+      "line": 43,
+      "verb": "POST",
+      "paths": [
+        "/staff/orders/{orderId}/delivery/complete"
+      ],
+      "method": "completeDelivery"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffOrderController.java",
+      "line": 45,
+      "verb": "POST",
+      "paths": [
+        "/staff/orders/{orderId}/pickup/prepare"
+      ],
+      "method": "preparePickup"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffOrderController.java",
+      "line": 47,
+      "verb": "POST",
+      "paths": [
+        "/staff/orders/{orderId}/pickup/ready"
+      ],
+      "method": "readyPickup"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffOrderController.java",
+      "line": 49,
+      "verb": "POST",
+      "paths": [
+        "/staff/orders/{orderId}/pickup/complete"
+      ],
+      "method": "completePickup"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffPickupController.java",
+      "line": 18,
+      "verb": "GET",
+      "paths": [
+        "/staff/orders/pickup"
+      ],
+      "method": "list"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffPickupController.java",
+      "line": 23,
+      "verb": "GET",
+      "paths": [
+        "/staff/orders/pickup/{orderId}"
+      ],
+      "method": "detail"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffPickupController.java",
+      "line": 28,
+      "verb": "POST",
+      "paths": [
+        "/staff/orders/pickup/{orderId}/prepare"
+      ],
+      "method": "prepare"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffPickupController.java",
+      "line": 32,
+      "verb": "POST",
+      "paths": [
+        "/staff/orders/pickup/{orderId}/ready"
+      ],
+      "method": "ready"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffPickupController.java",
+      "line": 36,
+      "verb": "POST",
+      "paths": [
+        "/staff/orders/pickup/{orderId}/complete"
+      ],
+      "method": "complete"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffPickupQueueController.java",
+      "line": 13,
+      "verb": "GET",
+      "paths": [
+        "/staff/pickup"
+      ],
+      "method": "queue"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffStockController.java",
+      "line": 22,
+      "verb": "GET",
+      "paths": [
+        "/staff/stock"
+      ],
+      "method": "stock"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffStockController.java",
+      "line": 24,
+      "verb": "GET",
+      "paths": [
+        "/staff/inventory-history"
+      ],
+      "method": "historySelection"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffStockController.java",
+      "line": 33,
+      "verb": "GET",
+      "paths": [
+        "/staff/stock/{id}/adjust"
+      ],
+      "method": "adjustForm"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffStockController.java",
+      "line": 40,
+      "verb": "POST",
+      "paths": [
+        "/staff/stock/{id}/adjust"
+      ],
+      "method": "adjust"
+    },
+    {
+      "file": "src/main/java/com/oneshop/controller/staff/StaffStockController.java",
+      "line": 51,
+      "verb": "GET",
+      "paths": [
+        "/staff/inventory-history/{id}"
+      ],
+      "method": "history"
+    }
+  ],
+  "entities": [
+    {
+      "file": "src/main/java/com/oneshop/entity/Brand.java",
+      "table": "brands",
+      "relations": 0
+    },
+    {
+      "file": "src/main/java/com/oneshop/entity/Cart.java",
+      "table": "carts",
+      "relations": 2
+    },
+    {
+      "file": "src/main/java/com/oneshop/entity/CartItem.java",
+      "table": "cart_items",
+      "relations": 2
+    },
+    {
+      "file": "src/main/java/com/oneshop/entity/Category.java",
+      "table": "categories",
+      "relations": 0
+    },
+    {
+      "file": "src/main/java/com/oneshop/entity/CheckoutSession.java",
+      "table": "checkout_sessions",
+      "relations": 2
+    },
+    {
+      "file": "src/main/java/com/oneshop/entity/CustomerAddress.java",
+      "table": "customer_addresses",
+      "relations": 1
+    },
+    {
+      "file": "src/main/java/com/oneshop/entity/InventoryMovement.java",
+      "table": "inventory_movements",
+      "relations": 3
+    },
+    {
+      "file": "src/main/java/com/oneshop/entity/Order.java",
+      "table": "orders",
+      "relations": 6
+    },
+    {
+      "file": "src/main/java/com/oneshop/entity/OrderItem.java",
+      "table": "order_items",
+      "relations": 2
+    },
+    {
+      "file": "src/main/java/com/oneshop/entity/OrderStatusHistory.java",
+      "table": "order_status_history",
+      "relations": 2
+    },
+    {
+      "file": "src/main/java/com/oneshop/entity/Payment.java",
+      "table": "payments",
+      "relations": 1
+    },
+    {
+      "file": "src/main/java/com/oneshop/entity/Product.java",
+      "table": "products",
+      "relations": 2
+    },
+    {
+      "file": "src/main/java/com/oneshop/entity/ProductImage.java",
+      "table": "product_images",
+      "relations": 1
+    },
+    {
+      "file": "src/main/java/com/oneshop/entity/Review.java",
+      "table": "reviews",
+      "relations": 2
+    },
+    {
+      "file": "src/main/java/com/oneshop/entity/Role.java",
+      "table": "roles",
+      "relations": 0
+    },
+    {
+      "file": "src/main/java/com/oneshop/entity/StaffStoreAssignment.java",
+      "table": "staff_store_assignments",
+      "relations": 2
+    },
+    {
+      "file": "src/main/java/com/oneshop/entity/Store.java",
+      "table": "stores",
+      "relations": 0
+    },
+    {
+      "file": "src/main/java/com/oneshop/entity/StoreProduct.java",
+      "table": "store_products",
+      "relations": 2
+    },
+    {
+      "file": "src/main/java/com/oneshop/entity/User.java",
+      "table": "users",
+      "relations": 1
+    }
+  ],
+  "templates": [
+    "src/main/resources/templates/error-message.html",
+    "src/main/resources/templates/error.html",
+    "src/main/resources/templates/admin/brands.html",
+    "src/main/resources/templates/admin/categories.html",
+    "src/main/resources/templates/admin/dashboard.html",
+    "src/main/resources/templates/admin/fragments.html",
+    "src/main/resources/templates/admin/order-detail.html",
+    "src/main/resources/templates/admin/orders.html",
+    "src/main/resources/templates/admin/product-form.html",
+    "src/main/resources/templates/admin/products.html",
+    "src/main/resources/templates/admin/reviews.html",
+    "src/main/resources/templates/admin/staff-assignments.html",
+    "src/main/resources/templates/admin/store-form.html",
+    "src/main/resources/templates/admin/store-product-form.html",
+    "src/main/resources/templates/admin/store-products.html",
+    "src/main/resources/templates/admin/stores.html",
+    "src/main/resources/templates/admin/user-form.html",
+    "src/main/resources/templates/admin/users.html",
+    "src/main/resources/templates/auth/login.html",
+    "src/main/resources/templates/auth/register.html",
+    "src/main/resources/templates/cart/index.html",
+    "src/main/resources/templates/checkout/index.html",
+    "src/main/resources/templates/checkout/result.html",
+    "src/main/resources/templates/fragments/admin.html",
+    "src/main/resources/templates/fragments/assets.html",
+    "src/main/resources/templates/fragments/components.html",
+    "src/main/resources/templates/fragments/footer.html",
+    "src/main/resources/templates/fragments/header.html",
+    "src/main/resources/templates/fragments/navbar.html",
+    "src/main/resources/templates/fragments/staff.html",
+    "src/main/resources/templates/home/index.html",
+    "src/main/resources/templates/layouts/admin.html",
+    "src/main/resources/templates/layouts/client.html",
+    "src/main/resources/templates/layouts/staff.html",
+    "src/main/resources/templates/orders/detail.html",
+    "src/main/resources/templates/orders/fragments.html",
+    "src/main/resources/templates/orders/index.html",
+    "src/main/resources/templates/payment/index.html",
+    "src/main/resources/templates/product/detail.html",
+    "src/main/resources/templates/product/list.html",
+    "src/main/resources/templates/staff/dashboard.html",
+    "src/main/resources/templates/staff/delivery/detail.html",
+    "src/main/resources/templates/staff/delivery/fragments.html",
+    "src/main/resources/templates/staff/delivery/index.html",
+    "src/main/resources/templates/staff/orders/detail.html",
+    "src/main/resources/templates/staff/orders/fragments.html",
+    "src/main/resources/templates/staff/orders/index.html",
+    "src/main/resources/templates/staff/pickup/detail.html",
+    "src/main/resources/templates/staff/pickup/index.html",
+    "src/main/resources/templates/staff/pickup/queue.html",
+    "src/main/resources/templates/staff/stock/adjust.html",
+    "src/main/resources/templates/staff/stock/history.html",
+    "src/main/resources/templates/staff/stock/index.html",
+    "src/main/resources/templates/store/list.html"
+  ],
+  "services": [
+    "src/main/java/com/oneshop/service/AdminOperationsService.java",
+    "src/main/java/com/oneshop/service/AdminReviewService.java",
+    "src/main/java/com/oneshop/service/AdminStaffAssignmentService.java",
+    "src/main/java/com/oneshop/service/AdminUserService.java",
+    "src/main/java/com/oneshop/service/AuthService.java",
+    "src/main/java/com/oneshop/service/CartService.java",
+    "src/main/java/com/oneshop/service/CheckoutService.java",
+    "src/main/java/com/oneshop/service/CloudinaryService.java",
+    "src/main/java/com/oneshop/service/CustomerOrderService.java",
+    "src/main/java/com/oneshop/service/DeliveryFulfillmentService.java",
+    "src/main/java/com/oneshop/service/InventoryService.java",
+    "src/main/java/com/oneshop/service/OrderService.java",
+    "src/main/java/com/oneshop/service/OrderTransitionPolicy.java",
+    "src/main/java/com/oneshop/service/OrderViewService.java",
+    "src/main/java/com/oneshop/service/PaymentService.java",
+    "src/main/java/com/oneshop/service/PickupCodeService.java",
+    "src/main/java/com/oneshop/service/PickupFulfillmentService.java",
+    "src/main/java/com/oneshop/service/ProductService.java",
+    "src/main/java/com/oneshop/service/ReviewService.java",
+    "src/main/java/com/oneshop/service/StaffInventoryService.java",
+    "src/main/java/com/oneshop/service/StaffOperationsService.java",
+    "src/main/java/com/oneshop/service/StaffStoreScopeService.java",
+    "src/main/java/com/oneshop/service/StoreProductService.java",
+    "src/main/java/com/oneshop/service/StoreService.java",
+    "src/main/java/com/oneshop/service/impl/AuthServiceImpl.java",
+    "src/main/java/com/oneshop/service/impl/CartServiceImpl.java",
+    "src/main/java/com/oneshop/service/impl/CheckoutServiceImpl.java",
+    "src/main/java/com/oneshop/service/impl/CloudinaryServiceImpl.java",
+    "src/main/java/com/oneshop/service/impl/CustomerOrderServiceImpl.java",
+    "src/main/java/com/oneshop/service/impl/DeliveryFulfillmentServiceImpl.java",
+    "src/main/java/com/oneshop/service/impl/InventoryServiceImpl.java",
+    "src/main/java/com/oneshop/service/impl/OrderServiceImpl.java",
+    "src/main/java/com/oneshop/service/impl/PaymentServiceImpl.java",
+    "src/main/java/com/oneshop/service/impl/PickupFulfillmentServiceImpl.java",
+    "src/main/java/com/oneshop/service/impl/ProductServiceImpl.java",
+    "src/main/java/com/oneshop/service/impl/ReviewServiceImpl.java",
+    "src/main/java/com/oneshop/service/impl/StoreProductServiceImpl.java",
+    "src/main/java/com/oneshop/service/impl/StoreServiceImpl.java"
+  ],
+  "tests": [
+    {
+      "file": "src/test/java/com/oneshop/AbstractIntegrationTest.java",
+      "annotations": 0,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/AccessControlIntegrationTest.java",
+      "annotations": 20,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/AuthDatabaseIntegrationTest.java",
+      "annotations": 11,
+      "conditional": true,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/AuthFlowIntegrationTest.java",
+      "annotations": 6,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/CartDatabaseIntegrationTest.java",
+      "annotations": 24,
+      "conditional": true,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/CartHttpDatabaseIntegrationTest.java",
+      "annotations": 15,
+      "conditional": true,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/CartWebIntegrationTest.java",
+      "annotations": 5,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/CatalogDatabaseIntegrationTest.java",
+      "annotations": 30,
+      "conditional": true,
+      "assumptions": false,
+      "mockAdapter": true
+    },
+    {
+      "file": "src/test/java/com/oneshop/CatalogHttpDatabaseIntegrationTest.java",
+      "annotations": 29,
+      "conditional": true,
+      "assumptions": true,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/CatalogWebIntegrationTest.java",
+      "annotations": 10,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/CheckoutConcurrencyDatabaseIntegrationTest.java",
+      "annotations": 6,
+      "conditional": true,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/CheckoutDatabaseIntegrationTest.java",
+      "annotations": 23,
+      "conditional": true,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/CheckoutHttpDatabaseIntegrationTest.java",
+      "annotations": 10,
+      "conditional": true,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/CheckoutWebIntegrationTest.java",
+      "annotations": 6,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/DatabaseFoundationIntegrationTest.java",
+      "annotations": 6,
+      "conditional": true,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/DeliveryDatabaseIntegrationTest.java",
+      "annotations": 18,
+      "conditional": true,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/DeliveryLiveSmoke.java",
+      "annotations": 0,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/DeliveryWebIntegrationTest.java",
+      "annotations": 8,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/LayoutsIntegrationTest.java",
+      "annotations": 9,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/OneShopApplicationTests.java",
+      "annotations": 2,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/OrderStateDatabaseIntegrationTest.java",
+      "annotations": 8,
+      "conditional": true,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/PaymentDatabaseIntegrationTest.java",
+      "annotations": 21,
+      "conditional": true,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/PaymentLiveSmoke.java",
+      "annotations": 0,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/PaymentWebIntegrationTest.java",
+      "annotations": 6,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/Phase10IntegrationWebDatabaseTest.java",
+      "annotations": 8,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/Phase11AdminDatabaseIntegrationTest.java",
+      "annotations": 20,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/Phase12CloudinaryLiveVerification.java",
+      "annotations": 1,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/Phase12HistoryHardeningDatabaseIntegrationTest.java",
+      "annotations": 16,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/Phase9IntegrationLiveSmoke.java",
+      "annotations": 0,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/Phase9IntegrationScenario.java",
+      "annotations": 0,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/Phase9IntegrationWebDatabaseTest.java",
+      "annotations": 10,
+      "conditional": true,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/PickupDatabaseIntegrationTest.java",
+      "annotations": 18,
+      "conditional": true,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/PickupLiveSmoke.java",
+      "annotations": 0,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/PickupWebIntegrationTest.java",
+      "annotations": 10,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/security/jwt/JwtServiceTest.java",
+      "annotations": 5,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/SeedGuard.java",
+      "annotations": 0,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/service/CartServiceRetryTest.java",
+      "annotations": 4,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/service/CloudinaryServiceTest.java",
+      "annotations": 2,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/service/CodPaymentServiceTest.java",
+      "annotations": 6,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/service/DeliveryFulfillmentServiceTest.java",
+      "annotations": 10,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/service/InventoryRestoreTest.java",
+      "annotations": 4,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/service/OrderServiceTest.java",
+      "annotations": 5,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/service/OrderTransitionPolicyTest.java",
+      "annotations": 2,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/service/OrderViewServiceTest.java",
+      "annotations": 1,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/service/PayAtStorePaymentServiceTest.java",
+      "annotations": 6,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/service/PaymentServiceTest.java",
+      "annotations": 10,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/service/PickupFulfillmentServiceTest.java",
+      "annotations": 14,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/StaffFulfillmentOperationsDatabaseIntegrationTest.java",
+      "annotations": 15,
+      "conditional": true,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/StaffInventoryDatabaseIntegrationTest.java",
+      "annotations": 18,
+      "conditional": true,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/StaffOperationsDatabaseIntegrationTest.java",
+      "annotations": 11,
+      "conditional": true,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/StaffStoreScopeDatabaseIntegrationTest.java",
+      "annotations": 9,
+      "conditional": true,
+      "assumptions": false,
+      "mockAdapter": false
+    },
+    {
+      "file": "src/test/java/com/oneshop/WebRoutesIntegrationTest.java",
+      "annotations": 7,
+      "conditional": false,
+      "assumptions": false,
+      "mockAdapter": false
+    }
+  ],
+  "reports": [
+    "docs/Phase10_1_StaffStoreScopeFoundation_Report.md",
+    "docs/Phase10_2_StaffDashboardOrderOperations_Report.md",
+    "docs/Phase10_3_FulfillmentPickupOperations_Report.md",
+    "docs/Phase10_4_StoreInventoryOperations_Report.md",
+    "docs/Phase10_5_IntegrationVerification_Report.md",
+    "docs/Phase11_AdminChain_Report.md",
+    "docs/Phase12_HistoryHardening_Report.md",
+    "docs/Phase9_1_PaymentFoundation_Report.md",
+    "docs/Phase9_2_OrderStateMachine_Report.md",
+    "docs/Phase9_3_DeliveryFlow_Report.md",
+    "docs/Phase9_4_StorePickupFlow_Report.md",
+    "docs/Phase9_5_IntegrationVerification_Report.md"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "tables": 19,
+  "columns": 141,
+  "foreignKeys": 26,
+  "checks": 40,
+  "uniqueIndexes": 29,
+  "indexCount": 35,
+  "integrityViolations": {
+    "constraintViolations": 0,
+    "monetaryIntegrity": 0,
+    "itemStoreIntegrity": 0,
+    "negativeStock": 0,
+    "duplicateMovements": 0,
+    "brokenTimeline": 0,
+    "statusHistory": 0,
+    "stockLedger": 0,
+    "duplicatePrimaryImages": 0,
+    "imageBinaryColumns": 0
+  }
+}

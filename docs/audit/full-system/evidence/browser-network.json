@@ -1,0 +1,1706 @@
+[
+  {
+    "role": "guest",
+    "url": "/",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "guest",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "guest",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "guest",
+    "url": "/products",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "guest",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "guest",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "guest",
+    "url": "/products/1",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "guest",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "guest",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "guest",
+    "url": "/stores",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "guest",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "guest",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "guest",
+    "url": "/login",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "guest",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "guest",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "guest",
+    "url": "/register",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "guest",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "guest",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "guest",
+    "url": "/products?q=AUDIT_NOT_FOUND_261009",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "guest",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "guest",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "guest",
+    "url": "/products/999999",
+    "status": 404,
+    "type": "Document"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "guest",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "guest",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "guest",
+    "url": "/login",
+    "status": 200,
+    "type": "Fetch"
+  },
+  {
+    "role": "guest",
+    "url": "/login",
+    "status": 200,
+    "type": "Fetch"
+  },
+  {
+    "role": "guest",
+    "url": "/login",
+    "status": 200,
+    "type": "Fetch"
+  },
+  {
+    "role": "guest",
+    "url": "/register",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "guest",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "guest",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "guest",
+    "url": "/register",
+    "status": 500,
+    "type": "Document"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "guest",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "customer",
+    "url": "/login",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "customer",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "customer",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "customer",
+    "url": "/favicon.ico",
+    "status": 404,
+    "type": "Other"
+  },
+  {
+    "role": "customer",
+    "url": "/",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "customer",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "customer",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "customer",
+    "url": "/cart",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "customer",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "customer",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "customer",
+    "url": "/orders",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "customer",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "customer",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "customer",
+    "url": "/orders/1",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "customer",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "customer",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "customer",
+    "url": "/orders/2",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "customer",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "customer",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "customer",
+    "url": "/orders/5",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "customer",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "customer",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "customer",
+    "url": "/orders/2/payments",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "customer",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "customer",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "customer",
+    "url": "/admin/inventory",
+    "status": 403,
+    "type": "Fetch"
+  },
+  {
+    "role": "customer",
+    "url": "/staff/stock",
+    "status": 403,
+    "type": "Fetch"
+  },
+  {
+    "role": "customer",
+    "url": "/orders/1",
+    "status": 200,
+    "type": "Fetch"
+  },
+  {
+    "role": "customer",
+    "url": "/reviews",
+    "status": 403,
+    "type": "Fetch"
+  },
+  {
+    "role": "customer",
+    "url": "/products/3/reviews",
+    "status": 403,
+    "type": "Fetch"
+  },
+  {
+    "role": "customer",
+    "url": "/cart/items",
+    "status": 403,
+    "type": "Fetch"
+  },
+  {
+    "role": "staff",
+    "url": "/login",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "staff",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/staff",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/staff",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/staff/orders",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/staff/orders/1",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/staff/orders/delivery",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/staff/orders/delivery/1",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/staff/orders/pickup",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/staff/stock",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/staff/stock/1/adjust",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/staff/stock/1/history",
+    "status": 404,
+    "type": "Document"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/staff/orders/2",
+    "status": 404,
+    "type": "Document"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "staff",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "staff",
+    "url": "/admin/inventory",
+    "status": 403,
+    "type": "Fetch"
+  },
+  {
+    "role": "staff",
+    "url": "/staff/stock",
+    "status": 200,
+    "type": "Fetch"
+  },
+  {
+    "role": "staff",
+    "url": "/orders/1",
+    "status": 403,
+    "type": "Fetch"
+  },
+  {
+    "role": "admin",
+    "url": "/login",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/stores",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/stores/new",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/stores/1/edit",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/categories",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/categories/1/edit",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/brands",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/brands/1/edit",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/products",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/products/new",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/products/1/edit",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/store-products",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/store-products/new",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/store-products/1/edit",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/users",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/users/new",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/users/5/edit",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/staff-assignments",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/inventory",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/orders",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/orders/1",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/reviews",
+    "status": 200,
+    "type": "Document"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/inventory",
+    "status": 200,
+    "type": "Fetch"
+  },
+  {
+    "role": "admin",
+    "url": "/staff/stock",
+    "status": 403,
+    "type": "Fetch"
+  },
+  {
+    "role": "admin",
+    "url": "/orders/1",
+    "status": 403,
+    "type": "Fetch"
+  }
+]

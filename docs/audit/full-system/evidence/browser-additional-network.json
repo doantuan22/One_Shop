@@ -1,0 +1,1508 @@
+[
+  {
+    "role": "admin",
+    "url": "/login",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 10.926
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 5.466
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 4.361
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 9.057
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 8.762
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/admin",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 168.014
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 9.057
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 8.762
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 3.449
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.579
+    }
+  },
+  {
+    "role": "admin",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/store-products/820/edit",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 30.798
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 9.057
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 8.762
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 4.184
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 3.08
+    }
+  },
+  {
+    "role": "admin",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/store-products?success=updated&storeId=48",
+    "status": 200,
+    "type": "Fetch",
+    "timing": {
+      "receiveHeadersEnd": 52.581
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/admin/orders",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 43.401
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 9.057
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 8.762
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 3.481
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.602
+    }
+  },
+  {
+    "role": "admin",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/orders?storeId=48",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 31.471
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 9.057
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 8.762
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 3.015
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.278
+    }
+  },
+  {
+    "role": "admin",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/inventory",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 69.65
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 9.057
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 8.762
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 3.171
+    }
+  },
+  {
+    "role": "admin",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.309
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/admin/inventory?storeId=49&productId=",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 34.581
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 9.057
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 8.762
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 3.345
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.617
+    }
+  },
+  {
+    "role": "admin",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  },
+  {
+    "role": "admin",
+    "url": "/admin",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 161.34
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 9.057
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 8.762
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 5.064
+    }
+  },
+  {
+    "role": "admin",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 3.948
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/admin/categories/7/edit",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 24.731
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 9.057
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 8.762
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 3.503
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.574
+    }
+  },
+  {
+    "role": "admin",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/categories?success=updated",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 16.102
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 9.057
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 8.762
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 3.348
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.483
+    }
+  },
+  {
+    "role": "admin",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/categories/7/edit",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 19.826
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 9.057
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 8.762
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 3.508
+    }
+  },
+  {
+    "role": "admin",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.667
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/admin/users/270/edit",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 18.351
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 9.057
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 8.762
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 3.222
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.482
+    }
+  },
+  {
+    "role": "admin",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/users?success",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 20.946
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 9.057
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 8.762
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 2.728
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.601
+    }
+  },
+  {
+    "role": "admin",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/users/270/edit",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 15.448
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 9.057
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 8.762
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 3.829
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 3.602
+    }
+  },
+  {
+    "role": "admin",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  },
+  {
+    "role": "admin",
+    "url": "/admin/users?success",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 21.764
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 9.057
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 8.762
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 4.12
+    }
+  },
+  {
+    "role": "admin",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 3.197
+    }
+  },
+  {
+    "role": "admin",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  },
+  {
+    "role": "staff",
+    "url": "/login",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 8.067
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 4.648
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 3.266
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 7.444
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 7.392
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/staff",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 65.744
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 7.444
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 7.392
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 3.33
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.54
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/staff/stock/820/adjust",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 59.54
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 7.444
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 7.392
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 3.193
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 3.036
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/staff/inventory-history/820?success=adjusted",
+    "status": 200,
+    "type": "Fetch",
+    "timing": {
+      "receiveHeadersEnd": 54.268
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/staff/inventory-history/820",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 28.078
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 7.444
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 7.392
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 3.917
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.936
+    }
+  },
+  {
+    "role": "staff",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  },
+  {
+    "role": "staff",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  },
+  {
+    "role": "staff",
+    "url": "/staff/inventory-history",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 39.993
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 7.444
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 7.392
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 3.034
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.774
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/login",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 9.367
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 7.444
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 7.392
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 2.796
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.872
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/staff/stock",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 33.739
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 7.444
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 7.392
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 3.357
+    }
+  },
+  {
+    "role": "staff",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 3.234
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/login",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 8.352
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 4.65
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 3.23
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 7.502
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 7.233
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 9.934
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 7.502
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 7.233
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 3.372
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.549
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/orders/9809",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 52.266
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 7.502
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 7.233
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 4.041
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.967
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/orders/9809/cancel",
+    "status": 400,
+    "type": "Fetch",
+    "timing": {
+      "receiveHeadersEnd": 17.578
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/cart",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 30.011
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 7.502
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 7.233
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 3.046
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.31
+    }
+  },
+  {
+    "role": "customer",
+    "url": "/admin/users",
+    "status": 403,
+    "type": "Fetch",
+    "timing": {
+      "receiveHeadersEnd": 5.745
+    }
+  },
+  {
+    "role": "guest",
+    "url": "/register",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 8.298
+    }
+  },
+  {
+    "role": "guest",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 5.123
+    }
+  },
+  {
+    "role": "guest",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 4.13
+    }
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 8.176
+    }
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 7.913
+    }
+  },
+  {
+    "role": "guest",
+    "url": "/register",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 8.85
+    }
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 8.176
+    }
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 7.913
+    }
+  },
+  {
+    "role": "guest",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 3.059
+    }
+  },
+  {
+    "role": "guest",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.269
+    }
+  },
+  {
+    "role": "guest",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  },
+  {
+    "role": "guest",
+    "url": "/",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 8.028
+    }
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 8.176
+    }
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 7.913
+    }
+  },
+  {
+    "role": "guest",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 2.988
+    }
+  },
+  {
+    "role": "guest",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.241
+    }
+  },
+  {
+    "role": "guest",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  },
+  {
+    "role": "guest",
+    "url": "/products",
+    "status": 200,
+    "type": "Document",
+    "timing": {
+      "receiveHeadersEnd": 53.152
+    }
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.min.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 8.176
+    }
+  },
+  {
+    "role": "guest",
+    "url": "/vendor/bootstrap/bootstrap.bundle.min.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 7.913
+    }
+  },
+  {
+    "role": "guest",
+    "url": "/css/main.css",
+    "status": 200,
+    "type": "Stylesheet",
+    "timing": {
+      "receiveHeadersEnd": 3.053
+    }
+  },
+  {
+    "role": "guest",
+    "url": "/js/main.js",
+    "status": 200,
+    "type": "Script",
+    "timing": {
+      "receiveHeadersEnd": 2.284
+    }
+  },
+  {
+    "role": "guest",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  },
+  {
+    "role": "guest",
+    "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+    "status": 200,
+    "type": "Image"
+  }
+]

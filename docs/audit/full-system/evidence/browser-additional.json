@@ -1,0 +1,1821 @@
+{
+  "at": "2026-10-09T09:02:07.380Z",
+  "rows": [
+    {
+      "label": "admin-cookie-flags",
+      "cookies": [
+        {
+          "name": "ONESHOP_TOKEN",
+          "httpOnly": true,
+          "secure": false,
+          "sameSite": "Lax",
+          "path": "/",
+          "expires": 1791540112.9301
+        },
+        {
+          "name": "XSRF-TOKEN",
+          "httpOnly": false,
+          "secure": false,
+          "path": "/",
+          "expires": -1
+        }
+      ]
+    },
+    {
+      "label": "staff-cookie-flags",
+      "cookies": [
+        {
+          "name": "ONESHOP_TOKEN",
+          "httpOnly": true,
+          "secure": false,
+          "sameSite": "Lax",
+          "path": "/",
+          "expires": 1791540113.884083
+        },
+        {
+          "name": "XSRF-TOKEN",
+          "httpOnly": false,
+          "secure": false,
+          "path": "/",
+          "expires": -1
+        }
+      ]
+    },
+    {
+      "label": "customer-cookie-flags",
+      "cookies": [
+        {
+          "name": "ONESHOP_TOKEN",
+          "httpOnly": true,
+          "secure": false,
+          "sameSite": "Lax",
+          "path": "/",
+          "expires": 1791540114.735018
+        },
+        {
+          "name": "XSRF-TOKEN",
+          "httpOnly": false,
+          "secure": false,
+          "path": "/",
+          "expires": -1
+        }
+      ]
+    },
+    {
+      "label": "concurrent-count-before",
+      "url": "/staff/stock/820/adjust",
+      "title": "Điều chỉnh tồn kho | OneShop Staff",
+      "text": "OneShop Staff\n2 chi nhánh\nTrang bán hàng\naudit-fsa-261009-staff@example.com\nĐăng xuất\nCHI NHÁNH ĐƯỢC PHÂN CÔNG\nAUD261009FSA Store B\nAUD261009FSAB · AuditArea\nAUD261009FSA Store C\nAUD261009FSAC · AuditArea\nTổng quan\nDanh sách đơn hàng\nĐơn giao hàng\nĐơn nhận tại cửa hàng\nHàng chờ nhận\nTồn kho chi nhánh\nLịch sử tồn kho\nĐiều chỉnh tồn kho\n\nGhi nhận tồn thực tế và lý do điều chỉnh.\n\nTồn kho chi nhánh\nAUD261009FSA SKU Cosmetic\n\nAUD261009FSA · AUD261009FSA Store B\n\nTồn hiện tại: 9\n\nSố lượng tồn thực tế\nLý do điều chỉnh\n\nNhập số lượng sau khi kiểm đếm. Khi số lượng không đổi, hệ thống không ghi biến động mới.\n\nLưu điều chỉnh",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "scrollWidth": 1440
+      },
+      "forms": [
+        {
+          "action": "/logout",
+          "method": "post",
+          "csrf": true,
+          "fields": [],
+          "buttons": [
+            {
+              "text": "Đăng xuất",
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "action": "/staff/stock/820/adjust",
+          "method": "post",
+          "csrf": true,
+          "fields": [
+            {
+              "name": "newQuantity",
+              "type": "number",
+              "value": "9",
+              "required": true,
+              "disabled": false
+            },
+            {
+              "name": "note",
+              "type": "textarea",
+              "value": "",
+              "required": true,
+              "disabled": false
+            }
+          ],
+          "buttons": [
+            {
+              "text": "Lưu điều chỉnh",
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "text": "OneShop Staff",
+          "href": "/staff"
+        },
+        {
+          "text": "Trang bán hàng",
+          "href": "/"
+        },
+        {
+          "text": "Tổng quan",
+          "href": "/staff"
+        },
+        {
+          "text": "Danh sách đơn hàng",
+          "href": "/staff/orders"
+        },
+        {
+          "text": "Đơn giao hàng",
+          "href": "/staff/orders/delivery"
+        },
+        {
+          "text": "Đơn nhận tại cửa hàng",
+          "href": "/staff/orders/pickup"
+        },
+        {
+          "text": "Hàng chờ nhận",
+          "href": "/staff/pickup"
+        },
+        {
+          "text": "Tồn kho chi nhánh",
+          "href": "/staff/stock"
+        },
+        {
+          "text": "Lịch sử tồn kho",
+          "href": "/staff/inventory-history"
+        },
+        {
+          "text": "Tồn kho chi nhánh",
+          "href": "/staff/stock"
+        }
+      ],
+      "brokenImages": [],
+      "unlabelledControls": [],
+      "decorator": {
+        "header": true,
+        "footer": false,
+        "sidebar": true
+      }
+    },
+    {
+      "label": "admin-staff-concurrent-count",
+      "requests": [
+        {
+          "status": 200,
+          "url": "/admin/store-products",
+          "body": "<!DOCTYPE html>\n\n<html lang=\"vi\">\n<head>\n    <head>\n    \n        <meta charset=\"UTF-8\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"stylesheet\" href=\"/vendor/bootstrap/bootstrap.min.css\">\n        <link rel=\"stylesheet\" href=\"/css/main.css\">\n    \n</head>\n    <title>Sản phẩm theo chi nhánh | OneShop Admin</title>\n    \n    \n\n</head>\n<body class=\"os-app os-app--admin\" data-layout=\"admin\">\n<header class=\"navbar navbar-dark os-appbar sticky-top px-3\">\n    <div class=\"d-flex align-items-center gap-2\">\n        <button class=\"navbar-toggler d-lg-none\" type=\"button\" data-bs-toggle=\"offcanvas\" data-bs-target=\"#appSidebar\"\n                aria-controls=\"appSidebar\" aria-label=\"Mở menu\">\n            <span class=\"navbar-toggler-icon\"></span>\n        </button>\n        <a class=\"navbar-brand mb-0 fw-bold\" href=\"/admin\">OneShop <span class=\"fw-normal opacity-75\">Admin</span></a>\n    </div>\n\n    <span class=\"badge os-scope-badge\" id=\"admin-scope-badge\">Toàn chuỗi</span>\n\n    <div class=\"d-flex align-items-center gap-2 ms-auto\">\n        <a class=\"btn btn-outline-light btn-sm d-none d-md-inline\" href=\"/\">Trang bán hàng</a>\n        <span class=\"text-w"
+        },
+        {
+          "status": 200,
+          "url": "/staff/inventory-history/820",
+          "body": "<!DOCTYPE html>\n\n<html lang=\"vi\">\n<head>\n    <head>\n    \n        <meta charset=\"UTF-8\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"stylesheet\" href=\"/vendor/bootstrap/bootstrap.min.css\">\n        <link rel=\"stylesheet\" href=\"/css/main.css\">\n    \n</head>\n    <title>Lịch sử biến động tồn kho | OneShop Staff</title>\n    \n</head>\n<body class=\"os-app os-app--staff\" data-layout=\"staff\">\n<header class=\"navbar navbar-dark os-appbar sticky-top px-3\">\n    <div class=\"d-flex align-items-center gap-2\">\n        <button class=\"navbar-toggler d-lg-none\" type=\"button\" data-bs-toggle=\"offcanvas\" data-bs-target=\"#appSidebar\"\n                aria-controls=\"appSidebar\" aria-label=\"Mở menu\">\n            <span class=\"navbar-toggler-icon\"></span>\n        </button>\n        <a class=\"navbar-brand mb-0 fw-bold\" href=\"/staff\">OneShop <span class=\"fw-normal opacity-75\">Staff</span></a>\n    </div>\n\n    <span class=\"badge os-scope-badge\" id=\"staff-scope-badge\">2 chi nhánh</span>\n\n    <div class=\"d-flex align-items-center gap-2 ms-auto\">\n        <a class=\"btn btn-outline-light btn-sm d-none d-md-inline\" href=\"/\">Trang bán hàng</a>\n        <span class=\"text-whit"
+        }
+      ]
+    },
+    {
+      "label": "concurrent-count-ledger",
+      "url": "/staff/inventory-history/820",
+      "title": "Lịch sử biến động tồn kho | OneShop Staff",
+      "text": "OneShop Staff\n2 chi nhánh\nTrang bán hàng\naudit-fsa-261009-staff@example.com\nĐăng xuất\nCHI NHÁNH ĐƯỢC PHÂN CÔNG\nAUD261009FSA Store B\nAUD261009FSAB · AuditArea\nAUD261009FSA Store C\nAUD261009FSAC · AuditArea\nTổng quan\nDanh sách đơn hàng\nĐơn giao hàng\nĐơn nhận tại cửa hàng\nHàng chờ nhận\nTồn kho chi nhánh\nLịch sử tồn kho\nLịch sử biến động tồn kho\n\nBiến động của sản phẩm thuộc chi nhánh được phân công.\n\nChọn sản phẩm khác Điều chỉnh tồn\nAUD261009FSA SKU Cosmetic\n\nAUD261009FSA · AUD261009FSA Store B\n\nTồn hiện tại: 17\n\nSố biến động: 4\n\nLoại\tTrước\tSau\tThay đổi\tNgười ghi nhận\tGhi chú\tThời gian\nSTOCK_ADJUST\t20\t17\t-3\tAUD261009FSA Staff\tAudit simultaneous STAFF physical count 17\t09/10/2026 16:01:56\nSTOCK_ADJUST\t9\t20\t+11\tQuản Trị OneShop\tAudit simultaneous ADMIN count 20\t09/10/2026 16:01:56\nORDER\t10\t9\t-1\tHệ thống\tCheckout #6281 - Order #9810\t09/10/2026 15:58:17\nSTOCK_ADJUST\t0\t10\t+10\tQuản Trị OneShop\tAudit fixture opening count\t09/10/2026 15:58:01",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "scrollWidth": 1440
+      },
+      "forms": [
+        {
+          "action": "/logout",
+          "method": "post",
+          "csrf": true,
+          "fields": [],
+          "buttons": [
+            {
+              "text": "Đăng xuất",
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "text": "OneShop Staff",
+          "href": "/staff"
+        },
+        {
+          "text": "Trang bán hàng",
+          "href": "/"
+        },
+        {
+          "text": "Tổng quan",
+          "href": "/staff"
+        },
+        {
+          "text": "Danh sách đơn hàng",
+          "href": "/staff/orders"
+        },
+        {
+          "text": "Đơn giao hàng",
+          "href": "/staff/orders/delivery"
+        },
+        {
+          "text": "Đơn nhận tại cửa hàng",
+          "href": "/staff/orders/pickup"
+        },
+        {
+          "text": "Hàng chờ nhận",
+          "href": "/staff/pickup"
+        },
+        {
+          "text": "Tồn kho chi nhánh",
+          "href": "/staff/stock"
+        },
+        {
+          "text": "Lịch sử tồn kho",
+          "href": "/staff/inventory-history"
+        },
+        {
+          "text": "Chọn sản phẩm khác",
+          "href": "/staff/inventory-history"
+        },
+        {
+          "text": "Điều chỉnh tồn",
+          "href": "/staff/stock/820/adjust"
+        }
+      ],
+      "brokenImages": [],
+      "unlabelledControls": [],
+      "decorator": {
+        "header": true,
+        "footer": false,
+        "sidebar": true
+      }
+    },
+    {
+      "label": "mobile-history",
+      "url": "/staff/inventory-history/820",
+      "title": "Lịch sử biến động tồn kho | OneShop Staff",
+      "text": "OneShop Staff\n2 chi nhánh\nĐăng xuất\nLịch sử biến động tồn kho\n\nBiến động của sản phẩm thuộc chi nhánh được phân công.\n\nChọn sản phẩm khác Điều chỉnh tồn\nAUD261009FSA SKU Cosmetic\n\nAUD261009FSA · AUD261009FSA Store B\n\nTồn hiện tại: 17\n\nSố biến động: 4\n\nLoại\tTrước\tSau\tThay đổi\tNgười ghi nhận\tGhi chú\tThời gian\nSTOCK_ADJUST\t20\t17\t-3\tAUD261009FSA Staff\tAudit simultaneous STAFF physical count 17\t09/10/2026 16:01:56\nSTOCK_ADJUST\t9\t20\t+11\tQuản Trị OneShop\tAudit simultaneous ADMIN count 20\t09/10/2026 16:01:56\nORDER\t10\t9\t-1\tHệ thống\tCheckout #6281 - Order #9810\t09/10/2026 15:58:17\nSTOCK_ADJUST\t0\t10\t+10\tQuản Trị OneShop\tAudit fixture opening count\t09/10/2026 15:58:01",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "scrollWidth": 390
+      },
+      "forms": [
+        {
+          "action": "/logout",
+          "method": "post",
+          "csrf": true,
+          "fields": [],
+          "buttons": [
+            {
+              "text": "Đăng xuất",
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "text": "OneShop Staff",
+          "href": "/staff"
+        },
+        {
+          "text": "Trang bán hàng",
+          "href": "/"
+        },
+        {
+          "text": "",
+          "href": "/staff"
+        },
+        {
+          "text": "",
+          "href": "/staff/orders"
+        },
+        {
+          "text": "",
+          "href": "/staff/orders/delivery"
+        },
+        {
+          "text": "",
+          "href": "/staff/orders/pickup"
+        },
+        {
+          "text": "",
+          "href": "/staff/pickup"
+        },
+        {
+          "text": "",
+          "href": "/staff/stock"
+        },
+        {
+          "text": "",
+          "href": "/staff/inventory-history"
+        },
+        {
+          "text": "Chọn sản phẩm khác",
+          "href": "/staff/inventory-history"
+        },
+        {
+          "text": "Điều chỉnh tồn",
+          "href": "/staff/stock/820/adjust"
+        }
+      ],
+      "brokenImages": [],
+      "unlabelledControls": [],
+      "decorator": {
+        "header": true,
+        "footer": false,
+        "sidebar": true
+      }
+    },
+    {
+      "label": "orders-filter-form",
+      "url": "/admin/orders?storeId=48",
+      "title": "Đơn hàng toàn hệ thống | OneShop Admin",
+      "text": "OneShop Admin\nToàn chuỗi\nTrang bán hàng\nadmin@oneshop.vn\nĐăng xuất\nPHẠM VI QUẢN TRỊ\nToàn chuỗi cửa hàng\nTổng quan\nChi nhánh\nDanh mục\nThương hiệu\nSản phẩm / SKU\nSản phẩm theo chi nhánh\nPhân công nhân viên\nTồn kho toàn chuỗi\nĐơn hàng\nĐánh giá\nNgười dùng\nĐơn hàng toàn hệ thống\n\nXem đơn của mọi chi nhánh, bao gồm lịch sử chi nhánh ngừng hoạt động.\n\nChi nhánh\nTất cả chi nhánh\nAUD261009FSA Store A · INACTIVE\nAUD261009FSA Store B · ACTIVE\nAUD261009FSA Store C · ACTIVE\nOneShop Hải Châu · INACTIVE\nOneShop Gò Vấp · ACTIVE\nOneShop Quận 10 · ACTIVE\nOneShop Quận 7 · ACTIVE\nOneShop Thủ Đức · ACTIVE\nLọc\nMã đơn\tChi nhánh\tKhách hàng\tHình thức nhận\tTrạng thái\tThanh toán\tTổng tiền\n#9810\n09/10/2026 15:58\n\tAUD261009FSA Store B\tAUD261009FSA Customer\naudit-fsa-261009-customer@example.com\n\tSTORE_PICKUP\tHoàn tất\tONLINE · PAID\t121.000 ₫\n\nTổng số: 1",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "scrollWidth": 1440
+      },
+      "forms": [
+        {
+          "action": "/logout",
+          "method": "post",
+          "csrf": true,
+          "fields": [],
+          "buttons": [
+            {
+              "text": "Đăng xuất",
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "action": "/admin/orders",
+          "method": "get",
+          "csrf": false,
+          "fields": [
+            {
+              "name": "storeId",
+              "type": "select-one",
+              "value": "48",
+              "required": false,
+              "disabled": false,
+              "options": [
+                {
+                  "value": "",
+                  "text": "Tất cả chi nhánh"
+                },
+                {
+                  "value": "47",
+                  "text": "AUD261009FSA Store A · INACTIVE"
+                },
+                {
+                  "value": "48",
+                  "text": "AUD261009FSA Store B · ACTIVE"
+                },
+                {
+                  "value": "49",
+                  "text": "AUD261009FSA Store C · ACTIVE"
+                },
+                {
+                  "value": "5",
+                  "text": "OneShop Hải Châu · INACTIVE"
+                },
+                {
+                  "value": "2",
+                  "text": "OneShop Gò Vấp · ACTIVE"
+                },
+                {
+                  "value": "4",
+                  "text": "OneShop Quận 10 · ACTIVE"
+                },
+                {
+                  "value": "3",
+                  "text": "OneShop Quận 7 · ACTIVE"
+                },
+                {
+                  "value": "1",
+                  "text": "OneShop Thủ Đức · ACTIVE"
+                }
+              ]
+            }
+          ],
+          "buttons": [
+            {
+              "text": "Lọc",
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "text": "OneShop Admin",
+          "href": "/admin"
+        },
+        {
+          "text": "Trang bán hàng",
+          "href": "/"
+        },
+        {
+          "text": "Tổng quan",
+          "href": "/admin"
+        },
+        {
+          "text": "Chi nhánh",
+          "href": "/admin/stores"
+        },
+        {
+          "text": "Danh mục",
+          "href": "/admin/categories"
+        },
+        {
+          "text": "Thương hiệu",
+          "href": "/admin/brands"
+        },
+        {
+          "text": "Sản phẩm / SKU",
+          "href": "/admin/products"
+        },
+        {
+          "text": "Sản phẩm theo chi nhánh",
+          "href": "/admin/store-products"
+        },
+        {
+          "text": "Phân công nhân viên",
+          "href": "/admin/staff-assignments"
+        },
+        {
+          "text": "Tồn kho toàn chuỗi",
+          "href": "/admin/inventory"
+        },
+        {
+          "text": "Đơn hàng",
+          "href": "/admin/orders"
+        },
+        {
+          "text": "Đánh giá",
+          "href": "/admin/reviews"
+        },
+        {
+          "text": "Người dùng",
+          "href": "/admin/users"
+        },
+        {
+          "text": "#9810",
+          "href": "/admin/orders/9810"
+        }
+      ],
+      "brokenImages": [],
+      "unlabelledControls": [],
+      "decorator": {
+        "header": true,
+        "footer": false,
+        "sidebar": true
+      }
+    },
+    {
+      "label": "inventory-filter-form",
+      "url": "/admin/inventory?storeId=49&productId=",
+      "title": "Sản phẩm theo chi nhánh | OneShop Admin",
+      "text": "OneShop Admin\nToàn chuỗi\nTrang bán hàng\nadmin@oneshop.vn\nĐăng xuất\nPHẠM VI QUẢN TRỊ\nToàn chuỗi cửa hàng\nTổng quan\nChi nhánh\nDanh mục\nThương hiệu\nSản phẩm / SKU\nSản phẩm theo chi nhánh\nPhân công nhân viên\nTồn kho toàn chuỗi\nĐơn hàng\nĐánh giá\nNgười dùng\nTồn kho toàn chuỗi\nSản phẩm theo chi nhánh\n\nMỗi dòng là một SKU đang gắn với một chi nhánh, có giá, tồn kho và trạng thái bán riêng của chi nhánh đó.\n\nGắn sản phẩm vào chi nhánh\nTất cả chi nhánh\nAUD261009FSA Store A\nAUD261009FSA Store B\nAUD261009FSA Store C\nOneShop Hải Châu\nOneShop Gò Vấp\nOneShop Quận 10\nOneShop Quận 7\nOneShop Thủ Đức\nTất cả sản phẩm\nBBIA-CHEEK-06 - BBIA Downy Cheek #06\nBBIA-CHEEK-08 - BBIA Downy Cheek #08\nCOCOON-SHAM-310 - Cocoon Dầu Gội Bưởi 310ml\nCOCOON-SERUM-30 - Cocoon Serum Bí Đao 30ml\nINNI-TONER-200 - Innisfree Green Tea Balancing Toner 200ml\nINNI-CLEANS-120 - Innisfree Green Tea Cleansing Foam 120ml\nLọc\nChi nhánh\tSKU\tSản phẩm\tGiá bán\tTồn kho\tTrạng thái\tThao tác\nAUD261009FSA Store C\tAUD261009FSA\tAUD261009FSA SKU Cosmetic\t131.000 ₫\t9\tĐang hoạt động\tSửa\n\nTổng số: 1 SKU theo chi nhánh.",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "scrollWidth": 1440
+      },
+      "forms": [
+        {
+          "action": "/logout",
+          "method": "post",
+          "csrf": true,
+          "fields": [],
+          "buttons": [
+            {
+              "text": "Đăng xuất",
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "action": "/admin/inventory",
+          "method": "get",
+          "csrf": false,
+          "fields": [
+            {
+              "name": "storeId",
+              "type": "select-one",
+              "value": "49",
+              "required": false,
+              "disabled": false,
+              "options": [
+                {
+                  "value": "",
+                  "text": "Tất cả chi nhánh"
+                },
+                {
+                  "value": "47",
+                  "text": "AUD261009FSA Store A"
+                },
+                {
+                  "value": "48",
+                  "text": "AUD261009FSA Store B"
+                },
+                {
+                  "value": "49",
+                  "text": "AUD261009FSA Store C"
+                },
+                {
+                  "value": "5",
+                  "text": "OneShop Hải Châu"
+                },
+                {
+                  "value": "2",
+                  "text": "OneShop Gò Vấp"
+                },
+                {
+                  "value": "4",
+                  "text": "OneShop Quận 10"
+                },
+                {
+                  "value": "3",
+                  "text": "OneShop Quận 7"
+                },
+                {
+                  "value": "1",
+                  "text": "OneShop Thủ Đức"
+                }
+              ]
+            },
+            {
+              "name": "productId",
+              "type": "select-one",
+              "value": "",
+              "required": false,
+              "disabled": false,
+              "options": [
+                {
+                  "value": "",
+                  "text": "Tất cả sản phẩm"
+                },
+                {
+                  "value": "1",
+                  "text": "BBIA-CHEEK-06 - BBIA Downy Cheek #06"
+                },
+                {
+                  "value": "2",
+                  "text": "BBIA-CHEEK-08 - BBIA Downy Cheek #08"
+                },
+                {
+                  "value": "5",
+                  "text": "COCOON-SHAM-310 - Cocoon Dầu Gội Bưởi 310ml"
+                },
+                {
+                  "value": "3",
+                  "text": "COCOON-SERUM-30 - Cocoon Serum Bí Đao 30ml"
+                },
+                {
+                  "value": "4",
+                  "text": "INNI-TONER-200 - Innisfree Green Tea Balancing Toner 200ml"
+                },
+                {
+                  "value": "6",
+                  "text": "INNI-CLEANS-120 - Innisfree Green Tea Cleansing Foam 120ml"
+                }
+              ]
+            }
+          ],
+          "buttons": [
+            {
+              "text": "Lọc",
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "text": "OneShop Admin",
+          "href": "/admin"
+        },
+        {
+          "text": "Trang bán hàng",
+          "href": "/"
+        },
+        {
+          "text": "Tổng quan",
+          "href": "/admin"
+        },
+        {
+          "text": "Chi nhánh",
+          "href": "/admin/stores"
+        },
+        {
+          "text": "Danh mục",
+          "href": "/admin/categories"
+        },
+        {
+          "text": "Thương hiệu",
+          "href": "/admin/brands"
+        },
+        {
+          "text": "Sản phẩm / SKU",
+          "href": "/admin/products"
+        },
+        {
+          "text": "Sản phẩm theo chi nhánh",
+          "href": "/admin/store-products"
+        },
+        {
+          "text": "Phân công nhân viên",
+          "href": "/admin/staff-assignments"
+        },
+        {
+          "text": "Tồn kho toàn chuỗi",
+          "href": "/admin/inventory"
+        },
+        {
+          "text": "Đơn hàng",
+          "href": "/admin/orders"
+        },
+        {
+          "text": "Đánh giá",
+          "href": "/admin/reviews"
+        },
+        {
+          "text": "Người dùng",
+          "href": "/admin/users"
+        },
+        {
+          "text": "Gắn sản phẩm vào chi nhánh",
+          "href": "/admin/store-products/new?storeId=49"
+        },
+        {
+          "text": "Sửa",
+          "href": "/admin/store-products/821/edit"
+        }
+      ],
+      "brokenImages": [],
+      "unlabelledControls": [],
+      "decorator": {
+        "header": true,
+        "footer": false,
+        "sidebar": true
+      }
+    },
+    {
+      "label": "overview-three-stores",
+      "url": "/admin",
+      "title": "Tổng quan toàn chuỗi | OneShop Admin",
+      "text": "OneShop Admin\nToàn chuỗi\nTrang bán hàng\nadmin@oneshop.vn\nĐăng xuất\nPHẠM VI QUẢN TRỊ\nToàn chuỗi cửa hàng\nTổng quan\nChi nhánh\nDanh mục\nThương hiệu\nSản phẩm / SKU\nSản phẩm theo chi nhánh\nPhân công nhân viên\nTồn kho toàn chuỗi\nĐơn hàng\nĐánh giá\nNgười dùng\nTổng quan toàn chuỗi\n\nTổng quan đơn hàng, tồn kho và nhân viên theo từng chi nhánh.\n\nLọc theo chi nhánh\nChi nhánh\nTất cả chi nhánh\nAUD261009FSA Store A · INACTIVE\nAUD261009FSA Store B · ACTIVE\nAUD261009FSA Store C · ACTIVE\nOneShop Hải Châu · INACTIVE\nOneShop Gò Vấp · ACTIVE\nOneShop Quận 10 · ACTIVE\nOneShop Quận 7 · ACTIVE\nOneShop Thủ Đức · ACTIVE\nLọc\n\nĐơn cần xử lý: CONFIRMED, PREPARING, PACKED, SHIPPING, READY_FOR_PICKUP. Tồn sắp hết: SKU ACTIVE có 1–5 sản phẩm; hết hàng: 0. Nhân viên có quyền: tài khoản STAFF, phân công và chi nhánh đều ACTIVE.\n\nAUD261009FSA Store A Ngừng hoạt động\nTổng đơn\n2\nMọi trạng thái\nCần xử lý\n0\nHoàn tất\n1\nĐã hủy\n1\nSKU được gắn (mọi trạng thái)\n1\nSKU sắp hết\n0\nSKU hết hàng\n0\nNhân viên có quyền\n0\nĐơn hàng\nTồn kho\nPhân công\nSửa chi nhánh\nAUD261009FSA Store B Đang hoạt động\nTổng đơn\n1\nMọi trạng thái\nCần xử lý\n0\nHoàn tất\n1\nĐã hủy\n0\nSKU được gắn (mọi trạng thái)\n1\nSKU sắp hết\n0\nSKU hết hàng\n0\nNhân viên có quyền\n1\nĐơn hàng\nTồn kho\nPhân công\nSửa chi nhánh\nAUD261009FSA Store C Đang hoạt động\nTổng đơn\n1\nMọi trạng thái\nCần xử lý\n0\nHoàn tất\n1\nĐã hủy\n0\nSKU được gắn (mọi trạng thái)\n1\nSKU sắp hết\n0\nSKU hết hàng\n0\nNhân viên có quyền\n1\nĐơn hàng\nTồn kho\nPhân công\nSửa chi nhánh\nOneShop Hải Châu Ngừng hoạt động\nTổng đơn\n1\nMọi trạng thái\nCần xử lý\n0\nHoàn tất\n1\nĐã hủy\n0\nSKU được gắn (mọi trạng thái)\n1\nSKU sắp hết\n0\nSKU hết hàng\n0\nNhân viên có quyền\n0\nĐơn hàng\nTồn kho\nPhân công\nSửa chi nhánh\nOneShop Gò Vấp Đang hoạt động\nTổng đơn\n1\nMọi trạng thái\nCần xử lý\n1\nHoàn tất\n0\nĐã hủy\n0\nSKU được gắn (mọi trạng thái)\n5\nSKU sắp hết\n0\nSKU hết hàng\n1\nNhân viên có quyền\n1\nĐơn hàng\nTồn kho\nPhân công\nSửa chi nhánh\nOneShop Quận 10 Đang hoạt động\nTổng đơn\n0\nMọi trạng thái\nCần xử lý\n0\nHoàn tất\n0\nĐã hủy\n0\nSKU được gắn (mọi trạng thái)\n3\nSKU sắp hết\n0\nSKU hết hàng\n0\nNhân viên có quyền\n1\nĐơn hàng\nTồn kho\nPhân công\nSửa chi nhánh\nOneShop Quận 7 Đang hoạt động\nTổng đơn\n1\nMọi trạng thái\nCần xử lý\n1\nHoàn tất\n0\nĐã hủy\n0\nSKU được gắn (mọi trạng thái)\n5\nSKU sắp hết\n0\nSKU hết hàng\n1\nNhân viên có quyền\n1\nĐơn hàng\nTồn kho\nPhân công\nSửa chi nhánh\nOneShop Thủ Đức Đang hoạt động\nTổng đơn\n2\nMọi trạng thái\nCần xử lý\n1\nHoàn tất\n0\nĐã hủy\n1\nSKU được gắn (mọi trạng thái)\n7\nSKU sắp hết\n0\nSKU hết hàng\n0\nNhân viên có quyền\n1\nĐơn hàng\nTồn kho\nPhân công\nSửa chi nhánh",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "scrollWidth": 1425
+      },
+      "forms": [
+        {
+          "action": "/logout",
+          "method": "post",
+          "csrf": true,
+          "fields": [],
+          "buttons": [
+            {
+              "text": "Đăng xuất",
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "action": "/admin",
+          "method": "get",
+          "csrf": false,
+          "fields": [
+            {
+              "name": "storeId",
+              "type": "select-one",
+              "value": "",
+              "required": false,
+              "disabled": false,
+              "options": [
+                {
+                  "value": "",
+                  "text": "Tất cả chi nhánh"
+                },
+                {
+                  "value": "47",
+                  "text": "AUD261009FSA Store A · INACTIVE"
+                },
+                {
+                  "value": "48",
+                  "text": "AUD261009FSA Store B · ACTIVE"
+                },
+                {
+                  "value": "49",
+                  "text": "AUD261009FSA Store C · ACTIVE"
+                },
+                {
+                  "value": "5",
+                  "text": "OneShop Hải Châu · INACTIVE"
+                },
+                {
+                  "value": "2",
+                  "text": "OneShop Gò Vấp · ACTIVE"
+                },
+                {
+                  "value": "4",
+                  "text": "OneShop Quận 10 · ACTIVE"
+                },
+                {
+                  "value": "3",
+                  "text": "OneShop Quận 7 · ACTIVE"
+                },
+                {
+                  "value": "1",
+                  "text": "OneShop Thủ Đức · ACTIVE"
+                }
+              ]
+            }
+          ],
+          "buttons": [
+            {
+              "text": "Lọc",
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "text": "OneShop Admin",
+          "href": "/admin"
+        },
+        {
+          "text": "Trang bán hàng",
+          "href": "/"
+        },
+        {
+          "text": "Tổng quan",
+          "href": "/admin"
+        },
+        {
+          "text": "Chi nhánh",
+          "href": "/admin/stores"
+        },
+        {
+          "text": "Danh mục",
+          "href": "/admin/categories"
+        },
+        {
+          "text": "Thương hiệu",
+          "href": "/admin/brands"
+        },
+        {
+          "text": "Sản phẩm / SKU",
+          "href": "/admin/products"
+        },
+        {
+          "text": "Sản phẩm theo chi nhánh",
+          "href": "/admin/store-products"
+        },
+        {
+          "text": "Phân công nhân viên",
+          "href": "/admin/staff-assignments"
+        },
+        {
+          "text": "Tồn kho toàn chuỗi",
+          "href": "/admin/inventory"
+        },
+        {
+          "text": "Đơn hàng",
+          "href": "/admin/orders"
+        },
+        {
+          "text": "Đánh giá",
+          "href": "/admin/reviews"
+        },
+        {
+          "text": "Người dùng",
+          "href": "/admin/users"
+        },
+        {
+          "text": "Đơn hàng",
+          "href": "/admin/orders?storeId=47"
+        },
+        {
+          "text": "Tồn kho",
+          "href": "/admin/inventory?storeId=47"
+        },
+        {
+          "text": "Phân công",
+          "href": "/admin/staff-assignments?storeId=47"
+        },
+        {
+          "text": "Sửa chi nhánh",
+          "href": "/admin/stores/47/edit"
+        },
+        {
+          "text": "Đơn hàng",
+          "href": "/admin/orders?storeId=48"
+        },
+        {
+          "text": "Tồn kho",
+          "href": "/admin/inventory?storeId=48"
+        },
+        {
+          "text": "Phân công",
+          "href": "/admin/staff-assignments?storeId=48"
+        },
+        {
+          "text": "Sửa chi nhánh",
+          "href": "/admin/stores/48/edit"
+        },
+        {
+          "text": "Đơn hàng",
+          "href": "/admin/orders?storeId=49"
+        },
+        {
+          "text": "Tồn kho",
+          "href": "/admin/inventory?storeId=49"
+        },
+        {
+          "text": "Phân công",
+          "href": "/admin/staff-assignments?storeId=49"
+        },
+        {
+          "text": "Sửa chi nhánh",
+          "href": "/admin/stores/49/edit"
+        },
+        {
+          "text": "Đơn hàng",
+          "href": "/admin/orders?storeId=5"
+        },
+        {
+          "text": "Tồn kho",
+          "href": "/admin/inventory?storeId=5"
+        },
+        {
+          "text": "Phân công",
+          "href": "/admin/staff-assignments?storeId=5"
+        },
+        {
+          "text": "Sửa chi nhánh",
+          "href": "/admin/stores/5/edit"
+        },
+        {
+          "text": "Đơn hàng",
+          "href": "/admin/orders?storeId=2"
+        },
+        {
+          "text": "Tồn kho",
+          "href": "/admin/inventory?storeId=2"
+        },
+        {
+          "text": "Phân công",
+          "href": "/admin/staff-assignments?storeId=2"
+        },
+        {
+          "text": "Sửa chi nhánh",
+          "href": "/admin/stores/2/edit"
+        },
+        {
+          "text": "Đơn hàng",
+          "href": "/admin/orders?storeId=4"
+        },
+        {
+          "text": "Tồn kho",
+          "href": "/admin/inventory?storeId=4"
+        },
+        {
+          "text": "Phân công",
+          "href": "/admin/staff-assignments?storeId=4"
+        },
+        {
+          "text": "Sửa chi nhánh",
+          "href": "/admin/stores/4/edit"
+        },
+        {
+          "text": "Đơn hàng",
+          "href": "/admin/orders?storeId=3"
+        },
+        {
+          "text": "Tồn kho",
+          "href": "/admin/inventory?storeId=3"
+        },
+        {
+          "text": "Phân công",
+          "href": "/admin/staff-assignments?storeId=3"
+        },
+        {
+          "text": "Sửa chi nhánh",
+          "href": "/admin/stores/3/edit"
+        },
+        {
+          "text": "Đơn hàng",
+          "href": "/admin/orders?storeId=1"
+        },
+        {
+          "text": "Tồn kho",
+          "href": "/admin/inventory?storeId=1"
+        },
+        {
+          "text": "Phân công",
+          "href": "/admin/staff-assignments?storeId=1"
+        },
+        {
+          "text": "Sửa chi nhánh",
+          "href": "/admin/stores/1/edit"
+        }
+      ],
+      "brokenImages": [],
+      "unlabelledControls": [],
+      "decorator": {
+        "header": true,
+        "footer": false,
+        "sidebar": true
+      }
+    },
+    {
+      "label": "staff-history-selection",
+      "url": "/staff/inventory-history",
+      "title": "Lịch sử tồn kho | OneShop Staff",
+      "text": "OneShop Staff\n2 chi nhánh\nTrang bán hàng\naudit-fsa-261009-staff@example.com\nĐăng xuất\nCHI NHÁNH ĐƯỢC PHÂN CÔNG\nAUD261009FSA Store B\nAUD261009FSAB · AuditArea\nAUD261009FSA Store C\nAUD261009FSAC · AuditArea\nTổng quan\nDanh sách đơn hàng\nĐơn giao hàng\nĐơn nhận tại cửa hàng\nHàng chờ nhận\nTồn kho chi nhánh\nLịch sử tồn kho\nLịch sử tồn kho\n\nChọn sản phẩm để xem biến động tồn của chi nhánh được phân công.\n\nSố SKU tại chi nhánh: 2\n\nChi nhánh\tSKU / Sản phẩm\tGiá\tTrạng thái\tTồn thực tế\tThao tác\nAUD261009FSA Store B\tAUD261009FSA\nAUD261009FSA SKU Cosmetic\n\t121.000 ₫\tĐang kinh doanh\t17\tLịch sử\nAUD261009FSA Store C\tAUD261009FSA\nAUD261009FSA SKU Cosmetic\n\t131.000 ₫\tĐang kinh doanh\t9\tLịch sử",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "scrollWidth": 1440
+      },
+      "forms": [
+        {
+          "action": "/logout",
+          "method": "post",
+          "csrf": true,
+          "fields": [],
+          "buttons": [
+            {
+              "text": "Đăng xuất",
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "text": "OneShop Staff",
+          "href": "/staff"
+        },
+        {
+          "text": "Trang bán hàng",
+          "href": "/"
+        },
+        {
+          "text": "Tổng quan",
+          "href": "/staff"
+        },
+        {
+          "text": "Danh sách đơn hàng",
+          "href": "/staff/orders"
+        },
+        {
+          "text": "Đơn giao hàng",
+          "href": "/staff/orders/delivery"
+        },
+        {
+          "text": "Đơn nhận tại cửa hàng",
+          "href": "/staff/orders/pickup"
+        },
+        {
+          "text": "Hàng chờ nhận",
+          "href": "/staff/pickup"
+        },
+        {
+          "text": "Tồn kho chi nhánh",
+          "href": "/staff/stock"
+        },
+        {
+          "text": "Lịch sử tồn kho",
+          "href": "/staff/inventory-history"
+        },
+        {
+          "text": "Lịch sử",
+          "href": "/staff/inventory-history/820"
+        },
+        {
+          "text": "Lịch sử",
+          "href": "/staff/inventory-history/821"
+        }
+      ],
+      "brokenImages": [],
+      "unlabelledControls": [],
+      "decorator": {
+        "header": true,
+        "footer": false,
+        "sidebar": true
+      }
+    },
+    {
+      "label": "stored-xss-escaped",
+      "scriptExecuted": false,
+      "url": "/admin/categories/7/edit",
+      "title": "Danh mục | OneShop Admin",
+      "text": "OneShop Admin\nToàn chuỗi\nTrang bán hàng\nadmin@oneshop.vn\nĐăng xuất\nPHẠM VI QUẢN TRỊ\nToàn chuỗi cửa hàng\nTổng quan\nChi nhánh\nDanh mục\nThương hiệu\nSản phẩm / SKU\nSản phẩm theo chi nhánh\nPhân công nhân viên\nTồn kho toàn chuỗi\nĐơn hàng\nĐánh giá\nNgười dùng\nDanh mục\n\nDanh mục dùng chung toàn chuỗi. Danh mục đang ẩn sẽ không hiển thị cho khách cùng các sản phẩm của nó.\n\nSửa danh mục\nTên danh mục *\nMô tả\nTrạng thái\nĐang hoạt động\nĐang ẩn\nLưu thay đổi Hủy\nTên\tMô tả\tTrạng thái\tThao tác\nAUD261009FSA Category\t<script>window.__auditXss=1</script>\tĐang hoạt động\tSửa\nChăm sóc da\tSerum, toner, sữa rửa mặt\tĐang hoạt động\tSửa\nChăm sóc tóc\tDầu gội, dầu xả\tĐang hoạt động\tSửa\nTrang điểm\tMá hồng, son, phấn\tĐang hoạt động\tSửa",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "scrollWidth": 1440
+      },
+      "forms": [
+        {
+          "action": "/logout",
+          "method": "post",
+          "csrf": true,
+          "fields": [],
+          "buttons": [
+            {
+              "text": "Đăng xuất",
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "action": "/admin/categories/7",
+          "method": "post",
+          "csrf": true,
+          "fields": [
+            {
+              "name": "name",
+              "type": "text",
+              "value": "AUD261009FSA Category",
+              "required": false,
+              "disabled": false
+            },
+            {
+              "name": "description",
+              "type": "textarea",
+              "value": "<script>window.__auditXss=1</script>",
+              "required": false,
+              "disabled": false
+            },
+            {
+              "name": "status",
+              "type": "select-one",
+              "value": "ACTIVE",
+              "required": false,
+              "disabled": false,
+              "options": [
+                {
+                  "value": "ACTIVE",
+                  "text": "Đang hoạt động"
+                },
+                {
+                  "value": "HIDDEN",
+                  "text": "Đang ẩn"
+                }
+              ]
+            }
+          ],
+          "buttons": [
+            {
+              "text": "Lưu thay đổi",
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "text": "OneShop Admin",
+          "href": "/admin"
+        },
+        {
+          "text": "Trang bán hàng",
+          "href": "/"
+        },
+        {
+          "text": "Tổng quan",
+          "href": "/admin"
+        },
+        {
+          "text": "Chi nhánh",
+          "href": "/admin/stores"
+        },
+        {
+          "text": "Danh mục",
+          "href": "/admin/categories"
+        },
+        {
+          "text": "Thương hiệu",
+          "href": "/admin/brands"
+        },
+        {
+          "text": "Sản phẩm / SKU",
+          "href": "/admin/products"
+        },
+        {
+          "text": "Sản phẩm theo chi nhánh",
+          "href": "/admin/store-products"
+        },
+        {
+          "text": "Phân công nhân viên",
+          "href": "/admin/staff-assignments"
+        },
+        {
+          "text": "Tồn kho toàn chuỗi",
+          "href": "/admin/inventory"
+        },
+        {
+          "text": "Đơn hàng",
+          "href": "/admin/orders"
+        },
+        {
+          "text": "Đánh giá",
+          "href": "/admin/reviews"
+        },
+        {
+          "text": "Người dùng",
+          "href": "/admin/users"
+        },
+        {
+          "text": "Hủy",
+          "href": "/admin/categories"
+        },
+        {
+          "text": "Sửa",
+          "href": "/admin/categories/7/edit"
+        },
+        {
+          "text": "Sửa",
+          "href": "/admin/categories/1/edit"
+        },
+        {
+          "text": "Sửa",
+          "href": "/admin/categories/3/edit"
+        },
+        {
+          "text": "Sửa",
+          "href": "/admin/categories/2/edit"
+        }
+      ],
+      "brokenImages": [],
+      "unlabelledControls": [],
+      "decorator": {
+        "header": true,
+        "footer": false,
+        "sidebar": true
+      }
+    },
+    {
+      "label": "inactive-user-old-jwt-blocked",
+      "url": "/login",
+      "title": "Đăng nhập | OneShop",
+      "text": "Chi nhánh đang chọn: Toàn chuỗi\nChọn chi nhánh\nHotline: 1900 0000 · Miễn phí vận chuyển cho đơn từ 500.000 ₫\nOneShop\nTrang chủ\nSản phẩm\nHệ thống cửa hàng\nGiỏ hàng\nĐăng nhập\nĐăng ký\nĐăng nhập\nEmail\nMật khẩu\nĐăng nhập\n\nChưa có tài khoản? Đăng ký\n\n© 2026 OneShop – Hệ thống cửa hàng mỹ phẩm\nSpring Boot · Thymeleaf · Bootstrap · SiteMesh",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "scrollWidth": 1440
+      },
+      "forms": [
+        {
+          "action": "/login",
+          "method": "post",
+          "csrf": true,
+          "fields": [
+            {
+              "name": "email",
+              "type": "email",
+              "value": "",
+              "required": false,
+              "disabled": false
+            }
+          ],
+          "buttons": [
+            {
+              "text": "Đăng nhập",
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "text": "Chọn chi nhánh",
+          "href": "/stores"
+        },
+        {
+          "text": "OneShop",
+          "href": "/"
+        },
+        {
+          "text": "Trang chủ",
+          "href": "/"
+        },
+        {
+          "text": "Sản phẩm",
+          "href": "/products"
+        },
+        {
+          "text": "Hệ thống cửa hàng",
+          "href": "/stores"
+        },
+        {
+          "text": "Giỏ hàng",
+          "href": "/cart"
+        },
+        {
+          "text": "Đăng nhập",
+          "href": "/login"
+        },
+        {
+          "text": "Đăng ký",
+          "href": "/register"
+        },
+        {
+          "text": "Đăng ký",
+          "href": "/register"
+        }
+      ],
+      "brokenImages": [],
+      "unlabelledControls": [],
+      "decorator": {
+        "header": true,
+        "footer": true,
+        "sidebar": false
+      }
+    },
+    {
+      "label": "reactivated-user-old-jwt",
+      "url": "/staff/stock",
+      "title": "Tồn kho chi nhánh | OneShop Staff",
+      "text": "OneShop Staff\n2 chi nhánh\nTrang bán hàng\naudit-fsa-261009-staff@example.com\nĐăng xuất\nCHI NHÁNH ĐƯỢC PHÂN CÔNG\nAUD261009FSA Store B\nAUD261009FSAB · AuditArea\nAUD261009FSA Store C\nAUD261009FSAC · AuditArea\nTổng quan\nDanh sách đơn hàng\nĐơn giao hàng\nĐơn nhận tại cửa hàng\nHàng chờ nhận\nTồn kho chi nhánh\nLịch sử tồn kho\nTồn kho chi nhánh\n\nTồn thực tế của các sản phẩm thuộc chi nhánh được phân công.\n\nSố SKU tại chi nhánh: 2\n\nChi nhánh\tSKU / Sản phẩm\tGiá\tTrạng thái\tTồn thực tế\tThao tác\nAUD261009FSA Store B\tAUD261009FSA\nAUD261009FSA SKU Cosmetic\n\t121.000 ₫\tĐang kinh doanh\t17\tĐiều chỉnh tồn Lịch sử\nAUD261009FSA Store C\tAUD261009FSA\nAUD261009FSA SKU Cosmetic\n\t131.000 ₫\tĐang kinh doanh\t9\tĐiều chỉnh tồn Lịch sử",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "scrollWidth": 1440
+      },
+      "forms": [
+        {
+          "action": "/logout",
+          "method": "post",
+          "csrf": true,
+          "fields": [],
+          "buttons": [
+            {
+              "text": "Đăng xuất",
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "text": "OneShop Staff",
+          "href": "/staff"
+        },
+        {
+          "text": "Trang bán hàng",
+          "href": "/"
+        },
+        {
+          "text": "Tổng quan",
+          "href": "/staff"
+        },
+        {
+          "text": "Danh sách đơn hàng",
+          "href": "/staff/orders"
+        },
+        {
+          "text": "Đơn giao hàng",
+          "href": "/staff/orders/delivery"
+        },
+        {
+          "text": "Đơn nhận tại cửa hàng",
+          "href": "/staff/orders/pickup"
+        },
+        {
+          "text": "Hàng chờ nhận",
+          "href": "/staff/pickup"
+        },
+        {
+          "text": "Tồn kho chi nhánh",
+          "href": "/staff/stock"
+        },
+        {
+          "text": "Lịch sử tồn kho",
+          "href": "/staff/inventory-history"
+        },
+        {
+          "text": "Điều chỉnh tồn",
+          "href": "/staff/stock/820/adjust"
+        },
+        {
+          "text": "Lịch sử",
+          "href": "/staff/inventory-history/820"
+        },
+        {
+          "text": "Điều chỉnh tồn",
+          "href": "/staff/stock/821/adjust"
+        },
+        {
+          "text": "Lịch sử",
+          "href": "/staff/inventory-history/821"
+        }
+      ],
+      "brokenImages": [],
+      "unlabelledControls": [],
+      "decorator": {
+        "header": true,
+        "footer": false,
+        "sidebar": true
+      }
+    },
+    {
+      "label": "cancel-completed-rejected",
+      "request": {
+        "status": 400,
+        "url": "/orders/9809/cancel",
+        "body": "<!DOCTYPE html>\n\n<html lang=\"vi\">\n<head>\n    <head>\n    \n        <meta charset=\"UTF-8\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"stylesheet\" href=\"/vendor/bootstrap/bootstrap.min.css\">\n        <link rel=\"stylesheet\" href=\"/css/main.css\">\n    \n</head>\n    <title>Có lỗi xảy ra | OneShop</title>\n    \n    \n\n</head>\n<body class=\"d-flex flex-column min-vh-100\" data-layout=\"client\">\n<header class=\"os-topbar text-white small py-2\">\n    <div class=\"container d-flex flex-wrap justify-content-between align-items-center gap-2\">\n        <div class=\"os-store-context d-flex flex-wrap align-items-center gap-2\" id=\"store-context\" data-store-scope=\"chain\">\n            <span>\n                <span class=\"opacity-75\">Chi nhánh đang chọn:</span>\n                \n                <strong>Toàn chuỗi</strong>\n            </span>\n            <a class=\"link-light\" href=\"/stores\">Chọn chi nhánh</a>\n            \n        </div>\n        <span class=\"d-none d-md-inline\">Hotline: 1900 0000 &middot; Miễn phí vận chuyển cho đơn từ 500.000&nbsp;₫</span>\n    </div>\n</header>\n<nav class=\"navbar navbar-expand-lg bg-white border-bottom sticky-top\">\n    <div class=\"co"
+      },
+      "url": "/orders/9809",
+      "title": "Chi tiết đơn hàng | OneShop",
+      "text": "Chi nhánh đang chọn: Toàn chuỗi\nChọn chi nhánh\nHotline: 1900 0000 · Miễn phí vận chuyển cho đơn từ 500.000 ₫\nOneShop\nTrang chủ\nSản phẩm\nHệ thống cửa hàng\nGiỏ hàng\nĐơn hàng của tôi\naudit-fsa-261009-customer@example.com\nĐăng xuất\nĐơn hàng của tôi\nĐơn hàng #9809\n\nAUD261009FSA Store A\n\n1 Audit Street\n\nNgày tạo\n09/10/2026 15:58:16\nHình thức nhận\nGiao tận nơi\nNgười nhận\nAUD261009FSA Customer\nĐiện thoại\n0912345678\nĐịa chỉ giao hàng\n1 Audit Street\nPhương thức thanh toán\nCOD · Thu khi giao thành công\nThanh toán\nĐã thanh toán\nTrạng thái đơn\nHoàn tất\nSản phẩm đã đặt\nSản phẩm\tĐơn giá\tSố lượng\tThành tiền\nAUD261009FSA SKU Cosmetic\t111.000 ₫\t2\t222.000 ₫\n\nTổng đơn: 222.000 ₫\n\nThanh toán\nCOD · SUCCESS · 222.000 ₫\n\nMã giao dịch: PAY-0e820d6c-9910-43ce-a966-16b6d3ba6e7d\n\nĐã thu lúc: 09/10/2026 15:59:39\n\nLịch sử trạng thái\nĐã xác nhận\nHệ thống · 09/10/2026 15:58:17\nHệ thống tự xác nhận đơn hợp lệ\nĐã xác nhận → Đang chuẩn bị\nAUD261009FSA Staff · 09/10/2026 15:59:37\nBắt đầu chuẩn bị\nĐang chuẩn bị → Đã đóng gói\nAUD261009FSA Staff · 09/10/2026 15:59:38\nĐã đóng gói\nĐã đóng gói → Đang giao hàng\nAUD261009FSA Staff · 09/10/2026 15:59:39\nBắt đầu giao hàng\nĐang giao hàng → Hoàn tất\nAUD261009FSA Staff · 09/10/2026 15:59:40\nXác nhận giao thành công\n© 2026 OneShop – Hệ thống cửa hàng mỹ phẩm\nSpring Boot · Thymeleaf · Bootstrap · SiteMesh",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "scrollWidth": 1425
+      },
+      "forms": [
+        {
+          "action": "/logout",
+          "method": "post",
+          "csrf": true,
+          "fields": [],
+          "buttons": [
+            {
+              "text": "Đăng xuất",
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "text": "Chọn chi nhánh",
+          "href": "/stores"
+        },
+        {
+          "text": "OneShop",
+          "href": "/"
+        },
+        {
+          "text": "Trang chủ",
+          "href": "/"
+        },
+        {
+          "text": "Sản phẩm",
+          "href": "/products"
+        },
+        {
+          "text": "Hệ thống cửa hàng",
+          "href": "/stores"
+        },
+        {
+          "text": "Giỏ hàng",
+          "href": "/cart"
+        },
+        {
+          "text": "Đơn hàng của tôi",
+          "href": "/orders"
+        },
+        {
+          "text": "Đơn hàng của tôi",
+          "href": "/orders"
+        }
+      ],
+      "brokenImages": [],
+      "unlabelledControls": [],
+      "decorator": {
+        "header": true,
+        "footer": true,
+        "sidebar": false
+      }
+    },
+    {
+      "label": "customer-admin-mutation-denied",
+      "request": {
+        "status": 403,
+        "url": "/admin/users",
+        "body": "{\"timestamp\":\"2026-10-09T16:02:04.869+07:00\",\"status\":403,\"error\":\"Forbidden\",\"path\":\"/admin/users\"}"
+      },
+      "url": "/cart",
+      "title": "Giỏ hàng | OneShop",
+      "text": "Chi nhánh đang chọn: Toàn chuỗi\nChọn chi nhánh\nHotline: 1900 0000 · Miễn phí vận chuyển cho đơn từ 500.000 ₫\nOneShop\nTrang chủ\nSản phẩm\nHệ thống cửa hàng\nGiỏ hàng\nĐơn hàng của tôi\naudit-fsa-261009-customer@example.com\nĐăng xuất\nGiỏ hàng\n\nGiỏ hàng của bạn đang trống.\n\nTiếp tục mua sắm\n© 2026 OneShop – Hệ thống cửa hàng mỹ phẩm\nSpring Boot · Thymeleaf · Bootstrap · SiteMesh",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "scrollWidth": 1440
+      },
+      "forms": [
+        {
+          "action": "/logout",
+          "method": "post",
+          "csrf": true,
+          "fields": [],
+          "buttons": [
+            {
+              "text": "Đăng xuất",
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "text": "Chọn chi nhánh",
+          "href": "/stores"
+        },
+        {
+          "text": "OneShop",
+          "href": "/"
+        },
+        {
+          "text": "Trang chủ",
+          "href": "/"
+        },
+        {
+          "text": "Sản phẩm",
+          "href": "/products"
+        },
+        {
+          "text": "Hệ thống cửa hàng",
+          "href": "/stores"
+        },
+        {
+          "text": "Giỏ hàng",
+          "href": "/cart"
+        },
+        {
+          "text": "Đơn hàng của tôi",
+          "href": "/orders"
+        },
+        {
+          "text": "Tiếp tục mua sắm",
+          "href": "/products"
+        }
+      ],
+      "brokenImages": [],
+      "unlabelledControls": [],
+      "decorator": {
+        "header": true,
+        "footer": true,
+        "sidebar": false
+      }
+    },
+    {
+      "label": "registration-invalid-field-feedback",
+      "url": "/register",
+      "title": "Đăng ký | OneShop",
+      "text": "Chi nhánh đang chọn: Toàn chuỗi\nChọn chi nhánh\nHotline: 1900 0000 · Miễn phí vận chuyển cho đơn từ 500.000 ₫\nOneShop\nTrang chủ\nSản phẩm\nHệ thống cửa hàng\nGiỏ hàng\nĐăng nhập\nĐăng ký\nTạo tài khoản\nHọ và tên\nVui lòng nhập họ tên\nEmail\nEmail không hợp lệ\nSố điện thoại\nSố điện thoại không hợp lệ\nMật khẩu\nMật khẩu từ 8 đến 72 ký tự\nĐăng ký\n\nĐã có tài khoản? Đăng nhập\n\n© 2026 OneShop – Hệ thống cửa hàng mỹ phẩm\nSpring Boot · Thymeleaf · Bootstrap · SiteMesh",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "scrollWidth": 1440
+      },
+      "forms": [
+        {
+          "action": "/register",
+          "method": "post",
+          "csrf": true,
+          "fields": [
+            {
+              "name": "fullName",
+              "type": "text",
+              "value": "",
+              "required": false,
+              "disabled": false
+            },
+            {
+              "name": "email",
+              "type": "email",
+              "value": "invalid",
+              "required": false,
+              "disabled": false
+            },
+            {
+              "name": "phone",
+              "type": "tel",
+              "value": "abc",
+              "required": false,
+              "disabled": false
+            }
+          ],
+          "buttons": [
+            {
+              "text": "Đăng ký",
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "text": "Chọn chi nhánh",
+          "href": "/stores"
+        },
+        {
+          "text": "OneShop",
+          "href": "/"
+        },
+        {
+          "text": "Trang chủ",
+          "href": "/"
+        },
+        {
+          "text": "Sản phẩm",
+          "href": "/products"
+        },
+        {
+          "text": "Hệ thống cửa hàng",
+          "href": "/stores"
+        },
+        {
+          "text": "Giỏ hàng",
+          "href": "/cart"
+        },
+        {
+          "text": "Đăng nhập",
+          "href": "/login"
+        },
+        {
+          "text": "Đăng ký",
+          "href": "/register"
+        },
+        {
+          "text": "Đăng nhập",
+          "href": "/login"
+        }
+      ],
+      "brokenImages": [],
+      "unlabelledControls": [],
+      "decorator": {
+        "header": true,
+        "footer": true,
+        "sidebar": false
+      }
+    },
+    {
+      "label": "mobile-navbar-toggle",
+      "before": "collapse navbar-collapse",
+      "after": "navbar-collapse collapse show",
+      "url": "/",
+      "title": "Trang chủ | OneShop",
+      "text": "Chi nhánh đang chọn: Toàn chuỗi\nChọn chi nhánh\nOneShop\nTrang chủ\nSản phẩm\nHệ thống cửa hàng\nGiỏ hàng\nĐăng nhập\nĐăng ký\nChào mừng đến với OneShop\n\nMỹ phẩm chính hãng, một website cho cả hệ thống cửa hàng.\n\nXem sản phẩm\nHệ thống cửa hàng\nMua sắm theo chi nhánh\nXem toàn chuỗi\n\nChưa chọn chi nhánh, bạn thấy mọi sản phẩm của chuỗi và biết sản phẩm đang bán ở những chi nhánh nào.\n\nChọn chi nhánh\n\nKhi đã chọn một chi nhánh, danh sách sản phẩm, giá và tình trạng hàng là của riêng chi nhánh đó.\n\nSo sánh giữa các chi nhánh\n\nỞ trang chi tiết, bạn xem được giá và tình trạng còn hàng của cùng sản phẩm tại các chi nhánh khác.\n\n© 2026 OneShop – Hệ thống cửa hàng mỹ phẩm\nSpring Boot · Thymeleaf · Bootstrap · SiteMesh",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "scrollWidth": 390
+      },
+      "forms": [],
+      "links": [
+        {
+          "text": "Chọn chi nhánh",
+          "href": "/stores"
+        },
+        {
+          "text": "OneShop",
+          "href": "/"
+        },
+        {
+          "text": "Trang chủ",
+          "href": "/"
+        },
+        {
+          "text": "Sản phẩm",
+          "href": "/products"
+        },
+        {
+          "text": "Hệ thống cửa hàng",
+          "href": "/stores"
+        },
+        {
+          "text": "Giỏ hàng",
+          "href": "/cart"
+        },
+        {
+          "text": "Đăng nhập",
+          "href": "/login"
+        },
+        {
+          "text": "Đăng ký",
+          "href": "/register"
+        },
+        {
+          "text": "Xem sản phẩm",
+          "href": "/products"
+        },
+        {
+          "text": "Hệ thống cửa hàng",
+          "href": "/stores"
+        }
+      ],
+      "brokenImages": [],
+      "unlabelledControls": [],
+      "decorator": {
+        "header": true,
+        "footer": true,
+        "sidebar": false
+      }
+    },
+    {
+      "label": "pagination-current-data",
+      "pagination": [],
+      "url": "/products",
+      "title": "Sản phẩm | OneShop",
+      "text": "Chi nhánh đang chọn: Toàn chuỗi\nChọn chi nhánh\nOneShop\nSản phẩm\n\nĐang xem toàn chuỗi: mỗi sản phẩm cho biết đang bán ở những chi nhánh nào. Chọn chi nhánh để xem giá tại một chi nhánh.\n\nTên sản phẩm hoặc mã SKU\nDanh mục\nTất cả\nAUD261009FSA Category\nChăm sóc da\nChăm sóc tóc\nTrang điểm\nThương hiệu\nTất cả\nAUD261009FSA Brand\nBBIA\nCocoon\nInnisfree\nTìm\n\nBBIA · Trang điểm\n\nBBIA Downy Cheek #06\n\nSKU: BBIA-CHEEK-06\n\nTừ 189.000 ₫\nOneShop Gò Vấp\nHết hàng\nOneShop Quận 7\nCòn hàng\nOneShop Thủ Đức\nCòn hàng\n\nBBIA · Trang điểm\n\nBBIA Downy Cheek #08\n\nSKU: BBIA-CHEEK-08\n\nTừ 189.000 ₫\nOneShop Gò Vấp\nCòn hàng\nOneShop Thủ Đức\nCòn hàng\n\nCocoon · Chăm sóc tóc\n\nCocoon Dầu Gội Bưởi 310ml\n\nSKU: COCOON-SHAM-310\n\nTừ 95.000 ₫\nOneShop Gò Vấp\nCòn hàng\nOneShop Quận 7\nCòn hàng\nOneShop Thủ Đức\nCòn hàng\n\nCocoon · Chăm sóc da\n\nCocoon Serum Bí Đao 30ml\n\nSKU: COCOON-SERUM-30\n\nTừ 129.000 ₫\nOneShop Gò Vấp\nCòn hàng\nOneShop Quận 10\nCòn hàng\nOneShop Quận 7\nHết hàng\nOneShop Thủ Đức\nCòn hàng\n\nInnisfree · Chăm sóc da\n\nInnisfree Green Tea Balancing Toner 200ml\n\nSKU: INNI-TONER-200\n\nTừ 249.000 ₫\nOneShop Gò Vấp\nCòn hàng\nOneShop Quận 7\nCòn hàng\nOneShop Thủ Đức\nCòn hàng\n\nInnisfree · Chăm sóc da\n\nInnisfree Green Tea Cleansing Foam 120ml\n\nSKU: INNI-CLEANS-120\n\nTừ 165.000 ₫\nOneShop Quận 10\nCòn hàng\nOneShop Quận 7\nCòn hàng\nOneShop Thủ Đức\nCòn hàng\n© 2026 OneShop – Hệ thống cửa hàng mỹ phẩm\nSpring Boot · Thymeleaf · Bootstrap · SiteMesh",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "scrollWidth": 390
+      },
+      "forms": [
+        {
+          "action": "/products",
+          "method": "get",
+          "csrf": false,
+          "fields": [
+            {
+              "name": "q",
+              "type": "search",
+              "value": "",
+              "required": false,
+              "disabled": false
+            },
+            {
+              "name": "categoryId",
+              "type": "select-one",
+              "value": "",
+              "required": false,
+              "disabled": false,
+              "options": [
+                {
+                  "value": "",
+                  "text": "Tất cả"
+                },
+                {
+                  "value": "7",
+                  "text": "AUD261009FSA Category"
+                },
+                {
+                  "value": "1",
+                  "text": "Chăm sóc da"
+                },
+                {
+                  "value": "3",
+                  "text": "Chăm sóc tóc"
+                },
+                {
+                  "value": "2",
+                  "text": "Trang điểm"
+                }
+              ]
+            },
+            {
+              "name": "brandId",
+              "type": "select-one",
+              "value": "",
+              "required": false,
+              "disabled": false,
+              "options": [
+                {
+                  "value": "",
+                  "text": "Tất cả"
+                },
+                {
+                  "value": "6",
+                  "text": "AUD261009FSA Brand"
+                },
+                {
+                  "value": "1",
+                  "text": "BBIA"
+                },
+                {
+                  "value": "2",
+                  "text": "Cocoon"
+                },
+                {
+                  "value": "3",
+                  "text": "Innisfree"
+                }
+              ]
+            }
+          ],
+          "buttons": [
+            {
+              "text": "Tìm",
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "text": "Chọn chi nhánh",
+          "href": "/stores"
+        },
+        {
+          "text": "OneShop",
+          "href": "/"
+        },
+        {
+          "text": "Trang chủ",
+          "href": "/"
+        },
+        {
+          "text": "Sản phẩm",
+          "href": "/products"
+        },
+        {
+          "text": "Hệ thống cửa hàng",
+          "href": "/stores"
+        },
+        {
+          "text": "Giỏ hàng",
+          "href": "/cart"
+        },
+        {
+          "text": "Đăng nhập",
+          "href": "/login"
+        },
+        {
+          "text": "Đăng ký",
+          "href": "/register"
+        },
+        {
+          "text": "Chọn chi nhánh",
+          "href": "/stores"
+        },
+        {
+          "text": "",
+          "href": "/products/1"
+        },
+        {
+          "text": "BBIA Downy Cheek #06",
+          "href": "/products/1"
+        },
+        {
+          "text": "",
+          "href": "/products/2"
+        },
+        {
+          "text": "BBIA Downy Cheek #08",
+          "href": "/products/2"
+        },
+        {
+          "text": "",
+          "href": "/products/5"
+        },
+        {
+          "text": "Cocoon Dầu Gội Bưởi 310ml",
+          "href": "/products/5"
+        },
+        {
+          "text": "",
+          "href": "/products/3"
+        },
+        {
+          "text": "Cocoon Serum Bí Đao 30ml",
+          "href": "/products/3"
+        },
+        {
+          "text": "",
+          "href": "/products/4"
+        },
+        {
+          "text": "Innisfree Green Tea Balancing Toner 200ml",
+          "href": "/products/4"
+        },
+        {
+          "text": "",
+          "href": "/products/6"
+        },
+        {
+          "text": "Innisfree Green Tea Cleansing Foam 120ml",
+          "href": "/products/6"
+        }
+      ],
+      "brokenImages": [],
+      "unlabelledControls": [],
+      "decorator": {
+        "header": true,
+        "footer": true,
+        "sidebar": false
+      }
+    }
+  ]
+}

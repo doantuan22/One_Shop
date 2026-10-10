@@ -1,0 +1,19 @@
+{
+  "status": "BUILD SUCCESS",
+  "summary": [
+    "[INFO] Tests run: 927, Failures: 0, Errors: 0, Skipped: 1"
+  ],
+  "finishedAt": [
+    "2026-10-09T15:42:46+07:00"
+  ],
+  "duration": [
+    " 02:03 min"
+  ],
+  "command": "mvn -o '-Dmaven.repo.local=C:/Users/Admin/.m2/repository' clean package",
+  "artifact": {
+    "path": "target/oneshop.jar",
+    "bytes": 63918707,
+    "sha256": "39affe41755a6f34e625291acf50fced79db18e8dc615cb60b2bc3b7f29bd362"
+  },
+  "liveCloudinaryRerun": false
+}

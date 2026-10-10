@@ -1,0 +1,165 @@
+[
+  {
+    "role": "guest",
+    "route": "/admin/inventory",
+    "status": 200,
+    "url": "/login",
+    "body": "<!DOCTYPE html>\n\n<html lang=\"vi\">\n<head>\n    <head>\n    \n        <meta charset=\"UTF-8\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"stylesheet\" href=\"/vendor/bootstrap/bootstrap.min.css\">\n        <link rel=\"stylesheet\" href=\"/css/main.css\">\n    \n</head>\n    <title>Đăng nhập | OneShop</title>\n    \n    \n\n</head>\n<body class=\"d-flex flex-column min-vh-100\" data-layout=\"client\">\n<header class=\"os-topbar text-white small py-2\">\n    <div class=\"container d-flex flex-wrap justify-content-between align-items-center gap-2\">\n        <div class=\"os-store-context d-flex flex-wrap align-items-center gap-2\" id=\"store-context\" data-store-scope=\"chain\">\n            <span>\n                <span class=\"opacity-75\">Chi nhánh đang chọn:</span>\n                \n                <strong>Toàn chuỗi</strong>\n            </span>\n            <a class=\"link-light\" href=\"/stores\">Chọn chi nhánh</a>\n            \n        </div>\n        <span class=\"d-none d-md-inline\">Hotline: 1900 0000 &middot; Miễn phí vận chuyển cho đơn từ 500.000&nbsp;₫</span>\n    </div>\n</header>\n<nav class=\"navbar navbar-expand-lg bg-white border-bottom sticky-top\">\n    <div class=\"contai"
+  },
+  {
+    "role": "guest",
+    "route": "/staff/stock",
+    "status": 200,
+    "url": "/login",
+    "body": "<!DOCTYPE html>\n\n<html lang=\"vi\">\n<head>\n    <head>\n    \n        <meta charset=\"UTF-8\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"stylesheet\" href=\"/vendor/bootstrap/bootstrap.min.css\">\n        <link rel=\"stylesheet\" href=\"/css/main.css\">\n    \n</head>\n    <title>Đăng nhập | OneShop</title>\n    \n    \n\n</head>\n<body class=\"d-flex flex-column min-vh-100\" data-layout=\"client\">\n<header class=\"os-topbar text-white small py-2\">\n    <div class=\"container d-flex flex-wrap justify-content-between align-items-center gap-2\">\n        <div class=\"os-store-context d-flex flex-wrap align-items-center gap-2\" id=\"store-context\" data-store-scope=\"chain\">\n            <span>\n                <span class=\"opacity-75\">Chi nhánh đang chọn:</span>\n                \n                <strong>Toàn chuỗi</strong>\n            </span>\n            <a class=\"link-light\" href=\"/stores\">Chọn chi nhánh</a>\n            \n        </div>\n        <span class=\"d-none d-md-inline\">Hotline: 1900 0000 &middot; Miễn phí vận chuyển cho đơn từ 500.000&nbsp;₫</span>\n    </div>\n</header>\n<nav class=\"navbar navbar-expand-lg bg-white border-bottom sticky-top\">\n    <div class=\"contai"
+  },
+  {
+    "role": "guest",
+    "route": "/orders/1",
+    "status": 200,
+    "url": "/login",
+    "body": "<!DOCTYPE html>\n\n<html lang=\"vi\">\n<head>\n    <head>\n    \n        <meta charset=\"UTF-8\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"stylesheet\" href=\"/vendor/bootstrap/bootstrap.min.css\">\n        <link rel=\"stylesheet\" href=\"/css/main.css\">\n    \n</head>\n    <title>Đăng nhập | OneShop</title>\n    \n    \n\n</head>\n<body class=\"d-flex flex-column min-vh-100\" data-layout=\"client\">\n<header class=\"os-topbar text-white small py-2\">\n    <div class=\"container d-flex flex-wrap justify-content-between align-items-center gap-2\">\n        <div class=\"os-store-context d-flex flex-wrap align-items-center gap-2\" id=\"store-context\" data-store-scope=\"chain\">\n            <span>\n                <span class=\"opacity-75\">Chi nhánh đang chọn:</span>\n                \n                <strong>Toàn chuỗi</strong>\n            </span>\n            <a class=\"link-light\" href=\"/stores\">Chọn chi nhánh</a>\n            \n        </div>\n        <span class=\"d-none d-md-inline\">Hotline: 1900 0000 &middot; Miễn phí vận chuyển cho đơn từ 500.000&nbsp;₫</span>\n    </div>\n</header>\n<nav class=\"navbar navbar-expand-lg bg-white border-bottom sticky-top\">\n    <div class=\"contai"
+  },
+  {
+    "role": "customer",
+    "route": "/admin/inventory",
+    "status": 403,
+    "url": "/admin/inventory",
+    "body": "{\"timestamp\":\"2026-10-09T15:53:41.733+07:00\",\"status\":403,\"error\":\"Forbidden\",\"path\":\"/admin/inventory\"}"
+  },
+  {
+    "role": "customer",
+    "route": "/staff/stock",
+    "status": 403,
+    "url": "/staff/stock",
+    "body": "{\"timestamp\":\"2026-10-09T15:53:41.745+07:00\",\"status\":403,\"error\":\"Forbidden\",\"path\":\"/staff/stock\"}"
+  },
+  {
+    "role": "customer",
+    "route": "/orders/1",
+    "status": 200,
+    "url": "/orders/1",
+    "body": "<!DOCTYPE html>\n\n<html lang=\"vi\">\n<head>\n    <head>\n    \n        <meta charset=\"UTF-8\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"stylesheet\" href=\"/vendor/bootstrap/bootstrap.min.css\">\n        <link rel=\"stylesheet\" href=\"/css/main.css\">\n    \n</head>\n    <title>Chi tiết đơn hàng | OneShop</title>\n    \n</head>\n<body class=\"d-flex flex-column min-vh-100\" data-layout=\"client\">\n<header class=\"os-topbar text-white small py-2\">\n    <div class=\"container d-flex flex-wrap justify-content-between align-items-center gap-2\">\n        <div class=\"os-store-context d-flex flex-wrap align-items-center gap-2\" id=\"store-context\" data-store-scope=\"chain\">\n            <span>\n                <span class=\"opacity-75\">Chi nhánh đang chọn:</span>\n                \n                <strong>Toàn chuỗi</strong>\n            </span>\n            <a class=\"link-light\" href=\"/stores\">Chọn chi nhánh</a>\n            \n        </div>\n        <span class=\"d-none d-md-inline\">Hotline: 1900 0000 &middot; Miễn phí vận chuyển cho đơn từ 500.000&nbsp;₫</span>\n    </div>\n</header>\n<nav class=\"navbar navbar-expand-lg bg-white border-bottom sticky-top\">\n    <div class=\"cont"
+  },
+  {
+    "role": "staff",
+    "route": "/admin/inventory",
+    "status": 403,
+    "url": "/admin/inventory",
+    "body": "{\"timestamp\":\"2026-10-09T15:53:41.796+07:00\",\"status\":403,\"error\":\"Forbidden\",\"path\":\"/admin/inventory\"}"
+  },
+  {
+    "role": "staff",
+    "route": "/staff/stock",
+    "status": 200,
+    "url": "/staff/stock",
+    "body": "<!DOCTYPE html>\n\n<html lang=\"vi\">\n<head>\n    <head>\n    \n        <meta charset=\"UTF-8\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"stylesheet\" href=\"/vendor/bootstrap/bootstrap.min.css\">\n        <link rel=\"stylesheet\" href=\"/css/main.css\">\n    \n</head>\n    <title>Tồn kho chi nhánh | OneShop Staff</title>\n    \n</head>\n<body class=\"os-app os-app--staff\" data-layout=\"staff\">\n<header class=\"navbar navbar-dark os-appbar sticky-top px-3\">\n    <div class=\"d-flex align-items-center gap-2\">\n        <button class=\"navbar-toggler d-lg-none\" type=\"button\" data-bs-toggle=\"offcanvas\" data-bs-target=\"#appSidebar\"\n                aria-controls=\"appSidebar\" aria-label=\"Mở menu\">\n            <span class=\"navbar-toggler-icon\"></span>\n        </button>\n        <a class=\"navbar-brand mb-0 fw-bold\" href=\"/staff\">OneShop <span class=\"fw-normal opacity-75\">Staff</span></a>\n    </div>\n\n    <span class=\"badge os-scope-badge\" id=\"staff-scope-badge\">OneShop Thủ Đức</span>\n\n    <div class=\"d-flex align-items-center gap-2 ms-auto\">\n        <a class=\"btn btn-outline-light btn-sm d-none d-md-inline\" href=\"/\">Trang bán hàng</a>\n        <span class=\"text-white sm"
+  },
+  {
+    "role": "staff",
+    "route": "/orders/1",
+    "status": 403,
+    "url": "/orders/1",
+    "body": "{\"timestamp\":\"2026-10-09T15:53:41.833+07:00\",\"status\":403,\"error\":\"Forbidden\",\"path\":\"/orders/1\"}"
+  },
+  {
+    "role": "admin",
+    "route": "/admin/inventory",
+    "status": 200,
+    "url": "/admin/inventory",
+    "body": "<!DOCTYPE html>\n\n<html lang=\"vi\">\n<head>\n    <head>\n    \n        <meta charset=\"UTF-8\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"stylesheet\" href=\"/vendor/bootstrap/bootstrap.min.css\">\n        <link rel=\"stylesheet\" href=\"/css/main.css\">\n    \n</head>\n    <title>Sản phẩm theo chi nhánh | OneShop Admin</title>\n    \n    \n\n</head>\n<body class=\"os-app os-app--admin\" data-layout=\"admin\">\n<header class=\"navbar navbar-dark os-appbar sticky-top px-3\">\n    <div class=\"d-flex align-items-center gap-2\">\n        <button class=\"navbar-toggler d-lg-none\" type=\"button\" data-bs-toggle=\"offcanvas\" data-bs-target=\"#appSidebar\"\n                aria-controls=\"appSidebar\" aria-label=\"Mở menu\">\n            <span class=\"navbar-toggler-icon\"></span>\n        </button>\n        <a class=\"navbar-brand mb-0 fw-bold\" href=\"/admin\">OneShop <span class=\"fw-normal opacity-75\">Admin</span></a>\n    </div>\n\n    <span class=\"badge os-scope-badge\" id=\"admin-scope-badge\">Toàn chuỗi</span>\n\n    <div class=\"d-flex align-items-center gap-2 ms-auto\">\n        <a class=\"btn btn-outline-light btn-sm d-none d-md-inline\" href=\"/\">Trang bán hàng</a>\n        <span class=\"text-w"
+  },
+  {
+    "role": "admin",
+    "route": "/staff/stock",
+    "status": 403,
+    "url": "/staff/stock",
+    "body": "{\"timestamp\":\"2026-10-09T15:53:41.899+07:00\",\"status\":403,\"error\":\"Forbidden\",\"path\":\"/staff/stock\"}"
+  },
+  {
+    "role": "admin",
+    "route": "/orders/1",
+    "status": 403,
+    "url": "/orders/1",
+    "body": "{\"timestamp\":\"2026-10-09T15:53:41.910+07:00\",\"status\":403,\"error\":\"Forbidden\",\"path\":\"/orders/1\"}"
+  },
+  {
+    "role": "customer",
+    "route": "/reviews",
+    "status": 403,
+    "url": "/reviews",
+    "body": "{\"timestamp\":\"2026-10-09T15:53:41.916+07:00\",\"status\":403,\"error\":\"Forbidden\",\"path\":\"/reviews\"}"
+  },
+  {
+    "role": "customer",
+    "route": "/products/3/reviews",
+    "status": 403,
+    "url": "/products/3/reviews",
+    "body": "{\"timestamp\":\"2026-10-09T15:53:41.923+07:00\",\"status\":403,\"error\":\"Forbidden\",\"path\":\"/products/3/reviews\"}"
+  },
+  {
+    "role": "customer",
+    "route": "/cart/items missing CSRF",
+    "status": 403,
+    "url": "/cart/items",
+    "body": "{\"timestamp\":\"2026-10-09T15:53:41.929+07:00\",\"status\":403,\"error\":\"Forbidden\",\"path\":\"/cart/items\"}"
+  },
+  {
+    "role": "guest",
+    "route": "Unicode registration 30 characters/90 UTF8 bytes",
+    "url": "/register",
+    "title": "Có lỗi xảy ra | OneShop",
+    "text": "Chi nhánh đang chọn: Toàn chuỗi\nChọn chi nhánh\nHotline: 1900 0000 · Miễn phí vận chuyển cho đơn từ 500.000 ₫\nOneShop\nTrang chủ\nSản phẩm\nHệ thống cửa hàng\nGiỏ hàng\nĐăng nhập\nĐăng ký\n\n500\n\nĐã có lỗi xảy ra\nVề trang chủ\n© 2026 OneShop – Hệ thống cửa hàng mỹ phẩm\nSpring Boot · Thymeleaf · Bootstrap · SiteMesh",
+    "viewport": {
+      "width": 1440,
+      "height": 900,
+      "scrollWidth": 1440
+    },
+    "forms": [],
+    "links": [
+      {
+        "text": "Chọn chi nhánh",
+        "href": "/stores"
+      },
+      {
+        "text": "OneShop",
+        "href": "/"
+      },
+      {
+        "text": "Trang chủ",
+        "href": "/"
+      },
+      {
+        "text": "Sản phẩm",
+        "href": "/products"
+      },
+      {
+        "text": "Hệ thống cửa hàng",
+        "href": "/stores"
+      },
+      {
+        "text": "Giỏ hàng",
+        "href": "/cart"
+      },
+      {
+        "text": "Đăng nhập",
+        "href": "/login"
+      },
+      {
+        "text": "Đăng ký",
+        "href": "/register"
+      },
+      {
+        "text": "Về trang chủ",
+        "href": "/"
+      }
+    ],
+    "brokenImages": [],
+    "unlabelledControls": [],
+    "decorator": {
+      "header": true,
+      "footer": true,
+      "sidebar": false
+    }
+  }
+]

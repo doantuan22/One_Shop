@@ -1,0 +1,3680 @@
+{
+  "method": "source annotated fields + inherited fields vs actual sys.columns; Id treated as NOT NULL; join FK type from target entity Id; Hibernate validate separately passed",
+  "entities": 19,
+  "mappedFields": 141,
+  "sqlColumns": 141,
+  "differences": [],
+  "unmappedColumns": [],
+  "rows": [
+    {
+      "table": "brands",
+      "file": "src/main/java/com/oneshop/entity/Brand.java",
+      "line": 14,
+      "field": "id",
+      "javaType": "Long",
+      "column": "brand_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "brand_id"
+      },
+      "sql": {
+        "table_name": "brands",
+        "column_id": 1,
+        "name": "brand_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": true
+      },
+      "issues": []
+    },
+    {
+      "table": "brands",
+      "file": "src/main/java/com/oneshop/entity/Brand.java",
+      "line": 19,
+      "field": "name",
+      "javaType": "String",
+      "column": "name",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "unique": "true",
+        "length": "150"
+      },
+      "sql": {
+        "table_name": "brands",
+        "column_id": 2,
+        "name": "name",
+        "sql_type": "nvarchar",
+        "max_length": 300,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "brands",
+      "file": "src/main/java/com/oneshop/entity/Brand.java",
+      "line": 22,
+      "field": "description",
+      "javaType": "String",
+      "column": "description",
+      "kind": "Column",
+      "nullable": true,
+      "spec": {
+        "length": "500"
+      },
+      "sql": {
+        "table_name": "brands",
+        "column_id": 3,
+        "name": "description",
+        "sql_type": "nvarchar",
+        "max_length": 1000,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "brands",
+      "file": "src/main/java/com/oneshop/entity/Brand.java",
+      "line": 27,
+      "field": "logoUrl",
+      "javaType": "String",
+      "column": "logo_url",
+      "kind": "Column",
+      "nullable": true,
+      "spec": {
+        "name": "logo_url",
+        "length": "500"
+      },
+      "sql": {
+        "table_name": "brands",
+        "column_id": 4,
+        "name": "logo_url",
+        "sql_type": "nvarchar",
+        "max_length": 1000,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "brands",
+      "file": "src/main/java/com/oneshop/entity/Brand.java",
+      "line": 31,
+      "field": "logoPublicId",
+      "javaType": "String",
+      "column": "logo_public_id",
+      "kind": "Column",
+      "nullable": true,
+      "spec": {
+        "name": "logo_public_id"
+      },
+      "sql": {
+        "table_name": "brands",
+        "column_id": 5,
+        "name": "logo_public_id",
+        "sql_type": "nvarchar",
+        "max_length": 510,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "brands",
+      "file": "src/main/java/com/oneshop/entity/Brand.java",
+      "line": 33,
+      "field": "status",
+      "javaType": "VisibilityStatus",
+      "column": "status",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "brands",
+        "column_id": 6,
+        "name": "status",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "carts",
+      "file": "src/main/java/com/oneshop/entity/TimestampedEntity.java",
+      "line": 15,
+      "field": "createdAt",
+      "javaType": "LocalDateTime",
+      "column": "created_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "created_at",
+        "nullable": "false",
+        "updatable": "false"
+      },
+      "sql": {
+        "table_name": "carts",
+        "column_id": 3,
+        "name": "created_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "carts",
+      "file": "src/main/java/com/oneshop/entity/TimestampedEntity.java",
+      "line": 19,
+      "field": "updatedAt",
+      "javaType": "LocalDateTime",
+      "column": "updated_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "updated_at",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "carts",
+        "column_id": 4,
+        "name": "updated_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "carts",
+      "file": "src/main/java/com/oneshop/entity/Cart.java",
+      "line": 20,
+      "field": "id",
+      "javaType": "Long",
+      "column": "cart_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "cart_id"
+      },
+      "sql": {
+        "table_name": "carts",
+        "column_id": 1,
+        "name": "cart_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": true
+      },
+      "issues": []
+    },
+    {
+      "table": "carts",
+      "file": "src/main/java/com/oneshop/entity/Cart.java",
+      "line": 25,
+      "field": "user",
+      "javaType": "User",
+      "column": "user_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "user_id",
+        "nullable": "false",
+        "unique": "true"
+      },
+      "sql": {
+        "table_name": "carts",
+        "column_id": 2,
+        "name": "user_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "cart_items",
+      "file": "src/main/java/com/oneshop/entity/TimestampedEntity.java",
+      "line": 15,
+      "field": "createdAt",
+      "javaType": "LocalDateTime",
+      "column": "created_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "created_at",
+        "nullable": "false",
+        "updatable": "false"
+      },
+      "sql": {
+        "table_name": "cart_items",
+        "column_id": 5,
+        "name": "created_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "cart_items",
+      "file": "src/main/java/com/oneshop/entity/TimestampedEntity.java",
+      "line": 19,
+      "field": "updatedAt",
+      "javaType": "LocalDateTime",
+      "column": "updated_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "updated_at",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "cart_items",
+        "column_id": 6,
+        "name": "updated_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "cart_items",
+      "file": "src/main/java/com/oneshop/entity/CartItem.java",
+      "line": 19,
+      "field": "id",
+      "javaType": "Long",
+      "column": "cart_item_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "cart_item_id"
+      },
+      "sql": {
+        "table_name": "cart_items",
+        "column_id": 1,
+        "name": "cart_item_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": true
+      },
+      "issues": []
+    },
+    {
+      "table": "cart_items",
+      "file": "src/main/java/com/oneshop/entity/CartItem.java",
+      "line": 24,
+      "field": "cart",
+      "javaType": "Cart",
+      "column": "cart_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "cart_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "cart_items",
+        "column_id": 2,
+        "name": "cart_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "cart_items",
+      "file": "src/main/java/com/oneshop/entity/CartItem.java",
+      "line": 28,
+      "field": "storeProduct",
+      "javaType": "StoreProduct",
+      "column": "store_product_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "store_product_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "cart_items",
+        "column_id": 3,
+        "name": "store_product_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "cart_items",
+      "file": "src/main/java/com/oneshop/entity/CartItem.java",
+      "line": 32,
+      "field": "quantity",
+      "javaType": "int",
+      "column": "quantity",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "cart_items",
+        "column_id": 4,
+        "name": "quantity",
+        "sql_type": "int",
+        "max_length": 4,
+        "precision": 10,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "categories",
+      "file": "src/main/java/com/oneshop/entity/Category.java",
+      "line": 14,
+      "field": "id",
+      "javaType": "Long",
+      "column": "category_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "category_id"
+      },
+      "sql": {
+        "table_name": "categories",
+        "column_id": 1,
+        "name": "category_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": true
+      },
+      "issues": []
+    },
+    {
+      "table": "categories",
+      "file": "src/main/java/com/oneshop/entity/Category.java",
+      "line": 19,
+      "field": "name",
+      "javaType": "String",
+      "column": "name",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "unique": "true",
+        "length": "150"
+      },
+      "sql": {
+        "table_name": "categories",
+        "column_id": 2,
+        "name": "name",
+        "sql_type": "nvarchar",
+        "max_length": 300,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "categories",
+      "file": "src/main/java/com/oneshop/entity/Category.java",
+      "line": 22,
+      "field": "description",
+      "javaType": "String",
+      "column": "description",
+      "kind": "Column",
+      "nullable": true,
+      "spec": {
+        "length": "500"
+      },
+      "sql": {
+        "table_name": "categories",
+        "column_id": 3,
+        "name": "description",
+        "sql_type": "nvarchar",
+        "max_length": 1000,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "categories",
+      "file": "src/main/java/com/oneshop/entity/Category.java",
+      "line": 25,
+      "field": "status",
+      "javaType": "VisibilityStatus",
+      "column": "status",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "categories",
+        "column_id": 4,
+        "name": "status",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "checkout_sessions",
+      "file": "src/main/java/com/oneshop/entity/CreatedAtEntity.java",
+      "line": 17,
+      "field": "createdAt",
+      "javaType": "LocalDateTime",
+      "column": "created_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "created_at",
+        "nullable": "false",
+        "updatable": "false"
+      },
+      "sql": {
+        "table_name": "checkout_sessions",
+        "column_id": 5,
+        "name": "created_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "checkout_sessions",
+      "file": "src/main/java/com/oneshop/entity/CheckoutSession.java",
+      "line": 23,
+      "field": "id",
+      "javaType": "Long",
+      "column": "checkout_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "checkout_id"
+      },
+      "sql": {
+        "table_name": "checkout_sessions",
+        "column_id": 1,
+        "name": "checkout_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": true
+      },
+      "issues": []
+    },
+    {
+      "table": "checkout_sessions",
+      "file": "src/main/java/com/oneshop/entity/CheckoutSession.java",
+      "line": 28,
+      "field": "user",
+      "javaType": "User",
+      "column": "user_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "user_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "checkout_sessions",
+        "column_id": 2,
+        "name": "user_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "checkout_sessions",
+      "file": "src/main/java/com/oneshop/entity/CheckoutSession.java",
+      "line": 32,
+      "field": "totalAmount",
+      "javaType": "BigDecimal",
+      "column": "total_amount",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "total_amount",
+        "nullable": "false",
+        "precision": "18",
+        "scale": "2"
+      },
+      "sql": {
+        "table_name": "checkout_sessions",
+        "column_id": 3,
+        "name": "total_amount",
+        "sql_type": "decimal",
+        "max_length": 9,
+        "precision": 18,
+        "scale": 2,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "checkout_sessions",
+      "file": "src/main/java/com/oneshop/entity/CheckoutSession.java",
+      "line": 35,
+      "field": "status",
+      "javaType": "CheckoutStatus",
+      "column": "status",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "checkout_sessions",
+        "column_id": 4,
+        "name": "status",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "customer_addresses",
+      "file": "src/main/java/com/oneshop/entity/CreatedAtEntity.java",
+      "line": 17,
+      "field": "createdAt",
+      "javaType": "LocalDateTime",
+      "column": "created_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "created_at",
+        "nullable": "false",
+        "updatable": "false"
+      },
+      "sql": {
+        "table_name": "customer_addresses",
+        "column_id": 7,
+        "name": "created_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "customer_addresses",
+      "file": "src/main/java/com/oneshop/entity/CustomerAddress.java",
+      "line": 15,
+      "field": "id",
+      "javaType": "Long",
+      "column": "address_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "address_id"
+      },
+      "sql": {
+        "table_name": "customer_addresses",
+        "column_id": 1,
+        "name": "address_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": true
+      },
+      "issues": []
+    },
+    {
+      "table": "customer_addresses",
+      "file": "src/main/java/com/oneshop/entity/CustomerAddress.java",
+      "line": 20,
+      "field": "user",
+      "javaType": "User",
+      "column": "user_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "user_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "customer_addresses",
+        "column_id": 2,
+        "name": "user_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "customer_addresses",
+      "file": "src/main/java/com/oneshop/entity/CustomerAddress.java",
+      "line": 24,
+      "field": "receiverName",
+      "javaType": "String",
+      "column": "receiver_name",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "receiver_name",
+        "nullable": "false",
+        "length": "150"
+      },
+      "sql": {
+        "table_name": "customer_addresses",
+        "column_id": 3,
+        "name": "receiver_name",
+        "sql_type": "nvarchar",
+        "max_length": 300,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "customer_addresses",
+      "file": "src/main/java/com/oneshop/entity/CustomerAddress.java",
+      "line": 27,
+      "field": "receiverPhone",
+      "javaType": "String",
+      "column": "receiver_phone",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "receiver_phone",
+        "nullable": "false",
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "customer_addresses",
+        "column_id": 4,
+        "name": "receiver_phone",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "customer_addresses",
+      "file": "src/main/java/com/oneshop/entity/CustomerAddress.java",
+      "line": 30,
+      "field": "addressLine",
+      "javaType": "String",
+      "column": "address_line",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "address_line",
+        "nullable": "false",
+        "length": "500"
+      },
+      "sql": {
+        "table_name": "customer_addresses",
+        "column_id": 5,
+        "name": "address_line",
+        "sql_type": "nvarchar",
+        "max_length": 1000,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "customer_addresses",
+      "file": "src/main/java/com/oneshop/entity/CustomerAddress.java",
+      "line": 33,
+      "field": "defaultAddress",
+      "javaType": "boolean",
+      "column": "is_default",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "is_default",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "customer_addresses",
+        "column_id": 6,
+        "name": "is_default",
+        "sql_type": "bit",
+        "max_length": 1,
+        "precision": 1,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "inventory_movements",
+      "file": "src/main/java/com/oneshop/entity/CreatedAtEntity.java",
+      "line": 17,
+      "field": "createdAt",
+      "javaType": "LocalDateTime",
+      "column": "created_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "created_at",
+        "nullable": "false",
+        "updatable": "false"
+      },
+      "sql": {
+        "table_name": "inventory_movements",
+        "column_id": 10,
+        "name": "created_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "inventory_movements",
+      "file": "src/main/java/com/oneshop/entity/InventoryMovement.java",
+      "line": 18,
+      "field": "id",
+      "javaType": "Long",
+      "column": "movement_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "movement_id"
+      },
+      "sql": {
+        "table_name": "inventory_movements",
+        "column_id": 1,
+        "name": "movement_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": true
+      },
+      "issues": []
+    },
+    {
+      "table": "inventory_movements",
+      "file": "src/main/java/com/oneshop/entity/InventoryMovement.java",
+      "line": 23,
+      "field": "storeProduct",
+      "javaType": "StoreProduct",
+      "column": "store_product_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "store_product_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "inventory_movements",
+        "column_id": 2,
+        "name": "store_product_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "inventory_movements",
+      "file": "src/main/java/com/oneshop/entity/InventoryMovement.java",
+      "line": 27,
+      "field": "type",
+      "javaType": "InventoryMovementType",
+      "column": "type",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "inventory_movements",
+        "column_id": 3,
+        "name": "type",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "inventory_movements",
+      "file": "src/main/java/com/oneshop/entity/InventoryMovement.java",
+      "line": 31,
+      "field": "quantityChange",
+      "javaType": "int",
+      "column": "quantity_change",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "quantity_change",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "inventory_movements",
+        "column_id": 4,
+        "name": "quantity_change",
+        "sql_type": "int",
+        "max_length": 4,
+        "precision": 10,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "inventory_movements",
+      "file": "src/main/java/com/oneshop/entity/InventoryMovement.java",
+      "line": 34,
+      "field": "quantityBefore",
+      "javaType": "int",
+      "column": "quantity_before",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "quantity_before",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "inventory_movements",
+        "column_id": 5,
+        "name": "quantity_before",
+        "sql_type": "int",
+        "max_length": 4,
+        "precision": 10,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "inventory_movements",
+      "file": "src/main/java/com/oneshop/entity/InventoryMovement.java",
+      "line": 37,
+      "field": "quantityAfter",
+      "javaType": "int",
+      "column": "quantity_after",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "quantity_after",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "inventory_movements",
+        "column_id": 6,
+        "name": "quantity_after",
+        "sql_type": "int",
+        "max_length": 4,
+        "precision": 10,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "inventory_movements",
+      "file": "src/main/java/com/oneshop/entity/InventoryMovement.java",
+      "line": 42,
+      "field": "referenceOrder",
+      "javaType": "Order",
+      "column": "reference_order_id",
+      "kind": "JoinColumn",
+      "nullable": true,
+      "spec": {
+        "name": "reference_order_id"
+      },
+      "sql": {
+        "table_name": "inventory_movements",
+        "column_id": 7,
+        "name": "reference_order_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "inventory_movements",
+      "file": "src/main/java/com/oneshop/entity/InventoryMovement.java",
+      "line": 47,
+      "field": "staff",
+      "javaType": "User",
+      "column": "staff_id",
+      "kind": "JoinColumn",
+      "nullable": true,
+      "spec": {
+        "name": "staff_id"
+      },
+      "sql": {
+        "table_name": "inventory_movements",
+        "column_id": 8,
+        "name": "staff_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "inventory_movements",
+      "file": "src/main/java/com/oneshop/entity/InventoryMovement.java",
+      "line": 50,
+      "field": "note",
+      "javaType": "String",
+      "column": "note",
+      "kind": "Column",
+      "nullable": true,
+      "spec": {
+        "length": "500"
+      },
+      "sql": {
+        "table_name": "inventory_movements",
+        "column_id": 9,
+        "name": "note",
+        "sql_type": "nvarchar",
+        "max_length": 1000,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "orders",
+      "file": "src/main/java/com/oneshop/entity/TimestampedEntity.java",
+      "line": 15,
+      "field": "createdAt",
+      "javaType": "LocalDateTime",
+      "column": "created_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "created_at",
+        "nullable": "false",
+        "updatable": "false"
+      },
+      "sql": {
+        "table_name": "orders",
+        "column_id": 16,
+        "name": "created_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "orders",
+      "file": "src/main/java/com/oneshop/entity/TimestampedEntity.java",
+      "line": 19,
+      "field": "updatedAt",
+      "javaType": "LocalDateTime",
+      "column": "updated_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "updated_at",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "orders",
+        "column_id": 17,
+        "name": "updated_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "orders",
+      "file": "src/main/java/com/oneshop/entity/Order.java",
+      "line": 27,
+      "field": "id",
+      "javaType": "Long",
+      "column": "order_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "order_id"
+      },
+      "sql": {
+        "table_name": "orders",
+        "column_id": 1,
+        "name": "order_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": true
+      },
+      "issues": []
+    },
+    {
+      "table": "orders",
+      "file": "src/main/java/com/oneshop/entity/Order.java",
+      "line": 32,
+      "field": "checkoutSession",
+      "javaType": "CheckoutSession",
+      "column": "checkout_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "checkout_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "orders",
+        "column_id": 2,
+        "name": "checkout_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "orders",
+      "file": "src/main/java/com/oneshop/entity/Order.java",
+      "line": 36,
+      "field": "user",
+      "javaType": "User",
+      "column": "user_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "user_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "orders",
+        "column_id": 3,
+        "name": "user_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "orders",
+      "file": "src/main/java/com/oneshop/entity/Order.java",
+      "line": 40,
+      "field": "store",
+      "javaType": "Store",
+      "column": "store_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "store_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "orders",
+        "column_id": 4,
+        "name": "store_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "orders",
+      "file": "src/main/java/com/oneshop/entity/Order.java",
+      "line": 44,
+      "field": "fulfillmentType",
+      "javaType": "FulfillmentType",
+      "column": "fulfillment_type",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "fulfillment_type",
+        "nullable": "false",
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "orders",
+        "column_id": 5,
+        "name": "fulfillment_type",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "orders",
+      "file": "src/main/java/com/oneshop/entity/Order.java",
+      "line": 48,
+      "field": "paymentMethod",
+      "javaType": "PaymentMethod",
+      "column": "payment_method",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "payment_method",
+        "nullable": "false",
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "orders",
+        "column_id": 6,
+        "name": "payment_method",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "orders",
+      "file": "src/main/java/com/oneshop/entity/Order.java",
+      "line": 52,
+      "field": "paymentStatus",
+      "javaType": "OrderPaymentStatus",
+      "column": "payment_status",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "payment_status",
+        "nullable": "false",
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "orders",
+        "column_id": 7,
+        "name": "payment_status",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "orders",
+      "file": "src/main/java/com/oneshop/entity/Order.java",
+      "line": 56,
+      "field": "orderStatus",
+      "javaType": "OrderStatus",
+      "column": "order_status",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "order_status",
+        "nullable": "false",
+        "length": "30"
+      },
+      "sql": {
+        "table_name": "orders",
+        "column_id": 8,
+        "name": "order_status",
+        "sql_type": "nvarchar",
+        "max_length": 60,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "orders",
+      "file": "src/main/java/com/oneshop/entity/Order.java",
+      "line": 60,
+      "field": "receiverName",
+      "javaType": "String",
+      "column": "receiver_name",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "receiver_name",
+        "nullable": "false",
+        "length": "150"
+      },
+      "sql": {
+        "table_name": "orders",
+        "column_id": 9,
+        "name": "receiver_name",
+        "sql_type": "nvarchar",
+        "max_length": 300,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "orders",
+      "file": "src/main/java/com/oneshop/entity/Order.java",
+      "line": 63,
+      "field": "receiverPhone",
+      "javaType": "String",
+      "column": "receiver_phone",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "receiver_phone",
+        "nullable": "false",
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "orders",
+        "column_id": 10,
+        "name": "receiver_phone",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "orders",
+      "file": "src/main/java/com/oneshop/entity/Order.java",
+      "line": 68,
+      "field": "shippingAddress",
+      "javaType": "String",
+      "column": "shipping_address",
+      "kind": "Column",
+      "nullable": true,
+      "spec": {
+        "name": "shipping_address",
+        "length": "500"
+      },
+      "sql": {
+        "table_name": "orders",
+        "column_id": 11,
+        "name": "shipping_address",
+        "sql_type": "nvarchar",
+        "max_length": 1000,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "orders",
+      "file": "src/main/java/com/oneshop/entity/Order.java",
+      "line": 72,
+      "field": "pickupCode",
+      "javaType": "String",
+      "column": "pickup_code",
+      "kind": "Column",
+      "nullable": true,
+      "spec": {
+        "name": "pickup_code",
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "orders",
+        "column_id": 12,
+        "name": "pickup_code",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "orders",
+      "file": "src/main/java/com/oneshop/entity/Order.java",
+      "line": 76,
+      "field": "readyAt",
+      "javaType": "LocalDateTime",
+      "column": "ready_at",
+      "kind": "Column",
+      "nullable": true,
+      "spec": {
+        "name": "ready_at"
+      },
+      "sql": {
+        "table_name": "orders",
+        "column_id": 13,
+        "name": "ready_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "orders",
+      "file": "src/main/java/com/oneshop/entity/Order.java",
+      "line": 80,
+      "field": "pickedUpAt",
+      "javaType": "LocalDateTime",
+      "column": "picked_up_at",
+      "kind": "Column",
+      "nullable": true,
+      "spec": {
+        "name": "picked_up_at"
+      },
+      "sql": {
+        "table_name": "orders",
+        "column_id": 14,
+        "name": "picked_up_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "orders",
+      "file": "src/main/java/com/oneshop/entity/Order.java",
+      "line": 82,
+      "field": "totalAmount",
+      "javaType": "BigDecimal",
+      "column": "total_amount",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "total_amount",
+        "nullable": "false",
+        "precision": "18",
+        "scale": "2"
+      },
+      "sql": {
+        "table_name": "orders",
+        "column_id": 15,
+        "name": "total_amount",
+        "sql_type": "decimal",
+        "max_length": 9,
+        "precision": 18,
+        "scale": 2,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "order_items",
+      "file": "src/main/java/com/oneshop/entity/OrderItem.java",
+      "line": 21,
+      "field": "id",
+      "javaType": "Long",
+      "column": "order_item_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "order_item_id"
+      },
+      "sql": {
+        "table_name": "order_items",
+        "column_id": 1,
+        "name": "order_item_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": true
+      },
+      "issues": []
+    },
+    {
+      "table": "order_items",
+      "file": "src/main/java/com/oneshop/entity/OrderItem.java",
+      "line": 26,
+      "field": "order",
+      "javaType": "Order",
+      "column": "order_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "order_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "order_items",
+        "column_id": 2,
+        "name": "order_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "order_items",
+      "file": "src/main/java/com/oneshop/entity/OrderItem.java",
+      "line": 30,
+      "field": "storeProduct",
+      "javaType": "StoreProduct",
+      "column": "store_product_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "store_product_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "order_items",
+        "column_id": 3,
+        "name": "store_product_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "order_items",
+      "file": "src/main/java/com/oneshop/entity/OrderItem.java",
+      "line": 34,
+      "field": "productName",
+      "javaType": "String",
+      "column": "product_name",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "product_name",
+        "nullable": "false",
+        "length": "255"
+      },
+      "sql": {
+        "table_name": "order_items",
+        "column_id": 4,
+        "name": "product_name",
+        "sql_type": "nvarchar",
+        "max_length": 510,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "order_items",
+      "file": "src/main/java/com/oneshop/entity/OrderItem.java",
+      "line": 37,
+      "field": "unitPrice",
+      "javaType": "BigDecimal",
+      "column": "unit_price",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "unit_price",
+        "nullable": "false",
+        "precision": "18",
+        "scale": "2"
+      },
+      "sql": {
+        "table_name": "order_items",
+        "column_id": 5,
+        "name": "unit_price",
+        "sql_type": "decimal",
+        "max_length": 9,
+        "precision": 18,
+        "scale": 2,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "order_items",
+      "file": "src/main/java/com/oneshop/entity/OrderItem.java",
+      "line": 40,
+      "field": "quantity",
+      "javaType": "int",
+      "column": "quantity",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "order_items",
+        "column_id": 6,
+        "name": "quantity",
+        "sql_type": "int",
+        "max_length": 4,
+        "precision": 10,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "order_items",
+      "file": "src/main/java/com/oneshop/entity/OrderItem.java",
+      "line": 43,
+      "field": "subtotal",
+      "javaType": "BigDecimal",
+      "column": "subtotal",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "precision": "18",
+        "scale": "2"
+      },
+      "sql": {
+        "table_name": "order_items",
+        "column_id": 7,
+        "name": "subtotal",
+        "sql_type": "decimal",
+        "max_length": 9,
+        "precision": 18,
+        "scale": 2,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "order_status_history",
+      "file": "src/main/java/com/oneshop/entity/OrderStatusHistory.java",
+      "line": 24,
+      "field": "id",
+      "javaType": "Long",
+      "column": "history_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "history_id"
+      },
+      "sql": {
+        "table_name": "order_status_history",
+        "column_id": 1,
+        "name": "history_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": true
+      },
+      "issues": []
+    },
+    {
+      "table": "order_status_history",
+      "file": "src/main/java/com/oneshop/entity/OrderStatusHistory.java",
+      "line": 29,
+      "field": "order",
+      "javaType": "Order",
+      "column": "order_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "order_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "order_status_history",
+        "column_id": 2,
+        "name": "order_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "order_status_history",
+      "file": "src/main/java/com/oneshop/entity/OrderStatusHistory.java",
+      "line": 35,
+      "field": "oldStatus",
+      "javaType": "OrderStatus",
+      "column": "old_status",
+      "kind": "Column",
+      "nullable": true,
+      "spec": {
+        "name": "old_status",
+        "length": "30"
+      },
+      "sql": {
+        "table_name": "order_status_history",
+        "column_id": 3,
+        "name": "old_status",
+        "sql_type": "nvarchar",
+        "max_length": 60,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "order_status_history",
+      "file": "src/main/java/com/oneshop/entity/OrderStatusHistory.java",
+      "line": 38,
+      "field": "newStatus",
+      "javaType": "OrderStatus",
+      "column": "new_status",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "new_status",
+        "nullable": "false",
+        "length": "30"
+      },
+      "sql": {
+        "table_name": "order_status_history",
+        "column_id": 4,
+        "name": "new_status",
+        "sql_type": "nvarchar",
+        "max_length": 60,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "order_status_history",
+      "file": "src/main/java/com/oneshop/entity/OrderStatusHistory.java",
+      "line": 44,
+      "field": "changedBy",
+      "javaType": "User",
+      "column": "changed_by_user_id",
+      "kind": "JoinColumn",
+      "nullable": true,
+      "spec": {
+        "name": "changed_by_user_id"
+      },
+      "sql": {
+        "table_name": "order_status_history",
+        "column_id": 5,
+        "name": "changed_by_user_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "order_status_history",
+      "file": "src/main/java/com/oneshop/entity/OrderStatusHistory.java",
+      "line": 47,
+      "field": "note",
+      "javaType": "String",
+      "column": "note",
+      "kind": "Column",
+      "nullable": true,
+      "spec": {
+        "length": "500"
+      },
+      "sql": {
+        "table_name": "order_status_history",
+        "column_id": 6,
+        "name": "note",
+        "sql_type": "nvarchar",
+        "max_length": 1000,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "order_status_history",
+      "file": "src/main/java/com/oneshop/entity/OrderStatusHistory.java",
+      "line": 50,
+      "field": "changedAt",
+      "javaType": "LocalDateTime",
+      "column": "changed_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "changed_at",
+        "nullable": "false",
+        "updatable": "false"
+      },
+      "sql": {
+        "table_name": "order_status_history",
+        "column_id": 7,
+        "name": "changed_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "payments",
+      "file": "src/main/java/com/oneshop/entity/CreatedAtEntity.java",
+      "line": 17,
+      "field": "createdAt",
+      "javaType": "LocalDateTime",
+      "column": "created_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "created_at",
+        "nullable": "false",
+        "updatable": "false"
+      },
+      "sql": {
+        "table_name": "payments",
+        "column_id": 8,
+        "name": "created_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "payments",
+      "file": "src/main/java/com/oneshop/entity/Payment.java",
+      "line": 21,
+      "field": "id",
+      "javaType": "Long",
+      "column": "payment_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "payment_id"
+      },
+      "sql": {
+        "table_name": "payments",
+        "column_id": 1,
+        "name": "payment_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": true
+      },
+      "issues": []
+    },
+    {
+      "table": "payments",
+      "file": "src/main/java/com/oneshop/entity/Payment.java",
+      "line": 26,
+      "field": "order",
+      "javaType": "Order",
+      "column": "order_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "order_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "payments",
+        "column_id": 2,
+        "name": "order_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "payments",
+      "file": "src/main/java/com/oneshop/entity/Payment.java",
+      "line": 30,
+      "field": "method",
+      "javaType": "PaymentMethod",
+      "column": "method",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "payments",
+        "column_id": 3,
+        "name": "method",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "payments",
+      "file": "src/main/java/com/oneshop/entity/Payment.java",
+      "line": 34,
+      "field": "amount",
+      "javaType": "BigDecimal",
+      "column": "amount",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "precision": "18",
+        "scale": "2"
+      },
+      "sql": {
+        "table_name": "payments",
+        "column_id": 4,
+        "name": "amount",
+        "sql_type": "decimal",
+        "max_length": 9,
+        "precision": 18,
+        "scale": 2,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "payments",
+      "file": "src/main/java/com/oneshop/entity/Payment.java",
+      "line": 37,
+      "field": "status",
+      "javaType": "PaymentStatus",
+      "column": "status",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "payments",
+        "column_id": 5,
+        "name": "status",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "payments",
+      "file": "src/main/java/com/oneshop/entity/Payment.java",
+      "line": 41,
+      "field": "transactionCode",
+      "javaType": "String",
+      "column": "transaction_code",
+      "kind": "Column",
+      "nullable": true,
+      "spec": {
+        "name": "transaction_code",
+        "length": "100"
+      },
+      "sql": {
+        "table_name": "payments",
+        "column_id": 6,
+        "name": "transaction_code",
+        "sql_type": "nvarchar",
+        "max_length": 200,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "payments",
+      "file": "src/main/java/com/oneshop/entity/Payment.java",
+      "line": 44,
+      "field": "paidAt",
+      "javaType": "LocalDateTime",
+      "column": "paid_at",
+      "kind": "Column",
+      "nullable": true,
+      "spec": {
+        "name": "paid_at"
+      },
+      "sql": {
+        "table_name": "payments",
+        "column_id": 7,
+        "name": "paid_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "products",
+      "file": "src/main/java/com/oneshop/entity/TimestampedEntity.java",
+      "line": 15,
+      "field": "createdAt",
+      "javaType": "LocalDateTime",
+      "column": "created_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "created_at",
+        "nullable": "false",
+        "updatable": "false"
+      },
+      "sql": {
+        "table_name": "products",
+        "column_id": 8,
+        "name": "created_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "products",
+      "file": "src/main/java/com/oneshop/entity/TimestampedEntity.java",
+      "line": 19,
+      "field": "updatedAt",
+      "javaType": "LocalDateTime",
+      "column": "updated_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "updated_at",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "products",
+        "column_id": 9,
+        "name": "updated_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "products",
+      "file": "src/main/java/com/oneshop/entity/Product.java",
+      "line": 21,
+      "field": "id",
+      "javaType": "Long",
+      "column": "product_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "product_id"
+      },
+      "sql": {
+        "table_name": "products",
+        "column_id": 1,
+        "name": "product_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": true
+      },
+      "issues": []
+    },
+    {
+      "table": "products",
+      "file": "src/main/java/com/oneshop/entity/Product.java",
+      "line": 26,
+      "field": "category",
+      "javaType": "Category",
+      "column": "category_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "category_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "products",
+        "column_id": 2,
+        "name": "category_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "products",
+      "file": "src/main/java/com/oneshop/entity/Product.java",
+      "line": 30,
+      "field": "brand",
+      "javaType": "Brand",
+      "column": "brand_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "brand_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "products",
+        "column_id": 3,
+        "name": "brand_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "products",
+      "file": "src/main/java/com/oneshop/entity/Product.java",
+      "line": 34,
+      "field": "sku",
+      "javaType": "String",
+      "column": "sku",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "unique": "true",
+        "length": "50"
+      },
+      "sql": {
+        "table_name": "products",
+        "column_id": 4,
+        "name": "sku",
+        "sql_type": "nvarchar",
+        "max_length": 100,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "products",
+      "file": "src/main/java/com/oneshop/entity/Product.java",
+      "line": 37,
+      "field": "name",
+      "javaType": "String",
+      "column": "name",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "length": "255"
+      },
+      "sql": {
+        "table_name": "products",
+        "column_id": 5,
+        "name": "name",
+        "sql_type": "nvarchar",
+        "max_length": 510,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "products",
+      "file": "src/main/java/com/oneshop/entity/Product.java",
+      "line": 40,
+      "field": "description",
+      "javaType": "String",
+      "column": "description",
+      "kind": "Column",
+      "nullable": true,
+      "spec": {
+        "columnDefinition": "NVARCHAR(MAX)"
+      },
+      "sql": {
+        "table_name": "products",
+        "column_id": 6,
+        "name": "description",
+        "sql_type": "nvarchar",
+        "max_length": -1,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "products",
+      "file": "src/main/java/com/oneshop/entity/Product.java",
+      "line": 43,
+      "field": "status",
+      "javaType": "ProductStatus",
+      "column": "status",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "products",
+        "column_id": 7,
+        "name": "status",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "product_images",
+      "file": "src/main/java/com/oneshop/entity/CreatedAtEntity.java",
+      "line": 17,
+      "field": "createdAt",
+      "javaType": "LocalDateTime",
+      "column": "created_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "created_at",
+        "nullable": "false",
+        "updatable": "false"
+      },
+      "sql": {
+        "table_name": "product_images",
+        "column_id": 7,
+        "name": "created_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "product_images",
+      "file": "src/main/java/com/oneshop/entity/ProductImage.java",
+      "line": 16,
+      "field": "id",
+      "javaType": "Long",
+      "column": "image_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "image_id"
+      },
+      "sql": {
+        "table_name": "product_images",
+        "column_id": 1,
+        "name": "image_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": true
+      },
+      "issues": []
+    },
+    {
+      "table": "product_images",
+      "file": "src/main/java/com/oneshop/entity/ProductImage.java",
+      "line": 21,
+      "field": "product",
+      "javaType": "Product",
+      "column": "product_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "product_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "product_images",
+        "column_id": 2,
+        "name": "product_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "product_images",
+      "file": "src/main/java/com/oneshop/entity/ProductImage.java",
+      "line": 25,
+      "field": "imageUrl",
+      "javaType": "String",
+      "column": "image_url",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "image_url",
+        "nullable": "false",
+        "length": "500"
+      },
+      "sql": {
+        "table_name": "product_images",
+        "column_id": 3,
+        "name": "image_url",
+        "sql_type": "nvarchar",
+        "max_length": 1000,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "product_images",
+      "file": "src/main/java/com/oneshop/entity/ProductImage.java",
+      "line": 28,
+      "field": "publicId",
+      "javaType": "String",
+      "column": "public_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "public_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "product_images",
+        "column_id": 4,
+        "name": "public_id",
+        "sql_type": "nvarchar",
+        "max_length": 510,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "product_images",
+      "file": "src/main/java/com/oneshop/entity/ProductImage.java",
+      "line": 31,
+      "field": "primary",
+      "javaType": "boolean",
+      "column": "is_primary",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "is_primary",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "product_images",
+        "column_id": 5,
+        "name": "is_primary",
+        "sql_type": "bit",
+        "max_length": 1,
+        "precision": 1,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "product_images",
+      "file": "src/main/java/com/oneshop/entity/ProductImage.java",
+      "line": 34,
+      "field": "sortOrder",
+      "javaType": "int",
+      "column": "sort_order",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "sort_order",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "product_images",
+        "column_id": 6,
+        "name": "sort_order",
+        "sql_type": "int",
+        "max_length": 4,
+        "precision": 10,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "reviews",
+      "file": "src/main/java/com/oneshop/entity/CreatedAtEntity.java",
+      "line": 17,
+      "field": "createdAt",
+      "javaType": "LocalDateTime",
+      "column": "created_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "created_at",
+        "nullable": "false",
+        "updatable": "false"
+      },
+      "sql": {
+        "table_name": "reviews",
+        "column_id": 7,
+        "name": "created_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "reviews",
+      "file": "src/main/java/com/oneshop/entity/Review.java",
+      "line": 17,
+      "field": "id",
+      "javaType": "Long",
+      "column": "review_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "review_id"
+      },
+      "sql": {
+        "table_name": "reviews",
+        "column_id": 1,
+        "name": "review_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": true
+      },
+      "issues": []
+    },
+    {
+      "table": "reviews",
+      "file": "src/main/java/com/oneshop/entity/Review.java",
+      "line": 22,
+      "field": "user",
+      "javaType": "User",
+      "column": "user_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "user_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "reviews",
+        "column_id": 2,
+        "name": "user_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "reviews",
+      "file": "src/main/java/com/oneshop/entity/Review.java",
+      "line": 26,
+      "field": "product",
+      "javaType": "Product",
+      "column": "product_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "product_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "reviews",
+        "column_id": 3,
+        "name": "product_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "reviews",
+      "file": "src/main/java/com/oneshop/entity/Review.java",
+      "line": 30,
+      "field": "rating",
+      "javaType": "int",
+      "column": "rating",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "reviews",
+        "column_id": 4,
+        "name": "rating",
+        "sql_type": "int",
+        "max_length": 4,
+        "precision": 10,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "reviews",
+      "file": "src/main/java/com/oneshop/entity/Review.java",
+      "line": 33,
+      "field": "comment",
+      "javaType": "String",
+      "column": "comment",
+      "kind": "Column",
+      "nullable": true,
+      "spec": {
+        "length": "1000"
+      },
+      "sql": {
+        "table_name": "reviews",
+        "column_id": 5,
+        "name": "comment",
+        "sql_type": "nvarchar",
+        "max_length": 2000,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "reviews",
+      "file": "src/main/java/com/oneshop/entity/Review.java",
+      "line": 36,
+      "field": "status",
+      "javaType": "VisibilityStatus",
+      "column": "status",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "reviews",
+        "column_id": 6,
+        "name": "status",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "roles",
+      "file": "src/main/java/com/oneshop/entity/Role.java",
+      "line": 14,
+      "field": "id",
+      "javaType": "Long",
+      "column": "role_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "role_id"
+      },
+      "sql": {
+        "table_name": "roles",
+        "column_id": 1,
+        "name": "role_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": true
+      },
+      "issues": []
+    },
+    {
+      "table": "roles",
+      "file": "src/main/java/com/oneshop/entity/Role.java",
+      "line": 19,
+      "field": "name",
+      "javaType": "RoleName",
+      "column": "name",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "unique": "true",
+        "length": "30"
+      },
+      "sql": {
+        "table_name": "roles",
+        "column_id": 2,
+        "name": "name",
+        "sql_type": "nvarchar",
+        "max_length": 60,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "roles",
+      "file": "src/main/java/com/oneshop/entity/Role.java",
+      "line": 23,
+      "field": "description",
+      "javaType": "String",
+      "column": "description",
+      "kind": "Column",
+      "nullable": true,
+      "spec": {
+        "length": "200"
+      },
+      "sql": {
+        "table_name": "roles",
+        "column_id": 3,
+        "name": "description",
+        "sql_type": "nvarchar",
+        "max_length": 400,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "staff_store_assignments",
+      "file": "src/main/java/com/oneshop/entity/StaffStoreAssignment.java",
+      "line": 26,
+      "field": "id",
+      "javaType": "Long",
+      "column": "assignment_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "assignment_id"
+      },
+      "sql": {
+        "table_name": "staff_store_assignments",
+        "column_id": 1,
+        "name": "assignment_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": true
+      },
+      "issues": []
+    },
+    {
+      "table": "staff_store_assignments",
+      "file": "src/main/java/com/oneshop/entity/StaffStoreAssignment.java",
+      "line": 31,
+      "field": "user",
+      "javaType": "User",
+      "column": "user_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "user_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "staff_store_assignments",
+        "column_id": 2,
+        "name": "user_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "staff_store_assignments",
+      "file": "src/main/java/com/oneshop/entity/StaffStoreAssignment.java",
+      "line": 35,
+      "field": "store",
+      "javaType": "Store",
+      "column": "store_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "store_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "staff_store_assignments",
+        "column_id": 3,
+        "name": "store_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "staff_store_assignments",
+      "file": "src/main/java/com/oneshop/entity/StaffStoreAssignment.java",
+      "line": 39,
+      "field": "status",
+      "javaType": "ActiveStatus",
+      "column": "status",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "staff_store_assignments",
+        "column_id": 4,
+        "name": "status",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "staff_store_assignments",
+      "file": "src/main/java/com/oneshop/entity/StaffStoreAssignment.java",
+      "line": 43,
+      "field": "assignedAt",
+      "javaType": "LocalDateTime",
+      "column": "assigned_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "assigned_at",
+        "nullable": "false",
+        "updatable": "false"
+      },
+      "sql": {
+        "table_name": "staff_store_assignments",
+        "column_id": 5,
+        "name": "assigned_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "stores",
+      "file": "src/main/java/com/oneshop/entity/TimestampedEntity.java",
+      "line": 15,
+      "field": "createdAt",
+      "javaType": "LocalDateTime",
+      "column": "created_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "created_at",
+        "nullable": "false",
+        "updatable": "false"
+      },
+      "sql": {
+        "table_name": "stores",
+        "column_id": 12,
+        "name": "created_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "stores",
+      "file": "src/main/java/com/oneshop/entity/TimestampedEntity.java",
+      "line": 19,
+      "field": "updatedAt",
+      "javaType": "LocalDateTime",
+      "column": "updated_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "updated_at",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "stores",
+        "column_id": 13,
+        "name": "updated_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "stores",
+      "file": "src/main/java/com/oneshop/entity/Store.java",
+      "line": 15,
+      "field": "id",
+      "javaType": "Long",
+      "column": "store_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "store_id"
+      },
+      "sql": {
+        "table_name": "stores",
+        "column_id": 1,
+        "name": "store_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": true
+      },
+      "issues": []
+    },
+    {
+      "table": "stores",
+      "file": "src/main/java/com/oneshop/entity/Store.java",
+      "line": 20,
+      "field": "code",
+      "javaType": "String",
+      "column": "code",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "unique": "true",
+        "length": "30"
+      },
+      "sql": {
+        "table_name": "stores",
+        "column_id": 2,
+        "name": "code",
+        "sql_type": "nvarchar",
+        "max_length": 60,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "stores",
+      "file": "src/main/java/com/oneshop/entity/Store.java",
+      "line": 23,
+      "field": "name",
+      "javaType": "String",
+      "column": "name",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "length": "150"
+      },
+      "sql": {
+        "table_name": "stores",
+        "column_id": 3,
+        "name": "name",
+        "sql_type": "nvarchar",
+        "max_length": 300,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "stores",
+      "file": "src/main/java/com/oneshop/entity/Store.java",
+      "line": 26,
+      "field": "address",
+      "javaType": "String",
+      "column": "address",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "length": "500"
+      },
+      "sql": {
+        "table_name": "stores",
+        "column_id": 4,
+        "name": "address",
+        "sql_type": "nvarchar",
+        "max_length": 1000,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "stores",
+      "file": "src/main/java/com/oneshop/entity/Store.java",
+      "line": 29,
+      "field": "provinceCity",
+      "javaType": "String",
+      "column": "province_city",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "province_city",
+        "nullable": "false",
+        "length": "100"
+      },
+      "sql": {
+        "table_name": "stores",
+        "column_id": 5,
+        "name": "province_city",
+        "sql_type": "nvarchar",
+        "max_length": 200,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "stores",
+      "file": "src/main/java/com/oneshop/entity/Store.java",
+      "line": 32,
+      "field": "area",
+      "javaType": "String",
+      "column": "area",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "length": "100"
+      },
+      "sql": {
+        "table_name": "stores",
+        "column_id": 6,
+        "name": "area",
+        "sql_type": "nvarchar",
+        "max_length": 200,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "stores",
+      "file": "src/main/java/com/oneshop/entity/Store.java",
+      "line": 35,
+      "field": "phone",
+      "javaType": "String",
+      "column": "phone",
+      "kind": "Column",
+      "nullable": true,
+      "spec": {
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "stores",
+        "column_id": 7,
+        "name": "phone",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "stores",
+      "file": "src/main/java/com/oneshop/entity/Store.java",
+      "line": 38,
+      "field": "openingHours",
+      "javaType": "String",
+      "column": "opening_hours",
+      "kind": "Column",
+      "nullable": true,
+      "spec": {
+        "name": "opening_hours",
+        "length": "200"
+      },
+      "sql": {
+        "table_name": "stores",
+        "column_id": 8,
+        "name": "opening_hours",
+        "sql_type": "nvarchar",
+        "max_length": 400,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "stores",
+      "file": "src/main/java/com/oneshop/entity/Store.java",
+      "line": 41,
+      "field": "deliveryEnabled",
+      "javaType": "boolean",
+      "column": "delivery_enabled",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "delivery_enabled",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "stores",
+        "column_id": 9,
+        "name": "delivery_enabled",
+        "sql_type": "bit",
+        "max_length": 1,
+        "precision": 1,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "stores",
+      "file": "src/main/java/com/oneshop/entity/Store.java",
+      "line": 44,
+      "field": "pickupEnabled",
+      "javaType": "boolean",
+      "column": "pickup_enabled",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "pickup_enabled",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "stores",
+        "column_id": 10,
+        "name": "pickup_enabled",
+        "sql_type": "bit",
+        "max_length": 1,
+        "precision": 1,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "stores",
+      "file": "src/main/java/com/oneshop/entity/Store.java",
+      "line": 47,
+      "field": "status",
+      "javaType": "ActiveStatus",
+      "column": "status",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "stores",
+        "column_id": 11,
+        "name": "status",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "store_products",
+      "file": "src/main/java/com/oneshop/entity/StoreProduct.java",
+      "line": 31,
+      "field": "id",
+      "javaType": "Long",
+      "column": "store_product_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "store_product_id"
+      },
+      "sql": {
+        "table_name": "store_products",
+        "column_id": 1,
+        "name": "store_product_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": true
+      },
+      "issues": []
+    },
+    {
+      "table": "store_products",
+      "file": "src/main/java/com/oneshop/entity/StoreProduct.java",
+      "line": 36,
+      "field": "store",
+      "javaType": "Store",
+      "column": "store_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "store_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "store_products",
+        "column_id": 2,
+        "name": "store_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "store_products",
+      "file": "src/main/java/com/oneshop/entity/StoreProduct.java",
+      "line": 40,
+      "field": "product",
+      "javaType": "Product",
+      "column": "product_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "product_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "store_products",
+        "column_id": 3,
+        "name": "product_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "store_products",
+      "file": "src/main/java/com/oneshop/entity/StoreProduct.java",
+      "line": 44,
+      "field": "price",
+      "javaType": "BigDecimal",
+      "column": "price",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "precision": "18",
+        "scale": "2"
+      },
+      "sql": {
+        "table_name": "store_products",
+        "column_id": 4,
+        "name": "price",
+        "sql_type": "decimal",
+        "max_length": 9,
+        "precision": 18,
+        "scale": 2,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "store_products",
+      "file": "src/main/java/com/oneshop/entity/StoreProduct.java",
+      "line": 47,
+      "field": "quantity",
+      "javaType": "int",
+      "column": "quantity",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "store_products",
+        "column_id": 5,
+        "name": "quantity",
+        "sql_type": "int",
+        "max_length": 4,
+        "precision": 10,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "store_products",
+      "file": "src/main/java/com/oneshop/entity/StoreProduct.java",
+      "line": 50,
+      "field": "status",
+      "javaType": "ActiveStatus",
+      "column": "status",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "store_products",
+        "column_id": 6,
+        "name": "status",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "store_products",
+      "file": "src/main/java/com/oneshop/entity/StoreProduct.java",
+      "line": 54,
+      "field": "updatedAt",
+      "javaType": "LocalDateTime",
+      "column": "updated_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "updated_at",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "store_products",
+        "column_id": 7,
+        "name": "updated_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "users",
+      "file": "src/main/java/com/oneshop/entity/TimestampedEntity.java",
+      "line": 15,
+      "field": "createdAt",
+      "javaType": "LocalDateTime",
+      "column": "created_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "created_at",
+        "nullable": "false",
+        "updatable": "false"
+      },
+      "sql": {
+        "table_name": "users",
+        "column_id": 8,
+        "name": "created_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "users",
+      "file": "src/main/java/com/oneshop/entity/TimestampedEntity.java",
+      "line": 19,
+      "field": "updatedAt",
+      "javaType": "LocalDateTime",
+      "column": "updated_at",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "updated_at",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "users",
+        "column_id": 9,
+        "name": "updated_at",
+        "sql_type": "datetime2",
+        "max_length": 6,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "users",
+      "file": "src/main/java/com/oneshop/entity/User.java",
+      "line": 17,
+      "field": "id",
+      "javaType": "Long",
+      "column": "user_id",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "user_id"
+      },
+      "sql": {
+        "table_name": "users",
+        "column_id": 1,
+        "name": "user_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": true
+      },
+      "issues": []
+    },
+    {
+      "table": "users",
+      "file": "src/main/java/com/oneshop/entity/User.java",
+      "line": 24,
+      "field": "role",
+      "javaType": "Role",
+      "column": "role_id",
+      "kind": "JoinColumn",
+      "nullable": false,
+      "spec": {
+        "name": "role_id",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "users",
+        "column_id": 2,
+        "name": "role_id",
+        "sql_type": "bigint",
+        "max_length": 8,
+        "precision": 19,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "users",
+      "file": "src/main/java/com/oneshop/entity/User.java",
+      "line": 27,
+      "field": "email",
+      "javaType": "String",
+      "column": "email",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "unique": "true"
+      },
+      "sql": {
+        "table_name": "users",
+        "column_id": 3,
+        "name": "email",
+        "sql_type": "nvarchar",
+        "max_length": 510,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "users",
+      "file": "src/main/java/com/oneshop/entity/User.java",
+      "line": 30,
+      "field": "passwordHash",
+      "javaType": "String",
+      "column": "password_hash",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "password_hash",
+        "nullable": "false"
+      },
+      "sql": {
+        "table_name": "users",
+        "column_id": 4,
+        "name": "password_hash",
+        "sql_type": "nvarchar",
+        "max_length": 510,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "users",
+      "file": "src/main/java/com/oneshop/entity/User.java",
+      "line": 33,
+      "field": "fullName",
+      "javaType": "String",
+      "column": "full_name",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "name": "full_name",
+        "nullable": "false",
+        "length": "150"
+      },
+      "sql": {
+        "table_name": "users",
+        "column_id": 5,
+        "name": "full_name",
+        "sql_type": "nvarchar",
+        "max_length": 300,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "users",
+      "file": "src/main/java/com/oneshop/entity/User.java",
+      "line": 36,
+      "field": "phone",
+      "javaType": "String",
+      "column": "phone",
+      "kind": "Column",
+      "nullable": true,
+      "spec": {
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "users",
+        "column_id": 6,
+        "name": "phone",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": true,
+        "is_identity": false
+      },
+      "issues": []
+    },
+    {
+      "table": "users",
+      "file": "src/main/java/com/oneshop/entity/User.java",
+      "line": 39,
+      "field": "status",
+      "javaType": "ActiveStatus",
+      "column": "status",
+      "kind": "Column",
+      "nullable": false,
+      "spec": {
+        "nullable": "false",
+        "length": "20"
+      },
+      "sql": {
+        "table_name": "users",
+        "column_id": 7,
+        "name": "status",
+        "sql_type": "nvarchar",
+        "max_length": 40,
+        "precision": 0,
+        "scale": 0,
+        "is_nullable": false,
+        "is_identity": false
+      },
+      "issues": []
+    }
+  ]
+}

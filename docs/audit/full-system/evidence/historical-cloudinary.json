@@ -1,0 +1,14 @@
+{
+  "source": "target-phase12-package.log",
+  "classification": "historical evidence; no live call rerun in full-system audit",
+  "liveSuiteSummary": [
+    "[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.129 s -- in com.oneshop.Phase12CloudinaryLiveVerification"
+  ],
+  "baselineSummary": [
+    "[INFO] Tests run: 928, Failures: 0, Errors: 0, Skipped: 1"
+  ],
+  "finishedAt": [
+    "2026-10-09T15:11:16+07:00"
+  ],
+  "buildSuccess": true
+}

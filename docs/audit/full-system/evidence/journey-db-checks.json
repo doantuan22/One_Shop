@@ -1,0 +1,16 @@
+{
+  "three_orders_one_checkout": true,
+  "completed_orders_paid": true,
+  "snapshot_after_price_change": true,
+  "cancel_restore_exactly_once": true,
+  "movement_arithmetic": true,
+  "ledger_continuity": true,
+  "ledger_matches_stock": true,
+  "history_connected": true,
+  "status_matches_history": true,
+  "duplicate_completion_absent": true,
+  "payment_amount_method": true,
+  "soft_disabled_records_retained": true,
+  "unicode_no_account_created": true,
+  "admin_staff_race_actor_and_serial_ledger": true
+}

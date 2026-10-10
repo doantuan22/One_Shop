@@ -1,0 +1,149 @@
+﻿[
+    {
+        "store_product_id":  1,
+        "quantity":  40,
+        "price":  129000.00,
+        "status":  "ACTIVE",
+        "updated_at":  "\/Date(1791228541000)\/"
+    },
+    {
+        "store_product_id":  2,
+        "quantity":  15,
+        "price":  135000.00,
+        "status":  "ACTIVE",
+        "updated_at":  "\/Date(1791228541000)\/"
+    },
+    {
+        "store_product_id":  3,
+        "quantity":  0,
+        "price":  129000.00,
+        "status":  "ACTIVE",
+        "updated_at":  "\/Date(1790675006000)\/"
+    },
+    {
+        "store_product_id":  4,
+        "quantity":  25,
+        "price":  139000.00,
+        "status":  "ACTIVE",
+        "updated_at":  "\/Date(1790675006000)\/"
+    },
+    {
+        "store_product_id":  5,
+        "quantity":  10,
+        "price":  129000.00,
+        "status":  "INACTIVE",
+        "updated_at":  "\/Date(1790675006000)\/"
+    },
+    {
+        "store_product_id":  6,
+        "quantity":  12,
+        "price":  189000.00,
+        "status":  "ACTIVE",
+        "updated_at":  "\/Date(1790675006000)\/"
+    },
+    {
+        "store_product_id":  7,
+        "quantity":  0,
+        "price":  195000.00,
+        "status":  "ACTIVE",
+        "updated_at":  "\/Date(1790675006000)\/"
+    },
+    {
+        "store_product_id":  8,
+        "quantity":  30,
+        "price":  189000.00,
+        "status":  "ACTIVE",
+        "updated_at":  "\/Date(1791228536000)\/"
+    },
+    {
+        "store_product_id":  9,
+        "quantity":  8,
+        "price":  189000.00,
+        "status":  "ACTIVE",
+        "updated_at":  "\/Date(1791228537000)\/"
+    },
+    {
+        "store_product_id":  10,
+        "quantity":  20,
+        "price":  195000.00,
+        "status":  "ACTIVE",
+        "updated_at":  "\/Date(1791228536000)\/"
+    },
+    {
+        "store_product_id":  11,
+        "quantity":  25,
+        "price":  255000.00,
+        "status":  "ACTIVE",
+        "updated_at":  "\/Date(1791228541000)\/"
+    },
+    {
+        "store_product_id":  12,
+        "quantity":  18,
+        "price":  249000.00,
+        "status":  "ACTIVE",
+        "updated_at":  "\/Date(1790675006000)\/"
+    },
+    {
+        "store_product_id":  13,
+        "quantity":  9,
+        "price":  259000.00,
+        "status":  "ACTIVE",
+        "updated_at":  "\/Date(1790675006000)\/"
+    },
+    {
+        "store_product_id":  14,
+        "quantity":  0,
+        "price":  255000.00,
+        "status":  "INACTIVE",
+        "updated_at":  "\/Date(1790675006000)\/"
+    },
+    {
+        "store_product_id":  15,
+        "quantity":  60,
+        "price":  95000.00,
+        "status":  "ACTIVE",
+        "updated_at":  "\/Date(1790675006000)\/"
+    },
+    {
+        "store_product_id":  16,
+        "quantity":  45,
+        "price":  95000.00,
+        "status":  "ACTIVE",
+        "updated_at":  "\/Date(1790675006000)\/"
+    },
+    {
+        "store_product_id":  17,
+        "quantity":  22,
+        "price":  99000.00,
+        "status":  "ACTIVE",
+        "updated_at":  "\/Date(1790675006000)\/"
+    },
+    {
+        "store_product_id":  18,
+        "quantity":  33,
+        "price":  165000.00,
+        "status":  "ACTIVE",
+        "updated_at":  "\/Date(1790675006000)\/"
+    },
+    {
+        "store_product_id":  19,
+        "quantity":  14,
+        "price":  169000.00,
+        "status":  "ACTIVE",
+        "updated_at":  "\/Date(1790675006000)\/"
+    },
+    {
+        "store_product_id":  20,
+        "quantity":  7,
+        "price":  165000.00,
+        "status":  "ACTIVE",
+        "updated_at":  "\/Date(1791228541000)\/"
+    },
+    {
+        "store_product_id":  21,
+        "quantity":  0,
+        "price":  45000.00,
+        "status":  "INACTIVE",
+        "updated_at":  "\/Date(1790675006000)\/"
+    }
+]

@@ -1,0 +1,36 @@
+{
+  "confirmed": [
+    {
+      "id": "FSA-01",
+      "severity": "MEDIUM",
+      "evidence": "Review skeleton + actual completed fixture no action + valid-CSRF404"
+    },
+    {
+      "id": "FSA-02",
+      "severity": "MEDIUM",
+      "evidence": "Chrome POST register500; log BCrypt password cannot be more than72bytes; SQL user absent"
+    },
+    {
+      "id": "FSA-03",
+      "severity": "MEDIUM",
+      "evidence": "render.yaml4–5 Docker vs Roadmap26/phase13line1174"
+    }
+  ],
+  "critical": 0,
+  "high": 0,
+  "medium": 3,
+  "low": 0,
+  "auditStatus": "AUDIT COMPLETED",
+  "readiness": "NOT READY",
+  "currentTC": {
+    "PASS": 17,
+    "FAIL": 0,
+    "NOT VERIFIED": 1,
+    "BLOCKED": 0
+  },
+  "unicodeExceptionEvidence": [
+    "2026-10-09T15:53:42.395+07:00 DEBUG 3160 --- [oneshop] [0.1-8787-exec-1] o.s.web.servlet.DispatcherServlet        : Failed to complete request: java.lang.IllegalArgumentException: password cannot be more than 72 bytes",
+    "2026-10-09T15:53:42.396+07:00 ERROR 3160 --- [oneshop] [0.1-8787-exec-1] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.IllegalArgumentException: password cannot be more than 72 bytes] with root cause",
+    "java.lang.IllegalArgumentException: password cannot be more than 72 bytes"
+  ]
+}

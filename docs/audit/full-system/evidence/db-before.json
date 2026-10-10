@@ -1,0 +1,78 @@
+﻿{
+    "brands":  {
+                   "count":  3,
+                   "sha256":  "b26c28ab20d3b5e50af330dba7cc06a7e93a3c42819f84da999b30691ad33141"
+               },
+    "cart_items":  {
+                       "count":  3,
+                       "sha256":  "38eadbf7b774acdf2e3aa818927ddb89056e5003136f3d514dbcf9fb27dd900e"
+                   },
+    "carts":  {
+                  "count":  2,
+                  "sha256":  "2f4ca8d67a7b5ca78802be4258f064195c5014573607f6e8fce6324206d43552"
+              },
+    "categories":  {
+                       "count":  3,
+                       "sha256":  "9d52f9c26f5fd8de4cd248214edccbbe99b77787fb2f235d2366aa7702fcb993"
+                   },
+    "customer_addresses":  {
+                               "count":  2,
+                               "sha256":  "1879182219cc99e0190dd6a9f636a4a46959be8083053703476f2ad704499794"
+                           },
+    "checkout_sessions":  {
+                              "count":  3,
+                              "sha256":  "f9b960f49730d53a122c315baf50ba80c317ceb252e1862075b79b1fefed9a05"
+                          },
+    "inventory_movements":  {
+                                "count":  9,
+                                "sha256":  "23c42bfc14b9507b3d005e594d3249cdc7652ace828347512556fd609efb08d3"
+                            },
+    "order_items":  {
+                        "count":  7,
+                        "sha256":  "7ff8aa477503fd6a13c4e48f5906c85af85fa5175b1a5737723cdc46892edfe4"
+                    },
+    "order_status_history":  {
+                                 "count":  16,
+                                 "sha256":  "e4dcfc84f49cca18649e62155ec174ab44069b2ce86397ce75e58c666d6f129b"
+                             },
+    "orders":  {
+                   "count":  5,
+                   "sha256":  "96accc2d21e22bbaa51e1eb5ce4d9fd5d6620c91b73ff9fdb77ff75fc82be07e"
+               },
+    "payments":  {
+                     "count":  5,
+                     "sha256":  "173b9c3581bc822e06642f4135ce7d4ba261c4e1d2428c63c6075849e76c6aab"
+                 },
+    "product_images":  {
+                           "count":  0,
+                           "sha256":  "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                       },
+    "products":  {
+                     "count":  7,
+                     "sha256":  "2d1879f1189da4e2c04ee315337c882a5ac99c8ca7100c013051d71087311693"
+                 },
+    "reviews":  {
+                    "count":  1,
+                    "sha256":  "5ee7643bcfc230793e327cc07737086496f9d689076238fb80f0ddca99f81c6d"
+                },
+    "roles":  {
+                  "count":  3,
+                  "sha256":  "7f6a029dea5179f34308c05dba834aa293736bb47cceab10b5620c70b1ecf19a"
+              },
+    "staff_store_assignments":  {
+                                    "count":  4,
+                                    "sha256":  "dc4dc5adafc6f34c921c96ed35ea80c2996b40a0cc467b8dc399f2cf89f6e167"
+                                },
+    "store_products":  {
+                           "count":  21,
+                           "sha256":  "c1ef6360ed0ba2a87ba19f46b0fc668f1de6577a13c93b900d25d21e996167d6"
+                       },
+    "stores":  {
+                   "count":  5,
+                   "sha256":  "f97720d7f032e45ca138c22cdf76135d669dbc5c40184665f2fa74d883e67e21"
+               },
+    "users":  {
+                  "count":  8,
+                  "sha256":  "3f83f413c592d95b98cd88d310c44d4914cfa9eafbfcc6ba681418734acceea9"
+              }
+}

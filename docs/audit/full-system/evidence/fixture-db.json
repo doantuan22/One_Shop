@@ -1,0 +1,577 @@
+﻿{
+    "stores":  [
+                   {
+                       "store_id":  47,
+                       "code":  "AUD261009FSAA",
+                       "name":  "AUD261009FSA Store A",
+                       "address":  "1 Audit Street",
+                       "province_city":  "AuditCity",
+                       "area":  "AuditArea",
+                       "phone":  "0912345678",
+                       "opening_hours":  "09:00 - 21:00",
+                       "delivery_enabled":  true,
+                       "pickup_enabled":  true,
+                       "status":  "INACTIVE",
+                       "created_at":  "\/Date(1791536274000)\/",
+                       "updated_at":  "\/Date(1791536400000)\/"
+                   },
+                   {
+                       "store_id":  48,
+                       "code":  "AUD261009FSAB",
+                       "name":  "AUD261009FSA Store B",
+                       "address":  "1 Audit Street",
+                       "province_city":  "AuditCity",
+                       "area":  "AuditArea",
+                       "phone":  "0912345678",
+                       "opening_hours":  "09:00 - 21:00",
+                       "delivery_enabled":  true,
+                       "pickup_enabled":  true,
+                       "status":  "ACTIVE",
+                       "created_at":  "\/Date(1791536275000)\/",
+                       "updated_at":  "\/Date(1791536275000)\/"
+                   },
+                   {
+                       "store_id":  49,
+                       "code":  "AUD261009FSAC",
+                       "name":  "AUD261009FSA Store C",
+                       "address":  "1 Audit Street",
+                       "province_city":  "AuditCity",
+                       "area":  "AuditArea",
+                       "phone":  "0912345678",
+                       "opening_hours":  "09:00 - 21:00",
+                       "delivery_enabled":  true,
+                       "pickup_enabled":  true,
+                       "status":  "ACTIVE",
+                       "created_at":  "\/Date(1791536276000)\/",
+                       "updated_at":  "\/Date(1791536276000)\/"
+                   }
+               ],
+    "users":  [
+                  {
+                      "user_id":  270,
+                      "email":  "audit-fsa-261009-staff@example.com",
+                      "full_name":  "AUD261009FSA Staff",
+                      "role_id":  2,
+                      "status":  "ACTIVE"
+                  },
+                  {
+                      "user_id":  271,
+                      "email":  "audit-fsa-261009-customer@example.com",
+                      "full_name":  "AUD261009FSA Customer",
+                      "role_id":  1,
+                      "status":  "ACTIVE"
+                  }
+              ],
+    "unicode":  [
+
+                ],
+    "products":  [
+                     {
+                         "product_id":  503,
+                         "category_id":  7,
+                         "brand_id":  6,
+                         "sku":  "AUD261009FSA",
+                         "name":  "AUD261009FSA SKU Cosmetic",
+                         "description":  "Audit only fixture, no image upload",
+                         "status":  "INACTIVE",
+                         "created_at":  "\/Date(1791536279000)\/",
+                         "updated_at":  "\/Date(1791536402000)\/"
+                     }
+                 ],
+    "assignments":  [
+                        {
+                            "assignment_id":  397,
+                            "user_id":  270,
+                            "store_id":  47,
+                            "status":  "ACTIVE",
+                            "assigned_at":  "\/Date(1791536283000)\/"
+                        },
+                        {
+                            "assignment_id":  398,
+                            "user_id":  270,
+                            "store_id":  48,
+                            "status":  "ACTIVE",
+                            "assigned_at":  "\/Date(1791536284000)\/"
+                        },
+                        {
+                            "assignment_id":  399,
+                            "user_id":  270,
+                            "store_id":  49,
+                            "status":  "ACTIVE",
+                            "assigned_at":  "\/Date(1791536285000)\/"
+                        }
+                    ],
+    "stock":  [
+                  {
+                      "store_product_id":  819,
+                      "store_id":  47,
+                      "product_id":  503,
+                      "price":  222000.00,
+                      "quantity":  12,
+                      "status":  "INACTIVE",
+                      "updated_at":  "\/Date(1791536403000)\/"
+                  },
+                  {
+                      "store_product_id":  820,
+                      "store_id":  48,
+                      "product_id":  503,
+                      "price":  121000.00,
+                      "quantity":  17,
+                      "status":  "ACTIVE",
+                      "updated_at":  "\/Date(1791536516000)\/"
+                  },
+                  {
+                      "store_product_id":  821,
+                      "store_id":  49,
+                      "product_id":  503,
+                      "price":  131000.00,
+                      "quantity":  9,
+                      "status":  "ACTIVE",
+                      "updated_at":  "\/Date(1791536297000)\/"
+                  }
+              ],
+    "checkout":  [
+                     {
+                         "checkout_id":  6281,
+                         "user_id":  271,
+                         "total_amount":  474000.00,
+                         "status":  "CREATED",
+                         "created_at":  "\/Date(1791536296000)\/"
+                     },
+                     {
+                         "checkout_id":  6282,
+                         "user_id":  271,
+                         "total_amount":  222000.00,
+                         "status":  "CREATED",
+                         "created_at":  "\/Date(1791536398000)\/"
+                     }
+                 ],
+    "orders":  [
+                   {
+                       "order_id":  9809,
+                       "checkout_id":  6281,
+                       "user_id":  271,
+                       "store_id":  47,
+                       "fulfillment_type":  "DELIVERY",
+                       "payment_method":  "COD",
+                       "payment_status":  "PAID",
+                       "order_status":  "COMPLETED",
+                       "receiver_name":  "AUD261009FSA Customer",
+                       "receiver_phone":  "0912345678",
+                       "shipping_address":  "1 Audit Street",
+                       "pickup_code":  null,
+                       "ready_at":  null,
+                       "picked_up_at":  null,
+                       "total_amount":  222000.00,
+                       "created_at":  "\/Date(1791536296000)\/",
+                       "updated_at":  "\/Date(1791536380000)\/"
+                   },
+                   {
+                       "order_id":  9810,
+                       "checkout_id":  6281,
+                       "user_id":  271,
+                       "store_id":  48,
+                       "fulfillment_type":  "STORE_PICKUP",
+                       "payment_method":  "ONLINE",
+                       "payment_status":  "PAID",
+                       "order_status":  "COMPLETED",
+                       "receiver_name":  "AUD261009FSA Customer",
+                       "receiver_phone":  "0912345678",
+                       "shipping_address":  null,
+                       "pickup_code":  "R7M7UGQX",
+                       "ready_at":  "\/Date(1791536381000)\/",
+                       "picked_up_at":  "\/Date(1791536382000)\/",
+                       "total_amount":  121000.00,
+                       "created_at":  "\/Date(1791536297000)\/",
+                       "updated_at":  "\/Date(1791536383000)\/"
+                   },
+                   {
+                       "order_id":  9811,
+                       "checkout_id":  6281,
+                       "user_id":  271,
+                       "store_id":  49,
+                       "fulfillment_type":  "STORE_PICKUP",
+                       "payment_method":  "PAY_AT_STORE",
+                       "payment_status":  "PAID",
+                       "order_status":  "COMPLETED",
+                       "receiver_name":  "AUD261009FSA Customer",
+                       "receiver_phone":  "0912345678",
+                       "shipping_address":  null,
+                       "pickup_code":  "JBF4ZVG3",
+                       "ready_at":  "\/Date(1791536384000)\/",
+                       "picked_up_at":  "\/Date(1791536386000)\/",
+                       "total_amount":  131000.00,
+                       "created_at":  "\/Date(1791536297000)\/",
+                       "updated_at":  "\/Date(1791536386000)\/"
+                   },
+                   {
+                       "order_id":  9812,
+                       "checkout_id":  6282,
+                       "user_id":  271,
+                       "store_id":  47,
+                       "fulfillment_type":  "DELIVERY",
+                       "payment_method":  "COD",
+                       "payment_status":  "UNPAID",
+                       "order_status":  "CANCELLED",
+                       "receiver_name":  "AUD261009FSA Customer",
+                       "receiver_phone":  "0912345678",
+                       "shipping_address":  "1 Audit Street",
+                       "pickup_code":  null,
+                       "ready_at":  null,
+                       "picked_up_at":  null,
+                       "total_amount":  222000.00,
+                       "created_at":  "\/Date(1791536398000)\/",
+                       "updated_at":  "\/Date(1791536399000)\/"
+                   }
+               ],
+    "items":  [
+                  {
+                      "order_item_id":  8650,
+                      "order_id":  9809,
+                      "store_product_id":  819,
+                      "product_name":  "AUD261009FSA SKU Cosmetic",
+                      "unit_price":  111000.00,
+                      "quantity":  2,
+                      "subtotal":  222000.00
+                  },
+                  {
+                      "order_item_id":  8651,
+                      "order_id":  9810,
+                      "store_product_id":  820,
+                      "product_name":  "AUD261009FSA SKU Cosmetic",
+                      "unit_price":  121000.00,
+                      "quantity":  1,
+                      "subtotal":  121000.00
+                  },
+                  {
+                      "order_item_id":  8652,
+                      "order_id":  9811,
+                      "store_product_id":  821,
+                      "product_name":  "AUD261009FSA SKU Cosmetic",
+                      "unit_price":  131000.00,
+                      "quantity":  1,
+                      "subtotal":  131000.00
+                  },
+                  {
+                      "order_item_id":  8653,
+                      "order_id":  9812,
+                      "store_product_id":  819,
+                      "product_name":  "AUD261009FSA SKU Cosmetic",
+                      "unit_price":  222000.00,
+                      "quantity":  1,
+                      "subtotal":  222000.00
+                  }
+              ],
+    "payments":  [
+                     {
+                         "payment_id":  2442,
+                         "order_id":  9810,
+                         "method":  "ONLINE",
+                         "amount":  121000.00,
+                         "status":  "SUCCESS",
+                         "transaction_code":  "PAY-819165e6-e45f-4660-97d3-147155a753ac",
+                         "paid_at":  "\/Date(1791536376000)\/",
+                         "created_at":  "\/Date(1791536376000)\/"
+                     },
+                     {
+                         "payment_id":  2443,
+                         "order_id":  9809,
+                         "method":  "COD",
+                         "amount":  222000.00,
+                         "status":  "SUCCESS",
+                         "transaction_code":  "PAY-0e820d6c-9910-43ce-a966-16b6d3ba6e7d",
+                         "paid_at":  "\/Date(1791536379000)\/",
+                         "created_at":  "\/Date(1791536380000)\/"
+                     },
+                     {
+                         "payment_id":  2444,
+                         "order_id":  9811,
+                         "method":  "PAY_AT_STORE",
+                         "amount":  131000.00,
+                         "status":  "SUCCESS",
+                         "transaction_code":  "PAY-00622409-289c-4a9e-bc9c-9e3f97e13371",
+                         "paid_at":  "\/Date(1791536386000)\/",
+                         "created_at":  "\/Date(1791536386000)\/"
+                     }
+                 ],
+    "history":  [
+                    {
+                        "history_id":  14629,
+                        "order_id":  9809,
+                        "old_status":  null,
+                        "new_status":  "CONFIRMED",
+                        "changed_by_user_id":  null,
+                        "note":  "Hệ thống tự xác nhận đơn hợp lệ",
+                        "changed_at":  "\/Date(1791536297000)\/"
+                    },
+                    {
+                        "history_id":  14630,
+                        "order_id":  9810,
+                        "old_status":  null,
+                        "new_status":  "PENDING_PAYMENT",
+                        "changed_by_user_id":  null,
+                        "note":  "Tạo đơn ONLINE",
+                        "changed_at":  "\/Date(1791536297000)\/"
+                    },
+                    {
+                        "history_id":  14631,
+                        "order_id":  9811,
+                        "old_status":  null,
+                        "new_status":  "CONFIRMED",
+                        "changed_by_user_id":  null,
+                        "note":  "Hệ thống tự xác nhận đơn hợp lệ",
+                        "changed_at":  "\/Date(1791536297000)\/"
+                    },
+                    {
+                        "history_id":  14632,
+                        "order_id":  9810,
+                        "old_status":  "PENDING_PAYMENT",
+                        "new_status":  "CONFIRMED",
+                        "changed_by_user_id":  null,
+                        "note":  "Thanh toán ONLINE thành công",
+                        "changed_at":  "\/Date(1791536376000)\/"
+                    },
+                    {
+                        "history_id":  14633,
+                        "order_id":  9809,
+                        "old_status":  "CONFIRMED",
+                        "new_status":  "PREPARING",
+                        "changed_by_user_id":  270,
+                        "note":  "Bắt đầu chuẩn bị",
+                        "changed_at":  "\/Date(1791536377000)\/"
+                    },
+                    {
+                        "history_id":  14634,
+                        "order_id":  9809,
+                        "old_status":  "PREPARING",
+                        "new_status":  "PACKED",
+                        "changed_by_user_id":  270,
+                        "note":  "Đã đóng gói",
+                        "changed_at":  "\/Date(1791536378000)\/"
+                    },
+                    {
+                        "history_id":  14635,
+                        "order_id":  9809,
+                        "old_status":  "PACKED",
+                        "new_status":  "SHIPPING",
+                        "changed_by_user_id":  270,
+                        "note":  "Bắt đầu giao hàng",
+                        "changed_at":  "\/Date(1791536379000)\/"
+                    },
+                    {
+                        "history_id":  14636,
+                        "order_id":  9809,
+                        "old_status":  "SHIPPING",
+                        "new_status":  "COMPLETED",
+                        "changed_by_user_id":  270,
+                        "note":  "Xác nhận giao thành công",
+                        "changed_at":  "\/Date(1791536380000)\/"
+                    },
+                    {
+                        "history_id":  14637,
+                        "order_id":  9810,
+                        "old_status":  "CONFIRMED",
+                        "new_status":  "PREPARING",
+                        "changed_by_user_id":  270,
+                        "note":  "Bắt đầu chuẩn bị",
+                        "changed_at":  "\/Date(1791536380000)\/"
+                    },
+                    {
+                        "history_id":  14638,
+                        "order_id":  9810,
+                        "old_status":  "PREPARING",
+                        "new_status":  "READY_FOR_PICKUP",
+                        "changed_by_user_id":  270,
+                        "note":  "Sẵn sàng nhận hàng",
+                        "changed_at":  "\/Date(1791536381000)\/"
+                    },
+                    {
+                        "history_id":  14639,
+                        "order_id":  9810,
+                        "old_status":  "READY_FOR_PICKUP",
+                        "new_status":  "COMPLETED",
+                        "changed_by_user_id":  270,
+                        "note":  "Xác nhận khách đã nhận hàng",
+                        "changed_at":  "\/Date(1791536383000)\/"
+                    },
+                    {
+                        "history_id":  14640,
+                        "order_id":  9811,
+                        "old_status":  "CONFIRMED",
+                        "new_status":  "PREPARING",
+                        "changed_by_user_id":  270,
+                        "note":  "Bắt đầu chuẩn bị",
+                        "changed_at":  "\/Date(1791536384000)\/"
+                    },
+                    {
+                        "history_id":  14641,
+                        "order_id":  9811,
+                        "old_status":  "PREPARING",
+                        "new_status":  "READY_FOR_PICKUP",
+                        "changed_by_user_id":  270,
+                        "note":  "Sẵn sàng nhận hàng",
+                        "changed_at":  "\/Date(1791536385000)\/"
+                    },
+                    {
+                        "history_id":  14642,
+                        "order_id":  9811,
+                        "old_status":  "READY_FOR_PICKUP",
+                        "new_status":  "COMPLETED",
+                        "changed_by_user_id":  270,
+                        "note":  "Xác nhận khách đã nhận hàng",
+                        "changed_at":  "\/Date(1791536386000)\/"
+                    },
+                    {
+                        "history_id":  14643,
+                        "order_id":  9812,
+                        "old_status":  null,
+                        "new_status":  "CONFIRMED",
+                        "changed_by_user_id":  null,
+                        "note":  "Hệ thống tự xác nhận đơn hợp lệ",
+                        "changed_at":  "\/Date(1791536398000)\/"
+                    },
+                    {
+                        "history_id":  14644,
+                        "order_id":  9812,
+                        "old_status":  "CONFIRMED",
+                        "new_status":  "CANCELLED",
+                        "changed_by_user_id":  271,
+                        "note":  "Khách hàng hủy đơn trước khi chuẩn bị hàng",
+                        "changed_at":  "\/Date(1791536399000)\/"
+                    }
+                ],
+    "movements":  [
+                      {
+                          "movement_id":  9957,
+                          "store_product_id":  819,
+                          "type":  "STOCK_ADJUST",
+                          "quantity_change":  10,
+                          "quantity_before":  0,
+                          "quantity_after":  10,
+                          "reference_order_id":  null,
+                          "staff_id":  1,
+                          "note":  "Audit fixture opening count",
+                          "created_at":  "\/Date(1791536280000)\/"
+                      },
+                      {
+                          "movement_id":  9958,
+                          "store_product_id":  820,
+                          "type":  "STOCK_ADJUST",
+                          "quantity_change":  10,
+                          "quantity_before":  0,
+                          "quantity_after":  10,
+                          "reference_order_id":  null,
+                          "staff_id":  1,
+                          "note":  "Audit fixture opening count",
+                          "created_at":  "\/Date(1791536281000)\/"
+                      },
+                      {
+                          "movement_id":  9959,
+                          "store_product_id":  821,
+                          "type":  "STOCK_ADJUST",
+                          "quantity_change":  10,
+                          "quantity_before":  0,
+                          "quantity_after":  10,
+                          "reference_order_id":  null,
+                          "staff_id":  1,
+                          "note":  "Audit fixture opening count",
+                          "created_at":  "\/Date(1791536282000)\/"
+                      },
+                      {
+                          "movement_id":  9960,
+                          "store_product_id":  819,
+                          "type":  "ORDER",
+                          "quantity_change":  -2,
+                          "quantity_before":  10,
+                          "quantity_after":  8,
+                          "reference_order_id":  9809,
+                          "staff_id":  null,
+                          "note":  "Checkout #6281 - Order #9809",
+                          "created_at":  "\/Date(1791536297000)\/"
+                      },
+                      {
+                          "movement_id":  9961,
+                          "store_product_id":  820,
+                          "type":  "ORDER",
+                          "quantity_change":  -1,
+                          "quantity_before":  10,
+                          "quantity_after":  9,
+                          "reference_order_id":  9810,
+                          "staff_id":  null,
+                          "note":  "Checkout #6281 - Order #9810",
+                          "created_at":  "\/Date(1791536297000)\/"
+                      },
+                      {
+                          "movement_id":  9962,
+                          "store_product_id":  821,
+                          "type":  "ORDER",
+                          "quantity_change":  -1,
+                          "quantity_before":  10,
+                          "quantity_after":  9,
+                          "reference_order_id":  9811,
+                          "staff_id":  null,
+                          "note":  "Checkout #6281 - Order #9811",
+                          "created_at":  "\/Date(1791536297000)\/"
+                      },
+                      {
+                          "movement_id":  9963,
+                          "store_product_id":  819,
+                          "type":  "STOCK_ADJUST",
+                          "quantity_change":  4,
+                          "quantity_before":  8,
+                          "quantity_after":  12,
+                          "reference_order_id":  null,
+                          "staff_id":  270,
+                          "note":  "Audit fixture physical count",
+                          "created_at":  "\/Date(1791536390000)\/"
+                      },
+                      {
+                          "movement_id":  9964,
+                          "store_product_id":  819,
+                          "type":  "ORDER",
+                          "quantity_change":  -1,
+                          "quantity_before":  12,
+                          "quantity_after":  11,
+                          "reference_order_id":  9812,
+                          "staff_id":  null,
+                          "note":  "Checkout #6282 - Order #9812",
+                          "created_at":  "\/Date(1791536398000)\/"
+                      },
+                      {
+                          "movement_id":  9965,
+                          "store_product_id":  819,
+                          "type":  "CANCEL_ORDER",
+                          "quantity_change":  1,
+                          "quantity_before":  11,
+                          "quantity_after":  12,
+                          "reference_order_id":  9812,
+                          "staff_id":  null,
+                          "note":  "Hoàn tồn do khách hủy đơn - Order #9812",
+                          "created_at":  "\/Date(1791536399000)\/"
+                      },
+                      {
+                          "movement_id":  9966,
+                          "store_product_id":  820,
+                          "type":  "STOCK_ADJUST",
+                          "quantity_change":  11,
+                          "quantity_before":  9,
+                          "quantity_after":  20,
+                          "reference_order_id":  null,
+                          "staff_id":  1,
+                          "note":  "Audit simultaneous ADMIN count 20",
+                          "created_at":  "\/Date(1791536516000)\/"
+                      },
+                      {
+                          "movement_id":  9967,
+                          "store_product_id":  820,
+                          "type":  "STOCK_ADJUST",
+                          "quantity_change":  -3,
+                          "quantity_before":  20,
+                          "quantity_after":  17,
+                          "reference_order_id":  null,
+                          "staff_id":  270,
+                          "note":  "Audit simultaneous STAFF physical count 17",
+                          "created_at":  "\/Date(1791536516000)\/"
+                      }
+                  ]
+}
