@@ -32,7 +32,7 @@ class PickupWebIntegrationTest extends AbstractIntegrationTest {
         when(storeService.getAssignedStores(STAFF)).thenReturn(List.of(new StoreResponse(1L,"TD","OneShop Thủ Đức","1 Đường thử","HCM","Thủ Đức",null,null,true,true,ActiveStatus.ACTIVE)));
     }
     private String cookie(RoleName role) {
-        var u=new User();u.setEmail(STAFF);u.setRole(new Role(role));u.setPasswordHash("x");when(userRepository.findByEmail(STAFF)).thenReturn(Optional.of(u));
+        var u=new User();u.setEmail(STAFF);u.setRole(new Role(role));u.setPasswordHash("x");when(userRepository.findByEmail(STAFF)).thenReturn(Optional.of(u));withId(u);
         return "ONESHOP_TOKEN="+jwt.generateToken(users.loadUserByUsername(STAFF));
     }
     private OrderViewResponse row(OrderStatus state,PickupAction action,String code) {

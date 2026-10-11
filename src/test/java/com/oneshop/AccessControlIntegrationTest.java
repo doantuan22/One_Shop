@@ -66,6 +66,7 @@ class AccessControlIntegrationTest extends AbstractIntegrationTest {
         user.setPasswordHash(passwordEncoder.encode(PASSWORD));
         user.setRole(new Role(role));
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        withId(user);
         return user;
     }
 
@@ -304,11 +305,11 @@ class AccessControlIntegrationTest extends AbstractIntegrationTest {
     void registrationAlwaysCreatesACustomerWithAHashedPassword() throws Exception {
         when(roleRepository.findByName(RoleName.CUSTOMER)).thenReturn(Optional.of(new Role(RoleName.CUSTOMER)));
         when(roleRepository.findByName(RoleName.ADMIN)).thenReturn(Optional.of(new Role(RoleName.ADMIN)));
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(userRepository.saveAndFlush(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         HttpResponse<String> form = get("/register");
         // a visitor trying to pick their own role
-        String body = "fullName=New+User&email=New.User%40oneshop.test&password=" + PASSWORD
+        String body = "fullName=New+User&userName=%20New.User_01%20&email=New.User%40oneshop.test&password=" + PASSWORD
                 + "&role=ADMIN&role.name=ADMIN&roleId=3&_csrf=" + csrfField(form);
         HttpResponse<String> response = post("/register", "application/x-www-form-urlencoded", body,
                 "Cookie", csrfCookie(form));
@@ -316,9 +317,10 @@ class AccessControlIntegrationTest extends AbstractIntegrationTest {
         assertThat(response.statusCode()).isEqualTo(302);
         assertThat(response.headers().firstValue("Location").orElseThrow()).endsWith("/login?registered");
         ArgumentCaptor<User> saved = ArgumentCaptor.forClass(User.class);
-        verify(userRepository).save(saved.capture());
+        verify(userRepository).saveAndFlush(saved.capture());
         assertThat(saved.getValue().getRole().getName()).isEqualTo(RoleName.CUSTOMER);
         assertThat(saved.getValue().getEmail()).isEqualTo("new.user@oneshop.test");
+        assertThat(saved.getValue().getUserName()).isEqualTo("New.User_01");
         assertThat(saved.getValue().getPasswordHash()).startsWith("$2").doesNotContain(PASSWORD);
         assertThat(passwordEncoder.matches(PASSWORD, saved.getValue().getPasswordHash())).isTrue();
     }
@@ -329,18 +331,39 @@ class AccessControlIntegrationTest extends AbstractIntegrationTest {
 
         HttpResponse<String> form = get("/register");
         HttpResponse<String> taken = post("/register", "application/x-www-form-urlencoded",
-                "fullName=Someone&email=" + CUSTOMER.replace("@", "%40") + "&password=" + PASSWORD
+                "fullName=Someone&userName=someone01&email=" + CUSTOMER.replace("@", "%40") + "&password=" + PASSWORD
                         + "&_csrf=" + csrfField(form), "Cookie", csrfCookie(form));
         assertThat(taken.statusCode()).isEqualTo(200);
         assertThat(taken.body()).contains("Email đã được sử dụng");
 
         HttpResponse<String> weak = post("/register", "application/x-www-form-urlencoded",
-                "fullName=Someone&email=someone%40oneshop.test&password=short&_csrf=" + csrfField(form),
+                "fullName=Someone&userName=someone01&email=someone%40oneshop.test&password=short&_csrf=" + csrfField(form),
                 "Cookie", csrfCookie(form));
         assertThat(weak.statusCode()).isEqualTo(200);
         assertThat(weak.body()).contains("Mật khẩu từ 8 đến 72 ký tự");
 
-        verify(userRepository, never()).save(any(User.class));
+        verify(userRepository, never()).saveAndFlush(any(User.class));
+    }
+
+    @Test
+    void registrationRejectsATakenOrMalformedUserName() throws Exception {
+        when(userRepository.existsByUserNameIgnoreCase("Taken.Name")).thenReturn(true);
+        HttpResponse<String> form = get("/register");
+
+        HttpResponse<String> taken = post("/register", "application/x-www-form-urlencoded",
+                "fullName=Someone&userName=Taken.Name&email=free%40oneshop.test&password=" + PASSWORD
+                        + "&_csrf=" + csrfField(form), "Cookie", csrfCookie(form));
+        assertThat(taken.statusCode()).isEqualTo(200);
+        assertThat(taken.body()).contains("Tên đăng nhập đã được sử dụng");
+
+        for (String bad : List.of("ab", "has%40at", "with+space", "x".repeat(31))) {
+            HttpResponse<String> response = post("/register", "application/x-www-form-urlencoded",
+                    "fullName=Someone&userName=" + bad + "&email=free%40oneshop.test&password=" + PASSWORD
+                            + "&_csrf=" + csrfField(form), "Cookie", csrfCookie(form));
+            assertThat(response.statusCode()).as(bad).isEqualTo(200);
+            assertThat(response.body()).as(bad).contains("Tên đăng nhập");
+        }
+        verify(userRepository, never()).saveAndFlush(any(User.class));
     }
 
     // ---------------------------------------------------------------- helpers

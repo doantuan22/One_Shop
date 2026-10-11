@@ -5,6 +5,7 @@ import com.oneshop.repository.RoleRepository;
 import com.oneshop.service.CartService;
 import com.oneshop.service.CheckoutService;
 import org.junit.jupiter.api.BeforeEach;
+import com.oneshop.entity.User;
 import com.oneshop.repository.UserRepository;
 import com.oneshop.service.ProductService;
 import com.oneshop.service.StoreProductService;
@@ -18,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.io.IOException;
@@ -26,6 +28,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -61,6 +67,20 @@ abstract class AbstractIntegrationTest {
 
     @MockitoBean
     protected UserRepository userRepository;
+
+    private static final AtomicLong USER_IDS = new AtomicLong(1000);
+    private static final Map<String, Long> IDS_BY_EMAIL = new ConcurrentHashMap<>();
+
+    /**
+     * The JWT subject is the user_id, so a mocked account needs an id and must be loadable by it
+     * (the JWT filter calls {@code findById}). Call after stubbing {@code findByEmail}. The id is stable per
+     * e-mail, so a test that re-creates an account (changed role or status) keeps its already issued tokens.
+     */
+    protected void withId(User user) {
+        ReflectionTestUtils.setField(user, "id",
+                IDS_BY_EMAIL.computeIfAbsent(user.getEmail(), email -> USER_IDS.incrementAndGet()));
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+    }
 
     @MockitoBean
     protected RoleRepository roleRepository;

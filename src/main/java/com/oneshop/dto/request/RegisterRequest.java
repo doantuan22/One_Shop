@@ -11,6 +11,13 @@ public class RegisterRequest {
     @Size(max = 150, message = "Họ tên tối đa 150 ký tự")
     private String fullName;
 
+    /** 4-30 chars of letters, digits, '_' and '.'; never contains '@'. Trimmed by the setter. */
+    @NotBlank(message = "Vui lòng nhập tên đăng nhập")
+    @Size(min = 4, max = 30, message = "Tên đăng nhập từ 4 đến 30 ký tự")
+    @Pattern(regexp = "^[A-Za-z0-9_.]*$",
+            message = "Tên đăng nhập chỉ gồm chữ, số, dấu _ và dấu chấm, không chứa @ hay khoảng trắng")
+    private String userName;
+
     @NotBlank(message = "Vui lòng nhập email")
     @Email(message = "Email không hợp lệ")
     @Size(max = 255, message = "Email tối đa 255 ký tự")
@@ -29,6 +36,14 @@ public class RegisterRequest {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName == null ? null : userName.trim();
     }
 
     public String getEmail() {

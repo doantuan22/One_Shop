@@ -10,6 +10,8 @@
    ========================================================================== */
 USE [oneshop];
 GO
+SET QUOTED_IDENTIFIER ON; -- bat buoc khi ghi bang co filtered index (UX_users_user_name)
+GO
 SET NOCOUNT ON;
 SET XACT_ABORT ON;
 GO
@@ -47,14 +49,14 @@ SET IDENTITY_INSERT dbo.roles OFF;
 
 /* ---------- users (BCrypt cua "OneShop@123") ---------- */
 SET IDENTITY_INSERT dbo.users ON;
-INSERT INTO dbo.users (user_id, role_id, email, password_hash, full_name, phone, status) VALUES
- (1, 3, N'admin@oneshop.vn',          N'$2a$10$xEjHDcYoM7aBZJf/2Hm.ZO3NPCKEr93cG2fro4NH5CrMY2NP6ScvW', N'Quản Trị OneShop',      N'0900000001', N'ACTIVE'),
- (2, 2, N'staff.thuduc@oneshop.vn',   N'$2a$10$xEjHDcYoM7aBZJf/2Hm.ZO3NPCKEr93cG2fro4NH5CrMY2NP6ScvW', N'Nguyễn Văn An (Thủ Đức)', N'0900000002', N'ACTIVE'),
- (3, 2, N'staff.govap@oneshop.vn',    N'$2a$10$xEjHDcYoM7aBZJf/2Hm.ZO3NPCKEr93cG2fro4NH5CrMY2NP6ScvW', N'Trần Thị Bình (Gò Vấp)',  N'0900000003', N'ACTIVE'),
- (4, 2, N'staff.quan7@oneshop.vn',    N'$2a$10$xEjHDcYoM7aBZJf/2Hm.ZO3NPCKEr93cG2fro4NH5CrMY2NP6ScvW', N'Lê Minh Châu (Quận 7)',   N'0900000004', N'ACTIVE'),
- (5, 1, N'khachhang1@example.com',    N'$2a$10$xEjHDcYoM7aBZJf/2Hm.ZO3NPCKEr93cG2fro4NH5CrMY2NP6ScvW', N'Phạm Thu Hà',            N'0911111111', N'ACTIVE'),
- (6, 1, N'khachhang2@example.com',    N'$2a$10$xEjHDcYoM7aBZJf/2Hm.ZO3NPCKEr93cG2fro4NH5CrMY2NP6ScvW', N'Đặng Quốc Khánh',        N'0922222222', N'ACTIVE'),
- (7, 2, N'staff.quan10@oneshop.vn',   N'$2a$10$xEjHDcYoM7aBZJf/2Hm.ZO3NPCKEr93cG2fro4NH5CrMY2NP6ScvW', N'Võ Hoài Dung (Quận 10)',  N'0900000007', N'ACTIVE');
+INSERT INTO dbo.users (user_id, role_id, email, user_name, password_hash, full_name, phone, status) VALUES
+ (1, 3, N'admin@oneshop.vn', N'admin',          N'$2a$10$xEjHDcYoM7aBZJf/2Hm.ZO3NPCKEr93cG2fro4NH5CrMY2NP6ScvW', N'Quản Trị OneShop',      N'0900000001', N'ACTIVE'),
+ (2, 2, N'staff.thuduc@oneshop.vn', N'staff_thuduc',   N'$2a$10$xEjHDcYoM7aBZJf/2Hm.ZO3NPCKEr93cG2fro4NH5CrMY2NP6ScvW', N'Nguyễn Văn An (Thủ Đức)', N'0900000002', N'ACTIVE'),
+ (3, 2, N'staff.govap@oneshop.vn', N'staff_govap',    N'$2a$10$xEjHDcYoM7aBZJf/2Hm.ZO3NPCKEr93cG2fro4NH5CrMY2NP6ScvW', N'Trần Thị Bình (Gò Vấp)',  N'0900000003', N'ACTIVE'),
+ (4, 2, N'staff.quan7@oneshop.vn', N'staff_quan7',    N'$2a$10$xEjHDcYoM7aBZJf/2Hm.ZO3NPCKEr93cG2fro4NH5CrMY2NP6ScvW', N'Lê Minh Châu (Quận 7)',   N'0900000004', N'ACTIVE'),
+ (5, 1, N'khachhang1@example.com', N'khachhang1',    N'$2a$10$xEjHDcYoM7aBZJf/2Hm.ZO3NPCKEr93cG2fro4NH5CrMY2NP6ScvW', N'Phạm Thu Hà',            N'0911111111', N'ACTIVE'),
+ (6, 1, N'khachhang2@example.com', N'khachhang2',    N'$2a$10$xEjHDcYoM7aBZJf/2Hm.ZO3NPCKEr93cG2fro4NH5CrMY2NP6ScvW', N'Đặng Quốc Khánh',        N'0922222222', N'ACTIVE'),
+ (7, 2, N'staff.quan10@oneshop.vn', N'staff_quan10',   N'$2a$10$xEjHDcYoM7aBZJf/2Hm.ZO3NPCKEr93cG2fro4NH5CrMY2NP6ScvW', N'Võ Hoài Dung (Quận 10)',  N'0900000007', N'ACTIVE');
 SET IDENTITY_INSERT dbo.users OFF;
 
 /* ---------- customer_addresses ---------- */

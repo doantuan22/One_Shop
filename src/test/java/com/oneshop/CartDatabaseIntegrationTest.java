@@ -327,6 +327,7 @@ class CartDatabaseIntegrationTest {
     void theCartIsCreatedOnTheFirstAddAndThereIsOnlyEverOne() {
         RegisterRequest request = new RegisterRequest();
         request.setFullName("Khách Mới");
+        request.setUserName("phase7.new");
         request.setEmail("phase7.new@example.com");
         request.setPassword("Phase7@Test");
         Long userId = authService.register(request).id();

@@ -45,6 +45,7 @@ class DeliveryWebIntegrationTest extends AbstractIntegrationTest {
         user.setPasswordHash("x");
         user.setRole(new Role(role));
         when(userRepository.findByEmail(STAFF)).thenReturn(Optional.of(user));
+        withId(user);
         return "ONESHOP_TOKEN=" + jwt.generateToken(users.loadUserByUsername(STAFF));
     }
 

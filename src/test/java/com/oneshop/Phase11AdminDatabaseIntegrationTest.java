@@ -294,7 +294,7 @@ class Phase11AdminDatabaseIntegrationTest {
                     + " select top 1 ?,?,category_id,brand_id,'ACTIVE' from dbo.products order by product_id", Long.class, "P11-" + UUID.randomUUID(), "Phase11 pagination " + i);
             jdbc.update("insert into dbo.store_products(store_id,product_id,price,quantity,status) values(1,?,1000,7,'ACTIVE')", p);
             jdbc.update("insert into dbo.reviews(user_id,product_id,rating,comment,status) values(?,?,5,'Phase11 pagination','ACTIVE')", user(CUSTOMER), p);
-            var u = asAdmin(() -> users.create(new AdminUserRequest("p11." + UUID.randomUUID() + "@example.com", "Phase11 Staff", "", RoleName.STAFF, ActiveStatus.ACTIVE, "Phase11@123")));
+            var u = asAdmin(() -> users.create(new AdminUserRequest("p11." + UUID.randomUUID() + "@example.com", null, "Phase11 Staff", "", RoleName.STAFF, ActiveStatus.ACTIVE, "Phase11@123")));
             asAdmin(() -> assignments.assign(new StaffAssignmentRequest(u.id(), 1L, ActiveStatus.ACTIVE)));
         }
         var ids = orderIds(1L);

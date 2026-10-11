@@ -50,6 +50,10 @@ public class AdminUserService {
     public AdminUserResponse create(@NotNull @Valid AdminUserRequest request) {
         String email = request.email().trim().toLowerCase(Locale.ROOT);
         if (users.existsByEmail(email)) throw new BadRequestException("email", "Email đã được sử dụng.");
+        String userName = userName(request);
+        if (userName != null && users.existsByUserNameIgnoreCase(userName)) {
+            throw new BadRequestException("userName", "Tên đăng nhập đã được sử dụng.");
+        }
         String password = request.password();
         if (password == null || password.isBlank() || password.length() < 8
                 || password.getBytes(StandardCharsets.UTF_8).length > 72) {
@@ -57,6 +61,7 @@ public class AdminUserService {
         }
         User user = new User();
         user.setEmail(email);
+        user.setUserName(userName);
         user.setPasswordHash(passwords.encode(password));
         apply(user, request);
         return response(users.saveAndFlush(user));
@@ -71,6 +76,12 @@ public class AdminUserService {
         if (request.password() != null && !request.password().isBlank()) {
             throw new BadRequestException("Không đổi mật khẩu bằng form cập nhật thông tin.");
         }
+        String userName = userName(request);
+        if (userName != null && !userName.equalsIgnoreCase(user.getUserName())
+                && users.existsByUserNameIgnoreCase(userName)) {
+            throw new BadRequestException("userName", "Tên đăng nhập đã được sử dụng.");
+        }
+        user.setUserName(userName);
         if (user.getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())
                 && (request.role() != RoleName.ADMIN || request.status() != ActiveStatus.ACTIVE)) {
             throw new BadRequestException("Không thể tự tắt tài khoản hoặc bỏ quyền Admin đang sử dụng.");
@@ -85,6 +96,11 @@ public class AdminUserService {
         return response(user);
     }
 
+    /** Trimmed user_name, or null when blank. Format is enforced by {@link AdminUserRequest}'s validation. */
+    private static String userName(AdminUserRequest request) {
+        return request.userName() == null || request.userName().isBlank() ? null : request.userName().trim();
+    }
+
     private void apply(User user, AdminUserRequest request) {
         user.setFullName(request.fullName().trim());
         user.setPhone(request.phone() == null || request.phone().isBlank() ? null : request.phone().trim());
@@ -95,7 +111,7 @@ public class AdminUserService {
     private User user(Long id) { return users.findById(id).orElseThrow(AdminUserService::notFound); }
     private static ResourceNotFoundException notFound() { return new ResourceNotFoundException("Không tìm thấy người dùng."); }
     public static AdminUserResponse response(User user) {
-        return new AdminUserResponse(user.getId(), user.getEmail(), user.getFullName(), user.getPhone(),
+        return new AdminUserResponse(user.getId(), user.getEmail(), user.getUserName(), user.getFullName(), user.getPhone(),
                 user.getRole().getName(), user.getStatus());
     }
 }

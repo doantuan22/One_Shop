@@ -36,6 +36,7 @@ class PaymentWebIntegrationTest extends AbstractIntegrationTest {
         user.setPasswordHash("x");
         user.setRole(new Role(role));
         when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(user));
+        withId(user);
         return "ONESHOP_TOKEN=" + jwt.generateToken(users.loadUserByUsername(EMAIL));
     }
     private HttpResponse<String> postAs(String cookie, String suffix, String body) throws Exception {

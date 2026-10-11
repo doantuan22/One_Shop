@@ -1,6 +1,7 @@
 package com.oneshop.security.jwt;
 
 import com.oneshop.config.JwtProperties;
+import com.oneshop.security.service.AppUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -17,7 +18,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Issues and validates signed JWTs (HMAC). The secret is read from the {@code JWT_SECRET}
+ * Issues and validates signed JWTs (HMAC). The subject is the user_id, never text typed by the user.
+ * The secret is read from the {@code JWT_SECRET}
  * environment variable through {@link JwtProperties}; it is never logged.
  */
 @Service
@@ -46,7 +48,7 @@ public class JwtService {
         Instant now = Instant.now();
         List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
         return Jwts.builder()
-                .subject(userDetails.getUsername())
+                .subject(String.valueOf(userId(userDetails)))
                 .claim(ROLES_CLAIM, roles)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plus(expiration)))
@@ -54,16 +56,21 @@ public class JwtService {
                 .compact();
     }
 
-    /** @throws JwtException if the token is malformed, tampered with or expired */
-    public String extractUsername(String token) {
-        return parseClaims(token).getSubject();
+    /**
+     * @return the user_id carried by the token subject
+     * @throws JwtException if the token is malformed, tampered with or expired
+     * @throws IllegalArgumentException if the subject is not a user_id (for example a token issued before
+     *         the subject became the user_id)
+     */
+    public Long extractUserId(String token) {
+        return Long.valueOf(parseClaims(token).getSubject());
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         try {
             return userDetails.isEnabled()
                     && userDetails.isAccountNonLocked()
-                    && userDetails.getUsername().equals(extractUsername(token));
+                    && userId(userDetails).equals(extractUserId(token));
         } catch (JwtException | IllegalArgumentException ex) {
             return false;
         }
@@ -71,6 +78,13 @@ public class JwtService {
 
     public long getExpirationSeconds() {
         return expiration.toSeconds();
+    }
+
+    private static Long userId(UserDetails userDetails) {
+        if (userDetails instanceof AppUserDetails app && app.getUserId() != null) {
+            return app.getUserId();
+        }
+        throw new IllegalArgumentException("A JWT can only be issued for an authenticated application user");
     }
 
     private Claims parseClaims(String token) {

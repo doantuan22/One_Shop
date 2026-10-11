@@ -1,23 +1,30 @@
 package com.oneshop.dto.request;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public class LoginRequest {
 
-    @NotBlank(message = "Vui lòng nhập email")
-    @Email(message = "Email không hợp lệ")
-    private String email;
+    /** E-mail or user_name. */
+    @NotBlank(message = "Vui lòng nhập email hoặc tên đăng nhập")
+    private String identifier;
 
     @NotBlank(message = "Vui lòng nhập mật khẩu")
     private String password;
 
-    public String getEmail() {
-        return email;
+    public String getIdentifier() {
+        return identifier;
     }
 
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    /**
+     * Backward compatible write-only alias: older clients (API JSON and forms) still post the identifier as
+     * {@code email}.
+     */
     public void setEmail(String email) {
-        this.email = email;
+        this.identifier = email;
     }
 
     public String getPassword() {

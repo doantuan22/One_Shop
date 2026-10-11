@@ -10,6 +10,7 @@ SQL Server schema theo Roadmap V2 mục 7 (19 bảng). Chỉ gồm schema, const
 | 3 | `03_create_indexes.sql` | 6 index theo Roadmap 7.4 |
 | 4 | `04_seed_data.sql` | 5 Store, 7 SKU, StoreProduct, 3 checkout / 5 order, payment, movement, history |
 | 5 | `05_verify.sql` | Kiểm tra tự động, `THROW` nếu sai |
+| - | `migration_001_add_users_user_name.sql` | Database **đã có dữ liệu**: thêm `users.user_name` + `UX_users_user_name` (idempotent, không xóa dữ liệu; không nằm trong `00_run_all.sql`) |
 
 ## Chạy
 
@@ -22,6 +23,12 @@ sqlcmd -S localhost -E -C -f 65001 -b -i 00_run_all.sql
 (SQL login: thay `-E` bằng `-U <user> -P <password>`.) Cần `-f 65001` để đọc UTF-8. Chạy lại được nhiều lần: `02` drop/tạo lại bảng, `04` tự dọn dữ liệu cũ. **Lưu ý: chạy lại sẽ xóa dữ liệu hiện có trong database `oneshop`.**
 
 Khớp `application.properties` (`databaseName=oneshop`). Tài khoản demo: mật khẩu `OneShop@123` (BCrypt) – chỉ dùng demo.
+
+Migration cho database cũ (cần `-I` vì tạo filtered index):
+
+```
+sqlcmd -S localhost -E -C -f 65001 -b -I -i migration_001_add_users_user_name.sql
+```
 
 ## Quy ước tự bổ sung (tài liệu không nêu chi tiết)
 

@@ -45,7 +45,7 @@ public class AuthController {
             cookieService.addTokenCookie(response, auth.accessToken(), auth.expiresInSeconds());
             return "redirect:" + homeOf(auth);
         } catch (AuthenticationException ex) {
-            model.addAttribute("loginError", "Email hoặc mật khẩu không đúng");
+            model.addAttribute("loginError", "Sai tài khoản hoặc mật khẩu");
             return "auth/login";
         }
     }
@@ -73,7 +73,8 @@ public class AuthController {
         try {
             authService.register(request);
         } catch (BadRequestException ex) {
-            bindingResult.rejectValue("email", "email.taken", ex.getMessage());
+            String field = "userName".equals(ex.getField()) ? "userName" : "email";
+            bindingResult.rejectValue(field, field + ".taken", ex.getMessage());
             return "auth/register";
         }
         return "redirect:/login?registered";

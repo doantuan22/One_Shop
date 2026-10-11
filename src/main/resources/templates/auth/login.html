@@ -16,10 +16,11 @@
 
                 <form th:action="@{/login}" th:object="${loginRequest}" method="post" novalidate>
                     <div class="mb-3">
-                        <label class="form-label" for="email">Email</label>
-                        <input type="email" class="form-control" id="email" th:field="*{email}"
-                               th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" autocomplete="username">
-                        <div class="invalid-feedback" th:errors="*{email}">Email không hợp lệ</div>
+                        <label class="form-label" for="identifier">Email hoặc tên đăng nhập</label>
+                        <input type="text" class="form-control" id="identifier" th:field="*{identifier}"
+                               th:classappend="${#fields.hasErrors('identifier')} ? 'is-invalid'"
+                               autocomplete="username" autocapitalize="none" spellcheck="false">
+                        <div class="invalid-feedback" th:errors="*{identifier}">Vui lòng nhập email hoặc tên đăng nhập</div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="password">Mật khẩu</label>

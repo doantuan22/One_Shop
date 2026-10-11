@@ -51,6 +51,7 @@ CREATE TABLE dbo.users (
     user_id       BIGINT IDENTITY(1,1) NOT NULL,
     role_id       BIGINT               NOT NULL,
     email         NVARCHAR(255)        NOT NULL,
+    user_name     NVARCHAR(50)         NULL,
     password_hash NVARCHAR(255)        NOT NULL,
     full_name     NVARCHAR(150)        NOT NULL,
     phone         NVARCHAR(20)         NULL,

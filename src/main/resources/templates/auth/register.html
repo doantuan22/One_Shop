@@ -18,6 +18,15 @@
                         <div class="invalid-feedback" th:errors="*{fullName}">Vui lòng nhập họ tên</div>
                     </div>
                     <div class="mb-3">
+                        <label class="form-label" for="userName">Tên đăng nhập</label>
+                        <input type="text" class="form-control" id="userName" th:field="*{userName}"
+                               th:classappend="${#fields.hasErrors('userName')} ? 'is-invalid'"
+                               minlength="4" maxlength="30" pattern="[A-Za-z0-9_.]{4,30}"
+                               autocomplete="username" autocapitalize="none" spellcheck="false">
+                        <div class="form-text">4-30 ký tự: chữ, số, dấu _ và dấu chấm (không chứa @).</div>
+                        <div class="invalid-feedback" th:errors="*{userName}">Tên đăng nhập không hợp lệ</div>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label" for="email">Email</label>
                         <input type="email" class="form-control" id="email" th:field="*{email}"
                                th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" autocomplete="email">

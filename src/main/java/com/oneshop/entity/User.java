@@ -29,6 +29,10 @@ public class User extends TimestampedEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
+    /** Optional login alias (4-30 chars, never contains '@'); unique ignoring case. Null for older accounts. */
+    @Column(name = "user_name", length = 50)
+    private String userName;
+
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
@@ -60,6 +64,14 @@ public class User extends TimestampedEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getPasswordHash() {

@@ -2,10 +2,12 @@
    OneShop - Phase 2 - File 03: INDEX (dung danh sach Roadmap V2 muc 7.4)
    Cac UNIQUE index (users.email, products.sku, store_products(store_id,product_id),
    cart_items(cart_id,store_product_id)) da duoc tao boi UNIQUE constraint o file 02.
+   UX_users_user_name la filtered unique index nen can QUOTED_IDENTIFIER ON (sqlcmd mac dinh OFF).
    ========================================================================== */
 USE [oneshop];
 GO
 SET NOCOUNT ON;
+SET QUOTED_IDENTIFIER ON;
 GO
 
 -- Catalog theo Store
@@ -40,4 +42,10 @@ CREATE INDEX IX_order_status_history_order_changed
 GO
 
 PRINT '6 indexes created.';
+GO
+
+-- Dang nhap bang user_name: duy nhat, bo qua cac tai khoan chua co user_name
+DROP INDEX IF EXISTS UX_users_user_name ON dbo.users;
+CREATE UNIQUE INDEX UX_users_user_name
+    ON dbo.users (user_name) WHERE user_name IS NOT NULL;
 GO

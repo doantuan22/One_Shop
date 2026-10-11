@@ -41,6 +41,7 @@ class AuthFlowIntegrationTest extends AbstractIntegrationTest {
         user.setPasswordHash(passwordEncoder.encode(PASSWORD));
         user.setRole(new Role(RoleName.CUSTOMER));
         when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(user));
+        withId(user);
     }
 
     @Test

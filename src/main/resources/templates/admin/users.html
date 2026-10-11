@@ -8,12 +8,12 @@
         <option th:each="r : ${roles}" th:value="${r}" th:text="${r}" th:selected="${r == role}"></option></select>
     <button class="btn btn-outline-primary">Lọc</button>
 </form>
-<div class="table-responsive"><table class="table table-hover"><thead><tr><th>Họ tên</th><th>Email</th><th>Điện thoại</th><th>Vai trò</th><th>Trạng thái</th><th></th></tr></thead>
+<div class="table-responsive"><table class="table table-hover"><thead><tr><th>Họ tên</th><th>Email</th><th>Tên đăng nhập</th><th>Điện thoại</th><th>Vai trò</th><th>Trạng thái</th><th></th></tr></thead>
 <tbody><tr th:each="u : ${users.content}" th:attr="data-user-id=${u.id}">
-    <td th:text="${u.fullName}"></td><td th:text="${u.email}"></td><td th:text="${u.phone}"></td><td th:text="${u.role}"></td>
+    <td th:text="${u.fullName}"></td><td th:text="${u.email}"></td><td th:text="${u.userName}"></td><td th:text="${u.phone}"></td><td th:text="${u.role}"></td>
     <td><span th:replace="~{fragments/components :: statusBadge(${u.status})}"></span></td>
     <td><a class="btn btn-sm btn-outline-primary" th:href="@{/admin/users/{id}/edit(id=${u.id})}">Sửa</a></td>
-</tr><tr th:if="${users.empty}"><td colspan="6">Chưa có người dùng.</td></tr></tbody></table></div>
+</tr><tr th:if="${users.empty}"><td colspan="7">Chưa có người dùng.</td></tr></tbody></table></div>
 <p>Tổng số: <strong id="user-count" th:text="${users.totalElements}"></strong></p>
 <nav th:replace="~{admin/fragments :: pagination(${users}, '/admin/users', 'role', ${role})}"></nav>
 </body></html>

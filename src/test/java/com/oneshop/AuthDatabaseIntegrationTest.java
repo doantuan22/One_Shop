@@ -86,6 +86,23 @@ class AuthDatabaseIntegrationTest {
     }
 
     @Test
+    void seedAccountsLogInByUserNameIgnoringCase() {
+        AuthResponse admin = authService.login(login("Admin", SEED_PASSWORD));
+        assertThat(admin.email()).isEqualTo(ADMIN);
+        assertThat(admin.roles()).containsExactly("ROLE_ADMIN");
+        assertThat(authService.login(login(" STAFF_THUDUC ", SEED_PASSWORD)).email()).isEqualTo(STAFF_THU_DUC);
+        assertThat(authService.login(login("khachhang1", SEED_PASSWORD)).email()).isEqualTo(CUSTOMER);
+    }
+
+    @Test
+    void wrongUserNameOrPasswordGivesTheSameBadCredentials() {
+        assertThatThrownBy(() -> authService.login(login("admin", "wrong-password")))
+                .isInstanceOf(BadCredentialsException.class);
+        assertThatThrownBy(() -> authService.login(login("no_such_user", SEED_PASSWORD)))
+                .isInstanceOf(BadCredentialsException.class);
+    }
+
+    @Test
     void wrongPasswordAndUnknownAccountAreRejectedTheSameWay() {
         assertThatThrownBy(() -> authService.login(login(ADMIN, "wrong-password")))
                 .isInstanceOf(BadCredentialsException.class);
@@ -109,6 +126,7 @@ class AuthDatabaseIntegrationTest {
     void registrationStoresACustomerThatCanLogIn() {
         RegisterRequest request = new RegisterRequest();
         request.setFullName("Khách Thử Nghiệm");
+        request.setUserName("Phase5.Tester");
         request.setEmail("Phase5.Test@Example.com");
         request.setPhone("0900000099");
         request.setPassword("Phase5@Test");
@@ -122,8 +140,13 @@ class AuthDatabaseIntegrationTest {
         assertThat(stored.getRole().getName()).isEqualTo(RoleName.CUSTOMER);
         assertThat(stored.getPasswordHash()).startsWith("$2").doesNotContain("Phase5@Test");
         assertThat(stored.getFullName()).isEqualTo("Khách Thử Nghiệm");
+        assertThat(stored.getUserName()).isEqualTo("Phase5.Tester");
         assertThat(authService.login(login("phase5.test@example.com", "Phase5@Test")).roles())
                 .containsExactly("ROLE_CUSTOMER");
+        // the same account logs in by user_name, ignoring case and surrounding spaces
+        AuthResponse byUserName = authService.login(login("  phase5.TESTER ", "Phase5@Test"));
+        assertThat(byUserName.email()).isEqualTo("phase5.test@example.com");
+        assertThat(byUserName.roles()).containsExactly("ROLE_CUSTOMER");
 
         assertThatThrownBy(() -> authService.register(request)).isInstanceOf(BadRequestException.class);
     }

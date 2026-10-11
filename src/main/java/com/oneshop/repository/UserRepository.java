@@ -19,6 +19,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(String email);
 
+    Optional<User> findByUserNameIgnoreCase(String userName);
+
+    boolean existsByUserNameIgnoreCase(String userName);
+
     List<User> findByRoleNameOrderByFullNameAscIdAsc(RoleName role);
 
     @Query("select u from User u where (:role is null or u.role.name = :role) order by u.id")

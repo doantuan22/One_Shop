@@ -26,7 +26,7 @@ IF EXISTS (SELECT 1 FROM sys.tables t WHERE NOT EXISTS (SELECT 1 FROM sys.key_co
     THROW 50012, 'A table has no primary key.', 1;
 DECLARE @required TABLE (name SYSNAME PRIMARY KEY);
 INSERT INTO @required VALUES
- (N'UQ_users_email'),(N'UQ_products_sku'),(N'UQ_store_products_store_product'),(N'UQ_cart_items_cart_store_product'),
+ (N'UQ_users_email'),(N'UX_users_user_name'),(N'UQ_products_sku'),(N'UQ_store_products_store_product'),(N'UQ_cart_items_cart_store_product'),
  (N'CK_store_products_quantity'),(N'CK_store_products_price'),(N'CK_reviews_rating'),
  (N'IX_store_products_store_status_qty'),(N'IX_store_products_product_status'),(N'IX_orders_store_status_created'),
  (N'IX_orders_user_created'),(N'IX_inventory_movements_sp_created'),(N'IX_order_status_history_order_changed');

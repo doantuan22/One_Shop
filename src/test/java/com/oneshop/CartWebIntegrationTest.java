@@ -55,6 +55,7 @@ class CartWebIntegrationTest extends AbstractIntegrationTest {
         user.setPasswordHash("x");
         user.setRole(new Role(role));
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        withId(user);
         return "ONESHOP_TOKEN=" + jwtService.generateToken(userDetailsService.loadUserByUsername(email));
     }
 

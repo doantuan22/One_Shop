@@ -23,14 +23,14 @@ public class AdminUserController {
     }
     @GetMapping("/new")
     public String createForm(Model model) {
-        model.addAttribute("form", new AdminUserRequest("", "", "", RoleName.STAFF, ActiveStatus.ACTIVE, ""));
+        model.addAttribute("form", new AdminUserRequest("", "", "", "", RoleName.STAFF, ActiveStatus.ACTIVE, ""));
         model.addAttribute("current", null); return "admin/user-form";
     }
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable Long id, Model model) {
         var user = users.getUser(id);
         model.addAttribute("current", user);
-        model.addAttribute("form", new AdminUserRequest(user.email(), user.fullName(), user.phone(), user.role(), user.status(), ""));
+        model.addAttribute("form", new AdminUserRequest(user.email(), user.userName(), user.fullName(), user.phone(), user.role(), user.status(), ""));
         return "admin/user-form";
     }
     @PostMapping

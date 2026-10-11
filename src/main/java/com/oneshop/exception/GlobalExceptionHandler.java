@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiErrorResponse> handleAuthentication(AuthenticationException ex,
                                                                  HttpServletRequest request) {
-        return build(HttpStatus.UNAUTHORIZED, "Email hoặc mật khẩu không đúng", request, null);
+        return build(HttpStatus.UNAUTHORIZED, "Sai tài khoản hoặc mật khẩu", request, null);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
