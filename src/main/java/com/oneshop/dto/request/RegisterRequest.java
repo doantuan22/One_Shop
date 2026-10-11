@@ -1,5 +1,6 @@
 package com.oneshop.dto.request;
 
+import com.oneshop.dto.validation.MaxUtf8Bytes;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -28,6 +29,7 @@ public class RegisterRequest {
 
     @NotBlank(message = "Vui lòng nhập mật khẩu")
     @Size(min = 8, max = 72, message = "Mật khẩu từ 8 đến 72 ký tự")
+    @MaxUtf8Bytes(value = 72, message = "Mật khẩu tối đa 72 byte (ký tự có dấu chiếm 2-3 byte), hãy dùng mật khẩu ngắn hơn")
     private String password;
 
     public String getFullName() {

@@ -406,7 +406,7 @@ CREATE TABLE dbo.order_status_history (
 GO
 
 /* ============================================================================
-   19. reviews  - danh gia (chi sau COMPLETED - kiem tra o ReviewService)
+   19. reviews  - danh gia (chi sau COMPLETED - kiem tra o ReviewService); moi khach 1 danh gia / Product
    ========================================================================== */
 CREATE TABLE dbo.reviews (
     review_id  BIGINT IDENTITY(1,1) NOT NULL,
@@ -417,6 +417,7 @@ CREATE TABLE dbo.reviews (
     status     NVARCHAR(20)         NOT NULL CONSTRAINT DF_reviews_status DEFAULT N'ACTIVE',
     created_at DATETIME2(0)         NOT NULL CONSTRAINT DF_reviews_created_at DEFAULT SYSDATETIME(),
     CONSTRAINT PK_reviews PRIMARY KEY (review_id),
+    CONSTRAINT UQ_reviews_user_product UNIQUE (user_id, product_id),
     CONSTRAINT FK_reviews_user    FOREIGN KEY (user_id)    REFERENCES dbo.users (user_id),
     CONSTRAINT FK_reviews_product FOREIGN KEY (product_id) REFERENCES dbo.products (product_id),
     CONSTRAINT CK_reviews_rating CHECK (rating BETWEEN 1 AND 5),

@@ -11,6 +11,7 @@ SQL Server schema theo Roadmap V2 mục 7 (19 bảng). Chỉ gồm schema, const
 | 4 | `04_seed_data.sql` | 5 Store, 7 SKU, StoreProduct, 3 checkout / 5 order, payment, movement, history |
 | 5 | `05_verify.sql` | Kiểm tra tự động, `THROW` nếu sai |
 | - | `migration_001_add_users_user_name.sql` | Database **đã có dữ liệu**: thêm `users.user_name` + `UX_users_user_name` (idempotent, không xóa dữ liệu; không nằm trong `00_run_all.sql`) |
+| - | `migration_002_reviews_unique_user_product.sql` | Database **đã có dữ liệu**: thêm `UNIQUE (user_id, product_id)` cho `reviews` (mỗi khách một đánh giá / Product; idempotent) |
 
 ## Chạy
 

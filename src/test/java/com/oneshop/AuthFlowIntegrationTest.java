@@ -16,6 +16,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class AuthFlowIntegrationTest extends AbstractIntegrationTest {
@@ -57,6 +60,26 @@ class AuthFlowIntegrationTest extends AbstractIntegrationTest {
         // Authenticated as a customer: past the login wall, but /api/admin/** needs ROLE_ADMIN.
         HttpResponse<String> admin = get("/api/admin/anything", "Authorization", "Bearer " + token.group(1));
         assertThat(admin.statusCode()).isEqualTo(403);
+    }
+
+    @Test
+    void apiRegisterWithMoreThan72BytesIsA400WithAPasswordFieldError() throws Exception {
+        String unicode90 = "ấ".repeat(30);
+        HttpResponse<String> register = post("/api/auth/register", "application/json; charset=utf-8",
+                "{\"fullName\":\"Someone\",\"userName\":\"someone01\",\"email\":\"someone@oneshop.test\","
+                        + "\"password\":\"" + unicode90 + "\"}");
+
+        assertThat(register.statusCode()).isEqualTo(400);
+        assertThat(register.body()).contains("\"password\"", "72 byte");
+        verify(userRepository, never()).saveAndFlush(any(User.class));
+    }
+
+    @Test
+    void apiLoginWithAnOverlongPasswordIsRejectedNotA500() throws Exception {
+        HttpResponse<String> login = post("/api/auth/login", "application/json; charset=utf-8",
+                "{\"email\":\"" + EMAIL + "\",\"password\":\"" + "ấ".repeat(30) + "\"}");
+
+        assertThat(login.statusCode()).isEqualTo(401);
     }
 
     @Test

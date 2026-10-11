@@ -366,6 +366,32 @@ class AccessControlIntegrationTest extends AbstractIntegrationTest {
         verify(userRepository, never()).saveAndFlush(any(User.class));
     }
 
+    @Test
+    void passwordLongerThan72BytesIsAFieldErrorNotA500() throws Exception {
+        HttpResponse<String> form = get("/register");
+        String bytes72 = "%E1%BA%A5".repeat(24);   // 24 x "ấ" = 24 characters = 72 UTF-8 bytes
+        String bytes90 = "%E1%BA%A5".repeat(30);   // 30 characters = 90 bytes: passes @Size, exceeds BCrypt
+        String ascii73 = "a".repeat(73);
+
+        for (String password : List.of(bytes90, "%E1%BA%A5".repeat(25), ascii73)) {
+            HttpResponse<String> response = post("/register", "application/x-www-form-urlencoded",
+                    "fullName=Someone&userName=someone01&email=someone%40oneshop.test&password=" + password
+                            + "&_csrf=" + csrfField(form), "Cookie", csrfCookie(form));
+            assertThat(response.statusCode()).as(password).isEqualTo(200);
+            assertThat(response.body()).as(password).contains("Mật khẩu");
+        }
+        verify(userRepository, never()).saveAndFlush(any(User.class));
+
+        // exactly 72 bytes is still accepted
+        when(roleRepository.findByName(RoleName.CUSTOMER)).thenReturn(Optional.of(new Role(RoleName.CUSTOMER)));
+        when(userRepository.saveAndFlush(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        HttpResponse<String> ok = post("/register", "application/x-www-form-urlencoded",
+                "fullName=Someone&userName=someone01&email=someone%40oneshop.test&password=" + bytes72
+                        + "&_csrf=" + csrfField(form), "Cookie", csrfCookie(form));
+        assertThat(ok.statusCode()).isEqualTo(302);
+        assertThat(ok.headers().firstValue("Location").orElseThrow()).endsWith("/login?registered");
+    }
+
     // ---------------------------------------------------------------- helpers
 
     private HttpResponse<String> webLogin(String email) throws Exception {

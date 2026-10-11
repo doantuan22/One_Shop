@@ -102,8 +102,8 @@ public class SecurityConfig {
                         // to (StaffStoreScopeInterceptor). Admin works chain-wide in /admin instead.
                         .requestMatchers("/staff/**", "/api/staff/**").hasRole("STAFF")
                         // Client: the cart belongs to a customer account (USER 1--1 CART), and only a customer
-                        // can turn it into orders
-                        .requestMatchers("/cart/**", "/checkout/**", "/orders/**").hasRole("CUSTOMER")
+                        // can turn it into orders or review what was delivered
+                        .requestMatchers("/cart/**", "/checkout/**", "/orders/**", "/reviews/**").hasRole("CUSTOMER")
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
                         .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),

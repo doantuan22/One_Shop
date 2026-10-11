@@ -73,7 +73,10 @@ public class AuthController {
         try {
             authService.register(request);
         } catch (BadRequestException ex) {
-            String field = "userName".equals(ex.getField()) ? "userName" : "email";
+            String field = switch (String.valueOf(ex.getField())) {
+                case "userName", "password" -> ex.getField();
+                default -> "email";
+            };
             bindingResult.rejectValue(field, field + ".taken", ex.getMessage());
             return "auth/register";
         }

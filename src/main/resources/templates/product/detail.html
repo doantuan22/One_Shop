@@ -108,6 +108,48 @@
             <h2 class="h5">Mô tả</h2>
             <p class="os-product-description" th:text="${product.description}">Mô tả sản phẩm.</p>
         </section>
+
+        <!--/* ---------- Reviews: visible ACTIVE ones; the form only for a Customer who received the product ---------- */-->
+        <section class="mt-4" id="reviews">
+            <h2 class="h5">Đánh giá của khách hàng</h2>
+            <div class="alert alert-success" th:if="${param.reviewed != null}">Cảm ơn bạn đã đánh giá sản phẩm.</div>
+            <div class="alert alert-danger" th:if="${param.reviewError != null and #strings.equals(param.reviewError[0], 'invalid')}">
+                Vui lòng chọn từ 1 đến 5 sao; nhận xét tối đa 1000 ký tự.</div>
+            <div class="alert alert-warning" th:if="${param.reviewError != null and !#strings.equals(param.reviewError[0], 'invalid')}">
+                Không thể gửi đánh giá. Bạn chỉ đánh giá được sản phẩm đã nhận trong đơn hoàn tất, mỗi sản phẩm một lần.</div>
+
+            <p class="text-secondary" id="no-reviews" th:if="${productReviews.count == 0}">Chưa có đánh giá nào.</p>
+            <p id="review-summary" th:unless="${productReviews.count == 0}">
+                <strong th:text="${#numbers.formatDecimal(productReviews.averageRating, 1, 1)}">4.5</strong> / 5 sao
+                &middot; <span th:text="${productReviews.count}">3</span> đánh giá
+            </p>
+            <ul class="list-group mb-3" th:unless="${productReviews.latest.isEmpty()}">
+                <li class="list-group-item" th:each="review : ${productReviews.latest}">
+                    <div class="d-flex justify-content-between">
+                        <span class="fw-semibold" th:text="${review.reviewerName}">Khách hàng</span>
+                        <span th:text="${review.rating} + ' / 5 sao'">5 / 5 sao</span>
+                    </div>
+                    <div class="small text-secondary" th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}">01/01/2026</div>
+                    <p class="mb-0 mt-1" style="white-space: pre-line" th:if="${review.comment}" th:text="${review.comment}">Nhận xét</p>
+                </li>
+            </ul>
+
+            <form th:if="${canReview == true}" th:action="@{/reviews}" method="post" class="card card-body">
+                <input type="hidden" name="productId" th:value="${product.id}">
+                <div class="mb-2">
+                    <label class="form-label" for="review-rating">Số sao</label>
+                    <select class="form-select w-auto" id="review-rating" name="rating" required>
+                        <option value="">Chọn</option>
+                        <option th:each="n : ${#numbers.sequence(5, 1, -1)}" th:value="${n}" th:text="${n} + ' sao'"></option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label" for="review-comment">Nhận xét (không bắt buộc)</label>
+                    <textarea class="form-control" id="review-comment" name="comment" rows="3" maxlength="1000"></textarea>
+                </div>
+                <div><button type="submit" class="btn btn-primary">Gửi đánh giá</button></div>
+            </form>
+        </section>
     </div>
 </div>
 </body>

@@ -1,6 +1,8 @@
 package com.oneshop;
 
 import com.oneshop.dto.response.CartResponse;
+import com.oneshop.dto.response.ProductReviewsResponse;
+import com.oneshop.service.ReviewService;
 import com.oneshop.repository.RoleRepository;
 import com.oneshop.service.CartService;
 import com.oneshop.service.CheckoutService;
@@ -60,7 +62,12 @@ abstract class AbstractIntegrationTest {
     @BeforeEach
     void emptyCartByDefault() {
         when(cartService.getCart(any())).thenReturn(CartResponse.empty());
+        when(reviewService.getProductReviews(any())).thenReturn(ProductReviewsResponse.empty());
     }
+
+    /** Unstubbed, a Product has no reviews and nobody may review it. */
+    @MockitoBean
+    protected ReviewService reviewService;
 
     @MockitoBean
     protected ProductService productService;

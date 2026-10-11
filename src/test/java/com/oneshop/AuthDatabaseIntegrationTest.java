@@ -152,6 +152,34 @@ class AuthDatabaseIntegrationTest {
     }
 
     @Test
+    @Transactional
+    void passwordIsLimitedToBcrypt72BytesNotCharacters() {
+        // 30 characters / 90 bytes: valid for @Size, refused by BCrypt -> a field error, never an IllegalArgumentException
+        RegisterRequest tooLong = registration("fsa02.long", "fsa02.long@example.com", "ấ".repeat(30));
+        assertThatThrownBy(() -> authService.register(tooLong)).isInstanceOf(BadRequestException.class)
+                .hasMessageContaining("72 byte")
+                .satisfies(ex -> assertThat(((BadRequestException) ex).getField()).isEqualTo("password"));
+        assertThat(userRepository.existsByEmail("fsa02.long@example.com")).isFalse();
+
+        // 72 bytes exactly (24 x 3-byte characters) is accepted and can log in
+        RegisterRequest edge = registration("fsa02.edge", "fsa02.edge@example.com", "ấ".repeat(24));
+        authService.register(edge);
+        assertThat(authService.login(login("fsa02.edge", "ấ".repeat(24))).roles()).containsExactly("ROLE_CUSTOMER");
+        // 73 ASCII characters = 73 bytes
+        assertThatThrownBy(() -> authService.register(registration("fsa02.a73", "fsa02.a73@example.com", "a".repeat(73))))
+                .isInstanceOf(BadRequestException.class);
+    }
+
+    private static RegisterRequest registration(String userName, String email, String password) {
+        RegisterRequest request = new RegisterRequest();
+        request.setFullName("Kiểm Thử FSA-02");
+        request.setUserName(userName);
+        request.setEmail(email);
+        request.setPassword(password);
+        return request;
+    }
+
+    @Test
     void staffScopeIsExactlyTheStoreOfTheActiveAssignment() {
         List<StoreResponse> thuDuc = storeService.getAssignedStores(STAFF_THU_DUC);
         List<StoreResponse> goVap = storeService.getAssignedStores(STAFF_GO_VAP);

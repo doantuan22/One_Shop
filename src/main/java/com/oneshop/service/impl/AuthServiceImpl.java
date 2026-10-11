@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -29,6 +30,7 @@ import java.util.regex.Pattern;
 public class AuthServiceImpl implements AuthService {
 
     private static final String TOKEN_TYPE = "Bearer";
+    private static final int BCRYPT_MAX_BYTES = 72;
     /** Same rule as the DTO validation, re-checked here so every caller of the Service is covered. */
     private static final Pattern USER_NAME_PATTERN = Pattern.compile("^[A-Za-z0-9_.]{4,30}$");
 
@@ -71,6 +73,11 @@ public class AuthServiceImpl implements AuthService {
         if (!USER_NAME_PATTERN.matcher(userName).matches()) {
             throw new BadRequestException("userName",
                     "Tên đăng nhập từ 4 đến 30 ký tự, chỉ gồm chữ, số, dấu _ và dấu chấm, không chứa @");
+        }
+        // BCrypt refuses more than 72 BYTES; the DTO checks this too, re-checked here for every caller of the Service
+        if (request.getPassword().getBytes(StandardCharsets.UTF_8).length > BCRYPT_MAX_BYTES) {
+            throw new BadRequestException("password",
+                    "Mật khẩu tối đa " + BCRYPT_MAX_BYTES + " byte (ký tự có dấu chiếm 2-3 byte), hãy dùng mật khẩu ngắn hơn");
         }
         if (userRepository.existsByEmail(email)) {
             throw new BadRequestException("email", "Email đã được sử dụng");

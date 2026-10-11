@@ -7,6 +7,36 @@
     <p class="small text-secondary">Có thể hủy đơn chưa thanh toán trước khi cửa hàng bắt đầu chuẩn bị hàng.</p>
     <button class="btn btn-outline-danger" type="submit">Hủy đơn hàng</button>
 </form>
+<section class="card shadow-sm mt-4" id="reviews" th:if="${reviewItems != null and !reviewItems.isEmpty()}">
+    <div class="card-header bg-white fw-semibold">Đánh giá sản phẩm</div>
+    <div class="card-body">
+        <div class="alert alert-success" th:if="${param.reviewed != null}">Cảm ơn bạn đã đánh giá sản phẩm.</div>
+        <div class="alert alert-danger" th:if="${param.reviewError != null and #strings.equals(param.reviewError[0], 'invalid')}">
+            Vui lòng chọn từ 1 đến 5 sao; nhận xét tối đa 1000 ký tự.</div>
+        <div class="alert alert-warning" th:if="${param.reviewError != null and !#strings.equals(param.reviewError[0], 'invalid')}">
+            Không thể gửi đánh giá. Bạn chỉ đánh giá được sản phẩm đã nhận trong đơn hoàn tất, mỗi sản phẩm một lần.</div>
+        <div class="border-bottom pb-3 mb-3" th:each="item : ${reviewItems}" th:attr="data-review-product=${item.productId}">
+            <div class="fw-semibold" th:text="${item.productName}">Sản phẩm</div>
+            <p class="text-secondary small mb-0" th:if="${item.reviewed}">Bạn đã đánh giá sản phẩm này.</p>
+            <form th:unless="${item.reviewed}" th:action="@{/reviews}" method="post" class="row g-2 align-items-end mt-1">
+                <input type="hidden" name="productId" th:value="${item.productId}">
+                <input type="hidden" name="orderId" th:value="${orderDetail.order.orderId}">
+                <div class="col-auto">
+                    <label class="form-label small mb-1" th:for="'rating-' + ${item.productId}">Số sao</label>
+                    <select class="form-select" name="rating" th:id="'rating-' + ${item.productId}" required>
+                        <option value="">Chọn</option>
+                        <option th:each="n : ${#numbers.sequence(5, 1, -1)}" th:value="${n}" th:text="${n} + ' sao'"></option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label class="form-label small mb-1" th:for="'comment-' + ${item.productId}">Nhận xét (không bắt buộc)</label>
+                    <textarea class="form-control" name="comment" th:id="'comment-' + ${item.productId}" rows="2" maxlength="1000"></textarea>
+                </div>
+                <div class="col-auto"><button class="btn btn-primary" type="submit">Gửi đánh giá</button></div>
+            </form>
+        </div>
+    </div>
+</section>
 <a class="btn btn-outline-primary mt-3" th:if="${orderDetail.order.paymentMethod.name() == 'ONLINE'}"
    th:href="@{/orders/{id}/payments(id=${orderDetail.order.orderId})}">Xem thanh toán trực tuyến</a>
 </body></html>
