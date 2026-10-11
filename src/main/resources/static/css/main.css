@@ -1,10 +1,10 @@
 :root {
-    --os-primary: #d6336c;
-    --os-primary-dark: #b02a5a;
+    --os-primary: #ff7f50;
+    --os-primary-dark: #ff7f50;
     --os-bg: #fff8fa;
 
     --bs-primary: var(--os-primary);
-    --bs-primary-rgb: 214, 51, 108;
+    --bs-primary-rgb: 255, 127, 80;
     --bs-link-color: var(--os-primary);
     --bs-link-hover-color: var(--os-primary-dark);
 }
