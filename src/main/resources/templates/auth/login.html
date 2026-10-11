@@ -80,7 +80,7 @@
 
         .input-icon-lead {
             position: absolute;
-            top: 50%;
+            top: 24px;
             left: 1rem;
             transform: translateY(-50%);
             color: #a0a6b1;
@@ -89,7 +89,7 @@
             justify-content: center;
             z-index: 4;
             pointer-events: none;
-            transition: color 0.2s ease;
+            transition: color 0.3s ease;
         }
 
         .form-control-icon {
@@ -164,6 +164,30 @@
             color: #bf360c;
             text-decoration: underline;
         }
+
+        @keyframes slideDownFeedback {
+            0% {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .invalid-feedback {
+            display: none;
+            font-size: 0.825rem;
+            color: #dc3545;
+            margin-top: 0.35rem;
+        }
+
+        .was-validated .form-control:invalid ~ .invalid-feedback,
+        .form-control.is-invalid ~ .invalid-feedback {
+            display: block !important;
+            animation: slideDownFeedback 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     </style>
 </head>
 <body class="os-home">
@@ -204,7 +228,7 @@
             <div th:text="${loginError}">Tài khoản hoặc mật khẩu không chính xác</div>
         </div>
 
-        <form th:action="@{/login}" th:object="${loginRequest}" method="post" novalidate>
+        <form th:action="@{/login}" th:object="${loginRequest}" method="post" class="needs-validation" novalidate>
             <div class="mb-3">
                 <label class="form-label" for="email">Địa chỉ Email</label>
                 <div class="input-group-custom">
@@ -220,9 +244,13 @@
                            placeholder="name@example.com"
                            th:field="*{email}"
                            th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
-                           autocomplete="username">
+                           autocomplete="username"
+                           required>
+                    <div class="invalid-feedback">
+                        <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email không hợp lệ</span>
+                        <span th:unless="${#fields.hasErrors('email')}">Vui lòng nhập đúng địa chỉ email (ví dụ: hotro@oneshop.vn)</span>
+                    </div>
                 </div>
-                <div class="invalid-feedback d-block mt-1" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email không hợp lệ</div>
             </div>
 
             <div class="mb-4">
@@ -240,9 +268,13 @@
                            placeholder="••••••••"
                            th:field="*{password}"
                            th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
-                           autocomplete="current-password">
+                           autocomplete="current-password"
+                           required>
+                    <div class="invalid-feedback">
+                        <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Vui lòng nhập mật khẩu</span>
+                        <span th:unless="${#fields.hasErrors('password')}">Vui lòng nhập mật khẩu</span>
+                    </div>
                 </div>
-                <div class="invalid-feedback d-block mt-1" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Vui lòng nhập mật khẩu</div>
             </div>
 
             <button type="submit" class="btn btn-primary btn-auth-submit w-100">
@@ -261,5 +293,29 @@
         </p>
     </div>
 </div>
+
+<script>
+    (() => {
+        'use strict';
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+
+            form.querySelectorAll('input').forEach(input => {
+                input.addEventListener('input', () => {
+                    if (input.classList.contains('is-invalid')) {
+                        input.classList.remove('is-invalid');
+                    }
+                });
+            });
+        });
+    })();
+</script>
 </body>
 </html>
