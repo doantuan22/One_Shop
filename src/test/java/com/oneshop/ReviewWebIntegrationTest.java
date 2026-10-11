@@ -9,6 +9,9 @@ import com.oneshop.dto.response.ProductResponse;
 import com.oneshop.dto.response.ProductReviewsResponse;
 import com.oneshop.dto.response.ReviewResponse;
 import com.oneshop.dto.response.ReviewableItemResponse;
+import com.oneshop.dto.response.StaffReviewResponse;
+import com.oneshop.dto.response.StoreResponse;
+import com.oneshop.entity.ActiveStatus;
 import com.oneshop.entity.FulfillmentType;
 import com.oneshop.entity.OrderPaymentStatus;
 import com.oneshop.entity.OrderStatus;
@@ -22,6 +25,7 @@ import com.oneshop.security.service.CustomUserDetailsService;
 import com.oneshop.service.CustomerOrderService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
@@ -35,6 +39,7 @@ import java.util.regex.Pattern;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -111,7 +116,7 @@ class ReviewWebIntegrationTest extends AbstractIntegrationTest {
             assertThat(postReview(cookieOf(email, role), "productId=1&rating=5").statusCode())
                     .as(role.name()).isEqualTo(403);
         }
-        verify(reviewService, never()).submit(any(), any());
+        verify(reviewService, never()).submit(any(), any(), any());
     }
 
     @Test
@@ -120,14 +125,14 @@ class ReviewWebIntegrationTest extends AbstractIntegrationTest {
                 "Cookie", cookieOf(CUSTOMER, RoleName.CUSTOMER));
 
         assertThat(response.statusCode()).isEqualTo(403);
-        verify(reviewService, never()).submit(any(), any());
+        verify(reviewService, never()).submit(any(), any(), any());
     }
 
     @Test
     void customerReviewIsSubmittedForThePrincipalAndSentBackToTheProduct() throws Exception {
         String jwt = cookieOf(CUSTOMER, RoleName.CUSTOMER);
-        when(reviewService.submit(eq(CUSTOMER), any())).thenReturn(
-                new ReviewResponse(1L, "Khách", 5, "Tốt", LocalDateTime.now()));
+        when(reviewService.submit(eq(CUSTOMER), any(), any())).thenReturn(
+                new ReviewResponse(1L, "Khách", 5, "Tốt", LocalDateTime.now(), null, null, null));
 
         // the body tries to name another reviewer: only productId/rating/comment are read
         HttpResponse<String> response = postReview(jwt,
@@ -135,7 +140,7 @@ class ReviewWebIntegrationTest extends AbstractIntegrationTest {
 
         assertThat(response.statusCode()).isEqualTo(302);
         assertThat(location(response)).isEqualTo("/products/7?reviewed#reviews");
-        verify(reviewService).submit(eq(CUSTOMER), eq(new ReviewRequest(7L, 5, "Tốt")));
+        verify(reviewService).submit(eq(CUSTOMER), eq(new ReviewRequest(7L, 5, "Tốt")), isNull());
     }
 
     @Test
@@ -145,6 +150,7 @@ class ReviewWebIntegrationTest extends AbstractIntegrationTest {
         HttpResponse<String> response = postReview(jwt, "productId=7&orderId=42&rating=4");
 
         assertThat(location(response)).isEqualTo("/orders/42?reviewed#reviews");
+        verify(reviewService).submit(eq(CUSTOMER), eq(new ReviewRequest(7L, 4, null)), eq(42L));
     }
 
     @Test
@@ -157,13 +163,13 @@ class ReviewWebIntegrationTest extends AbstractIntegrationTest {
             assertThat(response.statusCode()).as(body.substring(0, Math.min(40, body.length()))).isEqualTo(302);
             assertThat(location(response)).contains("/products/7?reviewError=invalid");
         }
-        verify(reviewService, never()).submit(any(), any());
+        verify(reviewService, never()).submit(any(), any(), any());
     }
 
     @Test
     void businessRejectionIsShownAsAGenericCodeNotAsArbitraryText() throws Exception {
         String jwt = cookieOf(CUSTOMER, RoleName.CUSTOMER);
-        when(reviewService.submit(eq(CUSTOMER), any())).thenThrow(new BadRequestException("Bạn đã đánh giá sản phẩm này rồi."));
+        when(reviewService.submit(eq(CUSTOMER), any(), any())).thenThrow(new BadRequestException("Bạn đã đánh giá sản phẩm này rồi."));
 
         HttpResponse<String> response = postReview(jwt, "productId=7&rating=5");
 
@@ -176,14 +182,18 @@ class ReviewWebIntegrationTest extends AbstractIntegrationTest {
     void productPageListsVisibleReviewsAndEscapesTheirContent() throws Exception {
         when(storeProductService.getProductDetail(eq(7L), any())).thenReturn(productDetail());
         when(reviewService.getProductReviews(7L)).thenReturn(new ProductReviewsResponse(2, 4.5, List.of(
-                new ReviewResponse(1L, "Phạm Thu Hà", 5, "Rất tốt <script>alert(1)</script>", LocalDateTime.now()),
-                new ReviewResponse(2L, "Đặng Quốc Khánh", 4, null, LocalDateTime.now()))));
+                new ReviewResponse(1L, "Phạm Thu Hà", 5, "Rất tốt <script>alert(1)</script>", LocalDateTime.now(),
+                        "Cảm ơn bạn <b>nhiều</b>", LocalDateTime.now(), "OneShop Thủ Đức"),
+                new ReviewResponse(2L, "Đặng Quốc Khánh", 4, null, LocalDateTime.now(), null, null, null))));
 
         String html = get("/products/7").body();
 
         assertThat(html).contains("id=\"review-summary\"", "4,5", "Phạm Thu Hà", "Đặng Quốc Khánh");
         assertThat(html).contains("Rất tốt &lt;script&gt;alert(1)&lt;/script&gt;").doesNotContain("<script>alert(1)");
         assertThat(html).doesNotContain("action=\"/reviews\"");
+        // the Store's reply is shown with the Store name, escaped, and never with a staff name
+        assertThat(html).contains("Phản hồi từ OneShop OneShop Thủ Đức", "Cảm ơn bạn &lt;b&gt;nhiều&lt;/b&gt;")
+                .doesNotContain("<b>nhiều</b>");
     }
 
     @Test
@@ -220,5 +230,91 @@ class ReviewWebIntegrationTest extends AbstractIntegrationTest {
         assertThat(html).contains("Đánh giá sản phẩm", "Cocoon Serum", "BBIA Cheek", "Bạn đã đánh giá sản phẩm này.");
         assertThat(html.split("action=\"/reviews\"", -1).length - 1).isEqualTo(1);
         assertThat(html).contains("name=\"orderId\" value=\"42\"");
+    }
+
+    // ---------------------------------------------------------------- replies (Staff / Admin)
+
+    private static final String STAFF = "staff@oneshop.test";
+    private static final String ADMIN = "admin@oneshop.test";
+
+    private static StoreResponse thuDuc() {
+        return new StoreResponse(1L, "TD", "OneShop Thủ Đức", "1 Võ Văn Ngân", "TP.HCM", "Thủ Đức", null, null,
+                true, true, ActiveStatus.ACTIVE);
+    }
+
+    private HttpResponse<String> postTo(String jwtCookie, String path, String body) throws Exception {
+        HttpResponse<String> page = get("/login");
+        Matcher field = Pattern.compile("name=\"_csrf\" value=\"([^\"]+)\"").matcher(page.body());
+        assertThat(field.find()).isTrue();
+        String csrfCookie = page.headers().allValues("Set-Cookie").stream()
+                .filter(c -> c.startsWith("XSRF-TOKEN=")).map(c -> c.split(";")[0]).findFirst().orElseThrow();
+        return post(path, FORM, body + "&_csrf=" + field.group(1), "Cookie", jwtCookie + "; " + csrfCookie);
+    }
+
+    @Test
+    void staffWithoutAssignmentIsStoppedBeforeTheReplyController() throws Exception {
+        String jwt = cookieOf(STAFF, RoleName.STAFF);
+        when(storeService.getAssignedStores(STAFF)).thenReturn(List.of());
+
+        HttpResponse<String> response = postTo(jwt, "/staff/reviews/9/reply", "reply=Cam+on");
+
+        assertThat(response.statusCode()).isEqualTo(403);
+        verify(reviewService, never()).reply(any(), any());
+    }
+
+    @Test
+    void assignedStaffReplyReachesTheServiceWithTheTextOnlyAndIsSentBackToTheList() throws Exception {
+        String jwt = cookieOf(STAFF, RoleName.STAFF);
+        when(storeService.getAssignedStores(STAFF)).thenReturn(List.of(thuDuc()));
+
+        // the body tries to choose the Store/Order: the controller reads only the text and the page number
+        HttpResponse<String> ok = postTo(jwt, "/staff/reviews/9/reply", "reply=Cam+on&page=2&storeId=77&orderId=5");
+
+        assertThat(ok.statusCode()).isEqualTo(302);
+        assertThat(location(ok)).isEqualTo("/staff/reviews?page=2&replied");
+        verify(reviewService).reply(eq(9L), eq("Cam on"));
+
+        org.mockito.Mockito.doThrow(new BadRequestException("reply", "Vui lòng nhập nội dung phản hồi."))
+                .when(reviewService).reply(eq(10L), any());
+        HttpResponse<String> bad = postTo(jwt, "/staff/reviews/10/reply", "reply=+++");
+        assertThat(location(bad)).isEqualTo("/staff/reviews?page=0&replyError=invalid");
+    }
+
+    @Test
+    void staffReviewListRendersTheReplyFormAndEscapesContent() throws Exception {
+        String jwt = cookieOf(STAFF, RoleName.STAFF);
+        when(storeService.getAssignedStores(STAFF)).thenReturn(List.of(thuDuc()));
+        when(reviewService.getStaffReviews(0)).thenReturn(new PageImpl<>(List.of(
+                new StaffReviewResponse(9L, "Phạm Thu Hà", 3L, "COCOON-SERUM-30", "Cocoon Serum", 5,
+                        "Tốt <img src=x>", LocalDateTime.now(), 5L, "OneShop Thủ Đức",
+                        "Cảm ơn <script>1</script>", LocalDateTime.now()))));
+
+        String html = get("/staff/reviews", "Cookie", jwt).body();
+
+        assertThat(html).contains("data-review-id=\"9\"", "Đơn #5", "action=\"/staff/reviews/9/reply\"",
+                "name=\"_csrf\"", "Cảm ơn &lt;script&gt;1&lt;/script&gt;", "Tốt &lt;img src=x&gt;");
+        assertThat(html).doesNotContain("<script>1</script>").doesNotContain("<img src=x>");
+    }
+
+    @Test
+    void customerAndGuestCannotUseTheStaffReviewRoutes() throws Exception {
+        String customer = cookieOf(CUSTOMER, RoleName.CUSTOMER);
+
+        assertThat(get("/staff/reviews", "Cookie", customer).statusCode()).isEqualTo(403);
+        assertThat(postTo(customer, "/staff/reviews/9/reply", "reply=hi").statusCode()).isEqualTo(403);
+        assertThat(get("/staff/reviews").statusCode()).isEqualTo(302);
+        verify(reviewService, never()).reply(any(), any());
+    }
+
+    @Test
+    void adminReplyUsesTheSameServiceAndIsCsrfProtected() throws Exception {
+        String jwt = cookieOf(ADMIN, RoleName.ADMIN);
+
+        HttpResponse<String> ok = postTo(jwt, "/admin/reviews/9/reply", "reply=Xin+loi&page=1");
+        assertThat(ok.statusCode()).isEqualTo(302);
+        assertThat(location(ok)).isEqualTo("/admin/reviews?page=1&replied");
+        verify(reviewService).reply(eq(9L), eq("Xin loi"));
+
+        assertThat(post("/admin/reviews/9/reply", FORM, "reply=x", "Cookie", jwt).statusCode()).isEqualTo(403);
     }
 }

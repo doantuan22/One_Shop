@@ -416,12 +416,26 @@ CREATE TABLE dbo.reviews (
     comment    NVARCHAR(1000)       NULL,
     status     NVARCHAR(20)         NOT NULL CONSTRAINT DF_reviews_status DEFAULT N'ACTIVE',
     created_at DATETIME2(0)         NOT NULL CONSTRAINT DF_reviews_created_at DEFAULT SYSDATETIME(),
+    -- Don COMPLETED khach dung de du dieu kien danh gia (gan mot lan luc tao). Chi nhanh suy ra tu orders.store_id.
+    -- NULL voi danh gia cu khong tra duoc don. Service kiem tra don dung khach va co chua san pham.
+    order_id   BIGINT               NULL,
+    -- Phan hoi cua nhan vien / admin: mot phan hoi, duoc sua, khong xoa; replied_by/at la lan gan nhat.
+    reply      NVARCHAR(1000)       NULL,
+    replied_by BIGINT               NULL,
+    replied_at DATETIME2(0)         NULL,
     CONSTRAINT PK_reviews PRIMARY KEY (review_id),
     CONSTRAINT UQ_reviews_user_product UNIQUE (user_id, product_id),
-    CONSTRAINT FK_reviews_user    FOREIGN KEY (user_id)    REFERENCES dbo.users (user_id),
-    CONSTRAINT FK_reviews_product FOREIGN KEY (product_id) REFERENCES dbo.products (product_id),
+    CONSTRAINT FK_reviews_user       FOREIGN KEY (user_id)    REFERENCES dbo.users (user_id),
+    CONSTRAINT FK_reviews_product    FOREIGN KEY (product_id) REFERENCES dbo.products (product_id),
+    CONSTRAINT FK_reviews_order      FOREIGN KEY (order_id)   REFERENCES dbo.orders (order_id),
+    CONSTRAINT FK_reviews_replied_by FOREIGN KEY (replied_by) REFERENCES dbo.users (user_id),
     CONSTRAINT CK_reviews_rating CHECK (rating BETWEEN 1 AND 5),
-    CONSTRAINT CK_reviews_status CHECK (status IN (N'ACTIVE', N'HIDDEN'))
+    CONSTRAINT CK_reviews_status CHECK (status IN (N'ACTIVE', N'HIDDEN')),
+    CONSTRAINT CK_reviews_reply CHECK (
+        (reply IS NULL AND replied_by IS NULL AND replied_at IS NULL)
+        OR
+        (reply IS NOT NULL AND LEN(LTRIM(RTRIM(reply))) > 0
+         AND replied_by IS NOT NULL AND replied_at IS NOT NULL))
 );
 GO
 

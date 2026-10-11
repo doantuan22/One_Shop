@@ -131,6 +131,11 @@
                     </div>
                     <div class="small text-secondary" th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}">01/01/2026</div>
                     <p class="mb-0 mt-1" style="white-space: pre-line" th:if="${review.comment}" th:text="${review.comment}">Nhận xét</p>
+                    <div class="os-review-reply border-start border-3 ps-2 mt-2 small" th:if="${review.reply != null}">
+                        <div class="fw-semibold"
+                             th:text="${review.replyStoreName != null} ? 'Phản hồi từ OneShop ' + ${review.replyStoreName} : 'Phản hồi từ OneShop'">Phản hồi từ OneShop</div>
+                        <div style="white-space: pre-line" th:text="${review.reply}">Nội dung phản hồi</div>
+                    </div>
                 </li>
             </ul>
 

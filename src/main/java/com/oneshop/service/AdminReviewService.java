@@ -22,7 +22,9 @@ public class AdminReviewService {
     public Page<AdminReviewResponse> getReviews(int page) {
         return reviews.findAllByOrderByCreatedAtDescIdDesc(PageRequest.of(Math.max(0, page), 20)).map(r ->
                 new AdminReviewResponse(r.getId(), r.getUser().getFullName(), r.getUser().getEmail(), r.getProduct().getId(),
-                        r.getProduct().getSku(), r.getProduct().getName(), r.getRating(), r.getComment(), r.getStatus(), r.getCreatedAt()));
+                        r.getProduct().getSku(), r.getProduct().getName(), r.getRating(), r.getComment(), r.getStatus(), r.getCreatedAt(),
+                        r.getOrder() == null ? null : r.getOrder().getId(),
+                        r.getOrder() == null ? null : r.getOrder().getStore().getName(), r.getReply(), r.getRepliedAt()));
     }
     @Transactional
     public void setStatus(Long id, @NotNull VisibilityStatus status) {

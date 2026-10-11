@@ -36,7 +36,7 @@ public class ReviewController {
             return "redirect:" + back + "?reviewError=invalid#reviews";
         }
         try {
-            reviewService.submit(principal.getName(), request);
+            reviewService.submit(principal.getName(), request, orderId);
         } catch (BadRequestException ex) {
             boolean fieldProblem = "rating".equals(ex.getField()) || "comment".equals(ex.getField());
             return "redirect:" + back + "?reviewError=" + (fieldProblem ? "invalid" : "rejected") + "#reviews";

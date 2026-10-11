@@ -242,8 +242,9 @@ INSERT INTO dbo.order_status_history (order_id, old_status, new_status, changed_
  (5, N'READY_FOR_PICKUP',N'COMPLETED',       1,    N'Khách nhận và thanh toán tại Store', DATEADD(DAY, -9, SYSDATETIME()));
 
 /* ---------- reviews (chi sau COMPLETED) ---------- */
-INSERT INTO dbo.reviews (user_id, product_id, rating, comment, status) VALUES
- (5, 3, 5, N'Serum dịu nhẹ, dùng ổn.', N'ACTIVE');
+-- order_id = 5: Order COMPLETED cua khach 5 co chua San pham 3 (SP 5), tai Store 5
+INSERT INTO dbo.reviews (user_id, product_id, rating, comment, status, order_id) VALUES
+ (5, 3, 5, N'Serum dịu nhẹ, dùng ổn.', N'ACTIVE', 5);
 
 COMMIT TRANSACTION;
 GO

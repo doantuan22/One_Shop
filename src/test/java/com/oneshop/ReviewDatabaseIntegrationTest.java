@@ -67,7 +67,7 @@ class ReviewDatabaseIntegrationTest {
     }
 
     private ReviewResponse submit(String email, long productId, Integer rating, String comment) {
-        return as(email, "CUSTOMER", () -> reviews.submit(email, new ReviewRequest(productId, rating, comment)));
+        return as(email, "CUSTOMER", () -> reviews.submit(email, new ReviewRequest(productId, rating, comment), null));
     }
 
     private long productOfStoreProduct(long storeProductId) {
@@ -141,12 +141,12 @@ class ReviewDatabaseIntegrationTest {
     @Test
     void staffAdminAndAnInactiveCustomerAreRefused() {
         assertThatThrownBy(() -> as(STAFF, "STAFF", () -> reviews.submit(STAFF,
-                new ReviewRequest(completedProduct, 5, null)))).isInstanceOf(AccessDeniedException.class);
+                new ReviewRequest(completedProduct, 5, null), null))).isInstanceOf(AccessDeniedException.class);
         assertThatThrownBy(() -> as(ADMIN, "ADMIN", () -> reviews.submit(ADMIN,
-                new ReviewRequest(completedProduct, 5, null)))).isInstanceOf(AccessDeniedException.class);
+                new ReviewRequest(completedProduct, 5, null), null))).isInstanceOf(AccessDeniedException.class);
         // an authenticated customer cannot act in the name of another e-mail
         assertThatThrownBy(() -> as(OTHER, "CUSTOMER", () -> reviews.submit(BUYER,
-                new ReviewRequest(completedProduct, 5, null)))).isInstanceOf(AccessDeniedException.class);
+                new ReviewRequest(completedProduct, 5, null), null))).isInstanceOf(AccessDeniedException.class);
 
         jdbc.update("update dbo.users set status='INACTIVE' where email=?", BUYER);
         assertThatThrownBy(() -> submit(BUYER, completedProduct, 5, null)).isInstanceOf(AccessDeniedException.class);
@@ -225,6 +225,244 @@ class ReviewDatabaseIntegrationTest {
         // not completed (Order 1) and not the caller's (Order 5 seen by khachhang2) offer nothing
         assertThat(as(BUYER, "CUSTOMER", () -> reviews.getOrderReviewItems(BUYER, 1L))).isEmpty();
         assertThat(as(OTHER, "CUSTOMER", () -> reviews.getOrderReviewItems(OTHER, 5L))).isEmpty();
+    }
+
+    // ---------------------------------------------------------------- which Order a review is attached to
+
+    private static final String STAFF_THU_DUC = "staff.thuduc@oneshop.vn";   // Store 1
+    private static final String STAFF_GO_VAP = "staff.govap@oneshop.vn";     // Store 2
+
+    /** Seed Order 1 (Store 1, DELIVERY) contains the same Product as Order 5; make it COMPLETED at {@code when}. */
+    private void completeOrderOne(String when) {
+        jdbc.update("update dbo.orders set order_status='COMPLETED', payment_status='PAID' where order_id=1");
+        jdbc.update("insert into dbo.order_status_history(order_id, old_status, new_status, changed_by_user_id, note, changed_at)"
+                + " values (1,'SHIPPING','COMPLETED',?,'test',?)", userId(STAFF_THU_DUC), when);
+    }
+
+    private void setOrderFiveCompletedAt(String when) {
+        jdbc.update("update dbo.order_status_history set changed_at=? where order_id=5 and new_status='COMPLETED'", when);
+    }
+
+    private Long storedOrderId(String email, long productId) {
+        return jdbc.queryForObject("select order_id from dbo.reviews where user_id=? and product_id=?", Long.class,
+                userId(email), productId);
+    }
+
+    private ReviewResponse submitFromOrder(String email, long productId, Long orderId) {
+        return as(email, "CUSTOMER", () -> reviews.submit(email, new ReviewRequest(productId, 5, "ok"), orderId));
+    }
+
+    @Test
+    void reviewIsAttachedToTheOrderTheFormWasOpenedFrom() {
+        completeOrderOne("2026-10-01 10:00:00");
+        setOrderFiveCompletedAt("2026-09-01 10:00:00");   // Order 1 is the newer one
+
+        submitFromOrder(BUYER, completedProduct, 5L);
+
+        assertThat(storedOrderId(BUYER, completedProduct)).isEqualTo(5L);
+    }
+
+    @Test
+    void withoutAnOrderTheMostRecentCompletedOneIsUsed() {
+        completeOrderOne("2026-10-01 10:00:00");
+        setOrderFiveCompletedAt("2026-09-01 10:00:00");
+
+        submit(BUYER, completedProduct, 4, "newest order");
+
+        assertThat(storedOrderId(BUYER, completedProduct)).isEqualTo(1L);
+    }
+
+    @Test
+    void whenCompletionMomentsTieTheHigherOrderIdWins() {
+        completeOrderOne("2026-09-01 10:00:00");
+        setOrderFiveCompletedAt("2026-09-01 10:00:00");
+
+        submit(BUYER, completedProduct, 4, "tie");
+
+        assertThat(storedOrderId(BUYER, completedProduct)).isEqualTo(5L);
+    }
+
+    @Test
+    void anOrderWithoutACompletedHistoryRowFallsBackToItsUpdatedAt() {
+        jdbc.update("update dbo.orders set order_status='COMPLETED', payment_status='PAID', updated_at='2026-10-05 10:00:00' where order_id=1");
+        setOrderFiveCompletedAt("2026-09-01 10:00:00");
+
+        submit(BUYER, completedProduct, 4, "fallback");
+
+        assertThat(storedOrderId(BUYER, completedProduct)).isEqualTo(1L);
+    }
+
+    @Test
+    void customerCannotAttachAReviewToAnOrderThatIsNotTheirCompletedPurchaseOfTheProduct() {
+        // Order 1 is still SHIPPING; Order 4 is somebody else's and cancelled; 999999 does not exist
+        for (Long orderId : new Long[]{1L, 4L, 999_999L}) {
+            assertThatThrownBy(() -> submitFromOrder(BUYER, completedProduct, orderId)).as("order " + orderId)
+                    .isInstanceOf(BadRequestException.class);
+        }
+        // Order 5 is the customer's COMPLETED order, but does not contain this other product
+        assertThatThrownBy(() -> submitFromOrder(BUYER, inProgressProduct, 5L)).isInstanceOf(BadRequestException.class);
+        // another customer cannot use the buyer's Order 5
+        assertThatThrownBy(() -> submitFromOrder(OTHER, completedProduct, 5L)).isInstanceOf(BadRequestException.class);
+        assertThat(jdbc.queryForObject("select count(*) from dbo.reviews", Integer.class)).isZero();
+    }
+
+    @Test
+    void theOrderIsNotChangedByASecondAttempt() {
+        completeOrderOne("2026-10-01 10:00:00");
+        submitFromOrder(BUYER, completedProduct, 5L);
+
+        assertThatThrownBy(() -> submitFromOrder(BUYER, completedProduct, 1L)).isInstanceOf(BadRequestException.class);
+
+        assertThat(storedOrderId(BUYER, completedProduct)).isEqualTo(5L);
+    }
+
+    // ---------------------------------------------------------------- replies
+
+    private long reviewForOrder(long orderId, String status) {
+        // inserted directly so the test controls the Order: user 5 reviewed product 3 from this Order
+        return jdbc.queryForObject("insert into dbo.reviews(user_id, product_id, rating, comment, status, order_id)"
+                + " output inserted.review_id values (?,?,5,'Tot',?,?)", Long.class,
+                userId(BUYER), completedProduct, status, orderId);
+    }
+
+    private void replyAs(String email, String role, long reviewId, String text) {
+        as(email, role, () -> {
+            reviews.reply(reviewId, text);
+            return null;
+        });
+    }
+
+    private String replyText(long reviewId) {
+        return jdbc.queryForObject("select reply from dbo.reviews where review_id=?", String.class, reviewId);
+    }
+
+    private String repliedBy(long reviewId) {
+        return jdbc.queryForObject("select u.email from dbo.reviews r join dbo.users u on u.user_id=r.replied_by"
+                + " where r.review_id=?", String.class, reviewId);
+    }
+
+    @Test
+    void staffOfTheStoreAnswersTrimmedAndCanEditTheAnswer() {
+        completeOrderOne("2026-10-01 10:00:00");
+        long review = reviewForOrder(1, "ACTIVE");               // Order 1 is at Store 1
+
+        replyAs(STAFF_THU_DUC, "STAFF", review, "  Cảm ơn bạn đã ủng hộ  ");
+
+        assertThat(replyText(review)).isEqualTo("Cảm ơn bạn đã ủng hộ");
+        assertThat(repliedBy(review)).isEqualTo(STAFF_THU_DUC);
+        assertThat(jdbc.queryForObject("select replied_at from dbo.reviews where review_id=?", Object.class, review)).isNotNull();
+
+        replyAs(STAFF_THU_DUC, "STAFF", review, "Chúng tôi đã cập nhật");
+        assertThat(replyText(review)).isEqualTo("Chúng tôi đã cập nhật");
+        assertThat(jdbc.queryForObject("select count(*) from dbo.reviews where reply is not null", Integer.class)).isEqualTo(1);
+    }
+
+    @Test
+    void staffOfAnotherStoreCannotSeeOrAnswerIt() {
+        completeOrderOne("2026-10-01 10:00:00");
+        long review = reviewForOrder(1, "ACTIVE");
+
+        assertThatThrownBy(() -> replyAs(STAFF_GO_VAP, "STAFF", review, "Không phải của tôi"))
+                .isInstanceOf(ResourceNotFoundException.class);
+        assertThat(replyText(review)).isNull();
+        assertThat(as(STAFF_GO_VAP, "STAFF", () -> reviews.getStaffReviews(0)).getContent()).isEmpty();
+        assertThat(as(STAFF_THU_DUC, "STAFF", () -> reviews.getStaffReviews(0)).getContent())
+                .extracting(r -> r.id()).containsExactly(review);
+    }
+
+    @Test
+    void adminAnswersAnyReviewAndTheLatestEditorIsRecorded() {
+        completeOrderOne("2026-10-01 10:00:00");
+        long withOrder = reviewForOrder(1, "ACTIVE");
+        replyAs(STAFF_THU_DUC, "STAFF", withOrder, "Từ nhân viên");
+
+        replyAs(ADMIN, "ADMIN", withOrder, "Admin sửa lại");
+
+        assertThat(replyText(withOrder)).isEqualTo("Admin sửa lại");
+        assertThat(repliedBy(withOrder)).isEqualTo(ADMIN);
+    }
+
+    @Test
+    void reviewWithoutAnOrderOrHiddenIsAdminOnly() {
+        completeOrderOne("2026-10-01 10:00:00");
+        long noOrder = jdbc.queryForObject("insert into dbo.reviews(user_id, product_id, rating, status)"
+                + " output inserted.review_id values (?,?,4,'ACTIVE')", Long.class, userId(BUYER), completedProduct);
+        long hidden = jdbc.queryForObject("insert into dbo.reviews(user_id, product_id, rating, status, order_id)"
+                + " output inserted.review_id values (?,?,4,'HIDDEN',1)", Long.class, userId(OTHER), completedProduct);
+
+        for (long id : new long[]{noOrder, hidden}) {
+            assertThatThrownBy(() -> replyAs(STAFF_THU_DUC, "STAFF", id, "x")).isInstanceOf(ResourceNotFoundException.class);
+            replyAs(ADMIN, "ADMIN", id, "Admin trả lời");
+            assertThat(replyText(id)).isEqualTo("Admin trả lời");
+        }
+        assertThat(as(STAFF_THU_DUC, "STAFF", () -> reviews.getStaffReviews(0)).getContent()).isEmpty();
+    }
+
+    @Test
+    void replyLengthAndWhitespaceRulesAndCustomerIsRefused() {
+        completeOrderOne("2026-10-01 10:00:00");
+        long review = reviewForOrder(1, "ACTIVE");
+
+        for (String bad : new String[]{null, "", "   ", "x".repeat(1001)}) {
+            assertThatThrownBy(() -> replyAs(STAFF_THU_DUC, "STAFF", review, bad)).isInstanceOf(BadRequestException.class);
+        }
+        assertThat(replyText(review)).isNull();
+
+        replyAs(STAFF_THU_DUC, "STAFF", review, "x");
+        assertThat(replyText(review)).isEqualTo("x");
+        replyAs(STAFF_THU_DUC, "STAFF", review, "y".repeat(1000));
+        assertThat(replyText(review)).hasSize(1000);
+
+        assertThatThrownBy(() -> replyAs(BUYER, "CUSTOMER", review, "tự trả lời"))
+                .isInstanceOf(AccessDeniedException.class);
+        assertThatThrownBy(() -> replyAs(STAFF_THU_DUC, "STAFF", 99_999_999L, "x"))
+                .isInstanceOf(ResourceNotFoundException.class);
+    }
+
+    @Test
+    void editingTheReviewKeepsTheStoredReply() {
+        completeOrderOne("2026-10-01 10:00:00");
+        long review = reviewForOrder(1, "ACTIVE");
+        replyAs(STAFF_THU_DUC, "STAFF", review, "Cảm ơn");
+
+        // the reply lives in its own columns: changing the review text does not touch it
+        jdbc.update("update dbo.reviews set comment='Đã sửa', rating=4 where review_id=?", review);
+
+        assertThat(replyText(review)).isEqualTo("Cảm ơn");
+    }
+
+    @Test
+    void productPageShowsTheReplyWithTheStoreOfTheOrder() {
+        completeOrderOne("2026-10-01 10:00:00");
+        long review = reviewForOrder(1, "ACTIVE");
+        replyAs(STAFF_THU_DUC, "STAFF", review, "Cảm ơn bạn");
+
+        var shown = reviews.getProductReviews(completedProduct).latest();
+
+        assertThat(shown).hasSize(1);
+        assertThat(shown.get(0).reply()).isEqualTo("Cảm ơn bạn");
+        assertThat(shown.get(0).replyStoreName()).isEqualTo(
+                jdbc.queryForObject("select s.name from dbo.orders o join dbo.stores s on s.store_id=o.store_id where o.order_id=1", String.class));
+    }
+
+    @Test
+    void replyColumnsAreCheckedByTheDatabase() {
+        long review = jdbc.queryForObject("insert into dbo.reviews(user_id, product_id, rating, status)"
+                + " output inserted.review_id values (?,?,4,'ACTIVE')", Long.class, userId(BUYER), completedProduct);
+        long admin = userId(ADMIN);
+
+        // a reply needs its author and moment, and all three are NULL together
+        assertThatThrownBy(() -> jdbc.update("update dbo.reviews set reply='x' where review_id=?", review))
+                .isInstanceOf(DataIntegrityViolationException.class);
+        assertThatThrownBy(() -> jdbc.update("update dbo.reviews set replied_by=? where review_id=?", admin, review))
+                .isInstanceOf(DataIntegrityViolationException.class);
+        // blank reply is refused even with author and moment
+        assertThatThrownBy(() -> jdbc.update(
+                "update dbo.reviews set reply='   ', replied_by=?, replied_at=sysdatetime() where review_id=?", admin, review))
+                .isInstanceOf(DataIntegrityViolationException.class);
+        // the complete form is accepted
+        assertThat(jdbc.update("update dbo.reviews set reply='ok', replied_by=?, replied_at=sysdatetime() where review_id=?",
+                admin, review)).isEqualTo(1);
     }
 
     // ---------------------------------------------------------------- the database backs the rule up

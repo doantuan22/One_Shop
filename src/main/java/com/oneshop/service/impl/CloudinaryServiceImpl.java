@@ -49,6 +49,15 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             return new ImageUploadResult(url, publicId);
         } catch (IOException ex) {
             throw new ImageStorageException("Không thể tải ảnh lên Cloudinary", ex);
+        } catch (RuntimeException ex) {
+            // The SDK reports a refused upload (bad content, bad credentials, quota...) as a plain RuntimeException
+            // carrying Cloudinary's message. Never let it escape as an HTTP 500.
+            if (isInvalidImage(ex)) {
+                log.warn("Cloudinary rejected the uploaded file as an invalid image: {}", ex.getMessage());
+                throw new BadRequestException("Tệp tải lên không phải hình ảnh hợp lệ");
+            }
+            log.warn("Cloudinary upload failed: {}", ex.getMessage());
+            throw new ImageStorageException("Không thể tải ảnh lên Cloudinary", ex);
         }
     }
 
@@ -63,7 +72,22 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             log.info("Deleted image from Cloudinary: {}", publicId);
         } catch (IOException ex) {
             throw new ImageStorageException("Không thể xóa ảnh trên Cloudinary", ex);
+        } catch (RuntimeException ex) {
+            // Provider-side API errors surface as RuntimeException; callers only handle ImageStorageException.
+            log.warn("Cloudinary delete failed for {}: {}", publicId, ex.getMessage());
+            throw new ImageStorageException("Không thể xóa ảnh trên Cloudinary", ex);
         }
+    }
+
+    /** Cloudinary answers with messages such as "Invalid image file" or "Unsupported ..." for unusable content. */
+    private static boolean isInvalidImage(RuntimeException ex) {
+        String message = ex.getMessage();
+        if (message == null) {
+            return false;
+        }
+        String text = message.toLowerCase(java.util.Locale.ROOT);
+        return text.contains("invalid image file") || text.contains("unsupported") || text.contains("empty file")
+                || text.contains("file size too large");
     }
 
     private void requireConfigured() {

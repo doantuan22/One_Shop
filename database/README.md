@@ -12,6 +12,7 @@ SQL Server schema theo Roadmap V2 mục 7 (19 bảng). Chỉ gồm schema, const
 | 5 | `05_verify.sql` | Kiểm tra tự động, `THROW` nếu sai |
 | - | `migration_001_add_users_user_name.sql` | Database **đã có dữ liệu**: thêm `users.user_name` + `UX_users_user_name` (idempotent, không xóa dữ liệu; không nằm trong `00_run_all.sql`) |
 | - | `migration_002_reviews_unique_user_product.sql` | Database **đã có dữ liệu**: thêm `UNIQUE (user_id, product_id)` cho `reviews` (mỗi khách một đánh giá / Product; idempotent) |
+| - | `migration_003_review_order_and_reply.sql` | Database **đã có dữ liệu**: thêm `reviews.order_id` (đơn COMPLETED dùng để đánh giá; chi nhánh suy ra từ đơn) và phản hồi `reply`, `replied_by`, `replied_at` (idempotent; tự điền `order_id` cho đánh giá cũ) |
 
 ## Chạy
 

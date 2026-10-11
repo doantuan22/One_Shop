@@ -27,7 +27,7 @@ IF EXISTS (SELECT 1 FROM sys.tables t WHERE NOT EXISTS (SELECT 1 FROM sys.key_co
 DECLARE @required TABLE (name SYSNAME PRIMARY KEY);
 INSERT INTO @required VALUES
  (N'UQ_users_email'),(N'UQ_reviews_user_product'),(N'UX_users_user_name'),(N'UQ_products_sku'),(N'UQ_store_products_store_product'),(N'UQ_cart_items_cart_store_product'),
- (N'CK_store_products_quantity'),(N'CK_store_products_price'),(N'CK_reviews_rating'),
+ (N'CK_store_products_quantity'),(N'CK_store_products_price'),(N'CK_reviews_rating'),(N'CK_reviews_reply'),(N'FK_reviews_order'),(N'IX_reviews_order'),
  (N'IX_store_products_store_status_qty'),(N'IX_store_products_product_status'),(N'IX_orders_store_status_created'),
  (N'IX_orders_user_created'),(N'IX_inventory_movements_sp_created'),(N'IX_order_status_history_order_changed');
 IF EXISTS (SELECT 1 FROM @required r
@@ -83,6 +83,19 @@ IF EXISTS (
 IF EXISTS (SELECT 1 FROM sys.check_constraints WHERE is_not_trusted = 1)
    OR EXISTS (SELECT 1 FROM sys.foreign_keys WHERE is_not_trusted = 1)
     THROW 50010, 'Untrusted constraint found.', 1;
+
+/* 9. Danh gia gan voi don: don phai thuoc dung khach, COMPLETED va co chua san pham cua danh gia
+      (CHECK khong tham chieu bang khac duoc nen day la kiem tra du lieu; Service moi la noi bao dam khi ghi) */
+IF EXISTS (
+    SELECT 1 FROM dbo.reviews r
+    WHERE r.order_id IS NOT NULL
+      AND NOT EXISTS (
+          SELECT 1 FROM dbo.orders o
+          JOIN dbo.order_items oi ON oi.order_id = o.order_id
+          JOIN dbo.store_products sp ON sp.store_product_id = oi.store_product_id
+          WHERE o.order_id = r.order_id AND o.user_id = r.user_id
+            AND o.order_status = N'COMPLETED' AND sp.product_id = r.product_id))
+    THROW 50015, 'A review points to an order that is not the reviewer''s COMPLETED order of that product.', 1;
 
 PRINT 'All Phase 2 checks passed.';
 GO

@@ -49,3 +49,8 @@ DROP INDEX IF EXISTS UX_users_user_name ON dbo.users;
 CREATE UNIQUE INDEX UX_users_user_name
     ON dbo.users (user_name) WHERE user_name IS NOT NULL;
 GO
+
+-- Danh gia -> don (tra chi nhanh cua danh gia qua orders.store_id)
+DROP INDEX IF EXISTS IX_reviews_order ON dbo.reviews;
+CREATE INDEX IX_reviews_order ON dbo.reviews (order_id);
+GO

@@ -2,11 +2,21 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Đánh giá</title></head><body>
 <div th:replace="~{fragments/components :: pageHeader('Đánh giá', 'Xem nội dung đánh giá và bật / ẩn theo trạng thái hiện có.')}"></div>
 <div class="alert alert-success" th:if="${param.success}">Đã cập nhật đánh giá.</div>
+<div class="alert alert-success" th:if="${param.replied}">Đã lưu phản hồi.</div>
+<div class="alert alert-danger" th:if="${param.replyError}">Phản hồi phải có từ 1 đến 1000 ký tự.</div>
 <div class="table-responsive"><table class="table table-hover"><thead><tr><th>Khách hàng</th><th>SKU / Sản phẩm</th><th>Điểm</th><th>Nội dung</th><th>Trạng thái</th><th></th></tr></thead>
 <tbody><tr th:each="r : ${reviews.content}" th:attr="data-review-id=${r.id}">
     <td><span th:text="${r.customerName}"></span><div class="small" th:text="${r.customerEmail}"></div></td>
     <td><span th:text="${r.sku}"></span><div th:text="${r.productName}"></div></td><td th:text="${r.rating} + ' / 5'"></td>
-    <td><span th:text="${r.comment}"></span><div class="small" th:text="${#temporals.format(r.createdAt, 'dd/MM/yyyy HH:mm')}"></div></td>
+    <td><span th:text="${r.comment}"></span><div class="small" th:text="${#temporals.format(r.createdAt, 'dd/MM/yyyy HH:mm')}"></div>
+        <div class="small text-secondary" th:if="${r.orderId != null}"><a th:href="@{/admin/orders/{id}(id=${r.orderId})}" th:text="'Đơn #' + ${r.orderId}"></a> &middot; <span th:text="${r.storeName}"></span></div>
+        <div class="small text-secondary" th:if="${r.orderId == null}">Không gắn với đơn nào</div>
+        <form class="mt-2" method="post" th:action="@{/admin/reviews/{id}/reply(id=${r.id})}">
+            <input type="hidden" name="page" th:value="${reviews.number}">
+            <label class="form-label small mb-1" th:for="'reply-' + ${r.id}" th:text="${r.reply != null} ? 'Phản hồi (có thể sửa)' : 'Phản hồi'">Phản hồi</label>
+            <textarea class="form-control form-control-sm mb-1" th:id="'reply-' + ${r.id}" name="reply" rows="2" maxlength="1000" required th:text="${r.reply}"></textarea>
+            <button class="btn btn-sm btn-outline-primary" type="submit" th:text="${r.reply != null} ? 'Cập nhật phản hồi' : 'Gửi phản hồi'">Gửi</button>
+        </form></td>
     <td th:text="${r.status}"></td><td><form th:action="@{/admin/reviews/{id}/status(id=${r.id})}" method="post">
         <input type="hidden" name="status" th:value="${r.status.name() == 'ACTIVE'} ? 'HIDDEN' : 'ACTIVE'">
         <button class="btn btn-sm btn-outline-primary" th:text="${r.status.name() == 'ACTIVE'} ? 'Ẩn' : 'Hiện'"></button></form></td>
