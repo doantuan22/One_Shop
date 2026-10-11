@@ -1,85 +1,448 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Đặt hàng thành công</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt hàng thành công - OneShop</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-coral.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .result-container {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 2.5rem 1rem 5rem;
+        }
+
+        .success-banner-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 2.25rem 1.75rem;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .success-icon-wrapper {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background-color: #ecfdf5;
+            color: #10b981;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .success-title {
+            font-size: 1.65rem;
+            font-weight: 850;
+            color: #0f172a;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+        }
+
+        .success-meta-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            color: #64748b;
+            font-size: 0.925rem;
+        }
+
+        .success-meta-bar strong {
+            color: #0f172a;
+        }
+
+        .checkout-total-pill {
+            color: var(--bs-primary, #ff7f50);
+            font-weight: 800;
+            font-size: 1.15rem;
+        }
+
+        .order-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            transition: border-color 0.2s ease;
+        }
+
+        .order-card:hover {
+            border-color: #cbd5e1;
+        }
+
+        .order-header-bar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 1.1rem 1.25rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .order-store-title {
+            font-size: 1rem;
+            font-weight: 750;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .order-store-address {
+            font-size: 0.825rem;
+            color: #64748b;
+        }
+
+        .status-badge {
+            font-size: 0.775rem;
+            font-weight: 700;
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-badge-pending {
+            background-color: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+
+        .status-badge-confirmed {
+            background-color: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+        }
+
+        .status-badge-cancelled {
+            background-color: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .status-badge-default {
+            background-color: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .order-item-row {
+            padding: 0.9rem 1.25rem;
+            border-bottom: 1px solid #f8fafc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .order-item-row:last-child {
+            border-bottom: none;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .item-qty-meta {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .item-subtotal {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .order-info-grid {
+            background-color: #fcfcfc;
+            border-top: 1px solid #f1f5f9;
+            padding: 1.25rem;
+        }
+
+        .info-dl {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            row-gap: 8px;
+            column-gap: 16px;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-dt {
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .info-dd {
+            color: #1e293b;
+            margin-bottom: 0;
+        }
+
+        .btn-order-action {
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.45rem 0.9rem;
+            border-radius: 8px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-order-outline {
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            background-color: #ffffff;
+            text-decoration: none;
+        }
+
+        .btn-order-outline:hover {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+            color: #0f172a;
+        }
+
+        .btn-order-online {
+            background-color: var(--bs-primary, #ff7f50);
+            border: 1px solid var(--bs-primary, #ff7f50);
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .btn-order-online:hover {
+            background-color: #e86738;
+            border-color: #e86738;
+            color: #ffffff;
+        }
+
+        .order-card-footer {
+            background-color: #ffffff;
+            border-top: 1px solid #f1f5f9;
+            padding: 0.9rem 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.925rem;
+        }
+
+        .order-card-footer strong {
+            font-size: 1.05rem;
+            color: var(--bs-primary, #ff7f50);
+        }
+
+        .bottom-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 2rem;
+        }
+
+        .btn-continue-shop {
+            height: 44px;
+            padding: 0 1.5rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.925rem;
+            background-color: #0f172a;
+            border: 1px solid #0f172a;
+            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: background-color 0.15s ease;
+        }
+
+        .btn-continue-shop:hover {
+            background-color: #1e293b;
+            color: #ffffff;
+        }
+
+        .btn-view-cart {
+            height: 44px;
+            padding: 0 1.25rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.925rem;
+            color: #475569;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+
+        .btn-view-cart:hover {
+            background-color: #f8fafc;
+            color: #0f172a;
+            border-color: #cbd5e1;
+        }
+
+        @media (max-width: 576px) {
+            .info-dl {
+                grid-template-columns: 1fr;
+                row-gap: 4px;
+            }
+            .info-dt {
+                margin-top: 6px;
+            }
+        }
+    </style>
 </head>
 <body>
-<!--/*
-    What one checkout created: one Order per Store. Item names and prices are the snapshots stored in the Order, not
-    the current catalog values.
-*/-->
-<div class="alert alert-success" th:if="${param.success}">
-    Đặt hàng thành công. Hệ thống đã tạo <strong th:text="${checkout.orders.size()}">3</strong> đơn hàng, mỗi chi nhánh một đơn.
-</div>
-
-<h1 class="h3 mb-1">Lần đặt hàng #<span id="checkout-id" th:text="${checkout.checkoutId}">100</span></h1>
-<p class="text-secondary">
-    <span th:text="${#temporals.format(checkout.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</span>
-    &middot; <span th:text="${checkout.orders.size()}">3</span> đơn hàng
-    &middot; Tổng cộng <strong id="checkout-total"><span th:replace="~{fragments/components :: price(${checkout.totalAmount})}"></span></strong>
-</p>
-
-<section class="card shadow-sm mb-3 os-order" th:each="order : ${checkout.orders}"
-         th:attr="data-order-id=${order.orderId}, data-store-id=${order.storeId}, data-status=${order.orderStatus},
-                  data-fulfillment=${order.fulfillmentType}, data-payment=${order.paymentMethod}">
-    <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
-        <div>
-            <h2 class="h6 mb-0">Đơn hàng #<span th:text="${order.orderId}">1001</span> &middot;
-                <span class="os-order-store" th:text="${order.storeName}">OneShop Thủ Đức</span></h2>
-            <div class="small text-secondary" th:text="${order.storeAddress}">101 Võ Văn Ngân</div>
+<div class="result-container">
+    <div class="success-banner-card">
+        <div class="success-icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
         </div>
-        <span class="badge os-order-status" th:switch="${order.orderStatus.name()}"
-              th:classappend="${order.orderStatus.name() == 'PENDING_PAYMENT'} ? 'text-bg-warning' : 'text-bg-success'">
-            <span th:case="'PENDING_PAYMENT'">Chờ thanh toán</span>
-            <span th:case="'CONFIRMED'">Đã xác nhận</span>
-            <span th:case="'CANCELLED'">Đã hủy</span>
-            <span th:case="*" th:text="${order.orderStatus}">Trạng thái</span>
-        </span>
+
+        <h1 class="success-title">Đặt hàng thành công!</h1>
+        <p class="text-secondary small mb-3" th:if="${param.success}">
+            Hệ thống đã tự động tạo <strong class="text-dark" th:text="${checkout.orders.size()}">3</strong> đơn hàng riêng biệt theo từng chi nhánh cung cấp.
+        </p>
+
+        <div class="success-meta-bar">
+            <span>Mã phiên: <strong>#<span id="checkout-id" th:text="${checkout.checkoutId}">100</span></strong></span>
+            <span>&middot;</span>
+            <span th:text="${#temporals.format(checkout.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</span>
+            <span>&middot;</span>
+            <span><strong th:text="${checkout.orders.size()}">3</strong> đơn hàng</span>
+            <span>&middot;</span>
+            <span>Tổng cộng: <span class="checkout-total-pill" id="checkout-total"><span th:replace="~{fragments/components :: price(${checkout.totalAmount})}"></span></span></span>
+        </div>
     </div>
 
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item d-flex flex-wrap justify-content-between gap-2 os-order-item" th:each="item : ${order.items}">
+    <section class="order-card os-order" th:each="order : ${checkout.orders}"
+             th:attr="data-order-id=${order.orderId}, data-store-id=${order.storeId}, data-status=${order.orderStatus},
+                      data-fulfillment=${order.fulfillmentType}, data-payment=${order.paymentMethod}">
+        
+        <div class="order-header-bar">
             <div>
-                <div class="fw-semibold" th:text="${item.productName}">Tên sản phẩm</div>
-                <div class="small text-secondary">
-                    <span th:replace="~{fragments/components :: price(${item.unitPrice})}"></span>
-                    &times; <span th:text="${item.quantity}">2</span>
+                <div class="order-store-title">
+                    Đơn hàng #<span th:text="${order.orderId}">1001</span> &middot;
+                    <span class="os-order-store" th:text="${order.storeName}">OneShop Thủ Đức</span>
+                </div>
+                <div class="order-store-address" th:text="${order.storeAddress}">101 Võ Văn Ngân</div>
+            </div>
+
+            <div class="os-order-status" th:switch="${order.orderStatus.name()}">
+                <span class="status-badge status-badge-pending" th:case="'PENDING_PAYMENT'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    Chờ thanh toán
+                </span>
+                <span class="status-badge status-badge-confirmed" th:case="'CONFIRMED'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Đã xác nhận
+                </span>
+                <span class="status-badge status-badge-cancelled" th:case="'CANCELLED'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Đã hủy
+                </span>
+                <span class="status-badge status-badge-default" th:case="*" th:text="${order.orderStatus}">
+                    Trạng thái
+                </span>
+            </div>
+        </div>
+
+        <div class="order-items-list">
+            <div class="order-item-row os-order-item" th:each="item : ${order.items}">
+                <div>
+                    <div class="item-name" th:text="${item.productName}">Tên sản phẩm</div>
+                    <div class="item-qty-meta">
+                        <span th:replace="~{fragments/components :: price(${item.unitPrice})}"></span>
+                        &times; <span th:text="${item.quantity}">2</span>
+                    </div>
+                </div>
+                <div class="item-subtotal">
+                    <span th:replace="~{fragments/components :: price(${item.subtotal})}"></span>
                 </div>
             </div>
-            <strong><span th:replace="~{fragments/components :: price(${item.subtotal})}"></span></strong>
-        </li>
-    </ul>
+        </div>
 
-    <div class="card-body border-top">
-        <dl class="row small mb-0">
-            <dt class="col-sm-4">Cách nhận hàng</dt>
-            <dd class="col-sm-8 os-order-fulfillment"
-                th:text="${order.fulfillmentType.name() == 'DELIVERY'} ? 'Giao hàng tận nơi' : 'Nhận tại cửa hàng ' + ${order.storeName}">Giao hàng tận nơi</dd>
-            <dt class="col-sm-4">Thanh toán</dt>
-            <dd class="col-sm-8 os-order-payment" th:switch="${order.paymentMethod.name()}">
-                <span th:case="'COD'">Thanh toán khi nhận hàng (COD)</span>
-                <span th:case="'PAY_AT_STORE'">Thanh toán tại cửa hàng</span>
-                <span th:case="'ONLINE'">Thanh toán trực tuyến</span>
-                &middot; <span th:switch="${order.paymentStatus.name()}"><span th:case="'PAID'">Đã thanh toán</span>
-                    <span th:case="'FAILED'">Thanh toán thất bại</span><span th:case="*">Chưa thanh toán</span></span>
-            </dd>
-            <dt class="col-sm-4">Người nhận</dt>
-            <dd class="col-sm-8"><span th:text="${order.receiverName}">Nguyễn Văn A</span> &middot; <span th:text="${order.receiverPhone}">0900000000</span></dd>
-            <dt class="col-sm-4" th:if="${order.shippingAddress}">Địa chỉ giao hàng</dt>
-            <dd class="col-sm-8" th:if="${order.shippingAddress}" th:text="${order.shippingAddress}">12 Võ Văn Ngân</dd>
-        </dl>
-        <a class="btn btn-outline-secondary mt-2" th:href="@{/orders/{id}(id=${order.orderId})}">Chi tiết đơn hàng</a>
-        <a th:if="${order.paymentMethod.name() == 'ONLINE'}" class="btn btn-outline-primary mt-2"
-           th:href="@{/orders/{id}/payments(id=${order.orderId})}">Xem thanh toán trực tuyến</a>
+        <div class="order-info-grid">
+            <dl class="info-dl">
+                <dt class="info-dt">Cách nhận hàng</dt>
+                <dd class="info-dd os-order-fulfillment"
+                    th:text="${order.fulfillmentType.name() == 'DELIVERY'} ? 'Giao hàng tận nơi' : 'Nhận tại cửa hàng ' + ${order.storeName}">
+                    Giao hàng tận nơi
+                </dd>
+
+                <dt class="info-dt">Thanh toán</dt>
+                <dd class="info-dd os-order-payment">
+                    <span th:switch="${order.paymentMethod.name()}">
+                        <span th:case="'COD'">Thanh toán khi nhận hàng (COD)</span>
+                        <span th:case="'PAY_AT_STORE'">Thanh toán tại quầy</span>
+                        <span th:case="'ONLINE'">Thanh toán trực tuyến</span>
+                    </span>
+                    &middot; 
+                    <span class="fw-semibold" th:switch="${order.paymentStatus.name()}">
+                        <span class="text-success" th:case="'PAID'">Đã thanh toán</span>
+                        <span class="text-danger" th:case="'FAILED'">Thanh toán thất bại</span>
+                        <span class="text-warning-emphasis" th:case="*">Chưa thanh toán</span>
+                    </span>
+                </dd>
+
+                <dt class="info-dt">Người nhận</dt>
+                <dd class="info-dd">
+                    <span th:text="${order.receiverName}">Nguyễn Văn A</span> &middot; 
+                    <span th:text="${order.receiverPhone}">0900000000</span>
+                </dd>
+
+                <dt class="info-dt" th:if="${order.shippingAddress}">Địa chỉ giao</dt>
+                <dd class="info-dd" th:if="${order.shippingAddress}" th:text="${order.shippingAddress}">
+                    12 Võ Văn Ngân
+                </dd>
+            </dl>
+
+            <div class="d-flex flex-wrap gap-2 pt-1 border-top">
+                <a class="btn btn-order-action btn-order-outline" th:href="@{/orders/{id}(id=${order.orderId})}">
+                    Xem chi tiết đơn hàng
+                </a>
+                <a th:if="${order.paymentMethod.name() == 'ONLINE'}" class="btn btn-order-action btn-order-online"
+                   th:href="@{/orders/{id}/payments(id=${order.orderId})}">
+                    Tiến hành thanh toán trực tuyến
+                </a>
+            </div>
+        </div>
+
+        <div class="order-card-footer">
+            <span class="text-secondary">Tổng đơn tại chi nhánh</span>
+            <strong class="os-order-total"><span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></strong>
+        </div>
+    </section>
+
+    <div class="bottom-actions">
+        <a class="btn-continue-shop" th:href="@{/products}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="21" r="1"/>
+                <circle cx="20" cy="21" r="1"/>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            Tiếp tục mua sắm
+        </a>
+        <a class="btn-view-cart" th:href="@{/cart}">
+            Quay lại giỏ hàng
+        </a>
     </div>
-
-    <div class="card-footer bg-white d-flex justify-content-between">
-        <span class="text-secondary">Tổng đơn hàng</span>
-        <strong class="os-order-total"><span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></strong>
-    </div>
-</section>
-
-<a class="btn btn-outline-primary" th:href="@{/products}">Tiếp tục mua sắm</a>
-<a class="btn btn-link" th:href="@{/cart}">Xem giỏ hàng</a>
+</div>
 </body>
 </html>

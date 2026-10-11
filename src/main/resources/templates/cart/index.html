@@ -1,144 +1,924 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Giỏ hàng</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ hàng - OneShop</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-coral.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <style>
+        :root {
+            --cart-primary: #FF7F50;
+            --cart-primary-hover: #E86738;
+            --cart-primary-active: #D9572B;
+            --cart-primary-light: #FFF3ED;
+            --cart-primary-border: #FFD2BF;
+            --cart-bg: #F8FAFC;
+            --cart-surface: #FFFFFF;
+            --cart-border: #E2E8F0;
+            --cart-text: #1E293B;
+            --cart-muted: #64748B;
+        }
+
+        body {
+            background: var(--cart-bg);
+            color: var(--cart-text);
+        }
+
+        .cart-container {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 2.25rem 1rem 4.5rem;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cart-header-title {
+            margin: 0 0 .35rem;
+            font-size: clamp(1.55rem, 3vw, 1.9rem);
+            font-weight: 800;
+            letter-spacing: -.035em;
+            color: var(--cart-text);
+        }
+
+        .cart-header-description {
+            margin: 0;
+            color: var(--cart-muted);
+            font-size: .9rem;
+            line-height: 1.55;
+        }
+
+        .cart-store-group {
+            background: var(--cart-surface);
+            border: 1px solid var(--cart-border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 3px 12px rgba(30, 41, 59, .035);
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+
+        .cart-store-group:hover {
+            border-color: #F3C1AD;
+            box-shadow: 0 5px 18px rgba(30, 41, 59, .055);
+        }
+
+        .cart-group-header {
+            background: #fff;
+            border-bottom: 1px solid #F1F5F9;
+            padding: 1.05rem 1.25rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .cart-checkbox {
+            width: 1.1rem;
+            height: 1.1rem;
+            margin-top: 0;
+            border: 1.5px solid #CBD5E1;
+            border-radius: 4px;
+            cursor: pointer;
+            accent-color: var(--cart-primary);
+            flex-shrink: 0;
+        }
+
+        .cart-checkbox:checked {
+            background-color: var(--cart-primary);
+            border-color: var(--cart-primary);
+        }
+
+        .cart-checkbox:focus {
+            border-color: var(--cart-primary);
+            box-shadow: 0 0 0 .2rem rgba(255, 127, 80, .18);
+        }
+
+        .cart-store-name {
+            font-size: .96rem;
+            font-weight: 750;
+            color: var(--cart-text);
+            line-height: 1.4;
+        }
+
+        .cart-store-address {
+            margin-top: 3px;
+            font-size: .8rem;
+            color: var(--cart-muted);
+        }
+
+        .cart-store-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: auto;
+            padding: .35rem .6rem;
+            border: 1px solid #FED7AA;
+            border-radius: 999px;
+            background: #FFF7ED;
+            color: #9A3412;
+            font-size: .73rem;
+            font-weight: 650;
+        }
+
+        .cart-item-row {
+            padding: 1.2rem 1.25rem;
+            border-bottom: 1px solid #F1F5F9;
+            transition: background-color .18s ease;
+        }
+
+        .cart-item-row:last-child {
+            border-bottom: 0;
+        }
+
+        .cart-item-row:hover {
+            background: #FFFCFA;
+        }
+
+        .cart-item-row:has(.os-cart-item-toggle:checked) {
+            background: #FFF9F5;
+        }
+
+        .cart-thumb-box {
+            display: block;
+            width: 78px;
+            height: 78px;
+            flex-shrink: 0;
+            overflow: hidden;
+            border: 1px solid #EDF0F4;
+            border-radius: 11px;
+            background: #F8FAFC;
+        }
+
+        .cart-thumb-box img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cart-thumb-placeholder {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            background: #F8FAFC;
+            color: #94A3B8;
+        }
+
+        .cart-item-info {
+            min-width: 150px;
+        }
+
+        .cart-item-title {
+            color: var(--cart-text);
+            font-size: .94rem;
+            font-weight: 650;
+            line-height: 1.45;
+            text-decoration: none;
+            overflow-wrap: anywhere;
+        }
+
+        .cart-item-title:hover {
+            color: var(--cart-primary-hover);
+        }
+
+        .cart-sku-tag {
+            margin-top: 4px;
+            color: #94A3B8;
+            font-size: .74rem;
+        }
+
+        .cart-unit-price {
+            margin-top: 5px;
+            color: var(--cart-muted);
+            font-size: .82rem;
+        }
+
+        .cart-stepper {
+            display: inline-flex;
+            align-items: center;
+            height: 36px;
+            padding: 2px;
+            border: 1px solid var(--cart-border);
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .cart-stepper:focus-within {
+            border-color: var(--cart-primary);
+            box-shadow: 0 0 0 2px rgba(255, 127, 80, .10);
+        }
+
+        .cart-stepper-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 30px;
+            border: 0;
+            border-radius: 6px;
+            background: transparent;
+            color: #64748B;
+            cursor: pointer;
+            transition: background .15s ease, color .15s ease;
+        }
+
+        .cart-stepper-btn:hover {
+            background: var(--cart-primary-light);
+            color: var(--cart-primary-hover);
+        }
+
+        .cart-stepper-input {
+            width: 36px;
+            padding: 0;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: var(--cart-text);
+            font-size: .86rem;
+            font-weight: 650;
+            text-align: center;
+            -moz-appearance: textfield;
+        }
+
+        .cart-stepper-input::-webkit-outer-spin-button,
+        .cart-stepper-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .os-cart-quantity-form.is-updating .cart-stepper {
+            opacity: .65;
+        }
+
+        .cart-item-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-left: auto;
+            padding-top: 2px;
+        }
+
+        .cart-item-total {
+            min-width: 108px;
+            color: var(--cart-primary-hover);
+            font-size: .98rem;
+            font-weight: 800;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .btn-remove-item {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            padding: 0;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            background: transparent;
+            color: #94A3B8;
+            transition: color .15s ease, background .15s ease, border-color .15s ease;
+        }
+
+        .btn-remove-item:hover {
+            border-color: #FECACA;
+            background: #FEF2F2;
+            color: #DC2626;
+        }
+
+        .cart-group-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: .95rem 1.25rem;
+            border-top: 1px solid #F1F5F9;
+            background: #FCFCFD;
+            color: var(--cart-muted);
+            font-size: .86rem;
+        }
+
+        .cart-group-footer strong {
+            color: var(--cart-text);
+            font-size: .98rem;
+            font-weight: 750;
+            white-space: nowrap;
+        }
+
+        .cart-summary-panel {
+            position: sticky;
+            top: 1.5rem;
+            padding: 1.4rem;
+            border: 1px solid var(--cart-border);
+            border-radius: 16px;
+            background: #fff;
+            box-shadow: 0 3px 12px rgba(30, 41, 59, .04);
+        }
+
+        .summary-header {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #F1F5F9;
+            color: var(--cart-text);
+            font-size: 1.08rem;
+            font-weight: 800;
+        }
+
+        .summary-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: .85rem;
+            color: var(--cart-muted);
+            font-size: .88rem;
+        }
+
+        .summary-row > :last-child {
+            text-align: right;
+        }
+
+        .summary-total-price {
+            color: var(--cart-primary-hover);
+            font-size: clamp(1.45rem, 2vw, 1.7rem);
+            font-weight: 850;
+            letter-spacing: -.035em;
+            line-height: 1.3;
+            overflow-wrap: anywhere;
+        }
+
+        .btn-checkout-submit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            width: 100%;
+            min-height: 49px;
+            padding: .8rem 1rem;
+            border: 1px solid var(--cart-primary);
+            border-radius: 10px;
+            background: var(--cart-primary);
+            color: #fff;
+            font-size: .91rem;
+            font-weight: 750;
+            line-height: 1.4;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(255, 127, 80, .16);
+            transition: background .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+        }
+
+        .btn-checkout-submit:hover:not(:disabled) {
+            transform: translateY(-1px);
+            border-color: var(--cart-primary-hover);
+            background: var(--cart-primary-hover);
+            color: #fff;
+            box-shadow: 0 6px 14px rgba(232, 103, 56, .2);
+        }
+
+        .btn-checkout-submit:focus-visible {
+            outline: 3px solid rgba(255, 127, 80, .28);
+            outline-offset: 2px;
+        }
+
+        .btn-checkout-submit:disabled {
+            border-color: #E2E8F0;
+            background: #E2E8F0;
+            color: #94A3B8;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .cart-summary-note {
+            color: var(--cart-muted);
+            font-size: .79rem;
+            line-height: 1.55;
+        }
+
+        .btn-back-catalog {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            color: var(--cart-muted);
+            font-size: .86rem;
+            font-weight: 650;
+            text-decoration: none;
+            transition: color .15s ease;
+        }
+
+        .btn-back-catalog:hover {
+            color: var(--cart-primary-hover);
+        }
+
+        .cart-alert {
+            border: 0;
+            border-radius: 11px;
+            box-shadow: 0 2px 8px rgba(30, 41, 59, .035);
+        }
+
+        .cart-empty-card {
+            padding: 3.5rem 1.5rem;
+            border: 1px solid var(--cart-border);
+            border-radius: 16px;
+            background: #fff;
+            box-shadow: 0 3px 12px rgba(30, 41, 59, .035);
+        }
+
+        .cart-empty-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            background: var(--cart-primary-light);
+            color: var(--cart-primary);
+        }
+
+        .btn-cart-empty {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 42px;
+            padding: .65rem 1.15rem;
+            border: 1px solid var(--cart-primary);
+            border-radius: 9px;
+            background: var(--cart-primary);
+            color: #fff;
+            font-size: .88rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background .15s ease;
+        }
+
+        .btn-cart-empty:hover {
+            background: var(--cart-primary-hover);
+            border-color: var(--cart-primary-hover);
+            color: #fff;
+        }
+
+        .os-cart-item-problem {
+            display: inline-block;
+            margin-top: 4px;
+            font-size: .78rem;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 991.98px) {
+            .cart-summary-panel {
+                position: static;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .cart-container {
+                padding: 1.5rem .85rem 3rem;
+            }
+
+            .cart-header {
+                align-items: flex-start;
+            }
+
+            .cart-group-header {
+                padding: 1rem;
+            }
+
+            .cart-item-row {
+                padding: 1rem;
+            }
+
+            .cart-item-row > .d-flex {
+                gap: 10px !important;
+            }
+
+            .cart-thumb-box {
+                width: 68px;
+                height: 68px;
+            }
+
+            .cart-item-info {
+                flex: 1 1 calc(100% - 115px);
+            }
+
+            .cart-item-actions {
+                width: 100%;
+                justify-content: space-between;
+                margin-left: 0;
+                padding-left: 1.85rem;
+            }
+
+            .cart-item-total {
+                min-width: 0;
+                margin-left: auto;
+                font-size: .94rem;
+            }
+
+            .cart-summary-panel {
+                padding: 1.2rem;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .cart-group-header {
+                gap: 9px;
+            }
+
+            .cart-store-badge {
+                margin-left: 0;
+            }
+
+            .cart-item-actions {
+                gap: 8px;
+                padding-left: 0;
+            }
+
+            .cart-stepper-input {
+                width: 30px;
+            }
+
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .cart-store-group,
+            .cart-item-row,
+            .btn-checkout-submit,
+            .btn-remove-item,
+            .btn-back-catalog {
+                transition: none;
+            }
+        }
+    </style>
 </head>
 <body>
-<!--/*
-    Cart grouped by Store (BR-06): every line is a StoreProduct, so the same SKU at two Stores is two lines in two
-    groups. Prices are the current StoreProduct prices; no exact stock is shown (BR-15). The checkboxes only build the
-    list of cartItemIds handed to the next step; nothing about them is stored.
-*/-->
-<h1 class="h3 mb-3">Giỏ hàng</h1>
-
-<div class="alert alert-success" th:if="${param.success != null and cartError == null}" th:switch="${param.success[0]}">
-    <span th:case="'added'">Đã thêm sản phẩm vào giỏ hàng.</span>
-    <span th:case="'updated'">Đã cập nhật số lượng.</span>
-    <span th:case="'removed'">Đã xóa sản phẩm khỏi giỏ hàng.</span>
-    <span th:case="*">Đã cập nhật giỏ hàng.</span>
-</div>
-<div class="alert alert-danger" id="cart-error" role="alert" th:if="${cartError != null}" th:text="${cartError}">Lỗi</div>
-
-<div class="card" id="cart-empty" th:if="${cart.isEmpty()}">
-    <div class="card-body text-center py-5">
-        <p class="text-secondary mb-3">Giỏ hàng của bạn đang trống.</p>
-        <a class="btn btn-primary" th:href="@{/products}">Tiếp tục mua sắm</a>
+<div class="cart-container">
+    <div class="cart-header">
+        <div>
+            <h1 class="cart-header-title">Giỏ hàng</h1>
+            <p class="cart-header-description" th:unless="${cart.isEmpty()}">
+                Có sản phẩm từ
+                <strong class="text-dark" th:text="${cart.groups.size()}">3</strong>
+                chi nhánh. Mỗi chi nhánh là một đơn hàng riêng.
+            </p>
+        </div>
     </div>
-</div>
 
-<div class="row g-4" th:unless="${cart.isEmpty()}">
-    <div class="col-12 col-lg-8">
-        <p class="text-secondary">
-            Giỏ hàng có sản phẩm từ <strong th:text="${cart.groups.size()}">3</strong> chi nhánh.
-            Mỗi chi nhánh sẽ là một đơn hàng riêng.
-        </p>
+    <div class="alert alert-success cart-alert py-2 px-3 mb-4 small"
+         th:if="${param.success != null and cartError == null}"
+         th:switch="${param.success[0]}" role="alert">
+        <span th:case="'added'">Đã thêm sản phẩm vào giỏ hàng.</span>
+        <span th:case="'updated'">Đã cập nhật số lượng.</span>
+        <span th:case="'removed'">Đã xóa sản phẩm khỏi giỏ hàng.</span>
+        <span th:case="*">Đã cập nhật giỏ hàng.</span>
+    </div>
 
-        <section class="card shadow-sm mb-3 os-cart-group" th:each="group : ${cart.groups}"
-                 th:attr="data-store-id=${group.storeId}">
-            <div class="card-header bg-white d-flex flex-wrap align-items-center gap-2">
-                <div class="form-check mb-0">
-                    <input type="checkbox" class="form-check-input os-cart-group-toggle"
-                           th:id="'group-' + ${group.storeId}" th:attr="data-store-id=${group.storeId}"
-                           th:disabled="${!group.hasSelectableItems()}">
-                    <label class="form-check-label" th:for="'group-' + ${group.storeId}">Chọn cả chi nhánh</label>
+    <div class="alert alert-danger cart-alert py-2 px-3 mb-4 small"
+         id="cart-error" role="alert"
+         th:if="${cartError != null}" th:text="${cartError}">
+        Lỗi xử lý
+    </div>
+
+    <div class="cart-empty-card text-center" id="cart-empty" th:if="${cart.isEmpty()}">
+        <div class="cart-empty-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="1.6"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+        </div>
+        <h2 class="h5 fw-bold mb-2">Giỏ hàng đang trống</h2>
+        <p class="text-secondary mb-4">Hãy khám phá sản phẩm và chọn những món bạn yêu thích.</p>
+        <a class="btn-cart-empty" th:href="@{/products}">Tiếp tục mua sắm</a>
+    </div>
+
+    <div class="row g-4" th:unless="${cart.isEmpty()}">
+        <div class="col-12 col-lg-8">
+            <section class="cart-store-group os-cart-group"
+                     th:each="group : ${cart.groups}"
+                     th:attr="data-store-id=${group.storeId}">
+                <div class="cart-group-header">
+                    <div class="form-check d-flex align-items-center gap-2 mb-0">
+                        <input type="checkbox"
+                               class="form-check-input cart-checkbox os-cart-group-toggle"
+                               th:id="'group-' + ${group.storeId}"
+                               th:attr="data-store-id=${group.storeId}"
+                               th:disabled="${!group.hasSelectableItems()}">
+                        <label class="form-check-label small text-secondary fw-semibold"
+                               th:for="'group-' + ${group.storeId}">
+                            Chọn chi nhánh
+                        </label>
+                    </div>
+
+                    <div class="ms-sm-2">
+                        <div class="cart-store-name os-cart-store-name"
+                             th:text="${group.storeName}">OneShop Thủ Đức</div>
+                        <div class="cart-store-address"
+                             th:text="${group.storeAddress}">101 Võ Văn Ngân</div>
+                    </div>
+
+                    <span class="cart-store-badge" th:unless="${group.storeActive}">
+                        <span aria-hidden="true">●</span> Tạm ngừng
+                    </span>
                 </div>
-                <div class="ms-sm-2">
-                    <h2 class="h6 mb-0 os-cart-store-name" th:text="${group.storeName}">OneShop Thủ Đức</h2>
-                    <div class="small text-secondary" th:text="${group.storeAddress}">101 Võ Văn Ngân</div>
-                </div>
-                <span class="badge text-bg-secondary ms-auto" th:unless="${group.storeActive}">Chi nhánh tạm ngừng</span>
-            </div>
 
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item os-cart-item" th:each="item : ${group.items}"
-                    th:attr="data-cart-item-id=${item.cartItemId}, data-store-product-id=${item.storeProductId}, data-status=${item.status}">
-                    <div class="d-flex flex-wrap align-items-start gap-3">
-                        <input type="checkbox" class="form-check-input mt-2 os-cart-item-toggle" name="cartItemIds"
-                               form="cart-selection-form" th:value="${item.cartItemId}"
-                               th:attr="data-store-id=${group.storeId}, aria-label='Chọn ' + ${item.productName}"
-                               th:disabled="${!item.selectable()}">
-
-                        <a th:href="@{/products/{id}(id=${item.productId})}" class="flex-shrink-0">
-                            <img th:if="${item.imageUrl}" th:src="${item.imageUrl}" th:alt="${item.productName}"
-                                 class="os-product-thumb rounded border" loading="lazy">
-                            <span class="os-product-thumb os-product-placeholder rounded border d-block" th:unless="${item.imageUrl}"></span>
-                        </a>
-
-                        <div class="flex-grow-1 os-cart-item-info">
-                            <a th:href="@{/products/{id}(id=${item.productId})}" class="fw-semibold text-decoration-none text-body"
-                               th:text="${item.productName}">Tên sản phẩm</a>
-                            <div class="small text-secondary">SKU: <span th:text="${item.sku}">SKU-001</span></div>
-                            <div class="small">Đơn giá: <span th:replace="~{fragments/components :: price(${item.unitPrice})}"></span></div>
-
-                            <div class="small mt-1" th:switch="${item.status.name()}">
-                                <span class="text-warning-emphasis os-cart-item-problem" th:case="'INSUFFICIENT_STOCK'">
-                                    Chi nhánh không còn đủ số lượng này. Vui lòng giảm số lượng.</span>
-                                <span class="text-danger os-cart-item-problem" th:case="'OUT_OF_STOCK'">
-                                    Đã hết hàng tại chi nhánh này.</span>
-                                <span class="text-danger os-cart-item-problem" th:case="'UNAVAILABLE'">
-                                    Không còn bán tại chi nhánh này.</span>
-                            </div>
-                        </div>
-
-                        <div class="d-flex flex-wrap align-items-center gap-2 ms-auto">
-                            <!--/* a line that is no longer on sale can only be removed */-->
-                            <form method="post" class="d-flex align-items-center gap-1 os-cart-quantity-form"
-                                  th:action="@{/cart/items/{id}(id=${item.cartItemId})}"
-                                  th:if="${item.status.name() != 'UNAVAILABLE'}">
-                                <label class="visually-hidden" th:for="'quantity-' + ${item.cartItemId}">Số lượng</label>
-                                <input type="number" class="form-control form-control-sm os-cart-quantity" name="quantity" min="1"
-                                       step="1" required th:id="'quantity-' + ${item.cartItemId}" th:value="${item.quantity}">
-                                <button type="submit" class="btn btn-outline-primary btn-sm">Cập nhật</button>
-                            </form>
-                            <span class="small text-secondary" th:if="${item.status.name() == 'UNAVAILABLE'}"
-                                  th:text="'Số lượng: ' + ${item.quantity}">Số lượng: 1</span>
-
-                            <div class="fw-semibold text-end os-cart-subtotal">
-                                <span th:replace="~{fragments/components :: price(${item.subtotal})}"></span>
+                <div class="cart-items-list">
+                    <div class="cart-item-row os-cart-item"
+                         th:each="item : ${group.items}"
+                         th:attr="data-cart-item-id=${item.cartItemId},
+                                  data-store-product-id=${item.storeProductId},
+                                  data-status=${item.status}">
+                        <div class="d-flex flex-wrap align-items-start gap-3">
+                            <div class="pt-2">
+                                <input type="checkbox"
+                                       class="form-check-input cart-checkbox os-cart-item-toggle"
+                                       name="cartItemIds"
+                                       form="cart-selection-form"
+                                       th:value="${item.cartItemId}"
+                                       th:attr="data-store-id=${group.storeId},
+                                                aria-label='Chọn ' + ${item.productName}"
+                                       th:disabled="${!item.selectable()}">
                             </div>
 
-                            <form method="post" th:action="@{/cart/items/{id}/delete(id=${item.cartItemId})}"
-                                  data-confirm="Xóa sản phẩm này khỏi giỏ hàng?">
-                                <button type="submit" class="btn btn-outline-danger btn-sm">Xóa</button>
-                            </form>
+                            <a th:href="@{/products/{id}(id=${item.productId})}"
+                               class="cart-thumb-box"
+                               th:attr="aria-label=${'Xem ' + item.productName}">
+                                <img th:if="${item.imageUrl}"
+                                     th:src="${item.imageUrl}"
+                                     th:alt="${item.productName}" loading="lazy">
+                                <span class="cart-thumb-placeholder" th:unless="${item.imageUrl}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26"
+                                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                         stroke-width="1.5" stroke-linecap="round"
+                                         stroke-linejoin="round" aria-hidden="true">
+                                        <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                                        <circle cx="9" cy="9" r="2"/>
+                                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                                    </svg>
+                                </span>
+                            </a>
+
+                            <div class="flex-grow-1 cart-item-info os-cart-item-info">
+                                <a th:href="@{/products/{id}(id=${item.productId})}"
+                                   class="cart-item-title"
+                                   th:text="${item.productName}">Tên sản phẩm</a>
+
+                                <div class="cart-sku-tag">
+                                    SKU: <span th:text="${item.sku}">SKU-001</span>
+                                </div>
+
+                                <div class="cart-unit-price">
+                                    Đơn giá:
+                                    <span th:replace="~{fragments/components :: price(${item.unitPrice})}"></span>
+                                </div>
+
+                                <div class="small mt-1" th:switch="${item.status.name()}">
+                                    <span class="text-warning-emphasis os-cart-item-problem"
+                                          th:case="'INSUFFICIENT_STOCK'">
+                                        Số lượng vượt quá tồn kho, vui lòng giảm bớt.
+                                    </span>
+                                    <span class="text-danger os-cart-item-problem"
+                                          th:case="'OUT_OF_STOCK'">
+                                        Hết hàng tại chi nhánh này.
+                                    </span>
+                                    <span class="text-secondary os-cart-item-problem"
+                                          th:case="'UNAVAILABLE'">
+                                        Ngừng kinh doanh tại chi nhánh này.
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="cart-item-actions">
+                                <form method="post"
+                                      class="d-flex align-items-center gap-2 os-cart-quantity-form"
+                                      th:action="@{/cart/items/{id}(id=${item.cartItemId})}"
+                                      th:if="${item.status.name() != 'UNAVAILABLE'}">
+                                    <label class="visually-hidden"
+                                           th:for="'quantity-' + ${item.cartItemId}">Số lượng</label>
+                                    <div class="cart-stepper">
+                                        <button type="button" class="cart-stepper-btn"
+                                                onclick="stepItemQty(this, -1)" aria-label="Giảm số lượng">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                 stroke-width="2.5" stroke-linecap="round"
+                                                 stroke-linejoin="round" aria-hidden="true">
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
+                                        </button>
+                                        <input type="number"
+                                               class="cart-stepper-input os-cart-quantity"
+                                               name="quantity" min="1" step="1" required
+                                               th:id="'quantity-' + ${item.cartItemId}"
+                                               th:value="${item.quantity}">
+                                        <button type="button" class="cart-stepper-btn"
+                                                onclick="stepItemQty(this, 1)" aria-label="Tăng số lượng">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                 stroke-width="2.5" stroke-linecap="round"
+                                                 stroke-linejoin="round" aria-hidden="true">
+                                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <span class="small text-secondary"
+                                      th:if="${item.status.name() == 'UNAVAILABLE'}"
+                                      th:text="'SL: ' + ${item.quantity}">SL: 1</span>
+
+                                <div class="cart-item-total os-cart-subtotal">
+                                    <span th:replace="~{fragments/components :: price(${item.subtotal})}"></span>
+                                </div>
+
+                                <form method="post"
+                                      th:action="@{/cart/items/{id}/delete(id=${item.cartItemId})}"
+                                      data-confirm="Xóa sản phẩm này khỏi giỏ hàng?">
+                                    <button type="submit" class="btn-remove-item" title="Xóa sản phẩm"
+                                            aria-label="Xóa sản phẩm khỏi giỏ hàng">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                             stroke-width="2" stroke-linecap="round"
+                                             stroke-linejoin="round" aria-hidden="true">
+                                            <polyline points="3 6 5 6 21 6"></polyline>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </li>
-            </ul>
-
-            <div class="card-footer bg-white d-flex justify-content-between">
-                <span class="text-secondary">Tạm tính tại chi nhánh</span>
-                <strong><span th:replace="~{fragments/components :: price(${group.subtotal})}"></span></strong>
-            </div>
-        </section>
-    </div>
-
-    <div class="col-12 col-lg-4">
-        <section class="card shadow-sm os-cart-summary">
-            <div class="card-body">
-                <h2 class="h6">Tổng giỏ hàng</h2>
-                <div class="d-flex justify-content-between mb-1">
-                    <span class="text-secondary">Số dòng sản phẩm</span>
-                    <span th:text="${cart.itemCount}">3</span>
-                </div>
-                <div class="d-flex justify-content-between mb-3">
-                    <span class="text-secondary">Tạm tính (sản phẩm còn mua được)</span>
-                    <strong id="cart-total"><span th:replace="~{fragments/components :: price(${cart.total})}"></span></strong>
                 </div>
 
-                <!--/* The checked cartItemIds are what the next step receives (form attribute on each checkbox). */-->
+                <div class="cart-group-footer">
+                    <span>Tạm tính tại chi nhánh</span>
+                    <strong>
+                        <span th:replace="~{fragments/components :: price(${group.subtotal})}"></span>
+                    </strong>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <section class="cart-summary-panel os-cart-summary">
+                <div class="summary-header">Tóm tắt đơn hàng</div>
+
+                <div class="summary-row">
+                    <span>Số lượng mặt hàng</span>
+                    <span class="fw-semibold text-dark" th:text="${cart.itemCount}">3</span>
+                </div>
+
+                <div class="pt-3 mb-3 border-top">
+                    <div class="small text-secondary mb-1">Tạm tính</div>
+                    <div class="summary-total-price" id="cart-total">
+                        <span th:replace="~{fragments/components :: price(${cart.total})}"></span>
+                    </div>
+                </div>
+
                 <form method="get" th:action="@{/checkout}" id="cart-selection-form">
-                    <button type="submit" class="btn btn-primary w-100" th:disabled="${!cart.hasSelectableItems()}">
+                    <button type="submit" class="btn-checkout-submit"
+                            th:disabled="${!cart.hasSelectableItems()}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17"
+                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round" aria-hidden="true">
+                            <path d="M5 12h14"></path>
+                            <path d="m12 5 7 7-7 7"></path>
+                        </svg>
                         Đặt hàng sản phẩm đã chọn
                     </button>
                 </form>
-                <p class="small text-secondary mt-2 mb-0">
-                    Chọn cả chi nhánh hoặc từng sản phẩm. Giá và tình trạng hàng sẽ được kiểm tra lại khi đặt hàng.
+
+                <p class="cart-summary-note mt-3 mb-0">
+                    Chọn chi nhánh hoặc từng sản phẩm để thanh toán.
+                    Tồn kho sẽ được xác thực khi gửi đơn hàng.
                 </p>
-                <a class="btn btn-link w-100 mt-2" th:href="@{/products}">Tiếp tục mua sắm</a>
-            </div>
-        </section>
+
+                <div class="text-center mt-3 pt-3 border-top">
+                    <a class="btn-back-catalog" th:href="@{/products}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round" aria-hidden="true">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                        Tiếp tục xem sản phẩm
+                    </a>
+                </div>
+            </section>
+        </div>
     </div>
 </div>
+
+<script>
+    const quantityTimers = new WeakMap();
+    const quantitySubmitting = new WeakSet();
+
+    function scheduleQuantityUpdate(input, delay = 500) {
+        const form = input.closest('.os-cart-quantity-form');
+        if (!form || quantitySubmitting.has(form)) return;
+
+        const min = parseInt(input.min, 10) || 1;
+        const value = parseInt(input.value, 10);
+
+        if (!Number.isInteger(value) || value < min) {
+            input.setAttribute('aria-invalid', 'true');
+            return;
+        }
+
+        input.removeAttribute('aria-invalid');
+
+        clearTimeout(quantityTimers.get(form));
+        quantityTimers.set(form, setTimeout(() => {
+            const initialValue = input.getAttribute('data-initial-quantity');
+            if (initialValue !== null && String(value) === initialValue) {
+                return;
+            }
+
+            quantitySubmitting.add(form);
+            form.classList.add('is-updating');
+            form.requestSubmit();
+        }, delay));
+    }
+
+    function stepItemQty(btn, delta) {
+        const form = btn.closest('.os-cart-quantity-form');
+        if (!form || quantitySubmitting.has(form)) return;
+
+        const input = form.querySelector('.os-cart-quantity');
+        if (!input) return;
+
+        const current = parseInt(input.value, 10) || 1;
+        const min = parseInt(input.min, 10) || 1;
+        const max = input.max ? parseInt(input.max, 10) : Infinity;
+        input.value = Math.min(max, Math.max(min, current + delta));
+        scheduleQuantityUpdate(input, 350);
+    }
+
+    document.querySelectorAll('.os-cart-quantity').forEach(input => {
+        input.setAttribute('data-initial-quantity', input.value);
+        input.addEventListener('input', () => scheduleQuantityUpdate(input, 650));
+        input.addEventListener('change', () => scheduleQuantityUpdate(input, 350));
+        input.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                scheduleQuantityUpdate(input, 0);
+            }
+        });
+    });
+
+    document.querySelectorAll('[data-confirm]').forEach(form => {
+        form.addEventListener('submit', event => {
+            const message = form.getAttribute('data-confirm');
+            if (message && !confirm(message)) event.preventDefault();
+        });
+    });
+
+    document.querySelectorAll('.os-cart-group-toggle').forEach(groupToggle => {
+        groupToggle.addEventListener('change', () => {
+            const storeId = groupToggle.getAttribute('data-store-id');
+            const itemCheckboxes = document.querySelectorAll(
+                '.os-cart-item-toggle[data-store-id="' + CSS.escape(storeId) + '"]:not(:disabled)'
+            );
+            itemCheckboxes.forEach(checkbox => {
+                checkbox.checked = groupToggle.checked;
+            });
+        });
+    });
+
+    document.querySelectorAll('.os-cart-item-toggle').forEach(itemToggle => {
+        itemToggle.addEventListener('change', () => {
+            const storeId = itemToggle.getAttribute('data-store-id');
+            const groupToggle = document.querySelector(
+                '.os-cart-group-toggle[data-store-id="' + CSS.escape(storeId) + '"]'
+            );
+            if (!groupToggle) return;
+
+            const selectableItems = document.querySelectorAll(
+                '.os-cart-item-toggle[data-store-id="' + CSS.escape(storeId) + '"]:not(:disabled)'
+            );
+            const checkedItems = Array.from(selectableItems).filter(checkbox => checkbox.checked);
+            groupToggle.checked = selectableItems.length > 0 &&
+                                  checkedItems.length === selectableItems.length;
+            groupToggle.indeterminate = checkedItems.length > 0 &&
+                                        checkedItems.length < selectableItems.length;
+        });
+    });
+</script>
 </body>
 </html>
