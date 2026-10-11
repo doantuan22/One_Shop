@@ -1,0 +1,58 @@
+:root {
+    --os-coral: #ff6f61;
+    --os-coral-dark: #e95b50;
+    --os-coral-light: #fff0ed;
+    --os-text: #292d32;
+    --os-muted: #707780;
+}
+
+body {
+    color: var(--os-text);
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--os-coral);
+    --bs-btn-border-color: var(--os-coral);
+    --bs-btn-hover-bg: var(--os-coral-dark);
+    --bs-btn-hover-border-color: var(--os-coral-dark);
+    --bs-btn-active-bg: var(--os-coral-dark);
+    --bs-btn-active-border-color: var(--os-coral-dark);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--os-coral-dark);
+    --bs-btn-border-color: var(--os-coral);
+    --bs-btn-hover-bg: var(--os-coral);
+    --bs-btn-hover-border-color: var(--os-coral);
+    --bs-btn-hover-color: #fff;
+}
+
+.os-hero {
+    padding: clamp(2rem, 5vw, 4rem);
+    border: 1px solid #ffe0da;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #fff0ed, #fffaf8);
+}
+
+.os-hero h1 {
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.os-hero p {
+    color: var(--os-muted);
+}
+
+.os-card {
+    height: 100%;
+    padding: 1.5rem;
+    border: 1px solid #f0e6e3;
+    border-radius: 18px;
+    background: #fff;
+    transition: transform .2s, box-shadow .2s;
+}
+
+.os-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px #292d3210;
+}
