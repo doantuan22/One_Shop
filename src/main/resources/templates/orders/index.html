@@ -1,11 +1,549 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Đơn hàng của tôi</title></head><body>
-<h1 class="h3">Đơn hàng của tôi</h1><p th:if="${customerOrders.isEmpty()}">Bạn chưa có đơn hàng.</p>
-<div class="card mb-3" th:each="order : ${customerOrders}" th:attr="data-order-id=${order.orderId}"><div class="card-body">
-    <h2 class="h5"><a th:href="@{/orders/{id}(id=${order.orderId})}" th:text="'Đơn #' + ${order.orderId}"></a> · <span th:text="${order.storeName}"></span></h2>
-    <p th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></p>
-    <p th:text="${order.fulfillmentType.name() == 'STORE_PICKUP'} ? 'Nhận tại cửa hàng' : 'Giao tận nơi'"></p>
-    <span th:replace="~{staff/delivery/fragments :: state(${order.orderStatus})}"></span> · <span th:replace="~{staff/delivery/fragments :: payment(${order.paymentStatus})}"></span>
-    <p class="fw-bold mt-2 mb-0"><span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></p>
-</div></div>
-</body></html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đơn hàng của tôi - OneShop</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-coral.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .orders-container {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 2.25rem 1rem 5rem;
+        }
+
+        .breadcrumb-clean {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            display: inline-flex;
+            margin-bottom: 1.5rem;
+        }
+
+        .breadcrumb-clean .breadcrumb-item a {
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .breadcrumb-clean .breadcrumb-item a:hover {
+            color: var(--bs-primary, #ff7f50);
+        }
+
+        .breadcrumb-clean .breadcrumb-item.active {
+            color: var(--bs-primary, #ff7f50);
+            font-weight: 700;
+        }
+
+        .orders-header {
+            margin-bottom: 2rem;
+        }
+
+        .orders-title {
+            font-size: 1.65rem;
+            font-weight: 850;
+            color: #0f172a;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.35rem;
+        }
+
+        .orders-subtitle {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 0;
+        }
+
+        .empty-orders-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 3.5rem 1.5rem;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .empty-orders-icon {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background-color: #fffaf8;
+            color: var(--bs-primary, #ff7f50);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .empty-orders-title {
+            font-size: 1.15rem;
+            font-weight: 750;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-orders-desc {
+            font-size: 0.9rem;
+            color: #64748b;
+            max-width: 420px;
+            margin: 0 auto 1.5rem;
+            line-height: 1.5;
+        }
+
+        .btn-start-shopping {
+            height: 44px;
+            padding: 0 1.5rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            background: linear-gradient(135deg, #ff7f50, #f06437);
+            border: none;
+            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.22);
+            transition: all 0.2s ease;
+        }
+
+        .btn-start-shopping:hover {
+            color: #ffffff;
+            background: linear-gradient(135deg, #f06437, #df5124);
+            box-shadow: 0 6px 16px rgba(255, 127, 80, 0.32);
+        }
+
+        .order-history-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .order-history-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .order-card-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 1rem 1.35rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .order-id-badge {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #0f172a;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .store-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.825rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .store-pill-icon {
+            color: var(--bs-primary, #ff7f50);
+            flex-shrink: 0;
+        }
+
+        .order-datetime {
+            font-size: 0.825rem;
+            color: #64748b;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .order-card-body {
+            padding: 1.2rem 1.35rem;
+        }
+
+        .order-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.15rem 1.5rem;
+        }
+
+        .order-info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .info-item-label {
+            font-size: 0.775rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #94a3b8;
+        }
+
+        .fulfillment-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 650;
+            width: fit-content;
+        }
+
+        .fulfillment-delivery {
+            background-color: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #dbeafe;
+        }
+
+        .fulfillment-pickup {
+            background-color: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #ffedd5;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 0.825rem;
+            font-weight: 700;
+            line-height: 1.2;
+            width: fit-content;
+        }
+
+        .status-pending {
+            background-color: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+
+        .status-confirmed {
+            background-color: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+        }
+
+        .status-preparing {
+            background-color: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #fed7aa;
+        }
+
+        .status-ready {
+            background-color: #f0fdfa;
+            color: #0f766e;
+            border: 1px solid #99f6e4;
+        }
+
+        .status-shipping {
+            background-color: #f5f3ff;
+            color: #6d28d9;
+            border: 1px solid #ddd6fe;
+        }
+
+        .status-completed {
+            background-color: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .status-cancelled {
+            background-color: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .status-default {
+            background-color: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .payment-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 0.825rem;
+            font-weight: 700;
+            width: fit-content;
+            line-height: 1.2;
+        }
+
+        .payment-paid {
+            background-color: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+        }
+
+        .payment-unpaid {
+            background-color: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #ffedd5;
+        }
+
+        .payment-failed {
+            background-color: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .order-card-footer {
+            background-color: #fcfcfc;
+            border-top: 1px solid #f1f5f9;
+            padding: 0.95rem 1.35rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .order-total-block {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .order-total-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .order-total-value {
+            font-size: 1.25rem;
+            font-weight: 850;
+            color: var(--bs-primary, #ff7f50);
+            letter-spacing: -0.02em;
+        }
+
+        .btn-view-order-detail {
+            height: 38px;
+            padding: 0 1.15rem;
+            border-radius: 9px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #334155;
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-view-order-detail:hover {
+            color: #ffffff;
+            background-color: var(--bs-primary, #ff7f50);
+            border-color: var(--bs-primary, #ff7f50);
+            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.2);
+        }
+    </style>
+</head>
+<body>
+<div class="orders-container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb breadcrumb-clean small">
+            <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Đơn hàng của tôi</li>
+        </ol>
+    </nav>
+
+    <div class="orders-header">
+        <h1 class="orders-title">Đơn hàng của tôi</h1>
+        <p class="orders-subtitle">Theo dõi lịch sử và tiến độ xử lý đơn hàng tại các chi nhánh OneShop</p>
+    </div>
+
+    <div class="empty-orders-card" th:if="${customerOrders.isEmpty()}">
+        <div class="empty-orders-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            </svg>
+        </div>
+        <div class="empty-orders-title">Bạn chưa có đơn hàng nào</div>
+        <p class="empty-orders-desc">Hãy khám phá bộ sưu tập mỹ phẩm chính hãng và lựa chọn chi nhánh gần bạn nhất để nhận hàng.</p>
+        <a class="btn-start-shopping" th:href="@{/products}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="21" r="1"/>
+                <circle cx="20" cy="21" r="1"/>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            Khám phá sản phẩm
+        </a>
+    </div>
+
+    <div th:unless="${customerOrders.isEmpty()}">
+        <article class="order-history-card" th:each="order : ${customerOrders}" th:attr="data-order-id=${order.orderId}">
+            <div class="order-card-header">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="order-id-badge" th:text="'Đơn #' + ${order.orderId}">Đơn #1001</span>
+                    <span class="store-pill">
+                        <svg class="store-pill-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 21h18"/>
+                            <path d="M5 21V7l8-4v18"/>
+                            <path d="M19 21V11l-6-4"/>
+                        </svg>
+                        <span th:text="${order.storeName}">OneShop Thủ Đức</span>
+                    </span>
+                </div>
+
+                <div class="order-datetime">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</span>
+                </div>
+            </div>
+
+            <div class="order-card-body">
+                <div class="order-info-grid">
+                    <div class="order-info-item">
+                        <span class="info-item-label">Hình thức nhận hàng</span>
+                        <div>
+                            <span class="fulfillment-chip fulfillment-delivery" th:if="${order.fulfillmentType.name() == 'DELIVERY'}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
+                                    <path d="M15 18H9"/>
+                                    <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.24-4.05a1 1 0 0 0-.78-.38H14v10"/>
+                                    <circle cx="17" cy="18.5" r="2.5"/>
+                                    <circle cx="7" cy="18.5" r="2.5"/>
+                                </svg>
+                                <span>Giao hàng tận nơi</span>
+                            </span>
+
+                            <span class="fulfillment-chip fulfillment-pickup" th:if="${order.fulfillmentType.name() == 'STORE_PICKUP'}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    <polyline points="9 22 9 12 15 12 15 22"/>
+                                </svg>
+                                <span>Nhận tại cửa hàng</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="order-info-item">
+                        <span class="info-item-label">Trạng thái xử lý</span>
+                        <div th:switch="${order.orderStatus.name()}">
+                            <span class="status-badge status-pending" th:case="'PENDING_PAYMENT'">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                Chờ thanh toán
+                            </span>
+
+                            <span class="status-badge status-confirmed" th:case="'CONFIRMED'">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                Đã xác nhận
+                            </span>
+
+                            <span class="status-badge status-preparing" th:case="'PREPARING'">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                                Đang chuẩn bị
+                            </span>
+
+                            <span class="status-badge status-ready" th:case="'READY_FOR_PICKUP'">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                                Sẵn sàng nhận tại cửa hàng
+                            </span>
+
+                            <span class="status-badge status-shipping" th:case="'SHIPPING'">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                                Đang giao hàng
+                            </span>
+
+                            <span class="status-badge status-completed" th:case="'DELIVERED'">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                Giao thành công
+                            </span>
+
+                            <span class="status-badge status-completed" th:case="'COMPLETED'">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                Đã hoàn tất
+                            </span>
+
+                            <span class="status-badge status-cancelled" th:case="'CANCELLED'">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                Đã hủy
+                            </span>
+
+                            <span class="status-badge status-default" th:case="*" th:text="${order.orderStatus}">
+                                Trạng thái
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="order-info-item">
+                        <span class="info-item-label">Thanh toán</span>
+                        <div th:switch="${order.paymentStatus.name()}">
+                            <span class="payment-chip payment-paid" th:case="'PAID'">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                Đã thanh toán
+                            </span>
+                            <span class="payment-chip payment-unpaid" th:case="'UNPAID'">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                Chưa thanh toán
+                            </span>
+                            <span class="payment-chip payment-failed" th:case="'FAILED'">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                                Thanh toán thất bại
+                            </span>
+                            <span class="payment-chip payment-unpaid" th:case="*" th:text="${order.paymentStatus}">
+                                Chưa thanh toán
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="order-card-footer">
+                <div class="order-total-block">
+                    <span class="order-total-label">Tổng thanh toán:</span>
+                    <span class="order-total-value">
+                        <span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span>
+                    </span>
+                </div>
+
+                <a class="btn-view-order-detail" th:href="@{/orders/{id}(id=${order.orderId})}">
+                    <span>Chi tiết đơn hàng</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </a>
+            </div>
+        </article>
+    </div>
+</div>
+</body>
+</html>

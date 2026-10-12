@@ -31,3 +31,6 @@ backup/
 *.bak
 database/seed_large/images/originals/
 oneshop-seed-images/
+
+URL_CHECKLIST.md
+log.txt
