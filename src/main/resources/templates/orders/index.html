@@ -158,18 +158,25 @@
         .store-pill {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 3px 10px;
+            gap: 7px;
+            background: linear-gradient(135deg, #FFF5F0, #FFE5DA);
+            border: 1px solid rgba(255, 127, 80, 0.22);
+            padding: 4px 11px;
             border-radius: 999px;
             font-size: 0.825rem;
-            font-weight: 600;
-            color: #334155;
+            font-weight: 650;
+            color: #0f172a;
+            box-shadow: 0 1px 3px rgba(255, 127, 80, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .store-pill:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(255, 127, 80, 0.16);
         }
 
         .store-pill-icon {
-            color: var(--bs-primary, #ff7f50);
+            color: #F06437;
             flex-shrink: 0;
         }
 
@@ -259,7 +266,7 @@
         }
 
         .status-ready {
-            background-color: #f0fdfa;
+            background-color: #f0fdf4;
             color: #0f766e;
             border: 1px solid #99f6e4;
         }
@@ -411,10 +418,22 @@
                 <div class="d-flex align-items-center gap-2 flex-wrap">
                     <span class="order-id-badge" th:text="'Đơn #' + ${order.orderId}">Đơn #1001</span>
                     <span class="store-pill">
-                        <svg class="store-pill-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 21h18"/>
-                            <path d="M5 21V7l8-4v18"/>
-                            <path d="M19 21V11l-6-4"/>
+                        <svg class="store-pill-icon" xmlns="http://www.w3.org/2000/svg"
+                             width="15" height="15"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.8"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             aria-hidden="true">
+                            <path d="M3 10h18"/>
+                            <path d="M5 10V20H19V10"/>
+                            <path d="M3 10L5 4H19L21 10"/>
+                            <path d="M3 10a3 3 0 0 0 6 0"/>
+                            <path d="M9 10a3 3 0 0 0 6 0"/>
+                            <path d="M15 10a3 3 0 0 0 6 0"/>
+                            <path d="M10 20V14H14V20"/>
                         </svg>
                         <span th:text="${order.storeName}">OneShop Thủ Đức</span>
                     </span>
@@ -436,7 +455,7 @@
                         <div>
                             <span class="fulfillment-chip fulfillment-delivery" th:if="${order.fulfillmentType.name() == 'DELIVERY'}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
+                                    <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 1 1 1h2"/>
                                     <path d="M15 18H9"/>
                                     <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.24-4.05a1 1 0 0 0-.78-.38H14v10"/>
                                     <circle cx="17" cy="18.5" r="2.5"/>
@@ -446,9 +465,22 @@
                             </span>
 
                             <span class="fulfillment-chip fulfillment-pickup" th:if="${order.fulfillmentType.name() == 'STORE_PICKUP'}">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                                    <polyline points="9 22 9 12 15 12 15 22"/>
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     width="15" height="15"
+                                     viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="1.8"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round"
+                                     aria-hidden="true">
+                                    <path d="M3 10h18"/>
+                                    <path d="M5 10V20H19V10"/>
+                                    <path d="M3 10L5 4H19L21 10"/>
+                                    <path d="M3 10a3 3 0 0 0 6 0"/>
+                                    <path d="M9 10a3 3 0 0 0 6 0"/>
+                                    <path d="M15 10a3 3 0 0 0 6 0"/>
+                                    <path d="M10 20V14H14V20"/>
                                 </svg>
                                 <span>Nhận tại cửa hàng</span>
                             </span>
@@ -474,7 +506,23 @@
                             </span>
 
                             <span class="status-badge status-ready" th:case="'READY_FOR_PICKUP'">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     width="13" height="13"
+                                     viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="1.8"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round"
+                                     aria-hidden="true">
+                                    <path d="M3 10h18"/>
+                                    <path d="M5 10V20H19V10"/>
+                                    <path d="M3 10L5 4H19L21 10"/>
+                                    <path d="M3 10a3 3 0 0 0 6 0"/>
+                                    <path d="M9 10a3 3 0 0 0 6 0"/>
+                                    <path d="M15 10a3 3 0 0 0 6 0"/>
+                                    <path d="M10 20V14H14V20"/>
+                                </svg>
                                 Sẵn sàng nhận tại cửa hàng
                             </span>
 

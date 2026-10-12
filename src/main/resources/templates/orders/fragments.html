@@ -1,43 +1,633 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org"><body>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
 <div th:fragment="detail(detail)" th:with="order=${detail.order}">
-    <h1 class="h3" th:text="'Đơn hàng #' + ${order.orderId}"></h1>
-    <p class="mb-1" th:text="${order.storeName}"></p><p class="text-secondary" th:text="${order.storeAddress}"></p>
-    <dl class="row">
-        <dt class="col-sm-4">Ngày tạo</dt><dd class="col-sm-8" th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm:ss')}"></dd>
-        <dt class="col-sm-4">Hình thức nhận</dt><dd class="col-sm-8" th:text="${order.fulfillmentType.name() == 'STORE_PICKUP'} ? 'Nhận tại cửa hàng' : 'Giao tận nơi'"></dd>
-        <dt class="col-sm-4">Người nhận</dt><dd class="col-sm-8" th:text="${order.receiverName}"></dd>
-        <dt class="col-sm-4">Điện thoại</dt><dd class="col-sm-8" th:text="${order.receiverPhone}"></dd>
-        <dt class="col-sm-4" th:if="${order.shippingAddress}">Địa chỉ giao hàng</dt><dd class="col-sm-8" th:if="${order.shippingAddress}" th:text="${order.shippingAddress}"></dd>
-        <dt class="col-sm-4">Phương thức thanh toán</dt><dd class="col-sm-8"><span th:replace="~{staff/delivery/fragments :: method(${order.paymentMethod})}"></span></dd>
-        <dt class="col-sm-4">Thanh toán</dt><dd class="col-sm-8" id="order-payment-status" th:attr="data-status=${order.paymentStatus}"><span th:replace="~{staff/delivery/fragments :: payment(${order.paymentStatus})}"></span></dd>
-        <dt class="col-sm-4">Trạng thái đơn</dt><dd class="col-sm-8" id="order-status" th:attr="data-status=${order.orderStatus}"><span th:replace="~{staff/delivery/fragments :: state(${order.orderStatus})}"></span></dd>
-        <dt class="col-sm-4" th:if="${order.readyAt}">Sẵn sàng nhận lúc</dt><dd class="col-sm-8" th:if="${order.readyAt}" th:text="${#temporals.format(order.readyAt, 'dd/MM/yyyy HH:mm:ss')}"></dd>
-        <dt class="col-sm-4" th:if="${order.pickedUpAt}">Đã nhận lúc</dt><dd class="col-sm-8" th:if="${order.pickedUpAt}" th:text="${#temporals.format(order.pickedUpAt, 'dd/MM/yyyy HH:mm:ss')}"></dd>
-    </dl>
-    <div class="alert alert-info" th:if="${order.pickupCode != null}">
-        Mã nhận hàng: <strong id="pickup-code" class="fs-4 font-monospace" th:text="${order.pickupCode}"></strong>
-        <p class="mb-0" th:if="${order.orderStatus.name() == 'READY_FOR_PICKUP'}">Cung cấp mã này cho nhân viên tại chi nhánh để nhận hàng.</p>
-        <p class="mb-0" th:if="${order.orderStatus.name() == 'COMPLETED'}">Đơn đã nhận. Mã này không còn sử dụng được.</p>
+    <style>
+        .od-wrapper {
+            padding: 1.5rem;
+            color: #1e293b;
+        }
+
+        .od-header-banner {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .od-store-header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .store-icon-badge {
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            color: #F06437;
+            background: linear-gradient(135deg, #FFF5F0, #FFE5DA);
+            border: 1px solid rgba(255, 127, 80, 0.22);
+            box-shadow: 0 3px 8px rgba(255, 127, 80, 0.10);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .store-icon-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(255, 127, 80, 0.18);
+        }
+
+        .od-store-name {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 0.2rem;
+            line-height: 1.3;
+        }
+
+        .od-store-address {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .od-status-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .od-section-title {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .od-grid-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .od-info-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 1.25rem;
+        }
+
+        .od-info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 0;
+        }
+
+        .od-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 0.875rem;
+        }
+
+        .od-info-label {
+            color: #64748b;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .od-info-value {
+            color: #0f172a;
+            font-weight: 650;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .od-pickup-box {
+            background: linear-gradient(135deg, #fffaf8 0%, #fff5f2 100%);
+            border: 1px dashed #ff7f50;
+            border-radius: 14px;
+            padding: 1.25rem;
+            margin-bottom: 1.75rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .od-pickup-code-display {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 1.75rem;
+            font-weight: 850;
+            color: var(--bs-primary, #ff7f50);
+            letter-spacing: 0.15em;
+            background: #ffffff;
+            border: 1px solid #ffd8cc;
+            padding: 0.35rem 1.25rem;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .od-table-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 1.75rem;
+        }
+
+        .od-table {
+            width: 100%;
+            margin: 0;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .od-table th {
+            background-color: #f8fafc;
+            color: #64748b;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 0.9rem 1.25rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .od-table td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+
+        .od-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .od-item-title {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .od-qty-badge {
+            background-color: #f1f5f9;
+            color: #475569;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-weight: 650;
+            font-size: 0.825rem;
+        }
+
+        .od-summary-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.75rem;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .od-summary-total {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+
+        .od-summary-total-label {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .od-summary-total-val {
+            font-size: 1.5rem;
+            font-weight: 850;
+            color: var(--bs-primary, #ff7f50);
+            letter-spacing: -0.02em;
+        }
+
+        .od-payment-entry {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 1.15rem 1.35rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .od-payment-entry:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .od-payment-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 13px;
+            background: linear-gradient(135deg, #FFF5F0, #FFE5DA);
+            border: 1px solid rgba(255, 127, 80, 0.22);
+            color: #F06437;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 3px 8px rgba(255, 127, 80, 0.10);
+        }
+
+        .od-payment-method-name {
+            font-size: 0.98rem;
+            font-weight: 750;
+            color: #0f172a;
+        }
+
+        .od-payment-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 11px;
+            border-radius: 999px;
+            font-size: 0.775rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .od-pay-pending {
+            background-color: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+
+        .od-pay-success {
+            background-color: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .od-pay-failed {
+            background-color: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .od-timeline {
+            position: relative;
+            padding-left: 28px;
+            margin: 0;
+            list-style: none;
+        }
+
+        .od-timeline::before {
+            content: "";
+            position: absolute;
+            left: 9px;
+            top: 6px;
+            bottom: 6px;
+            width: 2px;
+            background-color: #e2e8f0;
+        }
+
+        .od-timeline-item {
+            position: relative;
+            padding-bottom: 1.35rem;
+        }
+
+        .od-timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .od-timeline-dot {
+            position: absolute;
+            left: -28px;
+            top: 4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            border: 3px solid var(--bs-primary, #ff7f50);
+        }
+
+        .od-timeline-content {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0.85rem 1.15rem;
+        }
+
+        .od-timeline-head {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .od-timeline-meta {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+    </style>
+
+    <div class="od-wrapper">
+        <div class="od-header-banner">
+            <div class="od-store-header-left">
+                <span class="store-icon-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="22" height="22"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M3 10h18"/>
+                        <path d="M5 10V20H19V10"/>
+                        <path d="M3 10L5 4H19L21 10"/>
+                        <path d="M3 10a3 3 0 0 0 6 0"/>
+                        <path d="M9 10a3 3 0 0 0 6 0"/>
+                        <path d="M15 10a3 3 0 0 0 6 0"/>
+                        <path d="M10 20V14H14V20"/>
+                    </svg>
+                </span>
+                <div>
+                    <div class="od-store-name" th:text="${order.storeName}">OneShop</div>
+                    <p class="od-store-address" th:if="${order.storeAddress}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/>
+                            <circle cx="12" cy="10" r="2.5"/>
+                        </svg>
+                        <span th:text="${order.storeAddress}">Địa chỉ chi nhánh</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="od-status-group">
+                <span id="order-status" th:attr="data-status=${order.orderStatus}">
+                    <span th:replace="~{staff/delivery/fragments :: state(${order.orderStatus})}"></span>
+                </span>
+                <span id="order-payment-status" th:attr="data-status=${order.paymentStatus}">
+                    <span th:replace="~{staff/delivery/fragments :: payment(${order.paymentStatus})}"></span>
+                </span>
+            </div>
+        </div>
+
+        <div class="od-pickup-box" th:if="${order.pickupCode != null}">
+            <div>
+                <div class="fw-bold text-dark fs-6 mb-1">Mã nhận hàng tại cửa hàng</div>
+                <p class="text-secondary small mb-0" th:if="${order.orderStatus.name() == 'READY_FOR_PICKUP'}">
+                    Vui lòng xuất trình mã này cho nhân viên tại chi nhánh khi đến nhận hàng.
+                </p>
+                <p class="text-muted small mb-0" th:if="${order.orderStatus.name() == 'COMPLETED'}">
+                    Đơn hàng đã nhận thành công. Mã nhận hàng đã hết hiệu lực.
+                </p>
+            </div>
+            <div>
+                <span id="pickup-code" class="od-pickup-code-display" th:text="${order.pickupCode}">Mã nhận hàng</span>
+            </div>
+        </div>
+
+        <div class="od-grid-info">
+            <div class="od-info-card">
+                <div class="od-section-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="text-coral">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <span>Thông tin nhận hàng</span>
+                </div>
+                <div class="od-info-list">
+                    <div class="od-info-row">
+                        <span class="od-info-label">Người nhận:</span>
+                        <span class="od-info-value" th:text="${order.receiverName}">Họ tên</span>
+                    </div>
+                    <div class="od-info-row">
+                        <span class="od-info-label">Số điện thoại:</span>
+                        <span class="od-info-value" th:text="${order.receiverPhone}">Số điện thoại</span>
+                    </div>
+                    <div class="od-info-row">
+                        <span class="od-info-label">Hình thức:</span>
+                        <span class="od-info-value" th:text="${order.fulfillmentType.name() == 'STORE_PICKUP'} ? 'Nhận tại cửa hàng' : 'Giao tận nơi'">Hình thức nhận</span>
+                    </div>
+                    <div class="od-info-row" th:if="${order.shippingAddress != null}">
+                        <span class="od-info-label">Địa chỉ giao:</span>
+                        <span class="od-info-value" th:text="${order.shippingAddress}">Địa chỉ</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="od-info-card">
+                <div class="od-section-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="text-coral">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    <span>Thời gian & Thanh toán</span>
+                </div>
+                <div class="od-info-list">
+                    <div class="od-info-row">
+                        <span class="od-info-label">Ngày đặt:</span>
+                        <span class="od-info-value" th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm:ss')}">Thời gian tạo</span>
+                    </div>
+                    <div class="od-info-row">
+                        <span class="od-info-label">Phương thức:</span>
+                        <span class="od-info-value">
+                            <span th:replace="~{staff/delivery/fragments :: method(${order.paymentMethod})}"></span>
+                        </span>
+                    </div>
+                    <div class="od-info-row" th:if="${order.readyAt != null}">
+                        <span class="od-info-label">Sẵn sàng nhận:</span>
+                        <span class="od-info-value" th:text="${#temporals.format(order.readyAt, 'dd/MM/yyyy HH:mm:ss')}"></span>
+                    </div>
+                    <div class="od-info-row" th:if="${order.pickedUpAt != null}">
+                        <span class="od-info-label">Đã nhận lúc:</span>
+                        <span class="od-info-value" th:text="${#temporals.format(order.pickedUpAt, 'dd/MM/yyyy HH:mm:ss')}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="od-section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="text-coral">
+                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-2Z"/>
+                <path d="M3 6h18"/>
+                <path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+            <span>Sản phẩm đã đặt</span>
+        </div>
+
+        <div class="od-table-box">
+            <div class="table-responsive">
+                <table class="od-table">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th class="text-end">Đơn giá</th>
+                            <th class="text-center">Số lượng</th>
+                            <th class="text-end">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${detail.items}">
+                            <td>
+                                <span class="od-item-title" th:text="${item.productName}">Tên sản phẩm</span>
+                            </td>
+                            <td class="text-end text-secondary">
+                                <span th:replace="~{fragments/components :: price(${item.unitPrice})}"></span>
+                            </td>
+                            <td class="text-center">
+                                <span class="od-qty-badge" th:text="${item.quantity}">1</span>
+                            </td>
+                            <td class="text-end fw-bold text-dark">
+                                <span th:replace="~{fragments/components :: price(${item.subtotal})}"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="od-summary-card">
+            <div class="od-summary-total">
+                <span class="od-summary-total-label">Tổng thanh toán đơn hàng:</span>
+                <span class="od-summary-total-val">
+                    <span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span>
+                </span>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="od-section-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="text-coral">
+                    <rect x="2" y="5" width="20" height="14" rx="2"/>
+                    <line x1="2" y1="10" x2="22" y2="10"/>
+                </svg>
+                <span>Phương thức thanh toán</span>
+            </div>
+
+            <p class="text-secondary small mb-2" th:if="${detail.payments.isEmpty()}">Chưa có thông tin thanh toán nào.</p>
+
+            <div th:unless="${detail.payments.isEmpty()}">
+                <div class="od-payment-entry" th:each="payment : ${detail.payments}">
+                    <div class="d-flex align-items-center gap-3 w-100">
+                        <div class="od-payment-icon-box">
+                            <svg th:if="${#strings.containsIgnoreCase(payment.method, 'ONLINE')}" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                                <line x1="2" y1="10" x2="22" y2="10"></line>
+                            </svg>
+                            <svg th:if="${#strings.containsIgnoreCase(payment.method, 'STORE') or #strings.containsIgnoreCase(payment.method, 'CASH')}" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M3 10h18"/>
+                                <path d="M5 10V20H19V10"/>
+                                <path d="M3 10L5 4H19L21 10"/>
+                                <path d="M3 10a3 3 0 0 0 6 0"/>
+                                <path d="M9 10a3 3 0 0 0 6 0"/>
+                                <path d="M15 10a3 3 0 0 0 6 0"/>
+                                <path d="M10 20V14H14V20"/>
+                            </svg>
+                            <svg th:if="${!#strings.containsIgnoreCase(payment.method, 'ONLINE') and !#strings.containsIgnoreCase(payment.method, 'STORE') and !#strings.containsIgnoreCase(payment.method, 'CASH')}" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+                                <circle cx="12" cy="12" r="2"></circle>
+                                <path d="M6 12h.01M18 12h.01"></path>
+                            </svg>
+                        </div>
+
+                        <div>
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <span class="od-payment-method-name" th:switch="${#strings.toUpperCase(#strings.toString(payment.method))}">
+                                    <span th:case="'PAY_AT_STORE'">Thanh toán tại cửa hàng</span>
+                                    <span th:case="'COD'">Thanh toán khi nhận hàng (COD)</span>
+                                    <span th:case="'ONLINE'">Thanh toán trực tuyến</span>
+                                    <span th:case="'CASH'">Tiền mặt tại quầy</span>
+                                    <span th:case="'BANK_TRANSFER'">Chuyển khoản ngân hàng</span>
+                                    <span th:case="*">
+                                        <span th:replace="~{staff/delivery/fragments :: method(${payment.method})}"></span>
+                                    </span>
+                                </span>
+
+                                <span th:switch="${#strings.toUpperCase(#strings.toString(payment.status))}">
+                                    <span class="od-payment-chip od-pay-pending" th:case="'PENDING'">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                        Chờ thanh toán
+                                    </span>
+                                    <span class="od-payment-chip od-pay-success" th:case="'PAID'">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                        Đã thu tiền
+                                    </span>
+                                    <span class="od-payment-chip od-pay-success" th:case="'SUCCESS'">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                        Thành công
+                                    </span>
+                                    <span class="od-payment-chip od-pay-failed" th:case="'FAILED'">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                                        Thất bại
+                                    </span>
+                                    <span class="od-payment-chip od-pay-pending" th:case="*" th:text="${payment.status}">Trạng thái</span>
+                                </span>
+                            </div>
+
+                            <div class="small text-secondary mt-1" th:if="${payment.transactionCode != null or payment.paidAt != null}">
+                                <span th:if="${payment.transactionCode != null}">Mã GD: <strong class="text-dark" th:text="${payment.transactionCode}"></strong> · </span>
+                                <span th:if="${payment.paidAt != null}">Thời gian: <span th:text="${#temporals.format(payment.paidAt, 'dd/MM/yyyy HH:mm:ss')}"></span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4" th:if="${detail.history != null and !detail.history.isEmpty()}">
+            <div class="od-section-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="text-coral">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 14 14"/>
+                </svg>
+                <span>Lịch sử trạng thái</span>
+            </div>
+
+            <ul class="od-timeline">
+                <li class="od-timeline-item" th:each="entry : ${detail.history}">
+                    <span class="od-timeline-dot"></span>
+                    <div class="od-timeline-content">
+                        <div class="od-timeline-head">
+                            <span th:if="${entry.oldStatus != null}">
+                                <span th:replace="~{staff/delivery/fragments :: state(${entry.oldStatus})}"></span> →
+                            </span>
+                            <span th:replace="~{staff/delivery/fragments :: state(${entry.newStatus})}"></span>
+                        </div>
+                        <div class="od-timeline-meta">
+                            <span class="fw-semibold text-dark" th:text="${entry.actorName}">Người xử lý</span> ·
+                            <span th:text="${#temporals.format(entry.changedAt, 'dd/MM/yyyy HH:mm:ss')}">Thời gian đổi trạng thái</span>
+                        </div>
+                        <div class="small text-secondary mt-1" th:if="${entry.note}" th:text="${entry.note}"></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
-    <h2 class="h5">Sản phẩm đã đặt</h2>
-    <div class="table-responsive"><table class="table"><thead><tr><th>Sản phẩm</th><th>Đơn giá</th><th>Số lượng</th><th>Thành tiền</th></tr></thead>
-        <tbody><tr th:each="item : ${detail.items}"><td th:text="${item.productName}"></td>
-            <td><span th:replace="~{fragments/components :: price(${item.unitPrice})}"></span></td><td th:text="${item.quantity}"></td>
-            <td><span th:replace="~{fragments/components :: price(${item.subtotal})}"></span></td></tr></tbody></table></div>
-    <p class="fw-bold">Tổng đơn: <span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></p>
-    <h2 class="h5">Thanh toán</h2><p th:if="${detail.payments.isEmpty()}">Chưa ghi nhận thanh toán.</p>
-    <div class="card mb-2" th:each="payment : ${detail.payments}"><div class="card-body">
-        <span th:text="${payment.method} + ' · ' + ${payment.status}"></span> · <span th:replace="~{fragments/components :: price(${payment.amount})}"></span>
-        <p class="small mb-0" th:if="${payment.transactionCode}">Mã giao dịch: <span th:text="${payment.transactionCode}"></span></p>
-        <p class="small mb-0" th:if="${payment.paidAt}">Đã thu lúc: <span th:text="${#temporals.format(payment.paidAt, 'dd/MM/yyyy HH:mm:ss')}"></span></p>
-    </div></div>
-    <h2 class="h5 mt-4">Lịch sử trạng thái</h2><ol class="list-group list-group-numbered">
-        <li class="list-group-item" th:each="entry : ${detail.history}">
-            <span th:if="${entry.oldStatus != null}"><span th:replace="~{staff/delivery/fragments :: state(${entry.oldStatus})}"></span> → </span>
-            <span th:replace="~{staff/delivery/fragments :: state(${entry.newStatus})}"></span>
-            <div class="small"><span th:text="${entry.actorName}"></span> · <span th:text="${#temporals.format(entry.changedAt, 'dd/MM/yyyy HH:mm:ss')}"></span></div>
-            <div class="small text-secondary" th:if="${entry.note}" th:text="${entry.note}"></div>
-        </li></ol>
 </div>
-</body></html>
+</body>
+</html>

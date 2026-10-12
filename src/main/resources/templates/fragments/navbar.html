@@ -98,34 +98,86 @@
           box-shadow: 0 6px 16px rgba(255, 127, 80, 0.32);
         }
 
-        .user-profile-badge {
+        .os-account-dropdown-toggle {
           display: inline-flex;
           align-items: center;
-          gap: 7px;
+          gap: 8px;
           background-color: #f8fafc;
           border: 1px solid #e2e8f0;
-          padding: 0.35rem 0.85rem;
+          padding: 0.4rem 0.95rem;
           border-radius: 999px;
           font-size: 0.875rem;
           font-weight: 600;
           color: #1e293b;
-        }
-
-        .btn-nav-logout {
-          font-size: 0.825rem;
-          font-weight: 600;
-          color: #64748b;
-          background: transparent;
-          border: 1px solid #cbd5e1;
-          padding: 0.35rem 0.75rem;
-          border-radius: 8px;
+          text-decoration: none;
+          cursor: pointer;
           transition: all 0.15s ease;
         }
 
-        .btn-nav-logout:hover {
-          color: #dc2626;
-          border-color: #fca5a5;
+        .os-account-dropdown-toggle:hover,
+        .os-account-dropdown-toggle:focus,
+        .os-account-dropdown-toggle[aria-expanded="true"] {
+          background-color: #ffffff;
+          border-color: #cbd5e1;
+          color: var(--bs-primary, #ff7f50);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .os-dropdown-menu {
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+          padding: 0.4rem;
+          min-width: 185px;
+          margin-top: 0.5rem !important;
+        }
+
+        .os-dropdown-item {
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #334155;
+          border-radius: 8px;
+          padding: 0.55rem 0.85rem;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          text-decoration: none;
+          transition: all 0.15s ease;
+          background: transparent;
+          border: none;
+          width: 100%;
+          text-align: left;
+        }
+
+        .os-dropdown-item:hover {
+          background-color: #fffaf8;
+          color: var(--bs-primary, #ff7f50);
+        }
+
+        .os-dropdown-item.text-danger:hover {
           background-color: #fef2f2;
+          color: #dc2626 !important;
+        }
+
+        .os-nav-cart-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          font-size: 0.875rem;
+          font-weight: 650;
+          color: #334155 !important;
+          background-color: #ffffff;
+          border: 1px solid #e2e8f0;
+          padding: 0.4rem 0.95rem;
+          border-radius: 999px;
+          text-decoration: none;
+          transition: all 0.15s ease;
+        }
+
+        .os-nav-cart-btn:hover {
+          background-color: #fffaf8;
+          border-color: var(--bs-primary, #ff7f50);
+          color: var(--bs-primary, #ff7f50) !important;
         }
 
         .nav-role-badge {
@@ -205,28 +257,6 @@
           </ul>
 
           <ul class="navbar-nav align-items-lg-center gap-2 mt-3 mt-lg-0">
-            <li class="nav-item" sec:authorize="hasRole('CUSTOMER')">
-              <a class="nav-link os-nav-link" th:href="@{/orders}">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="15"
-                  height="15"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path
-                    d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"
-                  />
-                  <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
-                </svg>
-                <span>Đơn hàng của tôi</span>
-              </a>
-            </li>
-
             <li class="nav-item" sec:authorize="hasRole('STAFF')">
               <a class="nav-role-badge nav-role-staff" th:href="@{/staff}">
                 <svg
@@ -271,11 +301,107 @@
               </a>
             </li>
 
+            <li class="nav-item" sec:authorize="!isAuthenticated()">
+              <a class="btn-nav-login" th:href="@{/login}">Đăng nhập</a>
+            </li>
+            <li class="nav-item" sec:authorize="!isAuthenticated()">
+              <a class="btn-nav-register" th:href="@{/register}">Đăng ký</a>
+            </li>
+
+            <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+              <button
+                class="os-account-dropdown-toggle"
+                type="button"
+                id="accountDropdownMenu"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="text-coral"
+                >
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                <span sec:authentication="name">user</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="text-secondary"
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+
+              <ul class="dropdown-menu dropdown-menu-end os-dropdown-menu" aria-labelledby="accountDropdownMenu">
+                <li sec:authorize="hasRole('CUSTOMER')">
+                  <a class="os-dropdown-item" th:href="@{/orders}">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="text-secondary"
+                    >
+                      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                      <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+                    </svg>
+                    <span>Đơn hàng của tôi</span>
+                  </a>
+                </li>
+
+                <li sec:authorize="hasRole('CUSTOMER')"><hr class="dropdown-divider my-1"></li>
+
+                <li>
+                  <form th:action="@{/logout}" method="post" class="m-0">
+                    <button type="submit" class="os-dropdown-item text-danger">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                      </svg>
+                      <span>Đăng xuất</span>
+                    </button>
+                  </form>
+                </li>
+              </ul>
+            </li>
+
             <li
               class="nav-item"
               sec:authorize="!isAuthenticated() or hasRole('CUSTOMER')"
             >
-              <a class="nav-link os-nav-link" th:href="@{/cart}">
+              <a class="os-nav-cart-btn" th:href="@{/cart}">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -295,40 +421,6 @@
                 </svg>
                 <span>Giỏ hàng</span>
               </a>
-            </li>
-
-            <li class="nav-item" sec:authorize="!isAuthenticated()">
-              <a class="btn-nav-login" th:href="@{/login}">Đăng nhập</a>
-            </li>
-            <li class="nav-item" sec:authorize="!isAuthenticated()">
-              <a class="btn-nav-register" th:href="@{/register}">Đăng ký</a>
-            </li>
-
-            <li class="nav-item" sec:authorize="isAuthenticated()">
-              <div class="user-profile-badge">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="15"
-                  height="15"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="text-coral"
-                >
-                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-                <span sec:authentication="name">user</span>
-              </div>
-            </li>
-
-            <li class="nav-item" sec:authorize="isAuthenticated()">
-              <form th:action="@{/logout}" method="post" class="d-inline m-0">
-                <button type="submit" class="btn-nav-logout">Đăng xuất</button>
-              </form>
             </li>
           </ul>
         </div>
