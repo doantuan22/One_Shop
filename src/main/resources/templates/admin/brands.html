@@ -496,32 +496,31 @@
     </div>
 
     <div class="alert alert-custom alert-custom-success alert-dismissible fade show" th:if="${param.success}" th:switch="${param.success[0]}" role="alert">
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
-        <polyline points="20 6 9 17 4 12"></polyline>
-    </svg>
-    <div class="flex-grow-1">
-        <span th:case="'created'">Đã thêm thương hiệu thành công. Bạn có thể tải logo nhận diện bên dưới.</span>
-        <span th:case="'logo-uploaded'">Đã tải logo lên Cloudinary thành công.</span>
-        <span th:case="'logo-removed'">Đã xóa logo thương hiệu.</span>
-        <span th:case="*">Đã cập nhật thương hiệu thành công.</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <div class="flex-grow-1">
+            <span th:case="'created'">Đã thêm thương hiệu thành công. Bạn có thể tải logo nhận diện bên dưới.</span>
+            <span th:case="'logo-uploaded'">Đã tải logo lên Cloudinary thành công.</span>
+            <span th:case="'logo-removed'">Đã xóa logo thương hiệu.</span>
+            <span th:case="*">Đã cập nhật thương hiệu thành công.</span>
+        </div>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Đóng"></button>
     </div>
-    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Đóng"></button>
-</div>
 
-
-<div class="alert alert-custom alert-custom-danger alert-dismissible fade show" th:if="${param.error != null or error != null}" th:switch="${param.error != null ? param.error[0] : error}" role="alert">
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="12" y1="8" x2="12" y2="12"></line>
-        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-    </svg>
-    <div class="flex-grow-1">
-        <span th:case="'image-size'" th:text="${errorMessage != null ? errorMessage : 'Ảnh vượt quá ' + (maxFileSize != null ? maxFileSize : '5MB') + '. Vui lòng chọn tệp nhỏ hơn.'}">Ảnh vượt quá dung lượng cho phép.</span>
-        <span th:case="'image-invalid'">Tệp không hợp lệ. Vui lòng chọn một tệp hình ảnh đúng định dạng.</span>
-        <span th:case="*">Không thể làm việc với Cloudinary. Kiểm tra cấu hình hệ thống CLOUDINARY_* rồi thử lại.</span>
+    <div class="alert alert-custom alert-custom-danger alert-dismissible fade show" th:if="${param.error != null or error != null}" th:switch="${param.error != null ? param.error[0] : error}" role="alert">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <div class="flex-grow-1">
+            <span th:case="'image-size'" th:text="${errorMessage != null ? errorMessage : 'Ảnh vượt quá ' + (maxFileSize != null ? maxFileSize : '5MB') + '. Vui lòng chọn tệp nhỏ hơn.'}">Ảnh vượt quá dung lượng cho phép.</span>
+            <span th:case="'image-invalid'">Tệp không hợp lệ. Vui lòng chọn một tệp hình ảnh đúng định dạng.</span>
+            <span th:case="*">Không thể làm việc với Cloudinary. Kiểm tra cấu hình hệ thống CLOUDINARY_* rồi thử lại.</span>
+        </div>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Đóng"></button>
     </div>
-    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Đóng"></button>
-</div>
 
     <div class="collapse" id="brandFormCollapse"
          th:classappend="${editId != null or param.error != null or param.create != null} ? 'show'">
@@ -671,7 +670,7 @@
             <div class="brand-name-text" th:text="${brand.name}">Cocoon</div>
         </td>
         <td>
-            <span class="text-secondary" th:text="${brand.description}">Mô tả thương hiệu</span>
+            <span class="text-dark" th:text="${brand.description}">Mô tả thương hiệu</span>
         </td>
         <td>
             <span th:switch="${#strings.toUpperCase(#strings.toString(brand.status))}">
@@ -815,7 +814,7 @@
 
         openCollapse();
         setTimeout(() => {
-            const offset = 90; 
+            const offset = 90;
             const targetY = brandFormCollapseEl.getBoundingClientRect().top + window.pageYOffset - offset;
             window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
         }, 50);
@@ -937,6 +936,15 @@
             }
         });
     }
+
+    (function () {
+        const url = new URL(window.location.href);
+        if (url.searchParams.has('success') || url.searchParams.has('error')) {
+            url.searchParams.delete('success');
+            url.searchParams.delete('error');
+            window.history.replaceState({}, '', url.pathname + url.search + url.hash);
+        }
+    })();
 </script>
 <script th:src="@{/js/upload-validator.js}"></script>
 </body>
