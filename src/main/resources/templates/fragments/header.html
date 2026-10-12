@@ -1,26 +1,142 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <body>
-<!--/*
-    Client header. "Chi nhánh đang chọn" reads the request attribute `selectedStore` (a StoreResponse) that
-    SelectedStoreInterceptor sets after checking the Store in the database; absent means the whole chain.
-*/-->
-<header th:fragment="header" class="os-topbar text-white small py-2">
+<header th:fragment="header" class="os-topbar-coral">
+    <style>
+        .os-topbar-coral {
+            background: linear-gradient(90deg, #ff7f50 0%, #f06437 100%);
+            color: #ffffff;
+            font-size: 0.84rem;
+            padding: 0.5rem 0;
+            box-shadow: 0 2px 8px rgba(240, 100, 55, 0.18);
+            position: relative;
+            z-index: 1020;
+        }
+
+        .store-scope-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 3px 12px;
+            border-radius: 999px;
+            color: #ffffff;
+            backdrop-filter: blur(4px);
+        }
+
+        .store-scope-indicator {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+            display: inline-block;
+        }
+
+        .store-scope-indicator.chain {
+            background-color: rgba(255, 255, 255, 0.6);
+            box-shadow: none;
+        }
+
+        .store-scope-name {
+            color: #ffffff;
+            font-weight: 750;
+        }
+
+        .store-action-link {
+            color: #ffffff;
+            font-weight: 600;
+            text-decoration: none;
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 3px 10px;
+            border-radius: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .store-action-link:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.28);
+            border-color: rgba(255, 255, 255, 0.45);
+        }
+
+        .btn-clear-store {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.825rem;
+            font-weight: 500;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            background: transparent;
+            border: none;
+            padding: 2px 6px;
+            transition: color 0.15s ease;
+        }
+
+        .btn-clear-store:hover {
+            color: #ffffff;
+        }
+
+        .topbar-right-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .topbar-info-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .topbar-info-item strong {
+            color: #ffffff;
+        }
+
+        .topbar-divider {
+            color: rgba(255, 255, 255, 0.45);
+        }
+    </style>
+
     <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
         <div class="os-store-context d-flex flex-wrap align-items-center gap-2" id="store-context"
              th:attr="data-store-scope=${selectedStore != null} ? 'store' : 'chain'">
-            <span>
-                <span class="opacity-75">Chi nhánh đang chọn:</span>
-                <strong th:if="${selectedStore != null}" th:text="${selectedStore.name}">OneShop Thủ Đức</strong>
-                <strong th:unless="${selectedStore != null}">Toàn chuỗi</strong>
-            </span>
-            <a class="link-light" th:href="@{/stores}"
+            <div class="store-scope-pill">
+                <span class="store-scope-indicator" th:classappend="${selectedStore == null} ? 'chain'"></span>
+                <span>Chi nhánh đang chọn:</span>
+                <span class="store-scope-name" th:if="${selectedStore != null}" th:text="${selectedStore.name}">OneShop Thủ Đức</span>
+                <span class="store-scope-name" th:unless="${selectedStore != null}">Toàn chuỗi</span>
+            </div>
+
+            <a class="store-action-link" th:href="@{/stores}"
                th:text="${selectedStore != null} ? 'Đổi chi nhánh' : 'Chọn chi nhánh'">Chọn chi nhánh</a>
+
             <form th:if="${selectedStore != null}" th:action="@{/stores/clear}" method="post" class="d-inline">
-                <button type="submit" class="btn btn-link btn-sm link-light p-0 align-baseline">Xem toàn chuỗi</button>
+                <button type="submit" class="btn-clear-store">Xem toàn chuỗi</button>
             </form>
         </div>
-        <span class="d-none d-md-inline">Hotline: 1900 0000 &middot; Miễn phí vận chuyển cho đơn từ 500.000&nbsp;₫</span>
+
+        <div class="topbar-right-info d-none d-md-flex">
+            <div class="topbar-info-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+                <span>Hotline: <strong>1900 0000</strong></span>
+            </div>
+
+            <span class="topbar-divider">&middot;</span>
+
+            <div class="topbar-info-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="1" y="3" width="15" height="13"></rect>
+                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                    <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                    <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                </svg>
+                <span>Miễn phí vận chuyển cho đơn từ 500.000&nbsp;₫</span>
+            </div>
+        </div>
     </div>
 </header>
 </body>

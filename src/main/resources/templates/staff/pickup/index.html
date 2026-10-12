@@ -1,16 +1,161 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Đơn nhận tại cửa hàng</title></head><body>
-<h1 class="h3">Đơn nhận tại cửa hàng</h1>
-<p class="text-secondary">Các đơn thuộc chi nhánh được phân công.</p>
-<p th:if="${pickupOrders.isEmpty()}">Chưa có đơn nhận tại cửa hàng.</p>
-<div class="table-responsive"><table class="table align-middle"><thead><tr><th>Đơn / Chi nhánh</th><th>Ngày tạo</th><th>Người nhận</th><th>Thanh toán</th><th>Trạng thái</th><th>Sẵn sàng lúc</th><th>Tổng tiền</th><th>Thao tác</th></tr></thead>
-<tbody><tr th:each="order : ${pickupOrders}" th:attr="data-order-id=${order.orderId}">
-    <td><a th:href="@{/staff/orders/pickup/{id}(id=${order.orderId})}" th:text="'#' + ${order.orderId}"></a><div th:text="${order.storeName}"></div></td>
-    <td th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></td><td th:text="${order.receiverName}"></td>
-    <td><span th:replace="~{staff/delivery/fragments :: method(${order.paymentMethod})}"></span><br><span th:replace="~{staff/delivery/fragments :: payment(${order.paymentStatus})}"></span></td>
-    <td><span th:replace="~{staff/delivery/fragments :: state(${order.orderStatus})}"></span></td>
-    <td th:text="${order.readyAt != null} ? ${#temporals.format(order.readyAt, 'dd/MM/yyyy HH:mm')} : '—'"></td>
-    <td><span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></td>
-    <td><a class="btn btn-outline-primary btn-sm" th:href="@{/staff/orders/pickup/{id}(id=${order.orderId})}" th:text="${order.nextAction != null} ? ${order.nextAction.label} : 'Xem chi tiết'"></a></td>
-</tr></tbody></table></div>
-</body></html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Đơn nhận tại cửa hàng</title>
+    <style>
+        .os-pickup-list {
+            --pickup-primary: #FF7F50;
+            --pickup-hover: #e86738;
+            --pickup-soft: #fff5f2;
+            --pickup-border: #ffd5c7;
+            --pickup-text: #2c3038;
+        }
+
+        .os-pickup-list .os-page-heading {
+            margin-bottom: 24px;
+        }
+
+        .os-pickup-list .os-page-heading h1 {
+            color: var(--pickup-text);
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 8px;
+        }
+
+        .os-pickup-list .os-pickup-table {
+            background: #ffffff;
+            border: 1px solid var(--pickup-border);
+            border-radius: 16px;
+            overflow-x: auto;
+            box-shadow: 0 6px 22px rgba(255, 127, 80, 0.06);
+        }
+
+        .os-pickup-list .os-pickup-table .table {
+            margin-bottom: 0;
+            --bs-table-bg: transparent;
+        }
+
+        .os-pickup-list .os-pickup-table thead th {
+            background-color: var(--pickup-soft);
+            color: #bf360c;
+            font-weight: 700;
+            padding: 15px 14px;
+            white-space: nowrap;
+            border-bottom: 1px solid var(--pickup-border);
+        }
+
+        .os-pickup-list .os-pickup-table tbody td {
+            padding: 14px;
+            border-color: #f3e5df;
+            vertical-align: middle;
+        }
+
+        .os-pickup-list .os-pickup-table tbody tr:hover td {
+            background: #fffaf8;
+        }
+
+        .os-pickup-list .os-pickup-table td a:not(.btn) {
+            color: var(--pickup-hover);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .os-pickup-list .os-pickup-table td a:not(.btn):hover {
+            text-decoration: underline;
+        }
+
+        .os-pickup-list .btn-outline-primary {
+            color: var(--pickup-hover);
+            border: 1px solid var(--pickup-primary);
+            background: #fff;
+            border-radius: 9px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .os-pickup-list .btn-outline-primary:hover {
+            background: var(--pickup-primary);
+            border-color: var(--pickup-primary);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.18);
+        }
+
+        .os-pickup-list .os-empty-state {
+            padding: 18px 20px;
+            background: var(--pickup-soft);
+            border: 1px solid var(--pickup-border);
+            border-radius: 12px;
+            color: #bf360c;
+        }
+
+        @media (max-width: 767.98px) {
+            .os-pickup-list .os-pickup-table .table {
+                min-width: 980px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="os-pickup-list">
+
+        <div class="os-page-heading">
+            <h1 class="h3">Đơn nhận tại cửa hàng</h1>
+            <p class="text-secondary">Các đơn thuộc chi nhánh được phân công.</p>
+        </div>
+
+        <p class="os-empty-state" th:if="${pickupOrders.isEmpty()}">
+            Chưa có đơn nhận tại cửa hàng.
+        </p>
+
+        <div class="table-responsive os-pickup-table">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Đơn / Chi nhánh</th>
+                        <th>Ngày tạo</th>
+                        <th>Người nhận</th>
+                        <th>Thanh toán</th>
+                        <th>Trạng thái</th>
+                        <th>Sẵn sàng lúc</th>
+                        <th>Tổng tiền</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="order : ${pickupOrders}" th:attr="data-order-id=${order.orderId}">
+                        <td>
+                            <a th:href="@{/staff/orders/pickup/{id}(id=${order.orderId})}"
+                                th:text="'#' + ${order.orderId}"></a>
+                            <div th:text="${order.storeName}"></div>
+                        </td>
+                        <td th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td th:text="${order.receiverName}"></td>
+                        <td>
+                            <span th:replace="~{staff/delivery/fragments :: method(${order.paymentMethod})}"></span>
+                            <br>
+                            <span th:replace="~{staff/delivery/fragments :: payment(${order.paymentStatus})}"></span>
+                        </td>
+                        <td>
+                            <span th:replace="~{staff/delivery/fragments :: state(${order.orderStatus})}"></span>
+                        </td>
+                        <td
+                            th:text="${order.readyAt != null} ? ${#temporals.format(order.readyAt, 'dd/MM/yyyy HH:mm')} : '—'">
+                        </td>
+                        <td>
+                            <span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span>
+                        </td>
+                        <td>
+                            <a class="btn btn-outline-primary btn-sm"
+                                th:href="@{/staff/orders/pickup/{id}(id=${order.orderId})}"
+                                th:text="${order.nextAction != null} ? ${order.nextAction.label} : 'Xem chi tiết'"></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

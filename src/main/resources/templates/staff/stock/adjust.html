@@ -1,20 +1,142 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head><title>Điều chỉnh tồn kho</title></head>
+
+<head>
+    <title>Điều chỉnh tồn kho</title>
+    <style>
+        .os-stock-adjust {
+            --adjust-coral: #FF7F50;
+            --adjust-dark: #e86738;
+            --adjust-soft: #fff5f2;
+            --adjust-border: #ffd5c7;
+        }
+
+        .os-stock-adjust .os-back {
+            border-color: var(--adjust-border);
+            color: var(--adjust-dark);
+            background: #fff;
+            border-radius: 10px;
+            padding: 9px 16px;
+            font-weight: 600;
+        }
+
+        .os-stock-adjust .os-back:hover {
+            background: var(--adjust-soft);
+            border-color: var(--adjust-coral);
+        }
+
+        .os-stock-adjust .os-product-info {
+            background: linear-gradient(135deg, #fff5f2, #fff);
+            border: 1px solid var(--adjust-border);
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 20px;
+        }
+
+        .os-stock-adjust .os-product-info h2 {
+            color: #bf360c;
+            font-weight: 800;
+        }
+
+        .os-stock-adjust .os-current-count strong {
+            color: var(--adjust-dark);
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .os-stock-adjust .os-form-card {
+            padding: 28px;
+            border: 1px solid var(--adjust-border);
+            border-radius: 16px;
+            background: #fff;
+            box-shadow: 0 6px 24px rgba(255, 127, 80, .07);
+        }
+
+        .os-stock-adjust .form-label {
+            font-weight: 700;
+            color: #2c3038;
+        }
+
+        .os-stock-adjust .form-control {
+            border-radius: 10px;
+            border-color: #f3e5df;
+            padding: 12px 14px;
+        }
+
+        .os-stock-adjust .form-control:focus {
+            border-color: var(--adjust-coral);
+            box-shadow: 0 0 0 .2rem rgba(255, 127, 80, .16);
+        }
+
+        .os-stock-adjust .os-form-card .btn-primary {
+            background: var(--adjust-coral);
+            border-color: var(--adjust-coral);
+            border-radius: 10px;
+            font-weight: 700;
+            padding: 11px 22px;
+        }
+
+        .os-stock-adjust .os-form-card .btn-primary:hover {
+            background: var(--adjust-dark);
+            border-color: var(--adjust-dark);
+        }
+
+        @media (max-width: 575.98px) {
+
+            .os-stock-adjust .os-product-info,
+            .os-stock-adjust .os-form-card {
+                padding: 16px;
+            }
+
+            .os-stock-adjust .os-form-card .btn-primary {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
 <body>
-<div th:replace="~{fragments/components :: pageHeader('Điều chỉnh tồn kho', 'Ghi nhận tồn thực tế và lý do điều chỉnh.')}"></div>
-<a class="btn btn-outline-secondary mb-3" th:href="@{/staff/stock}">Tồn kho chi nhánh</a>
-<h2 class="h5" th:text="${stock.productName}"></h2>
-<p><span th:text="${stock.sku}"></span> · <span th:text="${stock.storeName}"></span></p>
-<p>Tồn hiện tại: <strong id="current-quantity" th:text="${stock.quantity}"></strong></p>
-<form class="card card-body" th:action="@{/staff/stock/{id}/adjust(id=${stock.storeProductId})}" th:object="${form}" method="post">
-    <label for="newQuantity" class="form-label">Số lượng tồn thực tế</label>
-    <input id="newQuantity" type="number" class="form-control" th:field="*{newQuantity}" min="0" max="2147483647" required>
-    <p class="text-danger small" th:if="${#fields.hasErrors('newQuantity')}" th:errors="*{newQuantity}"></p>
-    <label for="note" class="form-label mt-3">Lý do điều chỉnh</label>
-    <textarea id="note" class="form-control" th:field="*{note}" maxlength="500" required rows="3"></textarea>
-    <p class="text-danger small" th:if="${#fields.hasErrors('note')}" th:errors="*{note}"></p>
-    <p class="small text-secondary mt-3">Nhập số lượng sau khi kiểm đếm. Khi số lượng không đổi, hệ thống không ghi biến động mới.</p>
-    <button class="btn btn-primary align-self-start" type="submit">Lưu điều chỉnh</button>
-</form>
-</body></html>
+    <div class="os-stock-adjust">
+
+        <div
+            th:replace="~{fragments/components :: pageHeader('Điều chỉnh tồn kho', 'Ghi nhận tồn thực tế và lý do điều chỉnh.')}">
+        </div>
+
+        <a class="btn btn-outline-secondary mb-3 os-back" th:href="@{/staff/stock}">Tồn kho chi nhánh</a>
+
+        <section class="os-product-info">
+            <h2 class="h5" th:text="${stock.productName}"></h2>
+            <p>
+                <span th:text="${stock.sku}"></span> ·
+                <span th:text="${stock.storeName}"></span>
+            </p>
+            <p class="os-current-count mb-0">
+                Tồn hiện tại:
+                <strong id="current-quantity" th:text="${stock.quantity}"></strong>
+            </p>
+        </section>
+
+        <form class="card card-body os-form-card" th:action="@{/staff/stock/{id}/adjust(id=${stock.storeProductId})}"
+            th:object="${form}" method="post">
+
+            <label for="newQuantity" class="form-label">Số lượng tồn thực tế</label>
+            <input id="newQuantity" type="number" class="form-control" th:field="*{newQuantity}" min="0"
+                max="2147483647" required>
+            <p class="text-danger small" th:if="${#fields.hasErrors('newQuantity')}" th:errors="*{newQuantity}"></p>
+
+            <label for="note" class="form-label mt-3">Lý do điều chỉnh</label>
+            <textarea id="note" class="form-control" th:field="*{note}" maxlength="500" required rows="3"></textarea>
+            <p class="text-danger small" th:if="${#fields.hasErrors('note')}" th:errors="*{note}"></p>
+
+            <p class="small text-secondary mt-3">
+                Nhập số lượng sau khi kiểm đếm. Khi số lượng không đổi, hệ thống không ghi biến động mới.
+            </p>
+
+            <button class="btn btn-primary align-self-start" type="submit">
+                Lưu điều chỉnh
+            </button>
+        </form>
+    </div>
+</body>
+
+</html>

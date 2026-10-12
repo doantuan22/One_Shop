@@ -1,156 +1,767 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Đặt hàng</title>
-</head>
-<body>
-<!--/*
-    Checkout: one block per Store, each with its own way to receive and to pay (BR-08); each block becomes one Order.
-    The form sends only the chosen cartItemIds and those choices. Prices and totals shown here are for information:
-    the server reads them again from the database when the order is placed (BR-09).
-*/-->
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb small">
-        <li class="breadcrumb-item"><a th:href="@{/cart}">Giỏ hàng</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Đặt hàng</li>
-    </ol>
-</nav>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đặt hàng - OneShop</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" th:href="@{/css/bootstrap-coral.css}" />
+    <link rel="stylesheet" th:href="@{/css/home.css}" />
+    <style>
+      body {
+        background-color: #f8f9fa;
+      }
 
-<h1 class="h3 mb-2">Đặt hàng</h1>
-<p class="text-secondary" id="checkout-summary" th:with="selection=${preview.selection}">
-    Bạn đang đặt <strong th:text="${selection.itemCount}">3</strong> sản phẩm từ
-    <strong th:text="${selection.groups.size()}">2</strong> chi nhánh.
-    Mỗi chi nhánh sẽ là một đơn hàng riêng, có cách nhận và thanh toán riêng.
-</p>
+      .checkout-container {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 2rem 1rem 5rem;
+      }
 
-<div class="alert alert-danger" id="checkout-error" role="alert" th:if="${checkoutError != null}" th:text="${checkoutError}">Lỗi</div>
+      .breadcrumb-clean {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        display: inline-flex;
+        margin-bottom: 1.5rem;
+      }
 
-<form method="post" th:action="@{/checkout}" id="checkout-form" novalidate>
-    <input type="hidden" name="cartItemIds" th:each="id : ${preview.selection.cartItemIds()}" th:value="${id}">
+      .breadcrumb-clean .breadcrumb-item a {
+        color: #64748b;
+        text-decoration: none;
+        font-weight: 600;
+      }
 
-    <div class="row g-4">
-        <div class="col-12 col-lg-8">
-            <section class="card shadow-sm mb-3 os-checkout-group" th:each="group, row : ${preview.selection.groups}"
-                     th:attr="data-store-id=${group.storeId}"
-                     th:with="choice=${choices[group.storeId]},
-                              fulfillment=${choice != null and choice.fulfillmentType != null ? choice.fulfillmentType.name() : (group.deliveryEnabled ? 'DELIVERY' : 'STORE_PICKUP')},
-                              prefix=|groups[${row.index}]|">
-                <div class="card-header bg-white">
-                    <h2 class="h6 mb-0 os-checkout-store-name" th:text="${group.storeName}">OneShop Thủ Đức</h2>
-                    <div class="small text-secondary" th:text="${group.storeAddress}">101 Võ Văn Ngân</div>
+      .breadcrumb-clean .breadcrumb-item a:hover {
+        color: var(--bs-primary, #ff7f50);
+      }
+
+      .breadcrumb-clean .breadcrumb-item.active {
+        color: var(--bs-primary, #ff7f50);
+        font-weight: 700;
+      }
+
+      .checkout-header-title {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -0.025em;
+      }
+
+      /* Thẻ nhóm chi nhánh */
+      .checkout-store-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        transition: border-color 0.2s ease;
+      }
+
+      .checkout-store-card:hover {
+        border-color: #cbd5e1;
+      }
+
+      .store-header-bar {
+        background-color: #ffffff;
+        border-bottom: 1px solid #f1f5f9;
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .store-header-icon {
+        color: var(--bs-primary, #ff7f50);
+        flex-shrink: 0;
+      }
+
+      .store-title {
+        font-size: 1rem;
+        font-weight: 750;
+        color: #0f172a;
+        margin-bottom: 0;
+      }
+
+      .store-subtext {
+        font-size: 0.825rem;
+        color: #64748b;
+      }
+
+      /* Danh sách sản phẩm rút gọn */
+      .order-item-row {
+        padding: 0.85rem 1.25rem;
+        border-bottom: 1px solid #f8fafc;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+      }
+
+      .order-item-row:last-child {
+        border-bottom: none;
+      }
+
+      .order-item-name {
+        font-weight: 600;
+        color: #1e293b;
+      }
+
+      .order-item-meta {
+        font-size: 0.8rem;
+        color: #64748b;
+      }
+
+      .order-item-subtotal {
+        font-weight: 700;
+        color: #0f172a;
+      }
+
+      /* Tiêu đề nhóm lựa chọn */
+      .config-section-title {
+        font-size: 0.85rem;
+        font-weight: 750;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #475569;
+        margin-bottom: 0.85rem;
+      }
+
+      /* Thẻ lựa chọn dạng label toàn vùng bấm */
+      .selection-tile {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 1rem 1.15rem;
+        margin-bottom: 0.85rem;
+        background-color: #ffffff;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.2s ease;
+        width: 100%;
+      }
+
+      .selection-tile:hover {
+        border-color: #cbd5e1;
+        background-color: #fafbfc;
+      }
+
+      .selection-tile:has(input:checked) {
+        border-color: var(--bs-primary, #ff7f50);
+        background-color: #fffaf8;
+        box-shadow: 0 2px 10px rgba(255, 127, 80, 0.08);
+      }
+
+      .selection-tile .form-check-input {
+        margin-top: 0.2rem;
+        flex-shrink: 0;
+        cursor: pointer;
+      }
+
+      .selection-tile .form-check-input:checked {
+        background-color: var(--bs-primary, #ff7f50);
+        border-color: var(--bs-primary, #ff7f50);
+      }
+
+      .selection-tile .form-check-input:focus {
+        box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.15);
+      }
+
+      .selection-tile-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .selection-tile-label {
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: #1e293b;
+        line-height: 1.4;
+        cursor: pointer;
+      }
+
+      .form-control-custom {
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 0.6rem 0.85rem;
+        font-size: 0.9rem;
+        color: #1e293b;
+        background-color: #ffffff;
+        transition: all 0.15s ease;
+      }
+
+      .form-control-custom:focus {
+        border-color: var(--bs-primary, #ff7f50);
+        box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.15);
+        outline: none;
+      }
+
+      .field-label {
+        font-size: 0.825rem;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 0.35rem;
+      }
+
+      .checkout-group-footer {
+        background-color: #fcfcfc;
+        border-top: 1px solid #f1f5f9;
+        padding: 0.85rem 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+        color: #64748b;
+      }
+
+      .checkout-group-footer strong {
+        color: #0f172a;
+        font-size: 1rem;
+      }
+
+      /* Panel tổng thanh toán */
+      .order-summary-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        position: sticky;
+        top: 2rem;
+      }
+
+      .order-summary-title {
+        font-size: 1.1rem;
+        font-weight: 750;
+        color: #0f172a;
+        padding-bottom: 0.85rem;
+        border-bottom: 1px solid #f1f5f9;
+        margin-bottom: 1rem;
+      }
+
+      .summary-metric-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        font-size: 0.9rem;
+        color: #64748b;
+      }
+
+      .summary-total-value {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: var(--bs-primary, #ff7f50);
+        letter-spacing: -0.02em;
+      }
+
+      .btn-confirm-order {
+        height: 48px;
+        border-radius: 10px;
+        font-size: 0.975rem;
+        font-weight: 700;
+        background-color: var(--bs-primary, #ff7f50);
+        border: 1px solid var(--bs-primary, #ff7f50);
+        color: #ffffff;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition:
+          background 0.15s ease,
+          border-color 0.15s ease;
+      }
+
+      .btn-confirm-order:hover {
+        background-color: #e86738;
+        border-color: #e86738;
+        color: #ffffff;
+      }
+
+      .btn-back-cart {
+        color: #64748b;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: color 0.15s ease;
+      }
+
+      .btn-back-cart:hover {
+        color: #0f172a;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="checkout-container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb breadcrumb-clean small">
+          <li class="breadcrumb-item"><a th:href="@{/cart}">Giỏ hàng</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Đặt hàng</li>
+        </ol>
+      </nav>
+
+      <div class="mb-4">
+        <h1 class="checkout-header-title">Xác nhận đặt hàng</h1>
+        <p
+          class="text-secondary small mb-0"
+          id="checkout-summary"
+          th:with="selection=${preview.selection}"
+        >
+          Bạn đang đặt
+          <strong class="text-dark" th:text="${selection.itemCount}">3</strong>
+          sản phẩm từ
+          <strong class="text-dark" th:text="${selection.groups.size()}"
+            >2</strong
+          >
+          chi nhánh. Mỗi chi nhánh sẽ là một đơn hàng riêng biệt.
+        </p>
+      </div>
+
+      <div
+        class="alert alert-danger border-0 shadow-sm rounded-3 py-2 px-3 mb-4 small"
+        id="checkout-error"
+        role="alert"
+        th:if="${checkoutError != null}"
+        th:text="${checkoutError}"
+      >
+        Lỗi xử lý đặt hàng
+      </div>
+
+      <form
+        method="post"
+        th:action="@{/checkout}"
+        id="checkout-form"
+        novalidate
+      >
+        <input type="hidden" name="cartItemIds" th:each="id : ${preview.selection.cartItemIds()}" th:value="${id}" />
+
+        <div class="row g-4">
+          <div class="col-12 col-lg-8">
+            <section
+              class="checkout-store-card os-checkout-group"
+              th:each="group, row : ${preview.selection.groups}"
+              th:attr="data-store-id=${group.storeId}"
+              th:with="choice=${choices[group.storeId]},
+                                  fulfillment=${choice != null and choice.fulfillmentType != null ? choice.fulfillmentType.name() : (group.deliveryEnabled ? 'DELIVERY' : 'STORE_PICKUP')},
+                                  prefix=|groups[${row.index}]|"
+            >
+              <div class="store-header-bar">
+                <svg
+                  class="store-header-icon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M3 21h18" />
+                  <path d="M5 21V7l8-4v18" />
+                  <path d="M19 21V11l-6-4" />
+                </svg>
+                <div>
+                  <h2
+                    class="store-title os-checkout-store-name"
+                    th:text="${group.storeName}"
+                  >
+                    OneShop Thủ Đức
+                  </h2>
+                  <div class="store-subtext" th:text="${group.storeAddress}">
+                    101 Võ Văn Ngân
+                  </div>
                 </div>
-                <!--/* only tells the server which block these choices belong to; the Store of the Order comes from the cart lines */-->
-                <input type="hidden" th:name="${prefix} + '.storeId'" th:value="${group.storeId}">
+              </div>
 
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex flex-wrap justify-content-between gap-2" th:each="item : ${group.items}"
-                        th:attr="data-cart-item-id=${item.cartItemId}">
-                        <div>
-                            <div class="fw-semibold" th:text="${item.productName}">Tên sản phẩm</div>
-                            <div class="small text-secondary">
-                                <span th:replace="~{fragments/components :: price(${item.unitPrice})}"></span>
-                                &times; <span th:text="${item.quantity}">2</span>
-                            </div>
-                        </div>
-                        <strong><span th:replace="~{fragments/components :: price(${item.subtotal})}"></span></strong>
-                    </li>
-                </ul>
+              <input
+                type="hidden"
+                th:name="${prefix} + '.storeId'"
+                th:value="${group.storeId}"
+              />
 
-                <div class="card-body border-top"
-                     th:with="payment=${choice != null and choice.paymentMethod != null ? choice.paymentMethod.name() : (fulfillment == 'DELIVERY' ? 'COD' : 'PAY_AT_STORE')}">
-                    <div class="row g-3">
-                        <fieldset class="col-12 col-md-6">
-                            <legend class="form-label fs-6 fw-semibold float-none w-auto mb-2">Cách nhận hàng</legend>
-                            <div class="form-check" th:if="${group.deliveryEnabled}">
-                                <input type="radio" class="form-check-input os-checkout-fulfillment" value="DELIVERY"
-                                       th:name="${prefix} + '.fulfillmentType'" th:id="'delivery-' + ${group.storeId}"
-                                       th:checked="${fulfillment == 'DELIVERY'}">
-                                <label class="form-check-label" th:for="'delivery-' + ${group.storeId}">Giao hàng tận nơi</label>
-                            </div>
-                            <div class="form-check" th:if="${group.pickupEnabled}">
-                                <input type="radio" class="form-check-input os-checkout-fulfillment" value="STORE_PICKUP"
-                                       th:name="${prefix} + '.fulfillmentType'" th:id="'pickup-' + ${group.storeId}"
-                                       th:checked="${fulfillment == 'STORE_PICKUP'}">
-                                <label class="form-check-label" th:for="'pickup-' + ${group.storeId}">
-                                    Nhận tại cửa hàng <span class="text-secondary" th:text="'(' + ${group.storeName} + ')'">(OneShop Thủ Đức)</span>
-                                </label>
-                            </div>
-                            <div class="small text-secondary" th:unless="${group.deliveryEnabled}">Chi nhánh này không giao hàng tận nơi.</div>
-                            <div class="small text-secondary" th:unless="${group.pickupEnabled}">Chi nhánh này không hỗ trợ nhận tại cửa hàng.</div>
-                        </fieldset>
-
-                        <fieldset class="col-12 col-md-6">
-                            <legend class="form-label fs-6 fw-semibold float-none w-auto mb-2">Thanh toán</legend>
-                            <div class="form-check" data-for="DELIVERY">
-                                <input type="radio" class="form-check-input os-checkout-payment" value="COD"
-                                       th:name="${prefix} + '.paymentMethod'" th:id="'cod-' + ${group.storeId}"
-                                       th:checked="${payment == 'COD'}">
-                                <label class="form-check-label" th:for="'cod-' + ${group.storeId}">Thanh toán khi nhận hàng (COD)</label>
-                            </div>
-                            <div class="form-check" data-for="STORE_PICKUP">
-                                <input type="radio" class="form-check-input os-checkout-payment" value="PAY_AT_STORE"
-                                       th:name="${prefix} + '.paymentMethod'" th:id="'store-' + ${group.storeId}"
-                                       th:checked="${payment == 'PAY_AT_STORE'}">
-                                <label class="form-check-label" th:for="'store-' + ${group.storeId}">Thanh toán tại cửa hàng</label>
-                            </div>
-                            <div class="form-check" data-for="BOTH">
-                                <input type="radio" class="form-check-input os-checkout-payment" value="ONLINE"
-                                       th:name="${prefix} + '.paymentMethod'" th:id="'online-' + ${group.storeId}"
-                                       th:checked="${payment == 'ONLINE'}">
-                                <label class="form-check-label" th:for="'online-' + ${group.storeId}">Thanh toán trực tuyến</label>
-                            </div>
-                        </fieldset>
-
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" th:for="'receiver-name-' + ${group.storeId}">Người nhận <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" maxlength="150" required
-                                   th:name="${prefix} + '.receiverName'" th:id="'receiver-name-' + ${group.storeId}"
-                                   th:value="${choice != null ? choice.receiverName : preview.receiverName}">
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" th:for="'receiver-phone-' + ${group.storeId}">Số điện thoại <span class="text-danger">*</span></label>
-                            <input type="tel" class="form-control" maxlength="20" required
-                                   th:name="${prefix} + '.receiverPhone'" th:id="'receiver-phone-' + ${group.storeId}"
-                                   th:value="${choice != null ? choice.receiverPhone : preview.receiverPhone}">
-                        </div>
-                        <div class="col-12 os-checkout-address" th:classappend="${fulfillment != 'DELIVERY'} ? 'd-none'">
-                            <label class="form-label" th:for="'address-' + ${group.storeId}">Địa chỉ giao hàng <span class="text-danger">*</span></label>
-                            <textarea class="form-control" rows="2" maxlength="500"
-                                      th:name="${prefix} + '.shippingAddress'" th:id="'address-' + ${group.storeId}"
-                                      th:text="${choice != null ? choice.shippingAddress : preview.shippingAddress}"></textarea>
-                        </div>
+              <div class="order-items-wrapper">
+                <div
+                  class="order-item-row"
+                  th:each="item : ${group.items}"
+                  th:attr="data-cart-item-id=${item.cartItemId}"
+                >
+                  <div>
+                    <div class="order-item-name" th:text="${item.productName}">
+                      Tên sản phẩm
                     </div>
+                    <div class="order-item-meta">
+                      <span
+                        th:replace="~{fragments/components :: price(${item.unitPrice})}"
+                      ></span>
+                      &times; <span th:text="${item.quantity}">2</span>
+                    </div>
+                  </div>
+                  <div class="order-item-subtotal">
+                    <span
+                      th:replace="~{fragments/components :: price(${item.subtotal})}"
+                    ></span>
+                  </div>
                 </div>
+              </div>
 
-                <div class="card-footer bg-white d-flex justify-content-between">
-                    <span class="text-secondary">Tạm tính đơn tại chi nhánh</span>
-                    <strong><span th:replace="~{fragments/components :: price(${group.subtotal})}"></span></strong>
+              <div
+                class="p-3 p-sm-4 border-top bg-white"
+                th:with="payment=${choice != null and choice.paymentMethod != null ? choice.paymentMethod.name() : (fulfillment == 'DELIVERY' ? 'COD' : 'PAY_AT_STORE')}"
+              >
+                <div class="row g-4 pt-1">
+                  <fieldset class="col-12 col-md-6 border-0 m-0">
+                    <legend class="config-section-title">Cách nhận hàng</legend>
+
+                    <label
+                      class="selection-tile"
+                      th:if="${group.deliveryEnabled}"
+                      th:for="'delivery-' + ${group.storeId}"
+                    >
+                      <input
+                        type="radio"
+                        class="form-check-input os-checkout-fulfillment"
+                        value="DELIVERY"
+                        th:name="${prefix} + '.fulfillmentType'"
+                        th:id="'delivery-' + ${group.storeId}"
+                        th:checked="${fulfillment == 'DELIVERY'}"
+                      />
+                      <span class="selection-tile-content">
+                        <span class="selection-tile-label"
+                          >Giao hàng tận nơi</span
+                        >
+                      </span>
+                    </label>
+
+                    <label
+                      class="selection-tile"
+                      th:if="${group.pickupEnabled}"
+                      th:for="'pickup-' + ${group.storeId}"
+                    >
+                      <input
+                        type="radio"
+                        class="form-check-input os-checkout-fulfillment"
+                        value="STORE_PICKUP"
+                        th:name="${prefix} + '.fulfillmentType'"
+                        th:id="'pickup-' + ${group.storeId}"
+                        th:checked="${fulfillment == 'STORE_PICKUP'}"
+                      />
+                      <span class="selection-tile-content">
+                        <span class="selection-tile-label"
+                          >Nhận tại cửa hàng</span
+                        >
+                        <span
+                          class="small text-secondary fw-normal"
+                          th:text="'(' + ${group.storeName} + ')'"
+                          >(OneShop Thủ Đức)</span
+                        >
+                      </span>
+                    </label>
+
+                    <div
+                      class="small text-secondary"
+                      th:unless="${group.deliveryEnabled}"
+                    >
+                      Chi nhánh này không giao hàng tận nơi.
+                    </div>
+                    <div
+                      class="small text-secondary"
+                      th:unless="${group.pickupEnabled}"
+                    >
+                      Chi nhánh này không hỗ trợ nhận tại cửa hàng.
+                    </div>
+                  </fieldset>
+
+                  <fieldset class="col-12 col-md-6 border-0 m-0">
+                    <legend class="config-section-title">
+                      Phương thức thanh toán
+                    </legend>
+
+                    <label
+                      class="selection-tile"
+                      data-for="DELIVERY"
+                      th:for="'cod-' + ${group.storeId}"
+                    >
+                      <input
+                        type="radio"
+                        class="form-check-input os-checkout-payment"
+                        value="COD"
+                        th:name="${prefix} + '.paymentMethod'"
+                        th:id="'cod-' + ${group.storeId}"
+                        th:checked="${payment == 'COD'}"
+                      />
+                      <span class="selection-tile-content">
+                        <span class="selection-tile-label"
+                          >Thanh toán khi nhận hàng (COD)</span
+                        >
+                      </span>
+                    </label>
+
+                    <label
+                      class="selection-tile"
+                      data-for="STORE_PICKUP"
+                      th:for="'store-' + ${group.storeId}"
+                    >
+                      <input
+                        type="radio"
+                        class="form-check-input os-checkout-payment"
+                        value="PAY_AT_STORE"
+                        th:name="${prefix} + '.paymentMethod'"
+                        th:id="'store-' + ${group.storeId}"
+                        th:checked="${payment == 'PAY_AT_STORE'}"
+                      />
+                      <span class="selection-tile-content">
+                        <span class="selection-tile-label"
+                          >Thanh toán tại quầy</span
+                        >
+                      </span>
+                    </label>
+
+                    <label
+                      class="selection-tile"
+                      data-for="BOTH"
+                      th:for="'online-' + ${group.storeId}"
+                    >
+                      <input
+                        type="radio"
+                        class="form-check-input os-checkout-payment"
+                        value="ONLINE"
+                        th:name="${prefix} + '.paymentMethod'"
+                        th:id="'online-' + ${group.storeId}"
+                        th:checked="${payment == 'ONLINE'}"
+                      />
+                      <span class="selection-tile-content">
+                        <span class="selection-tile-label"
+                          >Thanh toán trực tuyến (VNPAY / Thẻ)</span
+                        >
+                      </span>
+                    </label>
+                  </fieldset>
+
+                  <div class="col-12 col-md-6 pt-2">
+                    <label
+                      class="field-label"
+                      th:for="'receiver-name-' + ${group.storeId}"
+                    >
+                      Tên người nhận <span class="text-danger">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control form-control-custom"
+                      maxlength="150"
+                      required
+                      placeholder="Họ và tên người nhận"
+                      th:name="${prefix} + '.receiverName'"
+                      th:id="'receiver-name-' + ${group.storeId}"
+                      th:value="${choice != null ? choice.receiverName : preview.receiverName}"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6 pt-2">
+                    <label
+                      class="field-label"
+                      th:for="'receiver-phone-' + ${group.storeId}"
+                    >
+                      Số điện thoại <span class="text-danger">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      class="form-control form-control-custom"
+                      maxlength="20"
+                      required
+                      placeholder="0912 345 678"
+                      th:name="${prefix} + '.receiverPhone'"
+                      th:id="'receiver-phone-' + ${group.storeId}"
+                      th:value="${choice != null ? choice.receiverPhone : preview.receiverPhone}"
+                    />
+                  </div>
+
+                  <div
+                    class="col-12 os-checkout-address"
+                    th:classappend="${fulfillment != 'DELIVERY'} ? 'd-none'"
+                  >
+                    <label
+                      class="field-label"
+                      th:for="'address-' + ${group.storeId}"
+                    >
+                      Địa chỉ giao hàng <span class="text-danger">*</span>
+                    </label>
+                    <textarea
+                      class="form-control form-control-custom"
+                      rows="2"
+                      maxlength="500"
+                      placeholder="Số nhà, tên đường, phường/xã, quận/huyện..."
+                      th:name="${prefix} + '.shippingAddress'"
+                      th:id="'address-' + ${group.storeId}"
+                      th:text="${choice != null ? choice.shippingAddress : preview.shippingAddress}"
+                    ></textarea>
+                  </div>
                 </div>
+              </div>
+
+              <div class="checkout-group-footer">
+                <span>Tạm tính đơn tại chi nhánh</span>
+                <strong
+                  ><span
+                    th:replace="~{fragments/components :: price(${group.subtotal})}"
+                  ></span
+                ></strong>
+              </div>
             </section>
-        </div>
+          </div>
 
-        <div class="col-12 col-lg-4">
-            <section class="card shadow-sm os-cart-summary">
-                <div class="card-body">
-                    <h2 class="h6">Tổng đặt hàng</h2>
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="text-secondary">Số đơn hàng sẽ tạo</span>
-                        <span th:text="${preview.selection.groups.size()}">3</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-3">
-                        <span class="text-secondary">Tổng tạm tính</span>
-                        <strong id="checkout-total"><span th:replace="~{fragments/components :: price(${preview.selection.total})}"></span></strong>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Xác nhận đặt hàng</button>
-                    <p class="small text-secondary mt-2 mb-0">
-                        Giá và tình trạng hàng được kiểm tra lại tại thời điểm đặt. Nếu một sản phẩm không còn đủ hàng,
-                        cả lần đặt hàng sẽ không được tạo.
-                    </p>
-                    <a class="btn btn-link w-100 mt-2" th:href="@{/cart}">Quay lại giỏ hàng</a>
+          <div class="col-12 col-lg-4">
+            <section class="order-summary-card os-cart-summary">
+              <div class="order-summary-title">Tóm tắt thanh toán</div>
+
+              <div class="summary-metric-row">
+                <span>Số lượng đơn sẽ tạo</span>
+                <span
+                  class="fw-semibold text-dark"
+                  th:text="${preview.selection.groups.size()}"
+                  >3</span
+                >
+              </div>
+
+              <div class="summary-metric-row">
+                <span>Tổng số sản phẩm</span>
+                <span
+                  class="fw-semibold text-dark"
+                  th:text="${preview.selection.itemCount}"
+                  >3</span
+                >
+              </div>
+
+              <div class="pt-2 mb-3 border-top">
+                <div class="small text-secondary mb-1">
+                  Tổng cộng thanh toán
                 </div>
+                <div class="summary-total-value" id="checkout-total">
+                  <span
+                    th:replace="~{fragments/components :: price(${preview.selection.total})}"
+                  ></span>
+                </div>
+              </div>
+
+              <button type="submit" class="btn-confirm-order">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Xác nhận đặt hàng
+              </button>
+
+              <p
+                class="small text-dark mt-3 mb-0"
+                style="line-height: 1.45; font-size: 0.8rem"
+              >
+                Giá và số lượng khả dụng được kiểm tra tự động tại thời điểm tạo
+                đơn. Đơn hàng sẽ không được hoàn tất nếu có sản phẩm hết tồn kho
+                đột xuất.
+              </p>
+
+              <div class="text-center mt-3 pt-3 border-top">
+                <a class="btn-back-cart" th:href="@{/cart}">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                  </svg>
+                  Quay lại giỏ hàng
+                </a>
+              </div>
             </section>
+          </div>
         </div>
+      </form>
     </div>
-</form>
-</body>
+
+    <script>
+      document.querySelectorAll('.os-checkout-group').forEach((groupEl) => {
+        const fulfillmentRadios = groupEl.querySelectorAll(
+          ".os-checkout-fulfillment",
+        );
+        const addressBlock = groupEl.querySelector(".os-checkout-address");
+        const paymentOptions = groupEl.querySelectorAll("[data-for]");
+
+        function updateFulfillmentUI(selectedType) {
+          if (addressBlock) {
+            if (selectedType === "DELIVERY") {
+              addressBlock.classList.remove("d-none");
+            } else {
+              addressBlock.classList.add("d-none");
+            }
+          }
+
+          paymentOptions.forEach((opt) => {
+            const target = opt.getAttribute("data-for");
+            const radio = opt.querySelector(".os-checkout-payment");
+            if (target === "BOTH" || target === selectedType) {
+              opt.classList.remove("d-none");
+              if (radio) radio.disabled = false;
+            } else {
+              opt.classList.add("d-none");
+              if (radio) {
+                radio.checked = false;
+                radio.disabled = true;
+              }
+            }
+          });
+
+          const visibleRadios = Array.from(paymentOptions)
+            .filter((opt) => !opt.classList.contains("d-none"))
+            .map((opt) => opt.querySelector(".os-checkout-payment"));
+
+          if (
+            visibleRadios.length > 0 &&
+            !visibleRadios.some((r) => r.checked)
+          ) {
+            visibleRadios[0].checked = true;
+          }
+        }
+
+        fulfillmentRadios.forEach((radio) => {
+          radio.addEventListener("change", () => {
+            if (radio.checked) {
+              updateFulfillmentUI(radio.value);
+            }
+          });
+          if (radio.checked) {
+            updateFulfillmentUI(radio.value);
+          }
+        });
+      });
+    </script>
+  </body>
 </html>

@@ -1,113 +1,421 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Sản phẩm</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sản phẩm - OneShop</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-coral.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <style>
+        .catalog-container {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 2rem 1rem 4rem;
+        }
+
+        .catalog-hero {
+            background: linear-gradient(135deg, #fff5f2 0%, #fffbf9 60%, #ffede6 100%);
+            border: 1px solid rgba(255, 111, 97, 0.2);
+            border-radius: 20px;
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 1.75rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .catalog-hero::before {
+            content: "";
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle, rgba(255, 127, 80, 0.15), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .catalog-title {
+            font-size: clamp(1.5rem, 3vw, 1.85rem);
+            font-weight: 800;
+            color: var(--os-text, #292d32);
+            letter-spacing: -0.03em;
+            margin-bottom: 0.35rem;
+        }
+
+        .catalog-context-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255, 111, 97, 0.25);
+            border-radius: 999px;
+            padding: 0.4rem 1rem;
+            font-size: 0.9rem;
+            color: #555e6d;
+        }
+
+        .catalog-context-pill strong {
+            color: var(--bs-primary, #ff7f50);
+        }
+
+        .catalog-context-pill a {
+            color: var(--bs-primary, #ff7f50);
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .filter-panel {
+            background: #ffffff;
+            border: 1px solid #f0e6e3;
+            border-radius: 18px;
+            box-shadow: 0 4px 20px rgba(48, 36, 32, 0.04);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-label {
+            font-size: 0.825rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #707780;
+            margin-bottom: 0.4rem;
+        }
+
+        .filter-input, .filter-select {
+            border: 1px solid #ebdcd7;
+            border-radius: 12px;
+            background-color: #fffaf9;
+            padding: 0.65rem 0.9rem;
+            font-size: 0.925rem;
+            color: #2c3038;
+            transition: all 0.2s ease;
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            background-color: #ffffff;
+            border-color: var(--bs-primary, #ff7f50) !important;
+            box-shadow: 0 0 0 0.25rem rgba(255, 127, 80, 0.18) !important;
+            outline: none;
+        }
+
+        .btn-filter-submit {
+            height: 44px;
+            border-radius: 12px;
+            font-weight: 700;
+            background: var(--bs-primary, #ff7f50);
+            border: none;
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(255, 127, 80, 0.25);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: background 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-filter-submit:hover {
+            background: var(--bs-primary-hover, #e86738);
+            color: #ffffff;
+            box-shadow: 0 6px 18px rgba(255, 127, 80, 0.35);
+        }
+
+        .modern-product-card {
+            background: #ffffff;
+            border: 1px solid #f0e6e3;
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .modern-product-card:hover {
+            border-color: rgba(255, 111, 97, 0.45);
+            box-shadow: 0 12px 30px rgba(255, 127, 80, 0.12);
+        }
+
+        .product-media {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            background-color: #fff6f3;
+            overflow: hidden;
+        }
+
+        .product-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .modern-product-card:hover .product-media img {
+            transform: scale(1.05);
+        }
+
+        .product-placeholder-box {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e0b8ab;
+            background: linear-gradient(135deg, #fff5f2 0%, #ffede6 100%);
+        }
+
+        .card-body-custom {
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-category-eyebrow {
+            font-size: 0.775rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #8c939e;
+            margin-bottom: 0.4rem;
+        }
+
+        .product-title-link {
+            font-size: 1.025rem;
+            font-weight: 750;
+            line-height: 1.4;
+            color: #292d32;
+            text-decoration: none;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 0.35rem;
+            transition: color 0.2s ease;
+        }
+
+        .product-title-link:hover {
+            color: var(--bs-primary, #ff7f50);
+        }
+
+        .product-sku-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: #f7f8fa;
+            color: #7b8290;
+            border-radius: 6px;
+            padding: 2px 7px;
+            margin-bottom: 0.85rem;
+            width: fit-content;
+        }
+
+        .product-price-highlight {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--bs-primary, #ff7f50);
+            letter-spacing: -0.02em;
+            margin-bottom: 0.35rem;
+        }
+
+        .product-price-highlight span {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #707780;
+        }
+
+        .store-availability-box {
+            background-color: #fffaf8;
+            border: 1px solid #f6ded7;
+            border-radius: 12px;
+            padding: 0.65rem 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .store-availability-box ul {
+            max-height: 110px;
+            overflow-y: auto;
+            margin: 0;
+            padding: 0;
+        }
+
+        .store-availability-box li {
+            padding: 0.25rem 0;
+            font-size: 0.825rem;
+            border-bottom: 1px dashed #f2e2dc;
+        }
+
+        .store-availability-box li:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .pagination .page-item .page-link {
+            border-radius: 10px;
+            margin: 0 4px;
+            color: var(--bs-primary, #ff7f50);
+            border-color: #f0ded8;
+            font-weight: 600;
+            padding: 0.55rem 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--bs-primary, #ff7f50) !important;
+            border-color: var(--bs-primary, #ff7f50) !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.25);
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #adb5bd;
+            background-color: #f8f9fa;
+            border-color: #e9ecef;
+        }
+    </style>
 </head>
-<body>
-<!--/*
-    Catalog. Without a selected Store every SKU of the chain is listed once, with the Stores selling it; with a selected
-    Store only that Store's StoreProducts are listed, at that Store's price (BR-04). Never an exact quantity (BR-15).
-*/-->
-<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
-    <div>
-        <h1 class="h3 mb-1">Sản phẩm</h1>
-        <p class="text-secondary mb-0" id="catalog-context" th:if="${selectedStore != null}">
-            Đang xem sản phẩm tại <strong th:text="${selectedStore.name}">OneShop Thủ Đức</strong>:
-            giá và tình trạng hàng là của chi nhánh này.
-        </p>
-        <p class="text-secondary mb-0" id="catalog-context" th:unless="${selectedStore != null}">
-            Đang xem <strong>toàn chuỗi</strong>: mỗi sản phẩm cho biết đang bán ở những chi nhánh nào.
-            <a th:href="@{/stores}">Chọn chi nhánh</a> để xem giá tại một chi nhánh.
-        </p>
-    </div>
-</div>
-
-<form method="get" th:action="@{/products}" class="card card-body shadow-sm mb-4" id="catalog-filter">
-    <div class="row g-3 align-items-end">
-        <div class="col-12 col-md-4">
-            <label class="form-label" for="q">Tên sản phẩm hoặc mã SKU</label>
-            <input type="search" class="form-control" id="q" name="q" th:value="${criteria.keyword}" maxlength="100">
-        </div>
-        <div class="col-6 col-md-3">
-            <label class="form-label" for="categoryId">Danh mục</label>
-            <select class="form-select" id="categoryId" name="categoryId">
-                <option value="">Tất cả</option>
-                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
-                        th:selected="${category.id == criteria.categoryId}">Chăm sóc da</option>
-            </select>
-        </div>
-        <div class="col-6 col-md-3">
-            <label class="form-label" for="brandId">Thương hiệu</label>
-            <select class="form-select" id="brandId" name="brandId">
-                <option value="">Tất cả</option>
-                <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"
-                        th:selected="${brand.id == criteria.brandId}">Cocoon</option>
-            </select>
-        </div>
-        <div class="col-12 col-md-2 d-grid">
-            <button type="submit" class="btn btn-primary">Tìm</button>
-        </div>
-    </div>
-</form>
-
-<div th:if="${catalog.isEmpty()}">
-    <div th:replace="~{fragments/components :: emptyState(${selectedStore != null} ? 'Chi nhánh này chưa có sản phẩm phù hợp.' : 'Không tìm thấy sản phẩm phù hợp.')}"></div>
-</div>
-
-<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3" th:unless="${catalog.isEmpty()}">
-    <div class="col" th:each="item : ${catalog.content}">
-        <article class="card h-100 shadow-sm os-product-card" th:with="product=${item.product}">
-            <a th:href="@{/products/{id}(id=${product.id})}" class="text-decoration-none">
-                <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" th:alt="${product.name}"
-                     class="card-img-top os-product-img" loading="lazy">
-                <div class="os-product-img os-product-placeholder" th:unless="${product.imageUrl}"></div>
-            </a>
-            <div class="card-body d-flex flex-column">
-                <p class="small text-secondary mb-1" th:text="${product.brandName} + ' · ' + ${product.categoryName}">Cocoon · Chăm sóc da</p>
-                <h2 class="h6 card-title">
-                    <a th:href="@{/products/{id}(id=${product.id})}" class="text-decoration-none text-body"
-                       th:text="${product.name}">Tên sản phẩm</a>
-                </h2>
-                <p class="small text-secondary mb-2">SKU: <span th:text="${product.sku}">SKU-001</span></p>
-
-                <!--/* Context of ONE Store: that Store's own price and availability */-->
-                <div class="mt-auto" th:if="${item.atSelectedStore != null}">
-                    <div class="fs-5 fw-semibold"><span th:replace="~{fragments/components :: price(${item.atSelectedStore.price})}"></span></div>
-                    <span th:replace="~{fragments/components :: availability(${item.atSelectedStore.inStock})}"></span>
-                </div>
-
-                <!--/* Whole chain: where the SKU is sold */-->
-                <div class="mt-auto" th:if="${item.atSelectedStore == null}">
-                    <p class="small text-secondary mb-0" th:if="${item.stores.isEmpty()}">Chưa có chi nhánh nào đang bán.</p>
-                    <th:block th:unless="${item.stores.isEmpty()}">
-                        <div class="fw-semibold mb-1">
-                            <span th:unless="${item.samePriceEverywhere()}">Từ </span><span th:replace="~{fragments/components :: price(${item.lowestPrice()})}"></span>
-                        </div>
-                        <ul class="list-unstyled small mb-0 os-store-availability">
-                            <li class="d-flex justify-content-between align-items-center gap-2" th:each="store : ${item.stores}">
-                                <span class="text-truncate" th:text="${store.storeName}">OneShop Thủ Đức</span>
-                                <span th:replace="~{fragments/components :: availability(${store.inStock})}"></span>
-                            </li>
-                        </ul>
-                    </th:block>
-                </div>
+<body class="os-home">
+<div class="catalog-container">
+    <div class="catalog-hero d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div>
+            <div class="os-eyebrow mb-2">
+                <span class="os-eyebrow-dot"></span>
+                DANH MỤC SẢN PHẨM
             </div>
-        </article>
+            <h1 class="catalog-title">Mỹ Phẩm & Chăm Sóc</h1>
+            <div id="catalog-context" th:if="${selectedStore != null}" class="catalog-context-pill">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-coral">
+                    <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/>
+                    <circle cx="12" cy="10" r="2.5"/>
+                </svg>
+                <span>Đang xem tại <strong th:text="${selectedStore.name}">OneShop Thủ Đức</strong>: giá & tồn kho của chi nhánh này</span>
+            </div>
+            <div id="catalog-context" th:unless="${selectedStore != null}" class="catalog-context-pill">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="2" y1="12" x2="22" y2="12"/>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                </svg>
+                <span>Đang xem <strong>toàn chuỗi</strong> · <a th:href="@{/stores}">Chọn chi nhánh</a> để xem giá bán cụ thể</span>
+            </div>
+        </div>
     </div>
-</div>
 
-<nav class="mt-4" th:if="${catalog.totalPages > 1}" aria-label="Phân trang">
-    <ul class="pagination justify-content-center">
-        <li class="page-item" th:classappend="${catalog.first} ? 'disabled'">
-            <a class="page-link" th:href="@{/products(q=${criteria.keyword}, categoryId=${criteria.categoryId}, brandId=${criteria.brandId}, page=${catalog.number - 1})}">Trước</a>
-        </li>
-        <li class="page-item disabled">
-            <span class="page-link" th:text="${catalog.number + 1} + ' / ' + ${catalog.totalPages}">1 / 1</span>
-        </li>
-        <li class="page-item" th:classappend="${catalog.last} ? 'disabled'">
-            <a class="page-link" th:href="@{/products(q=${criteria.keyword}, categoryId=${criteria.categoryId}, brandId=${criteria.brandId}, page=${catalog.number + 1})}">Sau</a>
-        </li>
-    </ul>
-</nav>
+    <form method="get" th:action="@{/products}" class="filter-panel" id="catalog-filter">
+        <div class="row g-3 align-items-end">
+            <div class="col-12 col-md-4">
+                <label class="filter-label" for="q">Tìm kiếm</label>
+                <input type="search" class="form-control filter-input" id="q" name="q"
+                       th:value="${criteria.keyword}" placeholder="Tên sản phẩm hoặc mã SKU..." maxlength="100">
+            </div>
+            <div class="col-6 col-md-3">
+                <label class="filter-label" for="categoryId">Danh mục</label>
+                <select class="form-select filter-select" id="categoryId" name="categoryId">
+                    <option value="">Tất cả danh mục</option>
+                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
+                            th:selected="${category.id == criteria.categoryId}">Chăm sóc da</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-3">
+                <label class="filter-label" for="brandId">Thương hiệu</label>
+                <select class="form-select filter-select" id="brandId" name="brandId">
+                    <option value="">Tất cả thương hiệu</option>
+                    <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"
+                            th:selected="${brand.id == criteria.brandId}">Cocoon</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-2 d-grid">
+                <button type="submit" class="btn btn-primary btn-filter-submit w-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    Lọc kết quả
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <div th:if="${catalog.isEmpty()}">
+        <div th:replace="~{fragments/components :: emptyState(${selectedStore != null} ? 'Chi nhánh này chưa có sản phẩm phù hợp.' : 'Không tìm thấy sản phẩm phù hợp.')}"></div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3 g-lg-4" th:unless="${catalog.isEmpty()}">
+        <div class="col" th:each="item : ${catalog.content}">
+            <article class="modern-product-card" th:with="product=${item.product}">
+                <a th:href="@{/products/{id}(id=${product.id})}" class="product-media text-decoration-none">
+                    <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" th:alt="${product.name}" loading="lazy">
+                    <div class="product-placeholder-box" th:unless="${product.imageUrl}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                            <circle cx="9" cy="9" r="2"/>
+                            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <div class="card-body-custom">
+                    <div class="product-category-eyebrow" th:text="${product.brandName} + ' · ' + ${product.categoryName}">Cocoon · Chăm sóc da</div>
+                    
+                    <h2 class="h6 mb-1">
+                        <a th:href="@{/products/{id}(id=${product.id})}" class="product-title-link" th:text="${product.name}">Tên sản phẩm</a>
+                    </h2>
+
+                    <div class="product-sku-tag">
+                        SKU: <span th:text="${product.sku}">SKU-001</span>
+                    </div>
+
+                    <div class="mt-auto" th:if="${item.atSelectedStore != null}">
+                        <div class="product-price-highlight">
+                            <span th:replace="~{fragments/components :: price(${item.atSelectedStore.price})}"></span>
+                        </div>
+                        <div class="pt-1">
+                            <span th:replace="~{fragments/components :: availability(${item.atSelectedStore.inStock})}"></span>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto" th:if="${item.atSelectedStore == null}">
+                        <p class="small text-muted mb-0" th:if="${item.stores.isEmpty()}">Chưa có chi nhánh nào đang bán.</p>
+                        <th:block th:unless="${item.stores.isEmpty()}">
+                            <div class="product-price-highlight">
+                                <span th:unless="${item.samePriceEverywhere()}">Từ </span><span th:replace="~{fragments/components :: price(${item.lowestPrice()})}"></span>
+                            </div>
+                            <div class="store-availability-box">
+                                <ul class="list-unstyled mb-0 os-store-availability">
+                                    <li class="d-flex justify-content-between align-items-center gap-2" th:each="store : ${item.stores}">
+                                        <span class="text-truncate fw-medium text-dark" th:text="${store.storeName}">OneShop Thủ Đức</span>
+                                        <span th:replace="~{fragments/components :: availability(${store.inStock})}"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+
+    <nav class="mt-5" th:if="${catalog.totalPages > 1}" aria-label="Phân trang">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${catalog.first} ? 'disabled'">
+                <a class="page-link" th:href="@{/products(q=${criteria.keyword}, categoryId=${criteria.categoryId}, brandId=${criteria.brandId}, page=${catalog.number - 1})}">
+                    &laquo; Trước
+                </a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link" th:text="${catalog.number + 1} + ' / ' + ${catalog.totalPages}">1 / 1</span>
+            </li>
+            <li class="page-item" th:classappend="${catalog.last} ? 'disabled'">
+                <a class="page-link" th:href="@{/products(q=${criteria.keyword}, categoryId=${criteria.categoryId}, brandId=${criteria.brandId}, page=${catalog.number + 1})}">
+                    Sau &raquo;
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
 </body>
 </html>
