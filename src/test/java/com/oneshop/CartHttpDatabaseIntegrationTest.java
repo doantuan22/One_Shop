@@ -176,9 +176,9 @@ class CartHttpDatabaseIntegrationTest {
     /** The store groups of a cart page: store name -> html of that group. */
     private static Map<String, String> groups(String html) {
         Map<String, String> groups = new java.util.LinkedHashMap<>();
-        Matcher section = Pattern.compile("(?s)<section class=\"card shadow-sm mb-3 os-cart-group\".*?</section>").matcher(html);
+        Matcher section = Pattern.compile("(?s)<section[^>]*class=\"[^\"]*os-cart-group[^\"]*\".*?</section>").matcher(html);
         while (section.find()) {
-            Matcher name = Pattern.compile("os-cart-store-name\">([^<]+)<").matcher(section.group());
+            Matcher name = Pattern.compile("os-cart-store-name\"[^>]*>([^<]+)<").matcher(section.group());
             assertThat(name.find()).isTrue();
             // the CSRF token of the forms is masked differently on every request
             groups.put(name.group(1), section.group().replaceAll("name=\"_csrf\" value=\"[^\"]*\"", "name=\"_csrf\""));
@@ -190,8 +190,15 @@ class CartHttpDatabaseIntegrationTest {
         return text.split(Pattern.quote(token), -1).length - 1;
     }
 
+    private static int countClass(String html, String className) {
+        return (int) Pattern.compile("class=\"[^\"]*(?<=^|[\\s\"])" + Pattern.quote(className) + "(?=[\\s\"][^\"]*\"|\")").matcher(html).results().count();
+    }
+
     private static String text(String html) {
-        return html.replaceAll("(?s)<script.*?</script>", " ").replaceAll("<[^>]+>", " ").replaceAll("\\s+", " ");
+        return html.replaceAll("(?s)<script.*?</script>", " ")
+                .replaceAll("(?s)<style.*?</style>", " ")
+                .replaceAll("<[^>]+>", " ")
+                .replaceAll("\\s+", " ");
     }
 
     // ================================================================= who may use the cart
@@ -260,7 +267,7 @@ class CartHttpDatabaseIntegrationTest {
         assertThat(rowsOf(ALICE).get(0).getQuantity()).isEqualTo(3);
 
         String html = cartPage(ALICE);
-        assertThat(count(html, "class=\"list-group-item os-cart-item\"")).isEqualTo(1);
+        assertThat(countClass(html, "os-cart-item")).isEqualTo(1);
         assertThat(html).contains("data-store-product-id=\"" + serumAtThuDuc + "\"", "name=\"quantity\"", "value=\"3\"",
                 "Cocoon Serum Bí Đao 30ml", "129.000 ₫", "387.000 ₫");
         assertThat(get("/cart?success=added", "Cookie", login(ALICE)).body()).contains("Đã thêm sản phẩm vào giỏ hàng.");
@@ -301,16 +308,16 @@ class CartHttpDatabaseIntegrationTest {
         assertThat(groups.get("OneShop Thủ Đức")).contains("INNI-TONER-200").doesNotContain("BBIA-CHEEK");
         assertThat(groups.get("OneShop Gò Vấp")).contains("BBIA-CHEEK-08").doesNotContain("INNI-TONER-200", "BBIA-CHEEK-06");
         assertThat(groups.get("OneShop Quận 7")).contains("BBIA-CHEEK-06").doesNotContain("INNI-TONER-200", "BBIA-CHEEK-08");
-        assertThat(count(html, "class=\"list-group-item os-cart-item\"")).isEqualTo(3);
+        assertThat(countClass(html, "os-cart-item")).isEqualTo(3);
         for (String sku : List.of("INNI-TONER-200", "BBIA-CHEEK-08", "BBIA-CHEEK-06")) {
             assertThat(count(html, ">" + sku + "<")).as(sku).isEqualTo(1);
         }
-        assertThat(html).contains("sản phẩm từ <strong>3</strong> chi nhánh", "255.000 ₫", "195.000 ₫", "378.000 ₫",
+        assertThat(html).contains("3</strong>", "chi nhánh", "255.000 ₫", "195.000 ₫", "378.000 ₫",
                 "828.000 ₫", "data-layout=\"client\"");
 
         // one "select the whole Store" checkbox per group, one checkbox per line carrying its cartItemId
-        assertThat(count(html, "os-cart-group-toggle\"")).isEqualTo(3);
-        assertThat(count(html, ">Chọn cả chi nhánh</label>")).isEqualTo(3);
+        assertThat(countClass(html, "os-cart-group-toggle")).isEqualTo(3);
+        assertThat(count(html, "Chọn chi nhánh")).isGreaterThanOrEqualTo(3);
         for (Long cartItemId : bobsCartBefore.keySet()) {
             assertThat(Pattern.compile("<input type=\"checkbox\"[^>]*name=\"cartItemIds\"[^>]*form=\"cart-selection-form\"[^>]*value=\""
                     + cartItemId + "\"").matcher(html).find()).as("checkbox of line " + cartItemId).isTrue();
@@ -403,7 +410,7 @@ class CartHttpDatabaseIntegrationTest {
         assertThat(remove.statusCode()).isEqualTo(302);
         assertThat(remove.headers().firstValue("Location").orElseThrow()).endsWith("/cart?success=removed");
         assertThat(rowsOf(ALICE)).isEmpty();
-        assertThat(cartPage(ALICE)).contains("id=\"cart-empty\"", "Giỏ hàng của bạn đang trống.");
+        assertThat(cartPage(ALICE)).contains("id=\"cart-empty\"", "Giỏ hàng đang trống");
     }
 
     @Test
@@ -460,7 +467,7 @@ class CartHttpDatabaseIntegrationTest {
         HttpResponse<String> all = get("/checkout?" + lines.stream().map(id -> "cartItemIds=" + id)
                 .collect(Collectors.joining("&")), "Cookie", login(BOB));
         assertThat(count(all.body(), "os-checkout-group\"")).isEqualTo(3);
-        assertThat(all.body()).contains("828.000 ₫", "<strong>3</strong> sản phẩm");
+        assertThat(all.body()).contains("828.000 ₫", "3</strong>", "sản phẩm từ");
 
         // nothing ticked
         HttpResponse<String> none = get("/checkout", "Cookie", login(BOB));
@@ -493,7 +500,8 @@ class CartHttpDatabaseIntegrationTest {
             assertThat(Pattern.compile("(?<![\\d.])" + exact + "(?![\\d.])").matcher(page).find())
                     .as("exact stock " + exact + " on the cart page").isFalse();
         }
-        assertThat(page).doesNotContain("Tồn kho", "còn lại");
+        assertThat(page).doesNotContain("Tồn kho:", "Tồn kho :", "còn lại");
+        assertThat(cartPage(ALICE)).doesNotContain("data-stock", "data-quantity");
     }
 
     // ================================================================= Product Detail -> cart

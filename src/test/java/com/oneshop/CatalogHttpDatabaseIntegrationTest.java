@@ -155,7 +155,10 @@ class CatalogHttpDatabaseIntegrationTest {
     }
 
     private static String text(String html) {
-        return html.replaceAll("(?s)<script.*?</script>", " ").replaceAll("<[^>]+>", " ").replaceAll("\\s+", " ");
+        return html.replaceAll("(?s)<script.*?</script>", " ")
+                .replaceAll("(?s)<style.*?</style>", " ")
+                .replaceAll("<[^>]+>", " ")
+                .replaceAll("\\s+", " ");
     }
 
     private static int count(String text, String token) {
@@ -344,13 +347,42 @@ class CatalogHttpDatabaseIntegrationTest {
                 get("/products/" + serum).body(),
                 get("/products?q=serum", "Cookie", storeCookie(thuDuc)).body(),
                 get("/products?q=serum").body())) {
-            assertThat(page).contains("Còn hàng").doesNotContain("Tồn kho", "quantity");
+            assertThat(page).contains("Còn hàng").doesNotContain("Tồn kho", "data-stock", "data-quantity");
+            assertThat(text(page)).doesNotContain("Tồn kho", "quantity");
             assertThat(exactQuantity.matcher(text(page)).find()).as("quantity " + quantity + " in the page").isFalse();
         }
 
         // the Admin does see it
         String adminPage = get("/admin/store-products?storeId=" + thuDuc + "&productId=" + serum, "Cookie", admin()).body();
         assertThat(adminPage).contains("Tồn kho", ">" + quantity + "<");
+    }
+
+    @Test
+    void br15_assertionCatchesLeakedStockInHtml() {
+        int quantity = 40;
+        Pattern exactQuantity = Pattern.compile("(?<![\\d.])" + quantity + "(?![\\d.])");
+
+        // 1. Stock number leaked into visible body text
+        String leakedNumberHtml = "<div>Còn hàng</div><span>Số lượng còn lại: 40</span>";
+        assertThat(exactQuantity.matcher(text(leakedNumberHtml)).find()).isTrue();
+
+        // 2. "Tồn kho" label leaked into page
+        String leakedLabelHtml = "<div>Còn hàng</div><span>Tồn kho: 40</span>";
+        org.junit.jupiter.api.Assertions.assertThrows(AssertionError.class, () ->
+                assertThat(leakedLabelHtml).contains("Còn hàng").doesNotContain("Tồn kho", "data-stock", "data-quantity")
+        );
+
+        // 3. data-stock or data-quantity attribute leaked
+        String leakedAttrHtml = "<div class=\"badge\" data-stock=\"40\">Còn hàng</div>";
+        org.junit.jupiter.api.Assertions.assertThrows(AssertionError.class, () ->
+                assertThat(leakedAttrHtml).contains("Còn hàng").doesNotContain("Tồn kho", "data-stock", "data-quantity")
+        );
+
+        // 4. "quantity" English word leaked in visible body text
+        String leakedWordHtml = "<div>Còn hàng</div><p>Available quantity: 40</p>";
+        org.junit.jupiter.api.Assertions.assertThrows(AssertionError.class, () ->
+                assertThat(text(leakedWordHtml)).doesNotContain("Tồn kho", "quantity")
+        );
     }
 
     // ================================================================= selected Store: invalid values

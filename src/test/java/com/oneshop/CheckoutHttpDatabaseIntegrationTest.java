@@ -397,9 +397,9 @@ class CheckoutHttpDatabaseIntegrationTest {
         // the result page shows the three Orders
         HttpResponse<String> result = get("/checkout/" + checkoutId + "?success=placed", "Cookie", login(ALICE));
         assertThat(result.statusCode()).isEqualTo(200);
-        assertThat(count(result.body(), "class=\"card shadow-sm mb-3 os-order\"")).isEqualTo(3);
+        assertThat((int) Pattern.compile("<section[^>]*class=\"[^\"]*\\bos-order\\b[^\"]*\"").matcher(result.body()).results().count()).isEqualTo(3);
         assertThat(result.body()).contains("Đặt hàng thành công", "1.143.000 ₫", "513.000 ₫", "Chờ thanh toán", "Đã xác nhận",
-                "Thanh toán khi nhận hàng (COD)", "Thanh toán tại cửa hàng", "Thanh toán trực tuyến",
+                "Thanh toán khi nhận hàng (COD)", "Thanh toán tại quầy", "Thanh toán trực tuyến",
                 "Nhận tại cửa hàng OneShop Gò Vấp", "Giao hàng tận nơi");
         // another customer cannot open it
         assertThat(get("/checkout/" + checkoutId, "Cookie", login(BOB)).statusCode()).isEqualTo(404);

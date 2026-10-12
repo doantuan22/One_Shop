@@ -135,6 +135,7 @@ class MaxUploadSizeExceededIntegrationTest extends AbstractIntegrationTest {
         assertThat(response.statusCode()).isEqualTo(200);
         String body = response.body();
         assertThat(body).contains("Ảnh vượt quá 5MB. Vui lòng chọn tệp nhỏ hơn.");
+        assertThat(body).contains("data-max-bytes=\"5242880\"");
         assertThat(body).contains("SKU-PROD-12");
         assertThat(body).contains("Sản phẩm thử nghiệm");
     }
@@ -151,6 +152,7 @@ class MaxUploadSizeExceededIntegrationTest extends AbstractIntegrationTest {
         assertThat(response.statusCode()).isEqualTo(200);
         String body = response.body();
         assertThat(body).contains("Ảnh vượt quá 5MB. Vui lòng chọn tệp nhỏ hơn.");
+        assertThat(body).contains("data-max-bytes=\"5242880\"");
         assertThat(body).contains("Thương hiệu thử nghiệm");
         assertThat(body).contains("tả thương hiệu");
     }
@@ -167,6 +169,7 @@ class MaxUploadSizeExceededIntegrationTest extends AbstractIntegrationTest {
         assertThat(response.statusCode()).isEqualTo(200);
         String body = response.body();
         assertThat(body).contains("Ảnh vượt quá 5MB. Vui lòng chọn tệp nhỏ hơn.");
+        assertThat(body).contains("data-max-bytes=\"5242880\"");
         assertThat(body).contains("Chăm sóc tóc");
         assertThat(body).contains("tả danh mục");
     }

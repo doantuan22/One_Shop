@@ -1,8 +1,9 @@
 /* =============================================================================
-   OneShop - Phase 2 - chay toan bo theo thu tu (SQLCMD mode)
+   OneShop - chay toan bo theo thu tu (SQLCMD mode): tao database, bang, index, du lieu mau va kiem tra.
    Chay tu THU MUC database/:
-     sqlcmd -S localhost -E -C -f 65001 -b -i 00_run_all.sql
+     sqlcmd -S localhost -E -C -f 65001 -b -I -i 00_run_all.sql
    (SQL login: thay -E bang -U <user> -P <password>)
+   Chi dung cho moi truong phat trien/thu nghiem: chay lai se XOA du lieu hien co cua database oneshop.
    ========================================================================== */
 :on error exit
 :r 01_create_database.sql

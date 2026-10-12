@@ -25,3 +25,9 @@ logs/
 # OS
 .DS_Store
 Thumbs.db
+
+# Large development seed: database backups and downloaded original images (never commit)
+backup/
+*.bak
+database/seed_large/images/originals/
+oneshop-seed-images/

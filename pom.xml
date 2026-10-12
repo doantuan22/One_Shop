@@ -24,6 +24,8 @@
         <sitemesh.version>3.2.3</sitemesh.version>
         <jjwt.version>0.12.7</jjwt.version>
         <cloudinary.version>2.4.0</cloudinary.version>
+        <!-- Database tests run against their own database (base data only), never against the large development seed. -->
+        <oneshop.test.db>oneshop_test</oneshop.test.db>
     </properties>
 
     <dependencies>
@@ -113,6 +115,16 @@
     <build>
         <finalName>oneshop</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <!-- overrides DB_NAME of .env for the forked test JVM; build the database with database/rebuild_dev_db.ps1 -Database oneshop_test -BaseDataOnly -->
+                        <DB_NAME>${oneshop.test.db}</DB_NAME>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

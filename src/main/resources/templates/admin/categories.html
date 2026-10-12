@@ -45,8 +45,10 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="file">Ảnh minh họa</label>
-                        <input type="file" class="form-control" id="file" name="file" accept="image/jpeg,image/png,image/webp">
-                        <div class="form-text">Định dạng hỗ trợ: JPEG, PNG, WebP. Dung lượng tối đa: 5MB.</div>
+                        <input type="file" class="form-control" id="file" name="file" accept="image/jpeg,image/png,image/webp"
+                               th:attr="data-max-bytes=5242880,data-max-size=${maxFileSize != null ? maxFileSize : '5MB'}">
+                        <div class="upload-file-error text-danger small mt-1" style="display:none;"></div>
+                        <div class="form-text" th:text="'Định dạng hỗ trợ: JPEG, PNG, WebP. Dung lượng tối đa: ' + (${maxFileSize != null ? maxFileSize : '5MB'}) + '.'">Định dạng hỗ trợ: JPEG, PNG, WebP. Dung lượng tối đa: 5MB.</div>
                     </div>
                     <button type="submit" class="btn btn-primary" th:text="${editId == null} ? 'Thêm' : 'Lưu thay đổi'">Lưu</button>
                     <a class="btn btn-outline-secondary" th:href="@{/admin/categories}" th:if="${editId != null}">Hủy</a>
@@ -65,10 +67,12 @@
                 <form method="post" enctype="multipart/form-data" class="mb-2"
                       th:action="@{/admin/categories/{id}/image(id=${editId})}">
                     <div class="input-group">
-                        <input type="file" class="form-control" name="file" accept="image/jpeg,image/png,image/webp" required aria-label="Tệp ảnh">
+                        <input type="file" class="form-control" name="file" accept="image/jpeg,image/png,image/webp" required aria-label="Tệp ảnh"
+                               th:attr="data-max-bytes=${maxFileSizeBytes},data-max-size=${maxFileSize}">
                         <button type="submit" class="btn btn-outline-primary">Tải lên</button>
                     </div>
-                    <div class="form-text">Định dạng: JPEG, PNG, WebP. Tối đa 5MB.</div>
+                    <div class="upload-file-error text-danger small mt-1" style="display:none;"></div>
+                    <div class="form-text">Định dạng: JPEG, PNG, WebP. Tối đa <span th:text="${maxFileSize != null ? maxFileSize : '5MB'}">5MB</span>.</div>
                 </form>
                 <form method="post" th:action="@{/admin/categories/{id}/image/delete(id=${editId})}"
                       th:if="${editCategory.imageUrl != null and !#strings.trim(editCategory.imageUrl).isEmpty()}">
@@ -115,5 +119,6 @@
     </tr>
     </tbody>
 </th:block>
+<script th:src="@{/js/upload-validator.js}"></script>
 </body>
 </html>

@@ -59,9 +59,11 @@
                 <form method="post" enctype="multipart/form-data" class="mb-2"
                       th:action="@{/admin/brands/{id}/logo(id=${editId})}">
                     <div class="input-group">
-                        <input type="file" class="form-control" name="file" accept="image/*" required aria-label="Tệp logo">
+                        <input type="file" class="form-control" name="file" accept="image/*" required aria-label="Tệp logo"
+                               th:attr="data-max-bytes=5242880,data-max-size=${maxFileSize != null ? maxFileSize : '5MB'}">
                         <button type="submit" class="btn btn-outline-primary">Tải lên</button>
                     </div>
+                    <div class="upload-file-error text-danger small mt-1" style="display:none;"></div>
                 </form>
                 <form method="post" th:action="@{/admin/brands/{id}/logo/delete(id=${editId})}" th:if="${editBrand.logoUrl}">
                     <button type="submit" class="btn btn-outline-danger btn-sm">Xóa logo</button>
@@ -103,5 +105,6 @@
     </tr>
     </tbody>
 </th:block>
+<script th:src="@{/js/upload-validator.js}"></script>
 </body>
 </html>

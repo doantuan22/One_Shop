@@ -8,13 +8,8 @@ SQL Server schema theo Roadmap V2 mục 7 (19 bảng). Chỉ gồm schema, const
 | 1 | `01_create_database.sql` | Tạo database `oneshop` nếu chưa có |
 | 2 | `02_create_tables.sql` | Drop + tạo 19 bảng, PK/FK/UNIQUE/CHECK |
 | 3 | `03_create_indexes.sql` | 6 index theo Roadmap 7.4 |
-| 4 | `04_seed_data.sql` | 5 Store, 7 SKU, StoreProduct, 3 checkout / 5 order, payment, movement, history |
+| 4 | `04_seed_data.sql` | Dữ liệu mẫu duy nhất: dữ liệu nền (5 Store, 7 SKU, 5 order…) + khối seed lớn (xem dưới) |
 | 5 | `05_verify.sql` | Kiểm tra tự động, `THROW` nếu sai |
-| - | `migration_001_add_users_user_name.sql` | Database **đã có dữ liệu**: thêm `users.user_name` + `UX_users_user_name` (idempotent, không xóa dữ liệu; không nằm trong `00_run_all.sql`) |
-| - | `migration_002_reviews_unique_user_product.sql` | Database **đã có dữ liệu**: thêm `UNIQUE (user_id, product_id)` cho `reviews` (mỗi khách một đánh giá / Product; idempotent) |
-| - | `migration_003_review_order_and_reply.sql` | Database **đã có dữ liệu**: thêm `reviews.order_id` (đơn COMPLETED dùng để đánh giá; chi nhánh suy ra từ đơn) và phản hồi `reply`, `replied_by`, `replied_at` (idempotent; tự điền `order_id` cho đánh giá cũ) |
-| - | `migration_004_category_images.sql` | Database **đã có dữ liệu**: thêm `categories.image_url` + `categories.image_public_id` (idempotent, không xóa dữ liệu) |
-| - | `optional_set_category_images.sql` | Database **đang chạy**: tùy chọn gán ảnh tĩnh mặc định cho các danh mục seed có `image_url IS NULL` (idempotent, không ghi đè) |
 
 ## Chạy
 
@@ -28,23 +23,8 @@ sqlcmd -S localhost -E -C -f 65001 -b -i 00_run_all.sql
 
 Khớp `application.properties` (`databaseName=oneshop`). Tài khoản demo: mật khẩu `OneShop@123` (BCrypt) – chỉ dùng demo.
 
-Migration cho database cũ (cần `-I` vì tạo filtered index):
-
-```
-sqlcmd -S localhost -E -C -f 65001 -b -I -i migration_001_add_users_user_name.sql
-```
-
-Migration thêm cột ảnh danh mục (Migration 004):
-
-```
-sqlcmd -S localhost -E -C -f 65001 -b -i migration_004_category_images.sql
-```
-
-Script tùy chọn gán ảnh cho danh mục seed đã có sẵn trong DB đang chạy:
-
-```
-sqlcmd -S localhost -E -C -f 65001 -b -i optional_set_category_images.sql
-```
+Không còn script migration: `02_create_tables.sql` và `03_create_indexes.sql` đã gồm mọi cột/ràng buộc (`users.user_name`,
+`UNIQUE (user_id, product_id)` của `reviews`, `reviews.order_id/reply`, ảnh danh mục). Muốn nâng cấp DB cũ, dựng lại bằng `00_run_all.sql`.
 
 ## Quy ước tự bổ sung (tài liệu không nêu chi tiết)
 
@@ -56,4 +36,20 @@ Chỉ có 19 bảng của Roadmap 7.2; không thêm bảng nào. Các bảng ngo
 - **`order_items.store_product_id` (giữ):** cần để hủy Order hoàn tồn đúng StoreProduct và ghi `InventoryMovement` (BR-12, Roadmap 6.7). Đây là FK bắt buộc cho nghiệp vụ đã chốt, không phải cột dư.
 - **`order_items.product_sku` (đã loại):** Roadmap 6.3 chỉ yêu cầu snapshot `product_name, unit_price, quantity, subtotal`; SKU luôn truy được qua `store_product_id → products.sku` và SKU không đổi. Bảng `order_items` còn: order_item_id, order_id, store_product_id, product_name, unit_price, quantity, subtotal.
 - **Ngoài phạm vi schema (Service kiểm tra ở phase sau):** item cùng Store với Order, transition trạng thái, Store scope của Staff, chỉ Staff role mới được assignment, đánh giá chỉ sau COMPLETED. `05_verify.sql` chỉ kiểm tra dữ liệu seed.
-- **Seed:** chưa có `product_images` (cần URL/public_id Cloudinary thật ở Phase 6).
+- **Seed:** `product_images`, logo thương hiệu và ảnh danh mục là URL/public_id Cloudinary (khối seed lớn trong `04_seed_data.sql`).
+
+## Dữ liệu mẫu: một bộ duy nhất (`04_seed_data.sql`)
+
+`04_seed_data.sql` chứa **toàn bộ** dữ liệu: dữ liệu nền (ID < 1000) + khối seed lớn (ID ≥ 1000) nằm giữa
+`BEGIN LARGE SEED` và `END LARGE SEED` (99 sản phẩm, 9 chi nhánh, 165 đơn, ảnh Cloudinary). Khối này do
+`src/test/java/com/oneshop/seed/LargeSeedGenerator.java` sinh, không sửa tay. `05_verify.sql` kiểm tra cả hai phần.
+Chi tiết, tài khoản thử nghiệm, ca biên, ảnh: `docs/SEED_LARGE.md`.
+
+| File | Dùng khi |
+| --- | --- |
+| `00_run_all.sql` | Chạy 01 → 05 một lần (SQLCMD mode, từ thư mục `database/`): `sqlcmd -S localhost -E -C -f 65001 -b -I -i 00_run_all.sql` |
+| `rebuild_dev_db.ps1` | Dựng lại DB **cục bộ** có sao lưu (`REBUILD_CONFIRM` = tên DB). `-BaseDataOnly` chỉ nạp dữ liệu nền (DB test `oneshop_test`) |
+| `seed_large/images/` | `image_plan.csv`, `image_sources.csv`, `image_manifest.csv` của ảnh seed |
+
+Máy đích cần SQL Server có collation `Vietnamese_100_CI_AI`, `sqlcmd` và Internet (ảnh là URL Cloudinary công khai).
+Chạy sẽ **xóa và tạo lại** database `oneshop`. Mật khẩu tài khoản thử nghiệm `OneShop@123`: chỉ dùng cho phát triển/thử nghiệm.

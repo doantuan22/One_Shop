@@ -88,9 +88,11 @@
                 <form method="post" enctype="multipart/form-data" class="mb-3"
                       th:action="@{/admin/products/{id}/images(id=${editId})}">
                     <div class="input-group">
-                        <input type="file" class="form-control" name="file" accept="image/*" required aria-label="Tệp ảnh">
+                        <input type="file" class="form-control" name="file" accept="image/*" required aria-label="Tệp ảnh"
+                               th:attr="data-max-bytes=5242880,data-max-size=${maxFileSize != null ? maxFileSize : '5MB'}">
                         <button type="submit" class="btn btn-outline-primary">Tải lên</button>
                     </div>
+                    <div class="upload-file-error text-danger small mt-1" style="display:none;"></div>
                     <div class="form-text">Ảnh được lưu trên Cloudinary. Ảnh đầu tiên sẽ là ảnh đại diện.</div>
                 </form>
 
@@ -119,5 +121,6 @@
         </section>
     </div>
 </div>
+<script th:src="@{/js/upload-validator.js}"></script>
 </body>
 </html>
