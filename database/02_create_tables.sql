@@ -1,8 +1,8 @@
 /* =============================================================================
-   OneShop - Phase 2 - File 02: 19 bang + PK / FK / UNIQUE / CHECK
-   Nguon: Roadmap V2 muc 7.1 - 7.4.
-   Script co the chay lai: xoa cac bang (theo thu tu FK) roi tao lai.
-   Khong xoa cung du lieu co lich su o runtime (BR-17) - viec DROP o day chi de dung lai schema.
+   OneShop V3 - File 02: DDL 22 bang + PK / FK / UNIQUE / CHECK constraints
+   Kien truc: Centralized Commerce - Distributed Inventory & Fulfillment
+   Dac ta: docs/OneShop_V3_DacTaNghiepVu_MaTranChuyenDoiCSDL.md
+   Script co the chay lai (idempotent): xoa cac bang theo thu tu FK roi tao lai.
    ========================================================================== */
 USE [oneshop];
 GO
@@ -10,10 +10,13 @@ SET NOCOUNT ON;
 GO
 
 /* ---------- Drop (con truoc, cha sau) ---------- */
+DROP TABLE IF EXISTS dbo.review_replies;
 DROP TABLE IF EXISTS dbo.reviews;
+DROP TABLE IF EXISTS dbo.order_fulfillment_status_history;
 DROP TABLE IF EXISTS dbo.order_status_history;
 DROP TABLE IF EXISTS dbo.payments;
 DROP TABLE IF EXISTS dbo.order_items;
+DROP TABLE IF EXISTS dbo.order_fulfillments;
 DROP TABLE IF EXISTS dbo.inventory_movements;
 DROP TABLE IF EXISTS dbo.orders;
 DROP TABLE IF EXISTS dbo.checkout_sessions;
@@ -82,7 +85,7 @@ CREATE TABLE dbo.customer_addresses (
 GO
 
 /* ============================================================================
-   4. stores  - chi nhanh (Store Finder metadata, khong toa do/map)
+   4. stores  - Chi nhanh phan phoi & Fulfillment
    ========================================================================== */
 CREATE TABLE dbo.stores (
     store_id         BIGINT IDENTITY(1,1) NOT NULL,
@@ -105,7 +108,7 @@ CREATE TABLE dbo.stores (
 GO
 
 /* ============================================================================
-   5. staff_store_assignments  - phan cong Staff -> Store (BR-14)
+   5. staff_store_assignments  - Phan cong nhan vien -> chi nhanh
    ========================================================================== */
 CREATE TABLE dbo.staff_store_assignments (
     assignment_id BIGINT IDENTITY(1,1) NOT NULL,
@@ -138,7 +141,7 @@ CREATE TABLE dbo.categories (
 GO
 
 /* ============================================================================
-   7. brands  - anh thuong hieu luu tren Cloudinary: chi URL + public_id
+   7. brands
    ========================================================================== */
 CREATE TABLE dbo.brands (
     brand_id       BIGINT IDENTITY(1,1) NOT NULL,
@@ -154,28 +157,32 @@ CREATE TABLE dbo.brands (
 GO
 
 /* ============================================================================
-   8. products  - MOT SKU ban duoc cu the, du lieu chung toan chuoi (BR-01)
+   8. products  - SKU ban duoc, gia ban online thong nhat toan chuoi (V3-DEC-02)
    ========================================================================== */
 CREATE TABLE dbo.products (
-    product_id  BIGINT IDENTITY(1,1) NOT NULL,
-    category_id BIGINT               NOT NULL,
-    brand_id    BIGINT               NOT NULL,
-    sku         NVARCHAR(50)         NOT NULL,
-    name        NVARCHAR(255)        NOT NULL,
-    description NVARCHAR(MAX)        NULL,
-    status      NVARCHAR(20)         NOT NULL CONSTRAINT DF_products_status DEFAULT N'ACTIVE',
-    created_at  DATETIME2(0)         NOT NULL CONSTRAINT DF_products_created_at DEFAULT SYSDATETIME(),
-    updated_at  DATETIME2(0)         NOT NULL CONSTRAINT DF_products_updated_at DEFAULT SYSDATETIME(),
+    product_id     BIGINT IDENTITY(1,1) NOT NULL,
+    category_id    BIGINT               NOT NULL,
+    brand_id       BIGINT               NOT NULL,
+    sku            NVARCHAR(50)         NOT NULL,
+    name           NVARCHAR(255)        NOT NULL,
+    description    NVARCHAR(MAX)        NULL,
+    price          DECIMAL(18,2)        NOT NULL CONSTRAINT DF_products_price DEFAULT 0,
+    original_price DECIMAL(18,2)        NULL,
+    status         NVARCHAR(20)         NOT NULL CONSTRAINT DF_products_status DEFAULT N'ACTIVE',
+    created_at     DATETIME2(0)         NOT NULL CONSTRAINT DF_products_created_at DEFAULT SYSDATETIME(),
+    updated_at     DATETIME2(0)         NOT NULL CONSTRAINT DF_products_updated_at DEFAULT SYSDATETIME(),
     CONSTRAINT PK_products PRIMARY KEY (product_id),
     CONSTRAINT UQ_products_sku UNIQUE (sku),
     CONSTRAINT FK_products_category FOREIGN KEY (category_id) REFERENCES dbo.categories (category_id),
     CONSTRAINT FK_products_brand    FOREIGN KEY (brand_id)    REFERENCES dbo.brands (brand_id),
-    CONSTRAINT CK_products_status CHECK (status IN (N'ACTIVE', N'INACTIVE', N'HIDDEN'))
+    CONSTRAINT CK_products_status CHECK (status IN (N'ACTIVE', N'INACTIVE', N'HIDDEN')),
+    CONSTRAINT CK_products_price CHECK (price >= 0),
+    CONSTRAINT CK_products_original_price CHECK (original_price IS NULL OR original_price >= price)
 );
 GO
 
 /* ============================================================================
-   9. product_images  - Cloudinary: chi URL + public_id, khong luu binary
+   9. product_images
    ========================================================================== */
 CREATE TABLE dbo.product_images (
     image_id   BIGINT IDENTITY(1,1) NOT NULL,
@@ -191,28 +198,29 @@ CREATE TABLE dbo.product_images (
 GO
 
 /* ============================================================================
-   10. store_products  - NGUON SU THAT cua price / quantity / status theo Store (BR-02)
+   10. store_products  - Ton kho vat ly tai tung chi nhanh (V3-DEC-03)
    ========================================================================== */
 CREATE TABLE dbo.store_products (
-    store_product_id BIGINT IDENTITY(1,1) NOT NULL,
-    store_id         BIGINT               NOT NULL,
-    product_id       BIGINT               NOT NULL,
-    price            DECIMAL(18,2)        NOT NULL,
-    quantity         INT                  NOT NULL CONSTRAINT DF_store_products_quantity DEFAULT 0,
-    status           NVARCHAR(20)         NOT NULL CONSTRAINT DF_store_products_status DEFAULT N'ACTIVE',
-    updated_at       DATETIME2(0)         NOT NULL CONSTRAINT DF_store_products_updated DEFAULT SYSDATETIME(),
+    store_product_id  BIGINT IDENTITY(1,1) NOT NULL,
+    store_id          BIGINT               NOT NULL,
+    product_id        BIGINT               NOT NULL,
+    price             DECIMAL(18,2)        NULL CONSTRAINT DF_store_products_price DEFAULT 0, -- V2 legacy compatibility
+    quantity          INT                  NOT NULL CONSTRAINT DF_store_products_quantity DEFAULT 0,
+    reserved_quantity INT                  NOT NULL CONSTRAINT DF_store_products_reserved DEFAULT 0,
+    status            NVARCHAR(20)         NOT NULL CONSTRAINT DF_store_products_status DEFAULT N'ACTIVE',
+    updated_at        DATETIME2(0)         NOT NULL CONSTRAINT DF_store_products_updated DEFAULT SYSDATETIME(),
     CONSTRAINT PK_store_products PRIMARY KEY (store_product_id),
     CONSTRAINT UQ_store_products_store_product UNIQUE (store_id, product_id),
     CONSTRAINT FK_store_products_store   FOREIGN KEY (store_id)   REFERENCES dbo.stores (store_id),
     CONSTRAINT FK_store_products_product FOREIGN KEY (product_id) REFERENCES dbo.products (product_id),
     CONSTRAINT CK_store_products_quantity CHECK (quantity >= 0),
-    CONSTRAINT CK_store_products_price    CHECK (price >= 0),
+    CONSTRAINT CK_store_products_reserved CHECK (reserved_quantity >= 0 AND reserved_quantity <= quantity),
     CONSTRAINT CK_store_products_status   CHECK (status IN (N'ACTIVE', N'INACTIVE'))
 );
 GO
 
 /* ============================================================================
-   11. carts  - moi user 1 cart (USER 1--1 CART)
+   11. carts  - Gio hang moi User (1 User -- 1 Cart)
    ========================================================================== */
 CREATE TABLE dbo.carts (
     cart_id    BIGINT IDENTITY(1,1) NOT NULL,
@@ -226,26 +234,27 @@ CREATE TABLE dbo.carts (
 GO
 
 /* ============================================================================
-   12. cart_items  - luon tham chieu StoreProduct (BR-05)
+   12. cart_items  - Gio hang thong nhat tham chieu product_id (V3-DEC-04)
    ========================================================================== */
 CREATE TABLE dbo.cart_items (
     cart_item_id     BIGINT IDENTITY(1,1) NOT NULL,
     cart_id          BIGINT               NOT NULL,
-    store_product_id BIGINT               NOT NULL,
+    product_id       BIGINT               NOT NULL,
+    store_product_id BIGINT               NULL,      -- V2 legacy compatibility
     quantity         INT                  NOT NULL,
     created_at       DATETIME2(0)         NOT NULL CONSTRAINT DF_cart_items_created_at DEFAULT SYSDATETIME(),
     updated_at       DATETIME2(0)         NOT NULL CONSTRAINT DF_cart_items_updated_at DEFAULT SYSDATETIME(),
     CONSTRAINT PK_cart_items PRIMARY KEY (cart_item_id),
-    CONSTRAINT UQ_cart_items_cart_store_product UNIQUE (cart_id, store_product_id),
+    CONSTRAINT UQ_cart_items_cart_product UNIQUE (cart_id, product_id),
     CONSTRAINT FK_cart_items_cart          FOREIGN KEY (cart_id)          REFERENCES dbo.carts (cart_id),
+    CONSTRAINT FK_cart_items_product       FOREIGN KEY (product_id)       REFERENCES dbo.products (product_id),
     CONSTRAINT FK_cart_items_store_product FOREIGN KEY (store_product_id) REFERENCES dbo.store_products (store_product_id),
     CONSTRAINT CK_cart_items_quantity CHECK (quantity > 0)
 );
 GO
 
 /* ============================================================================
-   13. checkout_sessions  - chi nhom cac Order cua cung mot lan checkout (BR-18)
-       KHONG chua thong tin thanh toan.
+   13. checkout_sessions  - Phien checkout
    ========================================================================== */
 CREATE TABLE dbo.checkout_sessions (
     checkout_id  BIGINT IDENTITY(1,1) NOT NULL,
@@ -261,24 +270,25 @@ CREATE TABLE dbo.checkout_sessions (
 GO
 
 /* ============================================================================
-   14. orders  - moi Order dung MOT Store (BR-07)
+   14. orders  - Don hang trung tam OneShop (store_id nullable trong V3)
    ========================================================================== */
 CREATE TABLE dbo.orders (
     order_id         BIGINT IDENTITY(1,1) NOT NULL,
     checkout_id      BIGINT               NOT NULL,
     user_id          BIGINT               NOT NULL,
-    store_id         BIGINT               NOT NULL,
+    store_id         BIGINT               NULL,      -- V2 legacy / StorePickup store / null voi online multi-store
     fulfillment_type NVARCHAR(20)         NOT NULL,
     payment_method   NVARCHAR(20)         NOT NULL,
     payment_status   NVARCHAR(20)         NOT NULL CONSTRAINT DF_orders_payment_status DEFAULT N'UNPAID',
     order_status     NVARCHAR(30)         NOT NULL,
     receiver_name    NVARCHAR(150)        NOT NULL,
     receiver_phone   NVARCHAR(20)         NOT NULL,
-    shipping_address NVARCHAR(500)        NULL,      -- chi DELIVERY
-    pickup_code      NVARCHAR(20)         NULL,      -- chi STORE_PICKUP
-    ready_at         DATETIME2(0)         NULL,      -- chi STORE_PICKUP
-    picked_up_at     DATETIME2(0)         NULL,      -- chi STORE_PICKUP
+    shipping_address NVARCHAR(500)        NULL,      -- DELIVERY
+    pickup_code      NVARCHAR(20)         NULL,      -- STORE_PICKUP
+    ready_at         DATETIME2(0)         NULL,      -- STORE_PICKUP
+    picked_up_at     DATETIME2(0)         NULL,      -- STORE_PICKUP
     total_amount     DECIMAL(18,2)        NOT NULL,
+    shipping_fee     DECIMAL(18,2)        NOT NULL CONSTRAINT DF_orders_shipping_fee DEFAULT 0,
     created_at       DATETIME2(0)         NOT NULL CONSTRAINT DF_orders_created_at DEFAULT SYSDATETIME(),
     updated_at       DATETIME2(0)         NOT NULL CONSTRAINT DF_orders_updated_at DEFAULT SYSDATETIME(),
     CONSTRAINT PK_orders PRIMARY KEY (order_id),
@@ -287,38 +297,80 @@ CREATE TABLE dbo.orders (
     CONSTRAINT FK_orders_store    FOREIGN KEY (store_id)    REFERENCES dbo.stores (store_id),
     CONSTRAINT CK_orders_fulfillment_type CHECK (fulfillment_type IN (N'DELIVERY', N'STORE_PICKUP')),
     CONSTRAINT CK_orders_payment_method   CHECK (payment_method IN (N'ONLINE', N'COD', N'PAY_AT_STORE')),
-    CONSTRAINT CK_orders_payment_status   CHECK (payment_status IN (N'UNPAID', N'PAID', N'FAILED')),
+    CONSTRAINT CK_orders_payment_status   CHECK (payment_status IN (N'UNPAID', N'PAID', N'FAILED', N'REFUNDED')),
     CONSTRAINT CK_orders_order_status CHECK (order_status IN (
-        N'PENDING_PAYMENT', N'CONFIRMED', N'PREPARING', N'PACKED', N'SHIPPING',
-        N'READY_FOR_PICKUP', N'COMPLETED', N'CANCELLED')),
-    CONSTRAINT CK_orders_total CHECK (total_amount >= 0),
-    -- DELIVERY: COD hoac ONLINE; STORE_PICKUP: PAY_AT_STORE hoac ONLINE (Roadmap 6.4, Phase 9)
-    CONSTRAINT CK_orders_fulfillment_payment CHECK (
-        (fulfillment_type = N'DELIVERY'     AND payment_method IN (N'COD', N'ONLINE')) OR
-        (fulfillment_type = N'STORE_PICKUP' AND payment_method IN (N'PAY_AT_STORE', N'ONLINE'))),
-    CONSTRAINT CK_orders_delivery_address CHECK (fulfillment_type <> N'DELIVERY' OR shipping_address IS NOT NULL),
-    -- pickup_* chi dung cho STORE_PICKUP (Roadmap 7.3)
-    CONSTRAINT CK_orders_pickup_only CHECK (
-        fulfillment_type = N'STORE_PICKUP'
-        OR (pickup_code IS NULL AND ready_at IS NULL AND picked_up_at IS NULL)),
-    CONSTRAINT CK_orders_ready_has_code CHECK (
-        order_status <> N'READY_FOR_PICKUP' OR (pickup_code IS NOT NULL AND ready_at IS NOT NULL)),
-    -- State flow theo fulfillment_type (Roadmap 6.5, 6.6)
-    CONSTRAINT CK_orders_status_by_fulfillment CHECK (
-        (fulfillment_type = N'DELIVERY'     AND order_status <> N'READY_FOR_PICKUP') OR
-        (fulfillment_type = N'STORE_PICKUP' AND order_status NOT IN (N'PACKED', N'SHIPPING'))),
-    -- PENDING_PAYMENT chi ton tai voi ONLINE (COD / PAY_AT_STORE bat dau tu CONFIRMED)
-    CONSTRAINT CK_orders_pending_payment_online CHECK (
-        order_status <> N'PENDING_PAYMENT' OR payment_method = N'ONLINE')
+        N'PENDING_PAYMENT', N'CONFIRMED', N'PROCESSING', N'SHIPPING',
+        N'PARTIALLY_COMPLETED', N'COMPLETED', N'CANCELLED', N'NEEDS_ATTENTION')),
+    CONSTRAINT CK_orders_total        CHECK (total_amount >= 0),
+    CONSTRAINT CK_orders_shipping_fee CHECK (shipping_fee >= 0),
+    CONSTRAINT CK_orders_delivery_address CHECK (fulfillment_type <> N'DELIVERY' OR shipping_address IS NOT NULL)
 );
 GO
 
 /* ============================================================================
-   15. order_items  - snapshot product_name/unit_price/quantity/subtotal; giu store_product_id de hoan ton dung StoreProduct (BR-12)
+   15. order_fulfillments  - Kien hang dieu phoi theo chi nhanh (V3 NEW / P0)
+   ========================================================================== */
+CREATE TABLE dbo.order_fulfillments (
+    fulfillment_id   BIGINT IDENTITY(1,1) NOT NULL,
+    order_id         BIGINT               NOT NULL,
+    store_id         BIGINT               NOT NULL,
+    fulfillment_type NVARCHAR(20)         NOT NULL CONSTRAINT DF_of_type DEFAULT N'DELIVERY',
+    status           NVARCHAR(30)         NOT NULL CONSTRAINT DF_of_status DEFAULT N'CONFIRMED',
+    tracking_code    NVARCHAR(50)         NULL,
+    pickup_code      NVARCHAR(20)         NULL,
+    assigned_at      DATETIME2(0)         NOT NULL CONSTRAINT DF_of_assigned_at DEFAULT SYSDATETIME(),
+    prepared_at      DATETIME2(0)         NULL,
+    packed_at        DATETIME2(0)         NULL,
+    ready_at         DATETIME2(0)         NULL,
+    picked_up_at     DATETIME2(0)         NULL,
+    shipped_at       DATETIME2(0)         NULL,
+    completed_at     DATETIME2(0)         NULL,
+    cancelled_at     DATETIME2(0)         NULL,
+    cancel_reason    NVARCHAR(500)        NULL,
+    note             NVARCHAR(500)        NULL,
+    created_at       DATETIME2(0)         NOT NULL CONSTRAINT DF_of_created_at DEFAULT SYSDATETIME(),
+    updated_at       DATETIME2(0)         NOT NULL CONSTRAINT DF_of_updated_at DEFAULT SYSDATETIME(),
+    CONSTRAINT PK_order_fulfillments PRIMARY KEY (fulfillment_id),
+    CONSTRAINT UQ_order_fulfillments_order_store UNIQUE (order_id, store_id),
+    CONSTRAINT FK_order_fulfillments_order FOREIGN KEY (order_id) REFERENCES dbo.orders (order_id),
+    CONSTRAINT FK_order_fulfillments_store FOREIGN KEY (store_id) REFERENCES dbo.stores (store_id),
+    CONSTRAINT CK_order_fulfillments_type CHECK (fulfillment_type IN (N'DELIVERY', N'STORE_PICKUP')),
+    CONSTRAINT CK_order_fulfillments_status CHECK (status IN (
+        N'CONFIRMED', N'PREPARING', N'PACKED', N'SHIPPING',
+        N'READY_FOR_PICKUP', N'COMPLETED', N'CANCELLED', N'FAILED'))
+);
+GO
+
+/* ============================================================================
+   16. order_fulfillment_status_history  - Audit transition cua tung kien hang (V3 NEW)
+   ========================================================================== */
+CREATE TABLE dbo.order_fulfillment_status_history (
+    history_id         BIGINT IDENTITY(1,1) NOT NULL,
+    fulfillment_id     BIGINT               NOT NULL,
+    old_status         NVARCHAR(30)         NULL,
+    new_status         NVARCHAR(30)         NOT NULL,
+    changed_by_user_id BIGINT               NULL,
+    note               NVARCHAR(500)        NULL,
+    changed_at         DATETIME2(0)         NOT NULL CONSTRAINT DF_ofsh_changed_at DEFAULT SYSDATETIME(),
+    CONSTRAINT PK_order_fulfillment_status_history PRIMARY KEY (history_id),
+    CONSTRAINT FK_ofsh_fulfillment FOREIGN KEY (fulfillment_id)     REFERENCES dbo.order_fulfillments (fulfillment_id),
+    CONSTRAINT FK_ofsh_user        FOREIGN KEY (changed_by_user_id) REFERENCES dbo.users (user_id),
+    CONSTRAINT CK_ofsh_old CHECK (old_status IS NULL OR old_status IN (
+        N'CONFIRMED', N'PREPARING', N'PACKED', N'SHIPPING',
+        N'READY_FOR_PICKUP', N'COMPLETED', N'CANCELLED', N'FAILED')),
+    CONSTRAINT CK_ofsh_new CHECK (new_status IN (
+        N'CONFIRMED', N'PREPARING', N'PACKED', N'SHIPPING',
+        N'READY_FOR_PICKUP', N'COMPLETED', N'CANCELLED', N'FAILED'))
+);
+GO
+
+/* ============================================================================
+   17. order_items  - Chi tiet dong hang gan fulfillment_id va store_product_id (V3)
    ========================================================================== */
 CREATE TABLE dbo.order_items (
     order_item_id    BIGINT IDENTITY(1,1) NOT NULL,
     order_id         BIGINT               NOT NULL,
+    fulfillment_id   BIGINT               NOT NULL,
     store_product_id BIGINT               NOT NULL,
     product_name     NVARCHAR(255)        NOT NULL,
     unit_price       DECIMAL(18,2)        NOT NULL,
@@ -326,6 +378,7 @@ CREATE TABLE dbo.order_items (
     subtotal         DECIMAL(18,2)        NOT NULL,
     CONSTRAINT PK_order_items PRIMARY KEY (order_item_id),
     CONSTRAINT FK_order_items_order         FOREIGN KEY (order_id)         REFERENCES dbo.orders (order_id),
+    CONSTRAINT FK_order_items_fulfillment   FOREIGN KEY (fulfillment_id)   REFERENCES dbo.order_fulfillments (fulfillment_id),
     CONSTRAINT FK_order_items_store_product FOREIGN KEY (store_product_id) REFERENCES dbo.store_products (store_product_id),
     CONSTRAINT CK_order_items_quantity   CHECK (quantity > 0),
     CONSTRAINT CK_order_items_unit_price CHECK (unit_price >= 0),
@@ -334,40 +387,47 @@ CREATE TABLE dbo.order_items (
 GO
 
 /* ============================================================================
-   16. payments  - gan truc tiep Order, KHONG gan CheckoutSession (BR-18)
+   18. payments  - Thanh toan gan Order + ho tro simulated refund (V3)
    ========================================================================== */
 CREATE TABLE dbo.payments (
-    payment_id       BIGINT IDENTITY(1,1) NOT NULL,
-    order_id         BIGINT               NOT NULL,
-    method           NVARCHAR(20)         NOT NULL,
-    amount           DECIMAL(18,2)        NOT NULL,
-    status           NVARCHAR(20)         NOT NULL CONSTRAINT DF_payments_status DEFAULT N'PENDING',
-    transaction_code NVARCHAR(100)        NULL,
-    paid_at          DATETIME2(0)         NULL,
-    created_at       DATETIME2(0)         NOT NULL CONSTRAINT DF_payments_created_at DEFAULT SYSDATETIME(),
+    payment_id          BIGINT IDENTITY(1,1) NOT NULL,
+    order_id            BIGINT               NOT NULL,
+    method              NVARCHAR(20)         NOT NULL,
+    amount              DECIMAL(18,2)        NOT NULL,
+    status              NVARCHAR(20)         NOT NULL CONSTRAINT DF_payments_status DEFAULT N'PENDING',
+    transaction_code    NVARCHAR(100)        NULL,
+    paid_at             DATETIME2(0)         NULL,
+    refund_status       NVARCHAR(30)         NOT NULL CONSTRAINT DF_payments_refund_status DEFAULT N'NONE',
+    refund_amount       DECIMAL(18,2)        NULL,
+    refund_requested_at DATETIME2(0)         NULL,
+    refunded_at         DATETIME2(0)         NULL,
+    refund_reason       NVARCHAR(500)        NULL,
+    created_at          DATETIME2(0)         NOT NULL CONSTRAINT DF_payments_created_at DEFAULT SYSDATETIME(),
     CONSTRAINT PK_payments PRIMARY KEY (payment_id),
     CONSTRAINT FK_payments_order FOREIGN KEY (order_id) REFERENCES dbo.orders (order_id),
     CONSTRAINT CK_payments_method CHECK (method IN (N'ONLINE', N'COD', N'PAY_AT_STORE')),
     CONSTRAINT CK_payments_status CHECK (status IN (N'PENDING', N'SUCCESS', N'FAILED')),
     CONSTRAINT CK_payments_amount CHECK (amount >= 0),
-    CONSTRAINT CK_payments_paid_at CHECK (status <> N'SUCCESS' OR paid_at IS NOT NULL)
+    CONSTRAINT CK_payments_paid_at CHECK (status <> N'SUCCESS' OR paid_at IS NOT NULL),
+    CONSTRAINT CK_payments_refund_status CHECK (refund_status IN (
+        N'NONE', N'PENDING_SIMULATION', N'SIMULATED_REFUNDED', N'SIMULATION_FAILED'))
 );
 GO
 
 /* ============================================================================
-   17. inventory_movements  - audit ton kho theo StoreProduct (ORDER / CANCEL_ORDER / STOCK_ADJUST)
+   19. inventory_movements  - Audit bien dong ton kho theo StoreProduct
    ========================================================================== */
 CREATE TABLE dbo.inventory_movements (
-    movement_id       BIGINT IDENTITY(1,1) NOT NULL,
-    store_product_id  BIGINT               NOT NULL,
-    type              NVARCHAR(20)         NOT NULL,
-    quantity_change   INT                  NOT NULL,
-    quantity_before   INT                  NOT NULL,
-    quantity_after    INT                  NOT NULL,
-    reference_order_id BIGINT              NULL,
-    staff_id          BIGINT               NULL,
-    note              NVARCHAR(500)        NULL,
-    created_at        DATETIME2(0)         NOT NULL CONSTRAINT DF_inventory_movements_created DEFAULT SYSDATETIME(),
+    movement_id        BIGINT IDENTITY(1,1) NOT NULL,
+    store_product_id   BIGINT               NOT NULL,
+    type               NVARCHAR(20)         NOT NULL,
+    quantity_change    INT                  NOT NULL,
+    quantity_before    INT                  NOT NULL,
+    quantity_after     INT                  NOT NULL,
+    reference_order_id BIGINT               NULL,
+    staff_id           BIGINT               NULL,
+    note               NVARCHAR(500)        NULL,
+    created_at         DATETIME2(0)         NOT NULL CONSTRAINT DF_inventory_movements_created DEFAULT SYSDATETIME(),
     CONSTRAINT PK_inventory_movements PRIMARY KEY (movement_id),
     CONSTRAINT FK_inventory_movements_store_product FOREIGN KEY (store_product_id)   REFERENCES dbo.store_products (store_product_id),
     CONSTRAINT FK_inventory_movements_order         FOREIGN KEY (reference_order_id) REFERENCES dbo.orders (order_id),
@@ -376,7 +436,6 @@ CREATE TABLE dbo.inventory_movements (
     CONSTRAINT CK_inventory_movements_before CHECK (quantity_before >= 0),
     CONSTRAINT CK_inventory_movements_after  CHECK (quantity_after >= 0),
     CONSTRAINT CK_inventory_movements_math   CHECK (quantity_after = quantity_before + quantity_change),
-    -- ORDER tru kho (am), CANCEL_ORDER hoan kho (duong) va deu tham chieu Order; STOCK_ADJUST can staff_id
     CONSTRAINT CK_inventory_movements_by_type CHECK (
         (type = N'ORDER'        AND quantity_change < 0 AND reference_order_id IS NOT NULL) OR
         (type = N'CANCEL_ORDER' AND quantity_change > 0 AND reference_order_id IS NOT NULL) OR
@@ -385,52 +444,51 @@ CREATE TABLE dbo.inventory_movements (
 GO
 
 /* ============================================================================
-   18. order_status_history  - audit transition trang thai Order (BR-13)
+   20. order_status_history  - Audit transition trang thai tong the cua Order
    ========================================================================== */
 CREATE TABLE dbo.order_status_history (
     history_id         BIGINT IDENTITY(1,1) NOT NULL,
     order_id           BIGINT               NOT NULL,
-    old_status         NVARCHAR(30)         NULL,      -- NULL o ban ghi tao don dau tien
+    old_status         NVARCHAR(30)         NULL,
     new_status         NVARCHAR(30)         NOT NULL,
-    changed_by_user_id BIGINT               NULL,      -- NULL neu he thong tu doi trang thai
+    changed_by_user_id BIGINT               NULL,
     note               NVARCHAR(500)        NULL,
     changed_at         DATETIME2(0)         NOT NULL CONSTRAINT DF_order_status_history_changed DEFAULT SYSDATETIME(),
     CONSTRAINT PK_order_status_history PRIMARY KEY (history_id),
     CONSTRAINT FK_order_status_history_order FOREIGN KEY (order_id)           REFERENCES dbo.orders (order_id),
     CONSTRAINT FK_order_status_history_user  FOREIGN KEY (changed_by_user_id) REFERENCES dbo.users (user_id),
     CONSTRAINT CK_order_status_history_old CHECK (old_status IS NULL OR old_status IN (
-        N'PENDING_PAYMENT', N'CONFIRMED', N'PREPARING', N'PACKED', N'SHIPPING',
-        N'READY_FOR_PICKUP', N'COMPLETED', N'CANCELLED')),
+        N'PENDING_PAYMENT', N'CONFIRMED', N'PROCESSING', N'SHIPPING',
+        N'PARTIALLY_COMPLETED', N'COMPLETED', N'CANCELLED', N'NEEDS_ATTENTION')),
     CONSTRAINT CK_order_status_history_new CHECK (new_status IN (
-        N'PENDING_PAYMENT', N'CONFIRMED', N'PREPARING', N'PACKED', N'SHIPPING',
-        N'READY_FOR_PICKUP', N'COMPLETED', N'CANCELLED'))
+        N'PENDING_PAYMENT', N'CONFIRMED', N'PROCESSING', N'SHIPPING',
+        N'PARTIALLY_COMPLETED', N'COMPLETED', N'CANCELLED', N'NEEDS_ATTENTION'))
 );
 GO
 
 /* ============================================================================
-   19. reviews  - danh gia (chi sau COMPLETED - kiem tra o ReviewService); moi khach 1 danh gia / Product
+   21. reviews  - Danh gia theo order_item_id da mua (V3)
    ========================================================================== */
 CREATE TABLE dbo.reviews (
-    review_id  BIGINT IDENTITY(1,1) NOT NULL,
-    user_id    BIGINT               NOT NULL,
-    product_id BIGINT               NOT NULL,
-    rating     INT                  NOT NULL,
-    comment    NVARCHAR(1000)       NULL,
-    status     NVARCHAR(20)         NOT NULL CONSTRAINT DF_reviews_status DEFAULT N'ACTIVE',
-    created_at DATETIME2(0)         NOT NULL CONSTRAINT DF_reviews_created_at DEFAULT SYSDATETIME(),
-    -- Don COMPLETED khach dung de du dieu kien danh gia (gan mot lan luc tao). Chi nhanh suy ra tu orders.store_id.
-    -- NULL voi danh gia cu khong tra duoc don. Service kiem tra don dung khach va co chua san pham.
-    order_id   BIGINT               NULL,
-    -- Phan hoi cua nhan vien / admin: mot phan hoi, duoc sua, khong xoa; replied_by/at la lan gan nhat.
-    reply      NVARCHAR(1000)       NULL,
-    replied_by BIGINT               NULL,
-    replied_at DATETIME2(0)         NULL,
+    review_id     BIGINT IDENTITY(1,1) NOT NULL,
+    user_id       BIGINT               NOT NULL,
+    product_id    BIGINT               NOT NULL,
+    order_item_id BIGINT               NULL,      -- V3: gan voi order_item_id da mua thuc te
+    rating        INT                  NOT NULL,
+    comment       NVARCHAR(1000)       NULL,
+    status        NVARCHAR(20)         NOT NULL CONSTRAINT DF_reviews_status DEFAULT N'ACTIVE',
+    created_at    DATETIME2(0)         NOT NULL CONSTRAINT DF_reviews_created_at DEFAULT SYSDATETIME(),
+    order_id      BIGINT               NULL,      -- legacy
+    reply         NVARCHAR(1000)       NULL,      -- legacy
+    replied_by    BIGINT               NULL,      -- legacy
+    replied_at    DATETIME2(0)         NULL,      -- legacy
     CONSTRAINT PK_reviews PRIMARY KEY (review_id),
     CONSTRAINT UQ_reviews_user_product UNIQUE (user_id, product_id),
-    CONSTRAINT FK_reviews_user       FOREIGN KEY (user_id)    REFERENCES dbo.users (user_id),
-    CONSTRAINT FK_reviews_product    FOREIGN KEY (product_id) REFERENCES dbo.products (product_id),
-    CONSTRAINT FK_reviews_order      FOREIGN KEY (order_id)   REFERENCES dbo.orders (order_id),
-    CONSTRAINT FK_reviews_replied_by FOREIGN KEY (replied_by) REFERENCES dbo.users (user_id),
+    CONSTRAINT FK_reviews_user       FOREIGN KEY (user_id)       REFERENCES dbo.users (user_id),
+    CONSTRAINT FK_reviews_product    FOREIGN KEY (product_id)    REFERENCES dbo.products (product_id),
+    CONSTRAINT FK_reviews_order_item FOREIGN KEY (order_item_id) REFERENCES dbo.order_items (order_item_id),
+    CONSTRAINT FK_reviews_order      FOREIGN KEY (order_id)      REFERENCES dbo.orders (order_id),
+    CONSTRAINT FK_reviews_replied_by FOREIGN KEY (replied_by)    REFERENCES dbo.users (user_id),
     CONSTRAINT CK_reviews_rating CHECK (rating BETWEEN 1 AND 5),
     CONSTRAINT CK_reviews_status CHECK (status IN (N'ACTIVE', N'HIDDEN')),
     CONSTRAINT CK_reviews_reply CHECK (
@@ -441,5 +499,22 @@ CREATE TABLE dbo.reviews (
 );
 GO
 
-PRINT '19 tables created.';
+/* ============================================================================
+   22. review_replies  - Phan hoi danh gia tu nhan vien chi nhanh (V3 NEW)
+   ========================================================================== */
+CREATE TABLE dbo.review_replies (
+    reply_id      BIGINT IDENTITY(1,1) NOT NULL,
+    review_id     BIGINT               NOT NULL,
+    staff_user_id BIGINT               NOT NULL,
+    content       NVARCHAR(1000)       NOT NULL,
+    created_at    DATETIME2(0)         NOT NULL CONSTRAINT DF_review_replies_created DEFAULT SYSDATETIME(),
+    updated_at    DATETIME2(0)         NOT NULL CONSTRAINT DF_review_replies_updated DEFAULT SYSDATETIME(),
+    CONSTRAINT PK_review_replies PRIMARY KEY (reply_id),
+    CONSTRAINT UQ_review_replies_review UNIQUE (review_id),
+    CONSTRAINT FK_review_replies_review FOREIGN KEY (review_id)     REFERENCES dbo.reviews (review_id),
+    CONSTRAINT FK_review_replies_staff  FOREIGN KEY (staff_user_id) REFERENCES dbo.users (user_id)
+);
+GO
+
+PRINT 'OneShop V3 schema created: 22 tables with complete PK/FK/UNIQUE/CHECK constraints.';
 GO

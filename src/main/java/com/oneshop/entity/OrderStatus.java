@@ -4,10 +4,13 @@ package com.oneshop.entity;
 public enum OrderStatus {
     PENDING_PAYMENT,
     CONFIRMED,
+    PROCESSING,
     PREPARING,
     PACKED,
     SHIPPING,
     READY_FOR_PICKUP,
+    PARTIALLY_COMPLETED,
     COMPLETED,
-    CANCELLED
+    CANCELLED,
+    NEEDS_ATTENTION
 }

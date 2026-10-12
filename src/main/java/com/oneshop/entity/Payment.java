@@ -46,6 +46,22 @@ public class Payment extends CreatedAtEntity {
     @Column(name = "paid_at")
     private LocalDateTime paidAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "refund_status", nullable = false, length = 30)
+    private PaymentRefundStatus refundStatus = PaymentRefundStatus.NONE;
+
+    @Column(name = "refund_amount", precision = 18, scale = 2)
+    private BigDecimal refundAmount;
+
+    @Column(name = "refund_requested_at")
+    private LocalDateTime refundRequestedAt;
+
+    @Column(name = "refunded_at")
+    private LocalDateTime refundedAt;
+
+    @Column(name = "refund_reason", length = 500)
+    private String refundReason;
+
     public Long getId() {
         return id;
     }
@@ -96,5 +112,45 @@ public class Payment extends CreatedAtEntity {
 
     public void setPaidAt(LocalDateTime paidAt) {
         this.paidAt = paidAt;
+    }
+
+    public PaymentRefundStatus getRefundStatus() {
+        return refundStatus;
+    }
+
+    public void setRefundStatus(PaymentRefundStatus refundStatus) {
+        this.refundStatus = refundStatus;
+    }
+
+    public BigDecimal getRefundAmount() {
+        return refundAmount;
+    }
+
+    public void setRefundAmount(BigDecimal refundAmount) {
+        this.refundAmount = refundAmount;
+    }
+
+    public LocalDateTime getRefundRequestedAt() {
+        return refundRequestedAt;
+    }
+
+    public void setRefundRequestedAt(LocalDateTime refundRequestedAt) {
+        this.refundRequestedAt = refundRequestedAt;
+    }
+
+    public LocalDateTime getRefundedAt() {
+        return refundedAt;
+    }
+
+    public void setRefundedAt(LocalDateTime refundedAt) {
+        this.refundedAt = refundedAt;
+    }
+
+    public String getRefundReason() {
+        return refundReason;
+    }
+
+    public void setRefundReason(String refundReason) {
+        this.refundReason = refundReason;
     }
 }

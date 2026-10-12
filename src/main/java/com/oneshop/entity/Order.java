@@ -39,8 +39,8 @@ public class Order extends TimestampedEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "store_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id")
     private Store store;
 
     @Enumerated(EnumType.STRING)
@@ -83,6 +83,12 @@ public class Order extends TimestampedEntity {
 
     @Column(name = "total_amount", nullable = false, precision = 18, scale = 2)
     private BigDecimal totalAmount;
+
+    @Column(name = "shipping_fee", nullable = false, precision = 18, scale = 2)
+    private BigDecimal shippingFee = BigDecimal.ZERO;
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderFulfillment> fulfillments = new ArrayList<>();
 
     @OneToMany(mappedBy = "order")
     private List<OrderItem> items = new ArrayList<>();
@@ -207,6 +213,18 @@ public class Order extends TimestampedEntity {
 
     public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public BigDecimal getShippingFee() {
+        return shippingFee;
+    }
+
+    public void setShippingFee(BigDecimal shippingFee) {
+        this.shippingFee = shippingFee;
+    }
+
+    public List<OrderFulfillment> getFulfillments() {
+        return fulfillments;
     }
 
     public List<OrderItem> getItems() {

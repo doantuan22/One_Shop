@@ -4,5 +4,6 @@ package com.oneshop.entity;
 public enum OrderPaymentStatus {
     UNPAID,
     PAID,
-    FAILED
+    FAILED,
+    REFUNDED
 }

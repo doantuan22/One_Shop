@@ -19,6 +19,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     boolean existsByUserIdAndProductId(Long userId, Long productId);
 
+    Optional<Review> findByOrderItemId(Long orderItemId);
+
+    boolean existsByUserIdAndOrderItemId(Long userId, Long orderItemId);
+
     /** Newest visible reviews of a Product, bounded by the Pageable; the reviewer is loaded with them. */
     @EntityGraph(attributePaths = {"user", "order", "order.store"})
     Page<Review> findByProductIdAndStatusOrderByCreatedAtDescIdDesc(Long productId, VisibilityStatus status,

@@ -43,11 +43,14 @@ public class StoreProduct {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(nullable = false, precision = 18, scale = 2)
+    @Column(precision = 18, scale = 2)
     private BigDecimal price;
 
     @Column(nullable = false)
     private int quantity;
+
+    @Column(name = "reserved_quantity", nullable = false)
+    private int reservedQuantity = 0;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -91,6 +94,18 @@ public class StoreProduct {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public int getReservedQuantity() {
+        return reservedQuantity;
+    }
+
+    public void setReservedQuantity(int reservedQuantity) {
+        this.reservedQuantity = reservedQuantity;
+    }
+
+    public int getAvailableQuantity() {
+        return Math.max(0, quantity - reservedQuantity);
     }
 
     public ActiveStatus getStatus() {

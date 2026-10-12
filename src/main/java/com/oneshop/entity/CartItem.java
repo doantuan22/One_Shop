@@ -14,8 +14,8 @@ import jakarta.persistence.UniqueConstraint;
 /** A cart line always references a StoreProduct, never a bare Product (BR-05). */
 @Entity
 @Table(name = "cart_items",
-        uniqueConstraints = @UniqueConstraint(name = "UQ_cart_items_cart_store_product",
-                columnNames = {"cart_id", "store_product_id"}))
+        uniqueConstraints = @UniqueConstraint(name = "UQ_cart_items_cart_product",
+                columnNames = {"cart_id", "product_id"}))
 public class CartItem extends TimestampedEntity {
 
     @Id
@@ -28,7 +28,11 @@ public class CartItem extends TimestampedEntity {
     private Cart cart;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "store_product_id", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_product_id")
     private StoreProduct storeProduct;
 
     @Column(nullable = false)
@@ -46,12 +50,23 @@ public class CartItem extends TimestampedEntity {
         this.cart = cart;
     }
 
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
     public StoreProduct getStoreProduct() {
         return storeProduct;
     }
 
     public void setStoreProduct(StoreProduct storeProduct) {
         this.storeProduct = storeProduct;
+        if (storeProduct != null && this.product == null) {
+            this.product = storeProduct.getProduct();
+        }
     }
 
     public int getQuantity() {

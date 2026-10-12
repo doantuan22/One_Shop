@@ -1,5 +1,6 @@
 package com.oneshop.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
@@ -30,6 +32,15 @@ public class Review extends CreatedAtEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
+
+    /** V3: Links directly to the purchased OrderItem. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_item_id")
+    private OrderItem orderItem;
+
+    /** V3: 1--1 staff reply record. */
+    @OneToOne(mappedBy = "review", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private ReviewReply reviewReply;
 
     @Column(nullable = false)
     private int rating;
@@ -78,6 +89,22 @@ public class Review extends CreatedAtEntity {
 
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    public OrderItem getOrderItem() {
+        return orderItem;
+    }
+
+    public void setOrderItem(OrderItem orderItem) {
+        this.orderItem = orderItem;
+    }
+
+    public ReviewReply getReviewReply() {
+        return reviewReply;
+    }
+
+    public void setReviewReply(ReviewReply reviewReply) {
+        this.reviewReply = reviewReply;
     }
 
     public int getRating() {

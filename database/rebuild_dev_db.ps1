@@ -171,15 +171,15 @@ try {
     Write-Host '01_create_database'; Invoke-Sql @('-d', 'master', '-i', (Retarget (Join-Path $dbDir '01_create_database.sql'))) '01_create_database'
     Write-Host '02_create_tables';   Invoke-Sql @('-d', $Database, '-i', (Retarget (Join-Path $dbDir '02_create_tables.sql'))) '02_create_tables'
     Write-Host '03_create_indexes';  Invoke-Sql @('-d', $Database, '-i', (Retarget (Join-Path $dbDir '03_create_indexes.sql'))) '03_create_indexes'
-    Write-Host '04_seed_data';       Invoke-Sql @('-d', $Database, '-i', (Retarget (Join-Path $dbDir '04_seed_data.sql') '/* ===== BEGIN LARGE SEED' '/* ===== END LARGE SEED ===== */')) '04_seed_data'
+    Write-Host '04_seed_data';       Invoke-Sql @('-d', $Database, '-i', (Retarget (Join-Path $dbDir '04_seed_data.sql'))) '04_seed_data'
     Write-Host '05_verify'
-    Invoke-Sql @('-d', $Database, '-i', (Retarget (Join-Path $dbDir '05_verify.sql') '/* ===== PART 2: LARGE SEED CHECKS')) '05_verify'
+    Invoke-Sql @('-d', $Database, '-i', (Retarget (Join-Path $dbDir '05_verify.sql'))) '05_verify'
 } finally {
     Remove-Item -Recurse -Force $tmp -ErrorAction SilentlyContinue
 }
 
 Write-Host ''
 Write-Host "Rebuild finished: [$Database] on $Server ."
-$counts = Query-Sql "SELECT 'users=' + CAST((SELECT COUNT(*) FROM dbo.users) AS VARCHAR) + ' products=' + CAST((SELECT COUNT(*) FROM dbo.products) AS VARCHAR) + ' store_products=' + CAST((SELECT COUNT(*) FROM dbo.store_products) AS VARCHAR) + ' orders=' + CAST((SELECT COUNT(*) FROM dbo.orders) AS VARCHAR) + ' reviews=' + CAST((SELECT COUNT(*) FROM dbo.reviews) AS VARCHAR)" $Database
+$counts = Query-Sql "SELECT 'users=' + CAST((SELECT COUNT(*) FROM dbo.users) AS VARCHAR) + ' products=' + CAST((SELECT COUNT(*) FROM dbo.products) AS VARCHAR) + ' store_products=' + CAST((SELECT COUNT(*) FROM dbo.store_products) AS VARCHAR) + ' orders=' + CAST((SELECT COUNT(*) FROM dbo.orders) AS VARCHAR) + ' fulfillments=' + CAST((SELECT COUNT(*) FROM dbo.order_fulfillments) AS VARCHAR) + ' reviews=' + CAST((SELECT COUNT(*) FROM dbo.reviews) AS VARCHAR)" $Database
 Write-Host ($counts | Select-Object -First 1)
 Remove-Item Env:\SQLCMDPASSWORD -ErrorAction SilentlyContinue
