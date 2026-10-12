@@ -1,78 +1,648 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Thương hiệu</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Thương hiệu - OneShop Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-coral.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .admin-page-container {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 2rem 1.25rem 6rem;
+        }
+
+        .admin-header-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .admin-title-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .admin-page-title {
+            font-size: 1.5rem;
+            font-weight: 850;
+            color: #0f172a;
+            letter-spacing: -0.025em;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-page-desc {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin: 0;
+            max-width: 680px;
+            line-height: 1.5;
+        }
+
+        .btn-toggle-create {
+            height: 42px;
+            padding: 0 1.25rem;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #ff7f50, #f06437);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.22);
+            transition: all 0.2s ease;
+        }
+
+        .btn-toggle-create:hover {
+            background: linear-gradient(135deg, #f06437, #df5124);
+            box-shadow: 0 6px 16px rgba(255, 127, 80, 0.32);
+            transform: translateY(-1px);
+        }
+
+        .alert-custom {
+            border-radius: 12px;
+            padding: 0.95rem 1.25rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            border: 1px solid transparent;
+        }
+
+        .alert-custom-success {
+            background-color: #f0fdf4;
+            color: #15803d;
+            border-color: #bbf7d0;
+        }
+
+        .alert-custom-danger {
+            background-color: #fef2f2;
+            color: #b91c1c;
+            border-color: #fecaca;
+        }
+
+        .form-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+            margin-bottom: 1.75rem;
+        }
+
+        .form-card-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 1.15rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .form-card-body {
+            padding: 1.75rem;
+        }
+
+        .form-label-custom {
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 0.4rem;
+            display: block;
+        }
+
+        .form-control-custom,
+        .form-select-custom {
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 0.885rem;
+            padding: 0.6rem 0.85rem;
+            background-color: #ffffff;
+            transition: all 0.15s ease;
+        }
+
+        .form-control-custom:focus,
+        .form-select-custom:focus {
+            border-color: var(--bs-primary, #ff7f50);
+            box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.18);
+            outline: none;
+        }
+
+        .btn-submit-main {
+            height: 40px;
+            padding: 0 1.35rem;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #ffffff;
+            background: linear-gradient(135deg, #ff7f50, #f06437);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.22);
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit-main:hover {
+            color: #ffffff;
+            background: linear-gradient(135deg, #f06437, #df5124);
+            box-shadow: 0 6px 16px rgba(255, 127, 80, 0.32);
+            transform: translateY(-1px);
+        }
+
+        .btn-action-cancel {
+            height: 40px;
+            padding: 0 1.15rem;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #64748b;
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-action-cancel:hover {
+            color: #334155;
+            background-color: #f1f5f9;
+        }
+
+        .upload-dropzone {
+            position: relative;
+            background-color: #fffaf8;
+            border: 2px dashed rgba(255, 127, 80, 0.38);
+            border-radius: 14px;
+            padding: 1.35rem 1.15rem;
+            text-align: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            margin-bottom: 0.75rem;
+        }
+
+        .upload-dropzone:hover {
+            border-color: var(--bs-primary, #ff7f50);
+            background-color: #fff5f0;
+            transform: translateY(-1px);
+        }
+
+        .upload-dropzone.has-file {
+            background-color: #f0fdf4;
+            border-color: #86efac;
+        }
+
+        .upload-dropzone.border-danger-custom {
+            border-color: #ef4444 !important;
+            background-color: #fef2f2 !important;
+            animation: shake 0.3s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .dropzone-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background-color: #ffffff;
+            color: var(--bs-primary, #ff7f50);
+            box-shadow: 0 2px 6px rgba(255, 127, 80, 0.12);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+            transition: transform 0.2s ease;
+        }
+
+        .upload-dropzone:hover .dropzone-icon-box {
+            transform: scale(1.08);
+        }
+
+        .dropzone-title {
+            font-size: 0.875rem;
+            font-weight: 750;
+            color: #0f172a;
+            margin-bottom: 0.2rem;
+        }
+
+        .dropzone-subtitle {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .file-chosen-name {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 650;
+            color: #1e293b;
+            margin-top: 0.5rem;
+        }
+
+        .btn-start-upload {
+            height: 38px;
+            border-radius: 9px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff7f50, #f06437);
+            border: none;
+            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(255, 127, 80, 0.18);
+        }
+
+        .btn-start-upload:hover {
+            background: linear-gradient(135deg, #f06437, #df5124);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.28);
+        }
+
+        .current-logo-preview-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .current-logo-img {
+            max-width: 140px;
+            max-height: 80px;
+            object-fit: contain;
+            margin-bottom: 0.75rem;
+        }
+
+        .btn-remove-logo {
+            height: 32px;
+            padding: 0 0.85rem;
+            border-radius: 7px;
+            font-size: 0.8rem;
+            font-weight: 650;
+            color: #dc2626;
+            background-color: #ffffff;
+            border: 1px solid #fca5a5;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-remove-logo:hover {
+            background-color: #dc2626;
+            border-color: #dc2626;
+            color: #ffffff;
+        }
+
+        .table-custom-wrapper {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .table-custom-wrapper .table {
+            margin-bottom: 0;
+            vertical-align: middle;
+        }
+
+        .table-custom-wrapper thead th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-size: 0.8rem;
+            font-weight: 750;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #e2e8f0;
+            white-space: nowrap;
+        }
+
+        .table-custom-wrapper tbody td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.885rem;
+        }
+
+        .table-custom-wrapper tbody tr:hover {
+            background-color: #fafbfd;
+        }
+
+        .table-custom-wrapper tbody tr.table-active {
+            background-color: #fffaf8;
+        }
+
+        .table-custom-wrapper tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .brand-logo-thumbnail {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .brand-logo-thumbnail img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .brand-logo-empty {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            border: 1px dashed #cbd5e1;
+            background-color: #f8fafc;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .brand-name-text {
+            font-weight: 750;
+            color: #0f172a;
+        }
+
+        .badge-solid-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.35rem 0.85rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: 999px;
+            color: #ffffff;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+
+        .badge-solid-pill.status-active {
+            background-color: #198754;
+        }
+
+        .badge-solid-pill.status-hidden {
+            background-color: #64748b;
+        }
+
+        .badge-solid-pill.status-inactive {
+            background-color: #dc3545;
+        }
+
+        .btn-table-edit {
+            height: 34px;
+            padding: 0 0.85rem;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 650;
+            color: #475569;
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-table-edit:hover {
+            color: var(--bs-primary, #ff7f50);
+            border-color: var(--bs-primary, #ff7f50);
+            background-color: #fffaf8;
+        }
+    </style>
 </head>
 <body>
-<div th:replace="~{fragments/components :: pageHeader('Thương hiệu', 'Thương hiệu dùng chung toàn chuỗi. Logo được lưu trên Cloudinary.')}"></div>
+<div class="admin-page-container">
+    <div class="admin-header-card">
+        <div class="admin-title-group">
+            <h1 class="admin-page-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-coral">
+                    <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+                    <path d="M5 3v4"/>
+                    <path d="M19 17v4"/>
+                    <path d="M3 5h4"/>
+                    <path d="M17 19h4"/>
+                </svg>
+                <span>Quản lý Thương hiệu</span>
+            </h1>
+            <p class="admin-page-desc">Thương hiệu dùng chung toàn chuỗi cửa hàng. Logo nhận diện được lưu trữ trên Cloudinary.</p>
+        </div>
 
-<div class="alert alert-success" th:if="${param.success}" th:switch="${param.success[0]}">
-    <span th:case="'created'">Đã thêm thương hiệu. Bạn có thể tải logo lên ngay bên dưới.</span>
-    <span th:case="'logo-uploaded'">Đã tải logo lên.</span>
-    <span th:case="'logo-removed'">Đã xóa logo.</span>
-    <span th:case="*">Đã cập nhật thương hiệu.</span>
-</div>
-<div class="alert alert-danger" th:if="${param.error != null or error != null}" th:switch="${param.error != null ? param.error[0] : error}">
-    <span th:case="'image-size'" th:text="${errorMessage != null ? errorMessage : 'Ảnh vượt quá ' + (maxFileSize != null ? maxFileSize : '5MB') + '. Vui lòng chọn tệp nhỏ hơn.'}">Ảnh vượt quá dung lượng cho phép.</span>
-    <span th:case="'image-invalid'">Tệp không hợp lệ. Vui lòng chọn một tệp hình ảnh.</span>
-    <span th:case="*">Không thể làm việc với Cloudinary. Kiểm tra cấu hình CLOUDINARY_* rồi thử lại.</span>
+        <div>
+            <button class="btn-toggle-create" id="btn-top-create" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span id="btn-top-create-text">Thêm thương hiệu</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="alert alert-custom alert-custom-success alert-dismissible fade show" th:if="${param.success}" th:switch="${param.success[0]}" role="alert">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+        <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <div class="flex-grow-1">
+        <span th:case="'created'">Đã thêm thương hiệu thành công. Bạn có thể tải logo nhận diện bên dưới.</span>
+        <span th:case="'logo-uploaded'">Đã tải logo lên Cloudinary thành công.</span>
+        <span th:case="'logo-removed'">Đã xóa logo thương hiệu.</span>
+        <span th:case="*">Đã cập nhật thương hiệu thành công.</span>
+    </div>
+    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Đóng"></button>
 </div>
 
-<div class="row g-4">
-    <div class="col-12 col-xl-4 order-xl-2">
-        <section class="card shadow-sm mb-4">
-            <div class="card-header bg-white fw-semibold" th:text="${editId == null} ? 'Thêm thương hiệu' : 'Sửa thương hiệu'">Thêm thương hiệu</div>
-            <div class="card-body">
-                <form method="post" th:object="${form}" id="brand-form" novalidate
-                      th:action="${editId == null} ? @{/admin/brands} : @{/admin/brands/{id}(id=${editId})}">
-                    <div class="alert alert-danger" th:each="message : ${#fields.globalErrors()}" th:text="${message}">Lỗi</div>
-                    <div class="mb-3">
-                        <label class="form-label" for="name">Tên thương hiệu <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" th:field="*{name}" th:errorclass="is-invalid" maxlength="150">
-                        <div class="invalid-feedback" th:errors="*{name}">Lỗi</div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="description">Mô tả</label>
-                        <textarea class="form-control" rows="3" th:field="*{description}" th:errorclass="is-invalid" maxlength="500"></textarea>
-                        <div class="invalid-feedback" th:errors="*{description}">Lỗi</div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="status">Trạng thái</label>
-                        <select class="form-select" th:field="*{status}">
-                            <option value="ACTIVE">Đang hoạt động</option>
-                            <option value="HIDDEN">Đang ẩn</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary" th:text="${editId == null} ? 'Thêm' : 'Lưu thay đổi'">Lưu</button>
-                    <a class="btn btn-outline-secondary" th:href="@{/admin/brands}" th:if="${editId != null}">Hủy</a>
-                </form>
+
+<div class="alert alert-custom alert-custom-danger alert-dismissible fade show" th:if="${param.error != null or error != null}" th:switch="${param.error != null ? param.error[0] : error}" role="alert">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </svg>
+    <div class="flex-grow-1">
+        <span th:case="'image-size'" th:text="${errorMessage != null ? errorMessage : 'Ảnh vượt quá ' + (maxFileSize != null ? maxFileSize : '5MB') + '. Vui lòng chọn tệp nhỏ hơn.'}">Ảnh vượt quá dung lượng cho phép.</span>
+        <span th:case="'image-invalid'">Tệp không hợp lệ. Vui lòng chọn một tệp hình ảnh đúng định dạng.</span>
+        <span th:case="*">Không thể làm việc với Cloudinary. Kiểm tra cấu hình hệ thống CLOUDINARY_* rồi thử lại.</span>
+    </div>
+    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Đóng"></button>
+</div>
+
+    <div class="collapse" id="brandFormCollapse"
+         th:classappend="${editId != null or param.error != null or param.create != null} ? 'show'">
+        <section class="form-card">
+            <div class="form-card-header">
+                <div class="d-flex align-items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="text-coral">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    <span id="brand-card-title" th:text="${editId == null} ? 'Thêm thương hiệu mới' : 'Chỉnh sửa thương hiệu #' + ${editId}">Biểu mẫu thương hiệu</span>
+                </div>
+                <button type="button" class="btn-close" id="btn-close-brand-form" aria-label="Đóng"></button>
             </div>
-        </section>
 
-        <section class="card shadow-sm" id="brand-logo" th:if="${editBrand != null}">
-            <div class="card-header bg-white fw-semibold">Logo</div>
-            <div class="card-body">
-                <img th:if="${editBrand.logoUrl}" th:src="${editBrand.logoUrl}" th:alt="${editBrand.name}"
-                     class="os-brand-logo border rounded mb-3">
-                <p class="text-secondary small" th:unless="${editBrand.logoUrl}">Chưa có logo.</p>
+            <div class="form-card-body">
+                <div class="row g-4 align-items-start">
+                    <div id="brand-form-col" th:class="${editBrand != null} ? 'col-12 col-lg-7' : 'col-12'">
+                        <form method="post" th:object="${form}" id="brand-form" novalidate
+                              th:action="${editId == null} ? @{/admin/brands} : @{/admin/brands/{id}(id=${editId})}">
+                            <div class="alert-custom alert-custom-danger mb-3" th:each="message : ${#fields.globalErrors()}" th:text="${message}">Lỗi dữ liệu</div>
 
-                <form method="post" enctype="multipart/form-data" class="mb-2"
-                      th:action="@{/admin/brands/{id}/logo(id=${editId})}">
-                    <div class="input-group">
-                        <input type="file" class="form-control" name="file" accept="image/*" required aria-label="Tệp logo"
-                               th:attr="data-max-bytes=5242880,data-max-size=${maxFileSize != null ? maxFileSize : '5MB'}">
-                        <button type="submit" class="btn btn-outline-primary">Tải lên</button>
+                            <div class="row g-3">
+                                <div class="col-12 col-md-7">
+                                    <label class="form-label-custom" for="brand-input-name">Tên thương hiệu <span class="text-danger">*</span></label>
+                                    <input type="text" id="brand-input-name" class="form-control form-control-custom" th:field="*{name}" th:errorclass="is-invalid" maxlength="150" placeholder="VD: Cocoon, Innisfree...">
+                                    <div class="invalid-feedback small" th:errors="*{name}">Vui lòng nhập tên thương hiệu</div>
+                                </div>
+
+                                <div class="col-12 col-md-5">
+                                    <label class="form-label-custom" for="brand-select-status">Trạng thái phát hành</label>
+                                    <select id="brand-select-status" class="form-select form-select-custom" th:field="*{status}">
+                                        <option value="ACTIVE">Đang hoạt động</option>
+                                        <option value="HIDDEN">Đang ẩn</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label-custom" for="brand-textarea-desc">Mô tả thương hiệu</label>
+                                    <textarea id="brand-textarea-desc" class="form-control form-control-custom" rows="3" th:field="*{description}" th:errorclass="is-invalid" maxlength="500" placeholder="Thông tin xuất xứ, câu chuyện thương hiệu..."></textarea>
+                                    <div class="invalid-feedback small" th:errors="*{description}">Mô tả vượt quá ký tự cho phép</div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-2 mt-4 pt-2 border-top">
+                                <button type="submit" class="btn-submit-main" id="btn-brand-submit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    <span id="btn-brand-submit-text" th:text="${editId == null} ? 'Tạo thương hiệu' : 'Lưu thay đổi'">Lưu</span>
+                                </button>
+                                <button type="button" class="btn-action-cancel" id="btn-cancel-brand">Hủy bỏ</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="upload-file-error text-danger small mt-1" style="display:none;"></div>
-                </form>
-                <form method="post" th:action="@{/admin/brands/{id}/logo/delete(id=${editId})}" th:if="${editBrand.logoUrl}">
-                    <button type="submit" class="btn btn-outline-danger btn-sm">Xóa logo</button>
-                </form>
+
+                    <div class="col-12 col-lg-5" id="brand-logo-col" th:style="${editBrand == null} ? 'display: none;' : ''">
+                        <div class="p-3 bg-light rounded-3 border" id="brand-logo">
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="text-coral">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
+                                <span class="fw-bold fs-6">Logo thương hiệu</span>
+                            </div>
+
+                            <div class="current-logo-preview-box" id="current-logo-box" th:style="${editBrand != null and editBrand.logoUrl != null} ? '' : 'display: none;'">
+                                <img id="current-logo-img" th:src="${editBrand != null ? editBrand.logoUrl : ''}" alt="Logo thương hiệu" class="current-logo-img os-brand-logo">
+                                <div>
+                                    <form method="post" id="delete-brand-logo-form"
+                                          th:action="${editBrand != null} ? @{/admin/brands/{id}/logo/delete(id=${editBrand.id})} : ''" class="m-0">
+                                        <button type="submit" class="btn-remove-logo" onclick="return confirm('Bạn có chắc chắn muốn xóa logo này?');">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="3 6 5 6 21 6"></polyline>
+                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            </svg>
+                                            <span>Xóa logo</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <p class="text-secondary small mb-3" id="no-logo-text" th:style="${editBrand != null and editBrand.logoUrl != null} ? 'display: none;' : ''">Chưa có logo.</p>
+
+                            <form method="post" enctype="multipart/form-data" id="upload-brand-logo-form"
+                                  th:action="${editBrand != null} ? @{/admin/brands/{id}/logo(id=${editBrand.id})} : ''">
+                                <label class="upload-dropzone d-block" for="brand-logo-input" id="dropzone-box">
+                                    <input type="file" id="brand-logo-input" class="d-none" name="file" accept="image/*"
+                                           th:attr="data-max-bytes=5242880,data-max-size=${maxFileSize != null ? maxFileSize : '5MB'}">
+                                    <div class="dropzone-icon-box">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="17 8 12 3 7 8"></polyline>
+                                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                                        </svg>
+                                    </div>
+                                    <div class="dropzone-title" id="dropzone-main-text">Nhấp để chọn logo hoặc kéo thả vào đây</div>
+                                    <div class="dropzone-subtitle" id="dropzone-sub-text">Định dạng JPG, PNG, WEBP (Tối đa 5MB)</div>
+                                    <div id="file-name-preview" class="file-chosen-name d-none"></div>
+                                </label>
+
+                                <div id="dropzone-error-msg" class="upload-file-error text-danger small fw-semibold mb-2" style="display:none;"></div>
+
+                                <button type="submit" class="btn-start-upload w-100" id="btn-upload-file">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="17 8 12 3 7 8"></polyline>
+                                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                                    </svg>
+                                    <span>Tải logo lên Cloudinary</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     </div>
 
-    <div class="col-12 col-xl-8 order-xl-1">
+    <div class="table-custom-wrapper">
         <div th:replace="~{fragments/components :: dataTable(~{::#brand-head}, ~{::#brand-body})}"></div>
     </div>
 </div>
@@ -80,31 +650,294 @@
 <th:block th:remove="all">
     <thead id="brand-head">
     <tr>
-        <th scope="col">Logo</th>
-        <th scope="col">Tên</th>
+        <th scope="col" style="width: 80px;">Logo</th>
+        <th scope="col" style="width: 220px;">Tên thương hiệu</th>
         <th scope="col">Mô tả</th>
-        <th scope="col">Trạng thái</th>
-        <th scope="col" class="text-end">Thao tác</th>
+        <th scope="col" style="width: 150px;">Trạng thái</th>
+        <th scope="col" class="text-end" style="width: 110px;">Thao tác</th>
     </tr>
     </thead>
     <tbody id="brand-body">
-    <tr th:each="brand : ${brands}" th:classappend="${brand.id == editId} ? 'table-active'">
+    <tr th:each="brand : ${brands}" th:id="'brand-row-' + ${brand.id}" th:classappend="${brand.id == editId} ? 'table-active'">
         <td>
-            <img th:if="${brand.logoUrl}" th:src="${brand.logoUrl}" th:alt="${brand.name}" class="os-brand-logo-sm rounded border">
-            <span class="text-secondary" th:unless="${brand.logoUrl}">—</span>
+            <div class="brand-logo-thumbnail" th:if="${brand.logoUrl}">
+                <img th:src="${brand.logoUrl}" th:alt="${brand.name}" class="os-brand-logo-sm" loading="lazy">
+            </div>
+            <div class="brand-logo-empty" th:unless="${brand.logoUrl}">
+                <span>Trống</span>
+            </div>
         </td>
-        <td class="fw-semibold" th:text="${brand.name}">Cocoon</td>
-        <td class="text-secondary" th:text="${brand.description}">Mô tả</td>
-        <td><span th:replace="~{fragments/components :: statusBadge(${brand.status})}"></span></td>
+        <td>
+            <div class="brand-name-text" th:text="${brand.name}">Cocoon</div>
+        </td>
+        <td>
+            <span class="text-secondary" th:text="${brand.description}">Mô tả thương hiệu</span>
+        </td>
+        <td>
+            <span th:switch="${#strings.toUpperCase(#strings.toString(brand.status))}">
+                <span class="badge-solid-pill status-active" th:case="'ACTIVE'">
+                    Đang hoạt động
+                </span>
+                <span class="badge-solid-pill status-hidden" th:case="'HIDDEN'">
+                    Đang ẩn
+                </span>
+                <span class="badge-solid-pill status-inactive" th:case="'INACTIVE'">
+                    Ngừng hoạt động
+                </span>
+                <span class="badge-solid-pill status-hidden" th:case="*">
+                    <span th:text="${brand.status}">Trạng thái</span>
+                </span>
+            </span>
+        </td>
         <td class="text-end">
-            <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/brands/{id}/edit(id=${brand.id})}">Sửa</a>
+            <button type="button" class="btn-table-edit btn-trigger-edit"
+                    th:attr="data-id=${brand.id},
+                             data-name=${brand.name},
+                             data-description=${brand.description != null ? brand.description : ''},
+                             data-status=${brand.status},
+                             data-logo=${brand.logoUrl != null ? brand.logoUrl : ''}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                <span>Sửa</span>
+            </button>
         </td>
     </tr>
     <tr th:if="${brands.isEmpty()}">
-        <td colspan="5" class="text-center text-secondary py-4">Chưa có thương hiệu nào.</td>
+        <td colspan="5" class="text-center text-secondary py-5">
+            <div class="d-flex flex-column align-items-center justify-content-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="mb-2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <div class="fw-semibold text-dark">Chưa có thương hiệu nào</div>
+                <div class="small text-muted mt-1">Bấm nút "Thêm thương hiệu" phía trên để bắt đầu thêm mới.</div>
+            </div>
+        </td>
     </tr>
     </tbody>
 </th:block>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const brandFormCollapseEl = document.getElementById('brandFormCollapse');
+    const brandForm = document.getElementById('brand-form');
+    const brandFormCol = document.getElementById('brand-form-col');
+    const brandLogoCol = document.getElementById('brand-logo-col');
+    const brandCardTitle = document.getElementById('brand-card-title');
+    const btnBrandSubmitText = document.getElementById('btn-brand-submit-text');
+
+    const brandInputName = document.getElementById('brand-input-name');
+    const brandSelectStatus = document.getElementById('brand-select-status');
+    const brandTextareaDesc = document.getElementById('brand-textarea-desc');
+
+    const currentLogoBox = document.getElementById('current-logo-box');
+    const currentLogoImg = document.getElementById('current-logo-img');
+    const noLogoText = document.getElementById('no-logo-text');
+    const deleteBrandLogoForm = document.getElementById('delete-brand-logo-form');
+    const uploadBrandLogoForm = document.getElementById('upload-brand-logo-form');
+
+    const btnTopCreate = document.getElementById('btn-top-create');
+    const btnCancelBrand = document.getElementById('btn-cancel-brand');
+    const btnCloseBrandForm = document.getElementById('btn-close-brand-form');
+
+    function getCollapseInstance() {
+        if (window.bootstrap && bootstrap.Collapse) {
+            return bootstrap.Collapse.getOrCreateInstance(brandFormCollapseEl, { toggle: false });
+        }
+        return null;
+    }
+
+    function openCollapse() {
+        const bsCollapse = getCollapseInstance();
+        if (bsCollapse) {
+            bsCollapse.show();
+        } else {
+            brandFormCollapseEl.classList.add('show');
+        }
+    }
+
+    function closeCollapse() {
+        const bsCollapse = getCollapseInstance();
+        if (bsCollapse) {
+            bsCollapse.hide();
+        } else {
+            brandFormCollapseEl.classList.remove('show');
+        }
+    }
+
+    function resetToCreateMode() {
+        brandForm.action = '/admin/brands';
+        brandCardTitle.textContent = 'Thêm thương hiệu mới';
+        btnBrandSubmitText.textContent = 'Tạo thương hiệu';
+
+        brandInputName.value = '';
+        brandSelectStatus.value = 'ACTIVE';
+        brandTextareaDesc.value = '';
+
+        brandFormCol.className = 'col-12';
+        brandLogoCol.style.display = 'none';
+
+        document.querySelectorAll('tbody tr').forEach(tr => tr.classList.remove('table-active'));
+    }
+
+    function openEditMode(id, name, desc, status, logoUrl) {
+        brandForm.action = '/admin/brands/' + id;
+        brandCardTitle.textContent = 'Chỉnh sửa thương hiệu: ' + name;
+        btnBrandSubmitText.textContent = 'Lưu thay đổi';
+
+        brandInputName.value = name;
+        brandTextareaDesc.value = desc;
+        brandSelectStatus.value = status;
+
+        brandFormCol.className = 'col-12 col-lg-7';
+        brandLogoCol.style.display = 'block';
+
+        uploadBrandLogoForm.action = '/admin/brands/' + id + '/logo';
+        deleteBrandLogoForm.action = '/admin/brands/' + id + '/logo/delete';
+
+        if (logoUrl && logoUrl.trim() !== '') {
+            currentLogoImg.src = logoUrl;
+            currentLogoBox.style.display = 'block';
+            noLogoText.style.display = 'none';
+        } else {
+            currentLogoBox.style.display = 'none';
+            noLogoText.style.display = 'block';
+        }
+
+        document.querySelectorAll('tbody tr').forEach(tr => tr.classList.remove('table-active'));
+        const activeRow = document.getElementById('brand-row-' + id);
+        if (activeRow) {
+            activeRow.classList.add('table-active');
+        }
+
+        openCollapse();
+        setTimeout(() => {
+            const offset = 90; 
+            const targetY = brandFormCollapseEl.getBoundingClientRect().top + window.pageYOffset - offset;
+            window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+        }, 50);
+    }
+
+    function handleDismiss() {
+        if (window.location.pathname.includes('/edit') || window.location.search.includes('create=')) {
+            window.location.href = '/admin/brands';
+        } else {
+            closeCollapse();
+            resetToCreateMode();
+        }
+    }
+
+    btnTopCreate.addEventListener('click', function () {
+        const isShown = brandFormCollapseEl.classList.contains('show');
+        const isCreating = brandForm.action.endsWith('/admin/brands');
+
+        if (isShown && isCreating) {
+            closeCollapse();
+        } else {
+            resetToCreateMode();
+            openCollapse();
+        }
+    });
+
+    btnCancelBrand.addEventListener('click', handleDismiss);
+    btnCloseBrandForm.addEventListener('click', handleDismiss);
+
+    document.querySelectorAll('.btn-trigger-edit').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            const name = this.getAttribute('data-name');
+            const desc = this.getAttribute('data-description');
+            const status = this.getAttribute('data-status');
+            const logo = this.getAttribute('data-logo');
+            openEditMode(id, name, desc, status, logo);
+        });
+    });
+
+    const fileInput = document.getElementById('brand-logo-input');
+    const dropzoneBox = document.getElementById('dropzone-box');
+    const mainText = document.getElementById('dropzone-main-text');
+    const subText = document.getElementById('dropzone-sub-text');
+    const previewBadge = document.getElementById('file-name-preview');
+    const errorMsg = document.getElementById('dropzone-error-msg');
+
+    function clearDropzoneError() {
+        if (errorMsg) {
+            errorMsg.textContent = '';
+            errorMsg.style.display = 'none';
+        }
+        if (dropzoneBox) {
+            dropzoneBox.classList.remove('border-danger-custom');
+        }
+    }
+
+    function showDropzoneError(message) {
+        if (errorMsg) {
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+        }
+        if (dropzoneBox) {
+            dropzoneBox.classList.remove('has-file');
+            dropzoneBox.classList.add('border-danger-custom');
+        }
+    }
+
+    if (fileInput && dropzoneBox) {
+        fileInput.addEventListener('change', function () {
+            if (this.files && this.files.length > 0) {
+                clearDropzoneError();
+                const fileName = this.files[0].name;
+                const fileSize = (this.files[0].size / 1024 / 1024).toFixed(2);
+                dropzoneBox.classList.add('has-file');
+                mainText.textContent = 'Đã chọn tệp logo:';
+                subText.classList.add('d-none');
+                previewBadge.classList.remove('d-none');
+                previewBadge.textContent = fileName + ' (' + fileSize + ' MB)';
+            } else {
+                dropzoneBox.classList.remove('has-file');
+                mainText.textContent = 'Nhấp để chọn logo hoặc kéo thả vào đây';
+                subText.classList.remove('d-none');
+                previewBadge.classList.add('d-none');
+            }
+        });
+
+        ['dragover', 'dragenter'].forEach(eventName => {
+            dropzoneBox.addEventListener(eventName, e => {
+                e.preventDefault();
+                clearDropzoneError();
+                dropzoneBox.style.borderColor = '#ff7f50';
+                dropzoneBox.style.backgroundColor = '#fff5f0';
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzoneBox.addEventListener(eventName, e => {
+                e.preventDefault();
+                dropzoneBox.style.borderColor = '';
+                dropzoneBox.style.backgroundColor = '';
+            });
+        });
+
+        dropzoneBox.addEventListener('drop', e => {
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                const event = new Event('change');
+                fileInput.dispatchEvent(event);
+            }
+        });
+    }
+
+    if (uploadBrandLogoForm) {
+        uploadBrandLogoForm.addEventListener('submit', function (e) {
+            if (!fileInput.files || fileInput.files.length === 0) {
+                e.preventDefault();
+                showDropzoneError('Vui lòng chọn hoặc kéo thả tệp logo vào khung trước khi tải lên.');
+            }
+        });
+    }
+</script>
 <script th:src="@{/js/upload-validator.js}"></script>
 </body>
 </html>
