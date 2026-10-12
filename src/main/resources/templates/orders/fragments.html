@@ -526,10 +526,62 @@
                     <rect x="2" y="5" width="20" height="14" rx="2"/>
                     <line x1="2" y1="10" x2="22" y2="10"/>
                 </svg>
-                <span>Phương thức thanh toán</span>
+                <span>Giao dịch thanh toán</span>
             </div>
 
-            <p class="text-secondary small mb-2" th:if="${detail.payments.isEmpty()}">Chưa có thông tin thanh toán nào.</p>
+            <div th:if="${detail.payments.isEmpty()}">
+                <div class="od-payment-entry" th:if="${#strings.toUpperCase(#strings.toString(order.paymentMethod)) == 'ONLINE'}">
+                    <div class="d-flex align-items-center gap-3 w-100">
+                        <div class="od-payment-icon-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                                <line x1="2" y1="10" x2="22" y2="10"></line>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <span class="od-payment-method-name">Thanh toán trực tuyến</span>
+                                <span class="od-payment-chip od-pay-pending">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                    Chờ thực hiện
+                                </span>
+                            </div>
+                            <div class="small text-secondary mt-1">
+                                Chưa phát sinh giao dịch. Vui lòng bấm nút <strong>Xem thanh toán trực tuyến</strong> phía dưới để tiến hành thanh toán cho đơn hàng.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="od-payment-entry" th:unless="${#strings.toUpperCase(#strings.toString(order.paymentMethod)) == 'ONLINE'}">
+                    <div class="d-flex align-items-center gap-3 w-100">
+                        <div class="od-payment-icon-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M3 10h18"/>
+                                <path d="M5 10V20H19V10"/>
+                                <path d="M3 10L5 4H19L21 10"/>
+                                <path d="M3 10a3 3 0 0 0 6 0"/>
+                                <path d="M9 10a3 3 0 0 0 6 0"/>
+                                <path d="M15 10a3 3 0 0 0 6 0"/>
+                                <path d="M10 20V14H14V20"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <span class="od-payment-method-name" th:switch="${#strings.toUpperCase(#strings.toString(order.paymentMethod))}">
+                                    <span th:case="'PAY_AT_STORE'">Thanh toán tại cửa hàng</span>
+                                    <span th:case="'COD'">Thanh toán khi nhận hàng (COD)</span>
+                                    <span th:case="*" th:text="${order.paymentMethod}">Hình thức</span>
+                                </span>
+                                <span class="od-payment-chip od-pay-pending">Chưa thu tiền</span>
+                            </div>
+                            <div class="small text-secondary mt-1">
+                                Giao dịch sẽ được nhân viên ghi nhận khi bàn giao hàng thành công.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div th:unless="${detail.payments.isEmpty()}">
                 <div class="od-payment-entry" th:each="payment : ${detail.payments}">
@@ -571,7 +623,7 @@
                                 <span th:switch="${#strings.toUpperCase(#strings.toString(payment.status))}">
                                     <span class="od-payment-chip od-pay-pending" th:case="'PENDING'">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                        Chờ thanh toán
+                                        Đang chờ xử lý
                                     </span>
                                     <span class="od-payment-chip od-pay-success" th:case="'PAID'">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>

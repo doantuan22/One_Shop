@@ -1,57 +1,645 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head><title>Thanh toán đơn hàng</title></head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Thanh toán đơn #' + ${paymentOrder.orderId} + ' - OneShop'">Thanh toán đơn hàng - OneShop</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-coral.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .payment-container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 2.25rem 1rem 5rem;
+        }
+
+        .breadcrumb-clean {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            display: inline-flex;
+            margin-bottom: 1.5rem;
+        }
+
+        .breadcrumb-clean .breadcrumb-item a {
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .breadcrumb-clean .breadcrumb-item a:hover {
+            color: var(--bs-primary, #ff7f50);
+        }
+
+        .breadcrumb-clean .breadcrumb-item.active {
+            color: var(--bs-primary, #ff7f50);
+            font-weight: 700;
+        }
+
+        .payment-page-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .payment-page-title {
+            font-size: 1.65rem;
+            font-weight: 850;
+            color: #0f172a;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.35rem;
+        }
+
+        .store-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: linear-gradient(135deg, #FFF5F0, #FFE5DA);
+            border: 1px solid rgba(255, 127, 80, 0.22);
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.825rem;
+            font-weight: 650;
+            color: #0f172a;
+            box-shadow: 0 1px 3px rgba(255, 127, 80, 0.08);
+        }
+
+        .store-pill-icon {
+            color: #F06437;
+            flex-shrink: 0;
+        }
+
+        .btn-header-back {
+            height: 38px;
+            padding: 0 1rem;
+            border-radius: 9px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #475569;
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-header-back:hover {
+            color: var(--bs-primary, #ff7f50);
+            border-color: var(--bs-primary, #ff7f50);
+            background-color: #fffaf8;
+        }
+
+        .order-summary-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .order-summary-header {
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .order-summary-header-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .order-summary-body {
+            padding: 1.4rem;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.25rem 1.5rem;
+        }
+
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .summary-label {
+            font-size: 0.775rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #94a3b8;
+        }
+
+        .summary-total-val {
+            font-size: 1.45rem;
+            font-weight: 850;
+            color: var(--bs-primary, #ff7f50);
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .chip-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 11px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            line-height: 1.2;
+            width: fit-content;
+        }
+
+        .chip-pending {
+            background-color: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+
+        .chip-confirmed {
+            background-color: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+        }
+
+        .chip-paid, .chip-success {
+            background-color: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .chip-unpaid {
+            background-color: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #ffedd5;
+        }
+
+        .chip-failed, .chip-cancelled {
+            background-color: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .chip-method {
+            background-color: #f8fafc;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+        }
+
+        .simulation-banner {
+            background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+            border: 1px solid #bfdbfe;
+            border-radius: 14px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 0.875rem;
+            color: #1e40af;
+            line-height: 1.5;
+        }
+
+        .simulation-banner-icon {
+            flex-shrink: 0;
+            color: #2563eb;
+            margin-top: 2px;
+        }
+
+        .btn-start-online-pay {
+            height: 46px;
+            padding: 0 1.5rem;
+            border-radius: 11px;
+            font-size: 0.95rem;
+            font-weight: 750;
+            color: #ffffff;
+            background: linear-gradient(135deg, #ff7f50, #f06437);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 14px rgba(255, 127, 80, 0.25);
+            transition: all 0.2s ease;
+            margin-bottom: 1.75rem;
+        }
+
+        .btn-start-online-pay:hover {
+            color: #ffffff;
+            background: linear-gradient(135deg, #f06437, #df5124);
+            box-shadow: 0 6px 18px rgba(255, 127, 80, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .attempts-heading {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .attempt-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 1.25rem 1.4rem;
+            margin-bottom: 1.1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .attempt-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .attempt-card-top {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 0.85rem;
+            padding-bottom: 0.85rem;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+
+        .attempt-id-tag {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .attempt-amount-val {
+            font-size: 1.15rem;
+            font-weight: 850;
+            color: #0f172a;
+        }
+
+        .attempt-info-row {
+            font-size: 0.84rem;
+            color: #64748b;
+            margin-bottom: 0.35rem;
+        }
+
+        .attempt-info-row strong {
+            color: #1e293b;
+        }
+
+        .simulation-actions-box {
+            background-color: #fffaf8;
+            border: 1px dashed rgba(255, 127, 80, 0.35);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .simulation-actions-label {
+            font-size: 0.8rem;
+            font-weight: 750;
+            color: #c2410c;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.65rem;
+        }
+
+        .btn-simulate-success {
+            height: 38px;
+            padding: 0 1.15rem;
+            border-radius: 9px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #ffffff;
+            background-color: #16a34a;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-simulate-success:hover {
+            background-color: #15803d;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+        }
+
+        .btn-simulate-failure {
+            height: 38px;
+            padding: 0 1.15rem;
+            border-radius: 9px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #dc2626;
+            background-color: #ffffff;
+            border: 1px solid #fca5a5;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-simulate-failure:hover {
+            background-color: #dc2626;
+            border-color: #dc2626;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+        }
+
+        .bottom-actions {
+            margin-top: 2rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-view-checkout {
+            height: 40px;
+            padding: 0 1.25rem;
+            border-radius: 9px;
+            font-size: 0.875rem;
+            font-weight: 650;
+            color: #334155;
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-view-checkout:hover {
+            color: var(--bs-primary, #ff7f50);
+            border-color: var(--bs-primary, #ff7f50);
+            background-color: #fffaf8;
+        }
+    </style>
+</head>
 <body>
-<h1 class="h3">Thanh toán đơn hàng #<span id="payment-order-id" th:text="${paymentOrder.orderId}">1001</span></h1>
-<p class="text-secondary" th:text="${paymentOrder.storeName}">OneShop Thủ Đức</p>
-<div class="card mb-3"><div class="card-body">
-    <dl class="row mb-0">
-        <dt class="col-sm-4">Tổng đơn hàng</dt>
-        <dd class="col-sm-8" id="payment-order-total"><span th:replace="~{fragments/components :: price(${paymentOrder.totalAmount})}"></span></dd>
-        <dt class="col-sm-4">Phương thức</dt>
-        <dd class="col-sm-8" th:switch="${paymentOrder.paymentMethod.name()}">
-            <span th:case="'ONLINE'">Thanh toán trực tuyến</span><span th:case="'COD'">Thanh toán khi nhận hàng</span>
-            <span th:case="'PAY_AT_STORE'">Thanh toán tại cửa hàng</span>
-        </dd>
-        <dt class="col-sm-4">Trạng thái thanh toán</dt>
-        <dd class="col-sm-8" id="payment-order-status" th:attr="data-status=${paymentOrder.paymentStatus}" th:switch="${paymentOrder.paymentStatus.name()}">
-            <span th:case="'UNPAID'">Chưa thanh toán</span><span th:case="'PAID'">Đã thanh toán</span><span th:case="'FAILED'">Thanh toán thất bại</span>
-        </dd>
-        <dt class="col-sm-4">Trạng thái đơn hàng</dt>
-        <dd class="col-sm-8" id="payment-order-state" th:attr="data-status=${paymentOrder.orderStatus}" th:switch="${paymentOrder.orderStatus.name()}">
-            <span th:case="'PENDING_PAYMENT'">Chờ thanh toán</span><span th:case="'CONFIRMED'">Đã xác nhận</span>
-            <span th:case="'CANCELLED'">Đã hủy</span><span th:case="*" th:text="${paymentOrder.orderStatus}"></span>
-        </dd>
-    </dl>
-</div></div>
-<div class="alert alert-info" th:if="${paymentOrder.paymentMethod.name() == 'ONLINE'}">
-    Đây là thanh toán trực tuyến mô phỏng, không thu tiền thật. Chọn kết quả để kiểm tra luồng thanh toán.
-    Nếu thanh toán thất bại, đơn hàng sẽ bị hủy. Bạn có thể đặt đơn mới để mua lại.
-</div>
-<form th:if="${paymentOrder.payable() and !paymentOrder.hasPendingAttempt()}" method="post"
-      th:action="@{/orders/{id}/payments/attempts(id=${paymentOrder.orderId})}">
-    <button id="start-payment" class="btn btn-primary mb-3" type="submit">Tiến hành thanh toán online</button>
-</form>
-<p th:if="${paymentOrder.attempts.isEmpty()}" class="text-secondary">Chưa có lần thanh toán nào.</p>
-<section class="card mb-3 os-payment-attempt" th:each="attempt : ${paymentOrder.attempts}"
-         th:attr="data-payment-id=${attempt.paymentId},data-status=${attempt.status}">
-    <div class="card-body">
-        <h2 class="h6">Lần thanh toán #<span th:text="${attempt.paymentId}"></span></h2>
-        <p><span th:replace="~{fragments/components :: price(${attempt.amount})}"></span> &middot;
-            <span th:switch="${attempt.status.name()}"><span th:case="'PENDING'">Đang chờ</span>
-                <span th:case="'SUCCESS'">Thành công</span><span th:case="'FAILED'">Thất bại</span></span>
-        </p>
-        <p class="small mb-1" th:if="${attempt.transactionCode}">Mã giao dịch: <span class="payment-transaction-code" th:text="${attempt.transactionCode}"></span></p>
-        <p class="small mb-1" th:if="${attempt.paidAt}">Đã thanh toán lúc: <span class="payment-paid-at" th:text="${#temporals.format(attempt.paidAt, 'dd/MM/yyyy HH:mm:ss')}"></span></p>
-        <div class="d-flex flex-wrap gap-2 mt-2" th:if="${paymentOrder.payable() and attempt.status.name() == 'PENDING'}">
-            <form method="post" th:action="@{/orders/{oid}/payments/{pid}/success(oid=${paymentOrder.orderId},pid=${attempt.paymentId})}">
-                <button class="btn btn-success" type="submit">Mô phỏng thành công</button>
-            </form>
-            <form method="post" th:action="@{/orders/{oid}/payments/{pid}/failure(oid=${paymentOrder.orderId},pid=${attempt.paymentId})}">
-                <button class="btn btn-outline-danger" type="submit">Mô phỏng thất bại và hủy đơn</button>
-            </form>
+<div class="payment-container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb breadcrumb-clean small">
+            <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/orders}">Đơn hàng của tôi</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/orders/{id}(id=${paymentOrder.orderId})}" th:text="'Đơn #' + ${paymentOrder.orderId}">Chi tiết đơn</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Thanh toán</li>
+        </ol>
+    </nav>
+
+    <div class="payment-page-header">
+        <div>
+            <h1 class="payment-page-title">Thanh toán đơn hàng #<span id="payment-order-id" th:text="${paymentOrder.orderId}">1001</span></h1>
+            <div class="store-pill" th:if="${paymentOrder.storeName != null}">
+                <svg class="store-pill-icon" xmlns="http://www.w3.org/2000/svg"
+                     width="16" height="16"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+                    <path d="M3 10h18"/>
+                    <path d="M5 10V20H19V10"/>
+                    <path d="M3 10L5 4H19L21 10"/>
+                    <path d="M3 10a3 3 0 0 0 6 0"/>
+                    <path d="M9 10a3 3 0 0 0 6 0"/>
+                    <path d="M15 10a3 3 0 0 0 6 0"/>
+                    <path d="M10 20V14H14V20"/>
+                </svg>
+                <span th:text="${paymentOrder.storeName}">OneShop Thủ Đức</span>
+            </div>
+        </div>
+
+        <a class="btn-header-back" th:href="@{/orders/{id}(id=${paymentOrder.orderId})}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            <span>Về chi tiết đơn</span>
+        </a>
+    </div>
+
+    <div class="order-summary-card">
+        <div class="order-summary-header">
+            <div class="order-summary-header-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="text-coral">
+                    <rect x="2" y="5" width="20" height="14" rx="2"/>
+                    <line x1="2" y1="10" x2="22" y2="10"/>
+                </svg>
+                <span>Thông tin thanh toán đơn hàng</span>
+            </div>
+        </div>
+
+        <div class="order-summary-body">
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span class="summary-label">Tổng thanh toán</span>
+                    <div id="payment-order-total" class="summary-total-val">
+                        <span th:replace="~{fragments/components :: price(${paymentOrder.totalAmount})}"></span>
+                    </div>
+                </div>
+
+                <div class="summary-item">
+                    <span class="summary-label">Phương thức</span>
+                    <div th:switch="${#strings.toUpperCase(#strings.toString(paymentOrder.paymentMethod))}">
+                        <span class="chip-badge chip-method" th:case="'ONLINE'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                            Thanh toán trực tuyến
+                        </span>
+                        <span class="chip-badge chip-method" th:case="'COD'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><circle cx="17" cy="18.5" r="2.5"/><circle cx="7" cy="18.5" r="2.5"/></svg>
+                            Thanh toán khi nhận hàng
+                        </span>
+                        <span class="chip-badge chip-method" th:case="'PAY_AT_STORE'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h18"/><path d="M5 10V20H19V10"/><path d="M3 10L5 4H19L21 10"/></svg>
+                            Thanh toán tại cửa hàng
+                        </span>
+                        <span class="chip-badge chip-method" th:case="*" th:text="${paymentOrder.paymentMethod}">Hình thức</span>
+                    </div>
+                </div>
+
+                <div class="summary-item">
+                    <span class="summary-label">Trạng thái thanh toán</span>
+                    <div id="payment-order-status" th:attr="data-status=${paymentOrder.paymentStatus}" th:switch="${#strings.toUpperCase(#strings.toString(paymentOrder.paymentStatus))}">
+                        <span class="chip-badge chip-unpaid" th:case="'UNPAID'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            Chưa thanh toán
+                        </span>
+                        <span class="chip-badge chip-paid" th:case="'PAID'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Đã thanh toán
+                        </span>
+                        <span class="chip-badge chip-failed" th:case="'FAILED'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                            Thanh toán thất bại
+                        </span>
+                        <span class="chip-badge chip-unpaid" th:case="*" th:text="${paymentOrder.paymentStatus}">Trạng thái</span>
+                    </div>
+                </div>
+
+                <div class="summary-item">
+                    <span class="summary-label">Trạng thái đơn hàng</span>
+                    <div id="payment-order-state" th:attr="data-status=${paymentOrder.orderStatus}" th:switch="${#strings.toUpperCase(#strings.toString(paymentOrder.orderStatus))}">
+                        <span class="chip-badge chip-pending" th:case="'PENDING_PAYMENT'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            Chờ thanh toán
+                        </span>
+                        <span class="chip-badge chip-confirmed" th:case="'CONFIRMED'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Đã xác nhận
+                        </span>
+                        <span class="chip-badge chip-cancelled" th:case="'CANCELLED'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            Đã hủy
+                        </span>
+                        <span class="chip-badge chip-method" th:case="*" th:text="${paymentOrder.orderStatus}">Trạng thái</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</section>
-<a class="btn btn-outline-primary" th:href="@{/checkout/{id}(id=${paymentOrder.checkoutId})}">Xem lần đặt hàng</a>
-</body></html>
+
+    <div class="simulation-banner" th:if="${#strings.toUpperCase(#strings.toString(paymentOrder.paymentMethod)) == 'ONLINE'}">
+        <svg class="simulation-banner-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <div>
+            Đây là hệ thống <strong>thanh toán trực tuyến mô phỏng</strong> (Sandbox), không trừ tiền thật. Vui lòng bấm tiến hành và chọn kết quả mô phỏng để kiểm tra toàn trình xử lý. Nếu mô phỏng thất bại, đơn hàng sẽ tự động hủy hoàn tồn.
+        </div>
+    </div>
+
+    <form th:if="${paymentOrder.payable() and !paymentOrder.hasPendingAttempt()}" method="post"
+          th:action="@{/orders/{id}/payments/attempts(id=${paymentOrder.orderId})}">
+        <button id="start-payment" class="btn-start-online-pay" type="submit">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                <line x1="2" y1="10" x2="22" y2="10"></line>
+            </svg>
+            <span>Tiến hành thanh toán online</span>
+        </button>
+    </form>
+
+    <div class="attempts-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="text-coral">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 14 14"></polyline>
+        </svg>
+        <span>Lịch sử các lần giao dịch</span>
+    </div>
+
+    <div th:if="${paymentOrder.attempts.isEmpty()}">
+        <div th:replace="~{fragments/components :: emptyState('Chưa có lần thanh toán nào.')}"></div>
+    </div>
+
+    <section class="attempt-card os-payment-attempt" th:each="attempt : ${paymentOrder.attempts}"
+             th:attr="data-payment-id=${attempt.paymentId},data-status=${attempt.status}">
+        <div class="attempt-card-top">
+            <div class="attempt-id-tag">
+                Lần thanh toán #<span th:text="${attempt.paymentId}">1</span>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <div class="attempt-amount-val">
+                    <span th:replace="~{fragments/components :: price(${attempt.amount})}"></span>
+                </div>
+
+                <div th:switch="${#strings.toUpperCase(#strings.toString(attempt.status))}">
+                    <span class="chip-badge chip-pending" th:case="'PENDING'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        Đang chờ xử lý
+                    </span>
+                    <span class="chip-badge chip-success" th:case="'SUCCESS'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Thành công
+                    </span>
+                    <span class="chip-badge chip-failed" th:case="'FAILED'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                        Thất bại
+                    </span>
+                    <span class="chip-badge chip-method" th:case="*" th:text="${attempt.status}">Trạng thái</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="attempt-info-row" th:if="${attempt.transactionCode != null}">
+            Mã giao dịch: <strong class="payment-transaction-code font-monospace" th:text="${attempt.transactionCode}">TXN-001</strong>
+        </div>
+
+        <div class="attempt-info-row" th:if="${attempt.paidAt != null}">
+            Thời gian hoàn tất: <strong class="payment-paid-at" th:text="${#temporals.format(attempt.paidAt, 'dd/MM/yyyy HH:mm:ss')}">01/01/2026 10:00:00</strong>
+        </div>
+
+        <div class="simulation-actions-box" th:if="${paymentOrder.payable() and #strings.toUpperCase(#strings.toString(attempt.status)) == 'PENDING'}">
+            <div class="simulation-actions-label">Công cụ mô phỏng kết quả thanh toán:</div>
+            <div class="d-flex flex-wrap gap-2">
+                <form method="post" class="m-0" th:action="@{/orders/{oid}/payments/{pid}/success(oid=${paymentOrder.orderId},pid=${attempt.paymentId})}">
+                    <button class="btn-simulate-success" type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>Mô phỏng thành công</span>
+                    </button>
+                </form>
+
+                <form method="post" class="m-0" th:action="@{/orders/{oid}/payments/{pid}/failure(oid=${paymentOrder.orderId},pid=${attempt.paymentId})}">
+                    <button class="btn-simulate-failure" type="submit" onclick="return confirm('Mô phỏng thất bại sẽ hủy đơn hàng này. Bạn có chắc chắn?');">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        <span>Mô phỏng thất bại và hủy đơn</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <div class="bottom-actions">
+        <a class="btn-view-checkout" th:href="@{/checkout/{id}(id=${paymentOrder.checkoutId})}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <span>Xem lần đặt hàng</span>
+        </a>
+
+        <a class="btn-view-checkout" th:href="@{/orders/{id}(id=${paymentOrder.orderId})}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            </svg>
+            <span>Chi tiết đơn hàng</span>
+        </a>
+    </div>
+</div>
+</body>
+</html>

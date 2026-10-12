@@ -1,126 +1,817 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${editId == null} ? 'Thêm sản phẩm' : 'Sửa sản phẩm'">Sản phẩm</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${editId == null} ? 'Thêm sản phẩm mới - OneShop Admin' : 'Cập nhật sản phẩm - OneShop Admin'">Sản phẩm - OneShop Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-coral.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .admin-form-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.25rem 8rem;
+        }
+
+        .breadcrumb-clean {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            display: inline-flex;
+            margin-bottom: 1.5rem;
+        }
+
+        .breadcrumb-clean .breadcrumb-item a {
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .breadcrumb-clean .breadcrumb-item a:hover {
+            color: var(--bs-primary, #ff7f50);
+        }
+
+        .breadcrumb-clean .breadcrumb-item.active {
+            color: var(--bs-primary, #ff7f50);
+            font-weight: 700;
+        }
+
+        .admin-header-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .admin-title-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .admin-page-title {
+            font-size: 1.5rem;
+            font-weight: 850;
+            color: #0f172a;
+            letter-spacing: -0.025em;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-page-desc {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin: 0;
+            max-width: 680px;
+            line-height: 1.5;
+        }
+
+        .btn-header-back {
+            height: 38px;
+            padding: 0 1.1rem;
+            border-radius: 9px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #475569;
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-header-back:hover {
+            color: var(--bs-primary, #ff7f50);
+            border-color: var(--bs-primary, #ff7f50);
+            background-color: #fffaf8;
+        }
+
+        .alert-custom {
+            border-radius: 12px;
+            padding: 0.95rem 1.25rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            border: 1px solid transparent;
+        }
+
+        .alert-custom-success {
+            background-color: #f0fdf4;
+            color: #15803d;
+            border-color: #bbf7d0;
+        }
+
+        .alert-custom-danger {
+            background-color: #fef2f2;
+            color: #b91c1c;
+            border-color: #fecaca;
+        }
+
+        .form-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-card-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 1.15rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .form-card-body {
+            padding: 1.5rem;
+        }
+
+        .form-label-custom {
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 0.4rem;
+            display: block;
+        }
+
+        .form-control-custom,
+        .form-select-custom {
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 0.885rem;
+            padding: 0.6rem 0.85rem;
+            background-color: #ffffff;
+            transition: all 0.15s ease;
+        }
+
+        .form-control-custom:focus,
+        .form-select-custom:focus {
+            border-color: var(--bs-primary, #ff7f50);
+            box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.18);
+            outline: none;
+        }
+
+        .btn-submit-main {
+            height: 42px;
+            padding: 0 1.5rem;
+            border-radius: 10px;
+            font-size: 0.885rem;
+            font-weight: 700;
+            color: #ffffff;
+            background: linear-gradient(135deg, #ff7f50, #f06437);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.22);
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit-main:hover {
+            color: #ffffff;
+            background: linear-gradient(135deg, #f06437, #df5124);
+            box-shadow: 0 6px 16px rgba(255, 127, 80, 0.32);
+            transform: translateY(-1px);
+        }
+
+        .btn-action-branch {
+            height: 42px;
+            padding: 0 1.25rem;
+            border-radius: 10px;
+            font-size: 0.885rem;
+            font-weight: 650;
+            color: #0f172a;
+            background: linear-gradient(135deg, #FFF5F0, #FFE5DA);
+            border: 1px solid rgba(255, 127, 80, 0.28);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-action-branch:hover {
+            color: #f06437;
+            border-color: #f06437;
+            box-shadow: 0 2px 8px rgba(255, 127, 80, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .btn-action-cancel {
+            height: 42px;
+            padding: 0 1.25rem;
+            border-radius: 10px;
+            font-size: 0.885rem;
+            font-weight: 600;
+            color: #64748b;
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-action-cancel:hover {
+            color: #334155;
+            background-color: #f1f5f9;
+        }
+
+        .upload-dropzone {
+            position: relative;
+            background-color: #fffaf8;
+            border: 2px dashed rgba(255, 127, 80, 0.38);
+            border-radius: 14px;
+            padding: 1.5rem 1.25rem;
+            text-align: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            margin-bottom: 0.85rem;
+        }
+
+        .upload-dropzone:hover {
+            border-color: var(--bs-primary, #ff7f50);
+            background-color: #fff5f0;
+            transform: translateY(-1px);
+        }
+
+        .upload-dropzone.has-file {
+            background-color: #f0fdf4;
+            border-color: #86efac;
+        }
+
+        .dropzone-icon-box {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            background-color: #ffffff;
+            color: var(--bs-primary, #ff7f50);
+            box-shadow: 0 2px 6px rgba(255, 127, 80, 0.12);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.65rem;
+            transition: transform 0.2s ease;
+        }
+
+        .upload-dropzone:hover .dropzone-icon-box {
+            transform: scale(1.08);
+        }
+
+        .dropzone-title {
+            font-size: 0.9rem;
+            font-weight: 750;
+            color: #0f172a;
+            margin-bottom: 0.2rem;
+        }
+
+        .dropzone-subtitle {
+            font-size: 0.775rem;
+            color: #64748b;
+        }
+
+        .file-chosen-name {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 650;
+            color: #1e293b;
+            margin-top: 0.5rem;
+        }
+
+        .btn-start-upload {
+            height: 40px;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff7f50, #f06437);
+            border: none;
+            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(255, 127, 80, 0.18);
+        }
+
+        .btn-start-upload:hover {
+            background: linear-gradient(135deg, #f06437, #df5124);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.28);
+        }
+
+        .step-guide-card {
+            background: linear-gradient(135deg, #ffffff 0%, #fffaf8 100%);
+            border: 1px dashed rgba(255, 127, 80, 0.35);
+            border-radius: 14px;
+            padding: 1.75rem 1.25rem;
+            text-align: center;
+        }
+
+        .step-icon-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #FFF5F0, #FFE5DA);
+            color: #F06437;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.85rem;
+            box-shadow: 0 2px 8px rgba(255, 127, 80, 0.12);
+        }
+
+        .step-guide-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 0.35rem;
+        }
+
+        .step-guide-desc {
+            font-size: 0.825rem;
+            color: #64748b;
+            line-height: 1.5;
+            margin-bottom: 1.25rem;
+        }
+
+        .step-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            text-align: left;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 0.85rem 1rem;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.825rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .step-number {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--bs-primary, #ff7f50);
+            color: #ffffff;
+            font-size: 0.7rem;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .step-number.inactive {
+            background-color: #cbd5e1;
+            color: #475569;
+        }
+
+        .img-grid-item {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.15s ease;
+        }
+
+        .img-grid-item:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .img-preview-box {
+            position: relative;
+            width: 100%;
+            padding-top: 100%;
+            background-color: #f8fafc;
+            overflow: hidden;
+        }
+
+        .img-preview-box img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .badge-primary-image {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: linear-gradient(135deg, #ff7f50, #f06437);
+            color: #ffffff;
+            font-size: 0.725rem;
+            font-weight: 750;
+            padding: 3px 8px;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .img-actions-footer {
+            padding: 0.65rem;
+            display: flex;
+            gap: 6px;
+            background-color: #ffffff;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .btn-img-set-primary {
+            height: 30px;
+            padding: 0 0.55rem;
+            border-radius: 7px;
+            font-size: 0.75rem;
+            font-weight: 650;
+            color: #475569;
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            transition: all 0.15s ease;
+        }
+
+        .btn-img-set-primary:hover {
+            color: var(--bs-primary, #ff7f50);
+            border-color: var(--bs-primary, #ff7f50);
+            background-color: #fffaf8;
+        }
+
+        .btn-img-delete {
+            height: 30px;
+            padding: 0 0.55rem;
+            border-radius: 7px;
+            font-size: 0.75rem;
+            font-weight: 650;
+            color: #dc2626;
+            background-color: #ffffff;
+            border: 1px solid #fca5a5;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .btn-img-delete:hover {
+            color: #ffffff;
+            background-color: #dc2626;
+            border-color: #dc2626;
+        }
+    </style>
 </head>
 <body>
-<div th:replace="~{fragments/components :: pageHeader(${editId == null} ? 'Thêm sản phẩm' : 'Sửa sản phẩm', 'Một sản phẩm là một SKU cụ thể (ví dụ từng màu son). Giá và tồn kho đặt ở mục Sản phẩm theo chi nhánh.')}"></div>
+<div class="admin-form-container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb breadcrumb-clean small">
+            <li class="breadcrumb-item"><a th:href="@{/admin/products}">Sản phẩm</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${editId == null} ? 'Thêm mới' : 'Chỉnh sửa #' + ${editId}">Thêm mới</li>
+        </ol>
+    </nav>
 
-<div class="alert alert-success" th:if="${param.success}" th:switch="${param.success[0]}">
-    <span th:case="'created'">Đã thêm sản phẩm. Bạn có thể tải ảnh lên ngay bên dưới.</span>
-    <span th:case="'image-uploaded'">Đã tải ảnh lên.</span>
-    <span th:case="'image-deleted'">Đã xóa ảnh.</span>
-    <span th:case="'image-primary'">Đã đổi ảnh đại diện.</span>
-    <span th:case="*">Đã lưu.</span>
-</div>
-<div class="alert alert-danger" th:if="${param.error != null or error != null}" th:switch="${param.error != null ? param.error[0] : error}">
-    <span th:case="'image-size'" th:text="${errorMessage != null ? errorMessage : 'Ảnh vượt quá ' + (maxFileSize != null ? maxFileSize : '5MB') + '. Vui lòng chọn tệp nhỏ hơn.'}">Ảnh vượt quá dung lượng cho phép.</span>
-    <span th:case="'image-invalid'">Tệp không hợp lệ. Vui lòng chọn một tệp hình ảnh.</span>
-    <span th:case="*">Không thể làm việc với Cloudinary. Kiểm tra cấu hình CLOUDINARY_* rồi thử lại.</span>
-</div>
+    <div class="admin-header-card">
+        <div class="admin-title-group">
+            <h1 class="admin-page-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-coral">
+                    <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                    <path d="m3.3 7 8.7 5 8.7-5"/>
+                    <path d="M12 22V12"/>
+                </svg>
+                <span th:text="${editId == null} ? 'Thêm sản phẩm mới' : 'Chỉnh sửa sản phẩm'">Thêm sản phẩm</span>
+            </h1>
+            <p class="admin-page-desc">Mỗi sản phẩm là một SKU lưu hành toàn hệ thống. Giá bán và số lượng tồn kho được quản lý riêng theo từng chi nhánh.</p>
+        </div>
 
-<div class="row g-4">
-    <div class="col-12" th:classappend="${editId != null} ? 'col-xl-7'">
-        <section class="card shadow-sm">
-            <div class="card-header bg-white fw-semibold">Thông tin sản phẩm</div>
-            <div class="card-body">
-                <form method="post" th:object="${form}" id="product-form" novalidate
-                      th:action="${editId == null} ? @{/admin/products} : @{/admin/products/{id}(id=${editId})}">
-                    <div class="alert alert-danger" th:each="message : ${#fields.globalErrors()}" th:text="${message}">Lỗi</div>
-                    <div class="row g-3">
-                        <div class="col-12 col-md-4">
-                            <label class="form-label" for="sku">Mã SKU <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" th:field="*{sku}" th:errorclass="is-invalid" maxlength="50">
-                            <div class="invalid-feedback" th:errors="*{sku}">Lỗi</div>
-                        </div>
-                        <div class="col-12 col-md-8">
-                            <label class="form-label" for="name">Tên sản phẩm <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" th:field="*{name}" th:errorclass="is-invalid" maxlength="255">
-                            <div class="invalid-feedback" th:errors="*{name}">Lỗi</div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="categoryId">Danh mục <span class="text-danger">*</span></label>
-                            <select class="form-select" th:field="*{categoryId}" th:errorclass="is-invalid">
-                                <option value="">-- Chọn danh mục --</option>
-                                <option th:each="category : ${categories}" th:value="${category.id}"
-                                        th:text="${category.name} + (${category.status.name() == 'HIDDEN'} ? ' (đang ẩn)' : '')">Chăm sóc da</option>
-                            </select>
-                            <div class="invalid-feedback" th:errors="*{categoryId}">Lỗi</div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="brandId">Thương hiệu <span class="text-danger">*</span></label>
-                            <select class="form-select" th:field="*{brandId}" th:errorclass="is-invalid">
-                                <option value="">-- Chọn thương hiệu --</option>
-                                <option th:each="brand : ${brands}" th:value="${brand.id}"
-                                        th:text="${brand.name} + (${brand.status.name() == 'HIDDEN'} ? ' (đang ẩn)' : '')">Cocoon</option>
-                            </select>
-                            <div class="invalid-feedback" th:errors="*{brandId}">Lỗi</div>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label" for="description">Mô tả</label>
-                            <textarea class="form-control" rows="5" th:field="*{description}"></textarea>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="status">Trạng thái</label>
-                            <select class="form-select" th:field="*{status}">
-                                <option value="ACTIVE">Đang hoạt động</option>
-                                <option value="HIDDEN">Đang ẩn (tạm không hiển thị cho khách)</option>
-                                <option value="INACTIVE">Ngừng kinh doanh</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <button type="submit" class="btn btn-primary" th:text="${editId == null} ? 'Thêm sản phẩm' : 'Lưu thay đổi'">Lưu</button>
-                        <a class="btn btn-outline-secondary" th:href="@{/admin/products}">Quay lại danh sách</a>
-                        <a class="btn btn-outline-secondary" th:if="${editId != null}"
-                           th:href="@{/admin/store-products(productId=${editId})}">Chi nhánh đang bán</a>
-                    </div>
-                </form>
-            </div>
-        </section>
+        <a class="btn-header-back" th:href="@{/admin/products}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            <span>Quay lại danh sách</span>
+        </a>
     </div>
 
-    <!--/* Images exist only for a saved product: the file goes to Cloudinary, the database keeps URL + public id. */-->
-    <div class="col-12 col-xl-5" th:if="${editId != null}">
-        <section class="card shadow-sm" id="product-images">
-            <div class="card-header bg-white fw-semibold">Ảnh sản phẩm</div>
-            <div class="card-body">
-                <form method="post" enctype="multipart/form-data" class="mb-3"
-                      th:action="@{/admin/products/{id}/images(id=${editId})}">
-                    <div class="input-group">
-                        <input type="file" class="form-control" name="file" accept="image/*" required aria-label="Tệp ảnh"
-                               th:attr="data-max-bytes=5242880,data-max-size=${maxFileSize != null ? maxFileSize : '5MB'}">
-                        <button type="submit" class="btn btn-outline-primary">Tải lên</button>
-                    </div>
-                    <div class="upload-file-error text-danger small mt-1" style="display:none;"></div>
-                    <div class="form-text">Ảnh được lưu trên Cloudinary. Ảnh đầu tiên sẽ là ảnh đại diện.</div>
-                </form>
+    <div class="alert-custom alert-custom-success" th:if="${param.success}" th:switch="${param.success[0]}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span th:case="'created'">Đã tạo sản phẩm thành công. Bạn có thể chọn và tải ảnh đại diện lên ngay bên cạnh.</span>
+        <span th:case="'image-uploaded'">Đã tải ảnh lên Cloudinary thành công.</span>
+        <span th:case="'image-deleted'">Đã xóa ảnh thành công.</span>
+        <span th:case="'image-primary'">Đã cập nhật ảnh đại diện cho sản phẩm.</span>
+        <span th:case="*">Đã lưu thông tin sản phẩm thành công.</span>
+    </div>
 
-                <p class="text-secondary mb-0" th:if="${images.isEmpty()}">Sản phẩm chưa có ảnh.</p>
-                <div class="row g-2" th:unless="${images.isEmpty()}">
-                    <div class="col-6" th:each="image : ${images}">
-                        <div class="card h-100">
-                            <img th:src="${image.imageUrl}" alt="Ảnh sản phẩm" class="card-img-top os-product-img" loading="lazy">
-                            <div class="card-body p-2">
-                                <span class="badge text-bg-primary mb-2" th:if="${image.primary}">Ảnh đại diện</span>
-                                <div class="d-flex flex-wrap gap-1">
-                                    <form method="post" th:unless="${image.primary}"
-                                          th:action="@{/admin/products/{id}/images/{imageId}/primary(id=${editId}, imageId=${image.id})}">
-                                        <button type="submit" class="btn btn-outline-secondary btn-sm">Đặt làm đại diện</button>
-                                    </form>
-                                    <form method="post"
-                                          th:action="@{/admin/products/{id}/images/{imageId}/delete(id=${editId}, imageId=${image.id})}">
-                                        <button type="submit" class="btn btn-outline-danger btn-sm">Xóa</button>
-                                    </form>
+    <div class="alert-custom alert-custom-danger" th:if="${param.error != null or error != null}" th:switch="${param.error != null ? param.error[0] : error}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span th:case="'image-size'" th:text="${errorMessage != null ? errorMessage : 'Ảnh vượt quá ' + (maxFileSize != null ? maxFileSize : '5MB') + '. Vui lòng chọn tệp nhỏ hơn.'}">Ảnh vượt quá dung lượng cho phép.</span>
+        <span th:case="'image-invalid'">Tệp không hợp lệ. Vui lòng chọn một tệp hình ảnh.</span>
+        <span th:case="*">Không thể làm việc với Cloudinary. Kiểm tra cấu hình hệ thống rồi thử lại.</span>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12 col-xl-7">
+            <section class="form-card">
+                <div class="form-card-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="text-coral">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    <span>Thông tin chi tiết SKU</span>
+                </div>
+
+                <div class="form-card-body">
+                    <form method="post" th:object="${form}" id="product-form" novalidate
+                          th:action="${editId == null} ? @{/admin/products} : @{/admin/products/{id}(id=${editId})}">
+                        <div class="alert-custom alert-custom-danger mb-3" th:each="message : ${#fields.globalErrors()}" th:text="${message}">Lỗi</div>
+
+                        <div class="row g-3">
+                            <div class="col-12 col-md-4">
+                                <label class="form-label-custom" for="sku">Mã SKU <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control-custom font-monospace" th:field="*{sku}"
+                                       th:errorclass="is-invalid" maxlength="50" placeholder="VD: SKU-LIP-01">
+                                <div class="invalid-feedback small" th:errors="*{sku}">Lỗi SKU</div>
+                            </div>
+
+                            <div class="col-12 col-md-8">
+                                <label class="form-label-custom" for="name">Tên sản phẩm <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control-custom" th:field="*{name}"
+                                       th:errorclass="is-invalid" maxlength="255" placeholder="Nhập tên sản phẩm...">
+                                <div class="invalid-feedback small" th:errors="*{name}">Lỗi tên sản phẩm</div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="form-label-custom" for="categoryId">Danh mục hàng hóa <span class="text-danger">*</span></label>
+                                <select class="form-select form-select-custom" th:field="*{categoryId}" th:errorclass="is-invalid">
+                                    <option value="">-- Chọn danh mục --</option>
+                                    <option th:each="category : ${categories}" th:value="${category.id}"
+                                            th:text="${category.name} + (${category.status.name() == 'HIDDEN'} ? ' (đang ẩn)' : '')">Chăm sóc da</option>
+                                </select>
+                                <div class="invalid-feedback small" th:errors="*{categoryId}">Vui lòng chọn danh mục</div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="form-label-custom" for="brandId">Thương hiệu <span class="text-danger">*</span></label>
+                                <select class="form-select form-select-custom" th:field="*{brandId}" th:errorclass="is-invalid">
+                                    <option value="">-- Chọn thương hiệu --</option>
+                                    <option th:each="brand : ${brands}" th:value="${brand.id}"
+                                            th:text="${brand.name} + (${brand.status.name() == 'HIDDEN'} ? ' (đang ẩn)' : '')">Cocoon</option>
+                                </select>
+                                <div class="invalid-feedback small" th:errors="*{brandId}">Vui lòng chọn thương hiệu</div>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label-custom" for="description">Mô tả sản phẩm</label>
+                                <textarea class="form-control form-control-custom" rows="5" th:field="*{description}"
+                                          placeholder="Nhập mô tả sản phẩm, hướng dẫn sử dụng..."></textarea>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="form-label-custom" for="status">Trạng thái phát hành</label>
+                                <select class="form-select form-select-custom" th:field="*{status}">
+                                    <option value="ACTIVE">Đang hoạt động</option>
+                                    <option value="HIDDEN">Đang ẩn (tạm ẩn với khách hàng)</option>
+                                    <option value="INACTIVE">Ngừng kinh doanh</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap align-items-center gap-2 mt-4 pt-3 border-top">
+                            <button type="submit" class="btn-submit-main">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                    <polyline points="7 3 7 8 15 8"></polyline>
+                                </svg>
+                                <span th:text="${editId == null} ? 'Tạo sản phẩm' : 'Lưu thay đổi'">Lưu</span>
+                            </button>
+
+                            <a class="btn-action-branch" th:if="${editId != null}"
+                               th:href="@{/admin/store-products(productId=${editId})}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M3 10h18"/>
+                                    <path d="M5 10V20H19V10"/>
+                                    <path d="M3 10L5 4H19L21 10"/>
+                                    <path d="M3 10a3 3 0 0 0 6 0"/>
+                                    <path d="M9 10a3 3 0 0 0 6 0"/>
+                                    <path d="M15 10a3 3 0 0 0 6 0"/>
+                                    <path d="M10 20V14H14V20"/>
+                                </svg>
+                                <span>Chi nhánh đang bán</span>
+                            </a>
+
+                            <a class="btn-action-cancel" th:href="@{/admin/products}">Hủy bỏ</a>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-12 col-xl-5">
+            <section class="form-card h-100" id="product-images">
+                <div class="form-card-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="text-coral">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                    </svg>
+                    <span>Hình ảnh sản phẩm</span>
+                </div>
+
+                <div class="form-card-body">
+                    <div th:if="${editId == null}" class="step-guide-card">
+                        <div class="step-icon-circle">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
+                            </svg>
+                        </div>
+                        <div class="step-guide-title">Quy trình tải ảnh lên thư viện</div>
+                        <p class="step-guide-desc">
+                            Hệ thống yêu cầu khởi tạo mã SKU và thông tin sản phẩm trước để cấp mã định danh lưu trữ trên Cloudinary.
+                        </p>
+                        <div class="step-list">
+                            <div class="step-item">
+                                <span class="step-number">1</span>
+                                <span>Điền thông tin và bấm <strong>Tạo sản phẩm</strong></span>
+                            </div>
+                            <div class="step-item text-secondary">
+                                <span class="step-number inactive">2</span>
+                                <span>Khung tải ảnh Cloudinary sẽ tự động kích hoạt</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div th:if="${editId != null}">
+                        <form method="post" enctype="multipart/form-data" class="mb-3"
+                              th:action="@{/admin/products/{id}/images(id=${editId})}">
+                            <label class="upload-dropzone d-block" for="image-upload-input" id="dropzone-box">
+                                <input type="file" id="image-upload-input" class="d-none" name="file" accept="image/*" required
+                                       th:attr="data-max-bytes=5242880,data-max-size=${maxFileSize != null ? maxFileSize : '5MB'}">
+                                <div class="dropzone-icon-box">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="17 8 12 3 7 8"></polyline>
+                                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                                    </svg>
+                                </div>
+                                <div class="dropzone-title" id="dropzone-main-text">Nhấp để chọn ảnh hoặc kéo thả vào đây</div>
+                                <div class="dropzone-subtitle" id="dropzone-sub-text">Định dạng JPG, PNG, WEBP (Tối đa 5MB)</div>
+                                <div id="file-name-preview" class="file-chosen-name d-none"></div>
+                            </label>
+
+                            <div class="upload-file-error text-danger small mt-1 mb-2" style="display:none;"></div>
+
+                            <button type="submit" class="btn-start-upload w-100" id="btn-upload-file">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                <span>Tải ảnh lên Cloudinary</span>
+                            </button>
+                        </form>
+
+                        <div class="text-center py-4 text-muted small" th:if="${images.isEmpty()}">
+                            Sản phẩm này chưa có hình ảnh nào.
+                        </div>
+
+                        <div class="row g-2" th:unless="${images.isEmpty()}">
+                            <div class="col-6" th:each="image : ${images}">
+                                <div class="img-grid-item">
+                                    <div class="img-preview-box">
+                                        <img th:src="${image.imageUrl}" alt="Ảnh sản phẩm" class="os-product-img" loading="lazy">
+                                        <span class="badge-primary-image" th:if="${image.primary}">Ảnh chính</span>
+                                    </div>
+                                    <div class="img-actions-footer">
+                                        <form method="post" class="flex-grow-1 m-0" th:unless="${image.primary}"
+                                              th:action="@{/admin/products/{id}/images/{imageId}/primary(id=${editId}, imageId=${image.id})}">
+                                            <button type="submit" class="btn-img-set-primary" title="Đặt làm ảnh đại diện">
+                                                <span>Làm ảnh chính</span>
+                                            </button>
+                                        </form>
+                                        <form method="post" class="m-0"
+                                              th:action="@{/admin/products/{id}/images/{imageId}/delete(id=${editId}, imageId=${image.id})}">
+                                            <button type="submit" class="btn-img-delete" title="Xóa hình ảnh này" onclick="return confirm('Bạn có chắc muốn xóa ảnh này?');">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
     </div>
 </div>
+
+<script>
+    const fileInput = document.getElementById('image-upload-input');
+    const dropzoneBox = document.getElementById('dropzone-box');
+    const mainText = document.getElementById('dropzone-main-text');
+    const subText = document.getElementById('dropzone-sub-text');
+    const previewBadge = document.getElementById('file-name-preview');
+
+    if (fileInput && dropzoneBox) {
+        fileInput.addEventListener('change', function () {
+            if (this.files && this.files.length > 0) {
+                const fileName = this.files[0].name;
+                const fileSize = (this.files[0].size / 1024 / 1024).toFixed(2);
+                dropzoneBox.classList.add('has-file');
+                mainText.textContent = 'Đã chọn tệp:';
+                subText.classList.add('d-none');
+                previewBadge.classList.remove('d-none');
+                previewBadge.textContent = fileName + ' (' + fileSize + ' MB)';
+            } else {
+                dropzoneBox.classList.remove('has-file');
+                mainText.textContent = 'Nhấp để chọn ảnh hoặc kéo thả vào đây';
+                subText.classList.remove('d-none');
+                previewBadge.classList.add('d-none');
+            }
+        });
+
+        ['dragover', 'dragenter'].forEach(eventName => {
+            dropzoneBox.addEventListener(eventName, e => {
+                e.preventDefault();
+                dropzoneBox.style.borderColor = '#ff7f50';
+                dropzoneBox.style.backgroundColor = '#fff5f0';
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzoneBox.addEventListener(eventName, e => {
+                e.preventDefault();
+                dropzoneBox.style.borderColor = '';
+                dropzoneBox.style.backgroundColor = '';
+            });
+        });
+
+        dropzoneBox.addEventListener('drop', e => {
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                const event = new Event('change');
+                fileInput.dispatchEvent(event);
+            }
+        });
+    }
+</script>
 <script th:src="@{/js/upload-validator.js}"></script>
 </body>
 </html>
