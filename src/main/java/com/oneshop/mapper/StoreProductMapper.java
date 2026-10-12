@@ -10,8 +10,14 @@ import org.springframework.stereotype.Component;
 public class StoreProductMapper {
 
     public StoreAvailabilityResponse toAvailability(StoreProduct storeProduct) {
+        java.math.BigDecimal price = (storeProduct.getProduct() != null && storeProduct.getProduct().getPrice() != null)
+                ? storeProduct.getProduct().getPrice()
+                : storeProduct.getPrice();
+        boolean inStock = (storeProduct.getStatus() == com.oneshop.entity.ActiveStatus.ACTIVE)
+                && (storeProduct.getStore() == null || storeProduct.getStore().getStatus() == com.oneshop.entity.ActiveStatus.ACTIVE)
+                && ((storeProduct.getQuantity() - storeProduct.getReservedQuantity()) > 0);
         return new StoreAvailabilityResponse(storeProduct.getId(), storeProduct.getStore().getId(),
-                storeProduct.getStore().getName(), storeProduct.getPrice(), storeProduct.getQuantity() > 0);
+                storeProduct.getStore().getName(), price, inStock);
     }
 
     public StoreProductStockResponse toStockView(StoreProduct storeProduct) {

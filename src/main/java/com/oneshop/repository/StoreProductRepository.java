@@ -42,8 +42,8 @@ public interface StoreProductRepository extends JpaRepository<StoreProduct, Long
      * is decided by the product query that produced the ids.
      */
     @Query("""
-            select sp from StoreProduct sp join fetch sp.store s
-            where sp.product.id in :productIds
+            select sp from StoreProduct sp join fetch sp.store s join fetch sp.product p
+            where p.id in :productIds
               and sp.status = com.oneshop.entity.ActiveStatus.ACTIVE
               and s.status = com.oneshop.entity.ActiveStatus.ACTIVE
             order by s.name, s.id""")
@@ -92,7 +92,7 @@ public interface StoreProductRepository extends JpaRepository<StoreProduct, Long
             where s.id = :storeId
               and s.status = com.oneshop.entity.ActiveStatus.ACTIVE
               and sp.status = com.oneshop.entity.ActiveStatus.ACTIVE
-              and sp.quantity > 0
+              and (sp.quantity - sp.reservedQuantity) > 0
               and p.status = com.oneshop.entity.ProductStatus.ACTIVE
               and c.status = com.oneshop.entity.VisibilityStatus.ACTIVE
               and b.status = com.oneshop.entity.VisibilityStatus.ACTIVE

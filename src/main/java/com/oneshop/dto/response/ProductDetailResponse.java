@@ -12,4 +12,23 @@ import java.util.List;
 public record ProductDetailResponse(ProductResponse product, List<ProductImageResponse> images,
                                     StoreAvailabilityResponse atSelectedStore,
                                     List<StoreAvailabilityResponse> otherStores) {
+
+    /** Returns true if in stock at the selected store or at any store across the chain. */
+    public boolean inStock() {
+        if (atSelectedStore != null && atSelectedStore.inStock()) {
+            return true;
+        }
+        return otherStores != null && otherStores.stream().anyMatch(StoreAvailabilityResponse::inStock);
+    }
+
+    public int inStockStoreCount() {
+        int count = 0;
+        if (atSelectedStore != null && atSelectedStore.inStock()) {
+            count++;
+        }
+        if (otherStores != null) {
+            count += (int) otherStores.stream().filter(StoreAvailabilityResponse::inStock).count();
+        }
+        return count;
+    }
 }

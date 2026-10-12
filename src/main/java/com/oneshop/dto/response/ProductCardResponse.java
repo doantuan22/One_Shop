@@ -19,13 +19,13 @@ public record ProductCardResponse(Long productId, Long storeProductId, String na
     public static ProductCardResponse from(CatalogItemResponse item) {
         ProductResponse product = item.product();
         StoreAvailabilityResponse atStore = item.atSelectedStore();
-        if (atStore != null) {
-            return new ProductCardResponse(product.id(), atStore.storeProductId(), product.name(), product.brandName(),
-                    product.categoryName(), product.imageUrl(), atStore.price(), false, atStore.inStock(), 0);
-        }
+        BigDecimal price = product.price() != null ? product.price() : (atStore != null ? atStore.price() : item.lowestPrice());
         int inStockStores = (int) item.stores().stream().filter(StoreAvailabilityResponse::inStock).count();
-        return new ProductCardResponse(product.id(), null, product.name(), product.brandName(),
-                product.categoryName(), product.imageUrl(), item.lowestPrice(), !item.samePriceEverywhere(),
-                inStockStores > 0, inStockStores);
+        boolean inStock = atStore != null ? atStore.inStock() : (inStockStores > 0);
+        Long storeProductId = atStore != null ? atStore.storeProductId() : null;
+        int storeCount = atStore != null ? 0 : inStockStores;
+
+        return new ProductCardResponse(product.id(), storeProductId, product.name(), product.brandName(),
+                product.categoryName(), product.imageUrl(), price, false, inStock, storeCount);
     }
 }

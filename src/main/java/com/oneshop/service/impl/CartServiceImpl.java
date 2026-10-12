@@ -14,8 +14,11 @@ import com.oneshop.entity.StoreProduct;
 import com.oneshop.entity.User;
 import com.oneshop.exception.BadRequestException;
 import com.oneshop.exception.ResourceNotFoundException;
+import com.oneshop.entity.ProductStatus;
+import com.oneshop.entity.VisibilityStatus;
 import com.oneshop.repository.CartItemRepository;
 import com.oneshop.repository.CartRepository;
+import com.oneshop.repository.ProductRepository;
 import com.oneshop.repository.StoreProductRepository;
 import com.oneshop.repository.UserRepository;
 import com.oneshop.service.CartService;
@@ -36,6 +39,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -49,19 +53,29 @@ public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final StoreProductRepository storeProductRepository;
+    private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final ProductService productService;
     private final TransactionTemplate transaction;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public CartServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository,
-                           StoreProductRepository storeProductRepository, UserRepository userRepository,
-                           ProductService productService, PlatformTransactionManager transactionManager) {
+                           StoreProductRepository storeProductRepository, ProductRepository productRepository,
+                           UserRepository userRepository, ProductService productService,
+                           PlatformTransactionManager transactionManager) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.storeProductRepository = storeProductRepository;
+        this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.productService = productService;
         this.transaction = new TransactionTemplate(transactionManager);
+    }
+
+    public CartServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository,
+                           StoreProductRepository storeProductRepository, UserRepository userRepository,
+                           ProductService productService, PlatformTransactionManager transactionManager) {
+        this(cartRepository, cartItemRepository, storeProductRepository, null, userRepository, productService, transactionManager);
     }
 
     // ------------------------------------------------------------------ read
@@ -91,7 +105,7 @@ public class CartServiceImpl implements CartService {
             throw new BadRequestException("Có sản phẩm đã chọn không còn trong giỏ hàng của bạn. Vui lòng chọn lại.");
         }
         CartResponse selection = toResponse(chosen);
-        if (selection.groups().stream().flatMap(group -> group.items().stream()).anyMatch(item -> !item.selectable())) {
+        if (selection.items().stream().anyMatch(item -> !item.selectable())) {
             throw new BadRequestException(
                     "Có sản phẩm đã chọn hiện không thể mua (hết hàng, không đủ hàng hoặc ngừng bán). Vui lòng kiểm tra lại giỏ hàng.");
         }
@@ -105,7 +119,7 @@ public class CartServiceImpl implements CartService {
         try {
             transaction.executeWithoutResult(status -> doAddItem(customerEmail, request));
         } catch (DataIntegrityViolationException ex) {
-            // UQ_carts_user or UQ_cart_items_cart_store_product: a parallel request of the same customer created the
+            // UQ_carts_user or UQ_cart_items_cart_product: a parallel request of the same customer created the
             // cart or the line first. It is committed now, so this second attempt finds it and adds to it.
             transaction.executeWithoutResult(status -> doAddItem(customerEmail, request));
         }
@@ -113,34 +127,90 @@ public class CartServiceImpl implements CartService {
 
     private void doAddItem(String customerEmail, AddCartItemRequest request) {
         int quantity = requirePositive(request.quantity());
-        StoreProduct storeProduct = request.storeProductId() == null
-                ? null
-                : storeProductRepository.findSellableById(request.storeProductId()).orElse(null);
-        if (storeProduct == null) {
-            throw new BadRequestException("storeProductId", NOT_ON_SALE);
+        Product product = null;
+        StoreProduct storeProduct = null;
+
+        if (request.productId() != null) {
+            product = productRepository.findVisibleById(request.productId()).orElse(null);
+            if (product == null) {
+                throw new BadRequestException("productId", NOT_ON_SALE);
+            }
+            if (request.storeProductId() != null) {
+                storeProduct = storeProductRepository.findSellableById(request.storeProductId()).orElse(null);
+                if (storeProduct == null) {
+                    throw new BadRequestException("storeProductId", NOT_ON_SALE);
+                }
+            }
+        } else if (request.storeProductId() != null) {
+            storeProduct = storeProductRepository.findSellableById(request.storeProductId()).orElse(null);
+            if (storeProduct == null) {
+                throw new BadRequestException("storeProductId", NOT_ON_SALE);
+            }
+            product = storeProduct.getProduct();
+        } else {
+            throw new BadRequestException("Thiếu thông tin sản phẩm.");
+        }
+
+        if (product == null && storeProduct != null) {
+            product = storeProduct.getProduct();
+        }
+        if (product == null) {
+            throw new BadRequestException("Sản phẩm không hợp lệ hoặc đã ngừng bán.");
         }
 
         User user = userRepository.findByEmail(customerEmail)
                 .orElseThrow(() -> new IllegalStateException("Authenticated user not found: " + customerEmail));
         Cart cart = cartRepository.findByUserIdForUpdate(user.getId()).orElseGet(() -> createCart(user));
-        CartItem item = cartItemRepository.findByCartIdAndStoreProductId(cart.getId(), storeProduct.getId()).orElse(null);
+        CartItem item = cartItemRepository.findByCartIdAndProductId(cart.getId(), product.getId()).orElse(null);
+        if (item == null && storeProduct != null) {
+            item = cartItemRepository.findByCartIdAndStoreProductId(cart.getId(), storeProduct.getId()).orElse(null);
+        }
         long resulting = (item == null ? 0L : item.getQuantity()) + quantity;
 
-        // a check against the stock of this moment, not a reservation: checkout checks again under a lock
-        if (storeProduct.getQuantity() <= 0) {
-            throw new BadRequestException("quantity", OUT_OF_STOCK);
-        }
-        if (resulting > storeProduct.getQuantity()) {
-            throw new BadRequestException("quantity", item == null ? NOT_ENOUGH : NOT_ENOUGH_WITH_CART);
+        int availableStock;
+        if (storeProduct != null) {
+            availableStock = storeProduct.getQuantity() - storeProduct.getReservedQuantity();
+            if (availableStock <= 0) {
+                throw new BadRequestException("quantity", OUT_OF_STOCK);
+            }
+            if (resulting > availableStock) {
+                throw new BadRequestException("quantity", item == null ? NOT_ENOUGH : NOT_ENOUGH_WITH_CART);
+            }
+        } else {
+            availableStock = getChainAvailableStock(product.getId());
+            if (availableStock <= 0) {
+                throw new BadRequestException("quantity", OUT_OF_STOCK);
+            }
+            if (resulting > availableStock) {
+                throw new BadRequestException("quantity", item == null ? NOT_ENOUGH : NOT_ENOUGH_WITH_CART);
+            }
         }
 
         if (item == null) {
             item = new CartItem();
             item.setCart(cart);
-            item.setStoreProduct(storeProduct);
+            item.setProduct(product);
+            if (storeProduct != null) {
+                item.setStoreProduct(storeProduct);
+            } else {
+                List<StoreProduct> sellable = storeProductRepository.findSellableByProductIds(List.of(product.getId()));
+                if (!sellable.isEmpty()) {
+                    item.setStoreProduct(sellable.get(0));
+                }
+            }
+        } else {
+            if (item.getStoreProduct() == null && storeProduct != null) {
+                item.setStoreProduct(storeProduct);
+            }
         }
         item.setQuantity((int) resulting);
         cartItemRepository.saveAndFlush(item);
+    }
+
+    private int getChainAvailableStock(Long productId) {
+        return storeProductRepository.findSellableByProductIds(List.of(productId)).stream()
+                .mapToInt(sp -> Math.max(0, sp.getQuantity() - sp.getReservedQuantity()))
+                .sum();
     }
 
     private Cart createCart(User user) {
@@ -154,15 +224,24 @@ public class CartServiceImpl implements CartService {
     public void updateItemQuantity(String customerEmail, Long cartItemId, int quantity) {
         requirePositive(quantity);
         CartItem item = ownItem(customerEmail, cartItemId);
-        StoreProduct storeProduct = item.getStoreProduct();
+        Product product = item.getProduct();
 
-        if (storeProductRepository.findSellableIdsIn(List.of(storeProduct.getId())).isEmpty()) {
+        if (productRepository.findVisibleById(product.getId()).isEmpty()) {
             throw new BadRequestException("quantity", NOT_ON_SALE + " Bạn có thể xóa sản phẩm khỏi giỏ.");
         }
-        if (storeProduct.getQuantity() <= 0) {
+
+        StoreProduct storeProduct = item.getStoreProduct();
+        int available;
+        if (storeProduct != null && storeProductRepository.findSellableIdsIn(List.of(storeProduct.getId())).contains(storeProduct.getId())) {
+            available = storeProduct.getQuantity() - storeProduct.getReservedQuantity();
+        } else {
+            available = getChainAvailableStock(product.getId());
+        }
+
+        if (available <= 0) {
             throw new BadRequestException("quantity", OUT_OF_STOCK);
         }
-        if (quantity > storeProduct.getQuantity()) {
+        if (quantity > available) {
             throw new BadRequestException("quantity", NOT_ENOUGH);
         }
         item.setQuantity(quantity);
@@ -196,48 +275,101 @@ public class CartServiceImpl implements CartService {
         if (items.isEmpty()) {
             return CartResponse.empty();
         }
-        Set<Long> onSale = new HashSet<>(storeProductRepository.findSellableIdsIn(
-                items.stream().map(item -> item.getStoreProduct().getId()).toList()));
-        Map<Long, String> images = productService.getPrimaryImageUrls(
-                items.stream().map(item -> item.getStoreProduct().getProduct().getId()).distinct().toList());
 
+        List<Long> productIds = items.stream().map(item -> item.getProduct().getId()).distinct().toList();
+        Map<Long, String> images = productService.getPrimaryImageUrls(productIds);
+
+        List<StoreProduct> sellableStoreProducts = storeProductRepository.findSellableByProductIds(productIds);
+        Map<Long, List<StoreProduct>> sellableByProduct = sellableStoreProducts.stream()
+                .collect(Collectors.groupingBy(sp -> sp.getProduct().getId()));
+
+        List<CartItemResponse> flatItems = new ArrayList<>();
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (CartItem item : items) {
+            Product product = item.getProduct();
+            List<StoreProduct> storeProductsForSku = sellableByProduct.getOrDefault(product.getId(), List.of());
+
+            int chainAvailableStock = storeProductsForSku.stream()
+                    .mapToInt(sp -> Math.max(0, sp.getQuantity() - sp.getReservedQuantity()))
+                    .sum();
+
+            boolean productVisible = product.getStatus() == ProductStatus.ACTIVE
+                    && (product.getCategory() == null || product.getCategory().getStatus() == VisibilityStatus.ACTIVE)
+                    && (product.getBrand() == null || product.getBrand().getStatus() == VisibilityStatus.ACTIVE);
+
+            CartItemStatus status;
+            if (!productVisible) {
+                status = CartItemStatus.UNAVAILABLE;
+            } else if (chainAvailableStock <= 0) {
+                status = CartItemStatus.OUT_OF_STOCK;
+            } else if (chainAvailableStock < item.getQuantity()) {
+                status = CartItemStatus.INSUFFICIENT_STOCK;
+            } else {
+                status = CartItemStatus.AVAILABLE;
+            }
+
+            BigDecimal unitPrice = product.getPrice() != null ? product.getPrice() : BigDecimal.ZERO;
+            BigDecimal originalPrice = product.getOriginalPrice();
+            BigDecimal subtotal = unitPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
+
+            Long storeProductId = item.getStoreProduct() != null ? item.getStoreProduct().getId() : null;
+            if (storeProductId == null && !storeProductsForSku.isEmpty()) {
+                storeProductId = storeProductsForSku.get(0).getId();
+            }
+
+            CartItemResponse response = new CartItemResponse(
+                    item.getId(),
+                    storeProductId,
+                    product.getId(),
+                    product.getSku(),
+                    product.getName(),
+                    images.get(product.getId()),
+                    unitPrice,
+                    originalPrice,
+                    item.getQuantity(),
+                    subtotal,
+                    status
+            );
+            flatItems.add(response);
+
+            if (response.selectable()) {
+                total = total.add(subtotal);
+            }
+        }
+
+        // Build legacy groups for backwards compatibility with V2 checkout and tests
         Map<Store, List<CartItemResponse>> byStore = new LinkedHashMap<>();
-        items.stream()
-                .sorted(Comparator.comparing((CartItem item) -> item.getStoreProduct().getStore().getName())
-                        .thenComparing(CartItem::getId))
-                .forEach(item -> byStore.computeIfAbsent(item.getStoreProduct().getStore(), store -> new ArrayList<>())
-                        .add(toItem(item, onSale, images)));
+        for (int i = 0; i < items.size(); i++) {
+            CartItem item = items.get(i);
+            CartItemResponse response = flatItems.get(i);
+            Store store = null;
+            if (item.getStoreProduct() != null && item.getStoreProduct().getStore() != null) {
+                store = item.getStoreProduct().getStore();
+            } else {
+                List<StoreProduct> sps = sellableByProduct.get(item.getProduct().getId());
+                if (sps != null && !sps.isEmpty()) {
+                    store = sps.get(0).getStore();
+                }
+            }
+            if (store != null) {
+                byStore.computeIfAbsent(store, s -> new ArrayList<>()).add(response);
+            }
+        }
 
         List<CartStoreGroupResponse> groups = byStore.entrySet().stream()
-                .map(entry -> new CartStoreGroupResponse(entry.getKey().getId(), entry.getKey().getName(),
-                        entry.getKey().getAddress(), entry.getKey().getStatus() == ActiveStatus.ACTIVE,
-                        entry.getKey().isDeliveryEnabled(), entry.getKey().isPickupEnabled(),
-                        entry.getValue(), purchasableSum(entry.getValue())))
+                .map(entry -> new CartStoreGroupResponse(
+                        entry.getKey().getId(),
+                        entry.getKey().getName(),
+                        entry.getKey().getAddress(),
+                        entry.getKey().getStatus() == ActiveStatus.ACTIVE,
+                        entry.getKey().isDeliveryEnabled(),
+                        entry.getKey().isPickupEnabled(),
+                        entry.getValue(),
+                        purchasableSum(entry.getValue())))
                 .toList();
-        BigDecimal total = groups.stream().map(CartStoreGroupResponse::subtotal).reduce(BigDecimal.ZERO, BigDecimal::add);
-        return new CartResponse(groups, items.size(), total);
-    }
 
-    private static CartItemResponse toItem(CartItem item, Set<Long> onSale, Map<Long, String> images) {
-        StoreProduct storeProduct = item.getStoreProduct();
-        Product product = storeProduct.getProduct();
-        BigDecimal subtotal = storeProduct.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
-        return new CartItemResponse(item.getId(), storeProduct.getId(), product.getId(), product.getSku(),
-                product.getName(), images.get(product.getId()), storeProduct.getPrice(), item.getQuantity(), subtotal,
-                statusOf(item, onSale));
-    }
-
-    private static CartItemStatus statusOf(CartItem item, Set<Long> onSale) {
-        StoreProduct storeProduct = item.getStoreProduct();
-        if (!onSale.contains(storeProduct.getId())) {
-            return CartItemStatus.UNAVAILABLE;
-        }
-        if (storeProduct.getQuantity() <= 0) {
-            return CartItemStatus.OUT_OF_STOCK;
-        }
-        return storeProduct.getQuantity() < item.getQuantity()
-                ? CartItemStatus.INSUFFICIENT_STOCK
-                : CartItemStatus.AVAILABLE;
+        return new CartResponse(flatItems, flatItems.size(), total, groups);
     }
 
     private static BigDecimal purchasableSum(List<CartItemResponse> items) {

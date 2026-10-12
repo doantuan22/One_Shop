@@ -371,6 +371,12 @@ public class ProductServiceImpl implements ProductService {
         product.setName(request.getName().trim());
         product.setDescription(trimToNull(request.getDescription()));
         product.setStatus(request.getStatus());
+        if (request.getPrice() != null) {
+            product.setPrice(request.getPrice());
+        } else if (product.getPrice() == null) {
+            product.setPrice(java.math.BigDecimal.ZERO);
+        }
+        product.setOriginalPrice(request.getOriginalPrice());
         product.setCategory(categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new BadRequestException("categoryId", "Danh mục không tồn tại")));
         product.setBrand(brandRepository.findById(request.getBrandId())

@@ -65,7 +65,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
               and exists (select 1 from StoreProduct sp
                           where sp.product = p
                             and sp.status = com.oneshop.entity.ActiveStatus.ACTIVE
-                            and sp.quantity > 0
+                            and (sp.quantity - sp.reservedQuantity) > 0
                             and sp.store.status = com.oneshop.entity.ActiveStatus.ACTIVE)
             order by p.id""")
     List<Long> findSellableInStockIds(Pageable pageable);

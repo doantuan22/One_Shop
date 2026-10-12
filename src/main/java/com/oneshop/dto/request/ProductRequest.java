@@ -27,6 +27,10 @@ public class ProductRequest {
 
     private String description;
 
+    private java.math.BigDecimal price = java.math.BigDecimal.ZERO;
+
+    private java.math.BigDecimal originalPrice;
+
     @NotNull(message = "Vui lòng chọn trạng thái")
     private ProductStatus status = ProductStatus.ACTIVE;
 
@@ -68,6 +72,22 @@ public class ProductRequest {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public java.math.BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(java.math.BigDecimal price) {
+        this.price = price;
+    }
+
+    public java.math.BigDecimal getOriginalPrice() {
+        return originalPrice;
+    }
+
+    public void setOriginalPrice(java.math.BigDecimal originalPrice) {
+        this.originalPrice = originalPrice;
     }
 
     public ProductStatus getStatus() {

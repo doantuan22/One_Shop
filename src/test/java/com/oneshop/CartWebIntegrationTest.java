@@ -90,13 +90,13 @@ class CartWebIntegrationTest extends AbstractIntegrationTest {
 
         String html = get("/cart", "Cookie", jwt).body();
 
-        assertThat(html.split("os-cart-group\"", -1).length - 1).isEqualTo(3);
-        assertThat(html).contains("OneShop Gò Vấp", "OneShop Quận 7", "OneShop Thủ Đức", "Chi nhánh tạm ngừng");
+        // V3 Central Cart: renders 1 central item list container with items from whole chain
+        assertThat(html.split("os-cart-group\"", -1).length - 1).isEqualTo(1);
         // the line that can be bought has an enabled checkbox; the two others are disabled and explain why
         assertThat(checkbox(html, 11)).doesNotContain("disabled");
         assertThat(checkbox(html, 12)).contains("disabled");
         assertThat(checkbox(html, 13)).contains("disabled");
-        assertThat(html).contains("Chi nhánh không còn đủ số lượng này", "Không còn bán tại chi nhánh này.");
+        assertThat(html).contains("Hệ thống không đủ hàng cho số lượng bạn chọn", "Sản phẩm hiện không còn bán.");
         // the line that is no longer on sale can only be removed: no quantity form for it
         assertThat(html).contains("action=\"/cart/items/11\"", "action=\"/cart/items/12\"", "action=\"/cart/items/13/delete\"")
                 .doesNotContain("action=\"/cart/items/13\"");

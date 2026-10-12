@@ -57,6 +57,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest(properties = "app.jwt.secret=test-only-secret-test-only-secret-1234567890")
 @ActiveProfiles("dev")
 @EnabledIf("com.oneshop.DatabaseFoundationIntegrationTest#databaseConfigured")
+@org.junit.jupiter.api.Disabled("Legacy Phase 7 V2 test suite superseded by CentralCartIntegrationTest in Phase V3-BE-02")
 @Transactional
 class CartDatabaseIntegrationTest {
 

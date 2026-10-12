@@ -46,18 +46,22 @@ class CartServiceRetryTest {
     private final StoreProduct storeProduct = mock(StoreProduct.class);
     private final Cart winnersCart = mock(Cart.class);
     private final User user = mock(User.class);
+    private final com.oneshop.entity.Product product = mock(com.oneshop.entity.Product.class);
 
     private CartService cartService;
 
     @BeforeEach
     void setUp() {
         when(transactionManager.getTransaction(any())).thenAnswer(invocation -> new SimpleTransactionStatus());
+        when(product.getId()).thenReturn(100L);
         when(storeProduct.getId()).thenReturn(10L);
         when(storeProduct.getQuantity()).thenReturn(5);
+        when(storeProduct.getProduct()).thenReturn(product);
         when(storeProductRepository.findSellableById(10L)).thenReturn(Optional.of(storeProduct));
         when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(user));
         when(user.getId()).thenReturn(42L);
         when(winnersCart.getId()).thenReturn(7L);
+        when(cartItemRepository.findByCartIdAndProductId(any(), any())).thenReturn(Optional.empty());
         cartService = new CartServiceImpl(cartRepository, cartItemRepository, storeProductRepository, userRepository,
                 mock(ProductService.class), transactionManager);
     }
@@ -85,6 +89,8 @@ class CartServiceRetryTest {
         CartItem winnersLine = new CartItem();
         winnersLine.setQuantity(1);
         when(cartRepository.findByUserIdForUpdate(42L)).thenReturn(Optional.of(winnersCart));
+        when(cartItemRepository.findByCartIdAndProductId(7L, 100L))
+                .thenReturn(Optional.empty(), Optional.of(winnersLine));
         when(cartItemRepository.findByCartIdAndStoreProductId(7L, 10L))
                 .thenReturn(Optional.empty(), Optional.of(winnersLine));
         when(cartItemRepository.saveAndFlush(any(CartItem.class)))
@@ -102,6 +108,8 @@ class CartServiceRetryTest {
         CartItem winnersLine = new CartItem();
         winnersLine.setQuantity(4);                 // stock is 5
         when(cartRepository.findByUserIdForUpdate(42L)).thenReturn(Optional.of(winnersCart));
+        when(cartItemRepository.findByCartIdAndProductId(7L, 100L))
+                .thenReturn(Optional.empty(), Optional.of(winnersLine));
         when(cartItemRepository.findByCartIdAndStoreProductId(7L, 10L))
                 .thenReturn(Optional.empty(), Optional.of(winnersLine));
         when(cartItemRepository.saveAndFlush(any(CartItem.class)))
