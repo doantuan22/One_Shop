@@ -1,0 +1,31 @@
+package com.oneshop.dto.response;
+
+import java.math.BigDecimal;
+
+/**
+ * A product card of the Client (home page, reusable by listings). Never carries an exact quantity (BR-15).
+ *
+ * @param storeProductId   the StoreProduct the "add to cart" button posts; {@code null} when no Store is selected
+ *                         (whole-chain card: the customer opens the detail page to pick a Store)
+ * @param price            price at the selected Store, or the lowest price among the Stores selling the SKU
+ * @param fromPrice        {@code true} when {@code price} is the lowest of several Stores ("Từ X")
+ * @param inStock          in stock at the selected Store, or at at least one Store of the chain
+ * @param inStockStoreCount Stores of the chain that have the SKU in stock (whole chain only, otherwise 0)
+ */
+public record ProductCardResponse(Long productId, Long storeProductId, String name, String brandName,
+                                  String categoryName, String imageUrl, BigDecimal price, boolean fromPrice,
+                                  boolean inStock, int inStockStoreCount) {
+
+    public static ProductCardResponse from(CatalogItemResponse item) {
+        ProductResponse product = item.product();
+        StoreAvailabilityResponse atStore = item.atSelectedStore();
+        if (atStore != null) {
+            return new ProductCardResponse(product.id(), atStore.storeProductId(), product.name(), product.brandName(),
+                    product.categoryName(), product.imageUrl(), atStore.price(), false, atStore.inStock(), 0);
+        }
+        int inStockStores = (int) item.stores().stream().filter(StoreAvailabilityResponse::inStock).count();
+        return new ProductCardResponse(product.id(), null, product.name(), product.brandName(),
+                product.categoryName(), product.imageUrl(), item.lowestPrice(), !item.samePriceEverywhere(),
+                inStockStores > 0, inStockStores);
+    }
+}

@@ -36,6 +36,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -107,6 +108,15 @@ public class ProductServiceImpl implements ProductService {
         return productImageRepository.findByProductIdInAndPrimaryTrue(productIds).stream()
                 .collect(Collectors.toMap(image -> image.getProduct().getId(), ProductImage::getImageUrl,
                         (first, second) -> first));
+    }
+
+    @Override
+    public Map<Long, Long> countVisibleProductsByBrand() {
+        Map<Long, Long> counts = new HashMap<>();
+        for (Object[] row : productRepository.countVisibleByBrand()) {
+            counts.put((Long) row[0], (Long) row[1]);
+        }
+        return counts;
     }
 
     @Override

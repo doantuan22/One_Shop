@@ -53,6 +53,41 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> searchVisible(@Param("keyword") String keyword, @Param("categoryId") Long categoryId,
                                 @Param("brandId") Long brandId, Pageable pageable);
 
+    /**
+     * Home page "discover products", whole chain: ids of the visible SKUs that at least one ACTIVE Store has in stock
+     * (the quantity is only compared here). Ordered by id so that, for the same data, the candidate list is stable.
+     */
+    @Query("""
+            select p.id from Product p join p.category c join p.brand b
+            where p.status = com.oneshop.entity.ProductStatus.ACTIVE
+              and c.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+              and b.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+              and exists (select 1 from StoreProduct sp
+                          where sp.product = p
+                            and sp.status = com.oneshop.entity.ActiveStatus.ACTIVE
+                            and sp.quantity > 0
+                            and sp.store.status = com.oneshop.entity.ActiveStatus.ACTIVE)
+            order by p.id""")
+    List<Long> findSellableInStockIds(Pageable pageable);
+
+    /** The visible SKUs of an id list with Category and Brand, one query (the caller restores its own order). */
+    @Query("""
+            select p from Product p join fetch p.category c join fetch p.brand b
+            where p.id in :ids
+              and p.status = com.oneshop.entity.ProductStatus.ACTIVE
+              and c.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+              and b.status = com.oneshop.entity.VisibilityStatus.ACTIVE""")
+    List<Product> findVisibleByIdIn(@Param("ids") java.util.Collection<Long> ids);
+
+    /** Number of visible SKUs per Brand (id, count) for the Brands that have at least one; no stock involved. */
+    @Query("""
+            select b.id, count(p) from Product p join p.category c join p.brand b
+            where p.status = com.oneshop.entity.ProductStatus.ACTIVE
+              and c.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+              and b.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+            group by b.id""")
+    List<Object[]> countVisibleByBrand();
+
     /** One SKU as the Client may see it: ACTIVE, in an ACTIVE Category and Brand. */
     @Query("""
             select p from Product p join fetch p.category c join fetch p.brand b

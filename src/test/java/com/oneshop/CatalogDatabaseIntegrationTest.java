@@ -262,6 +262,78 @@ class CatalogDatabaseIntegrationTest {
                 .doesNotContain(TONER);
     }
 
+
+    // ================================================================= home page "discover products"
+
+    @Test
+    void randomPickOfAStoreIsInStockThereWithoutDuplicatesAndLimited() {
+        for (long seed = 1; seed <= 10; seed++) {
+            List<CatalogItemResponse> goVap = storeProductService.getRandomSellable(storeId(GO_VAP), 8, seed);
+
+            // the cheek #06 is ACTIVE at Gò Vấp but has quantity 0: never offered
+            assertThat(goVap).extracting(i -> i.product().sku())
+                    .containsExactlyInAnyOrder(SERUM, TONER, "BBIA-CHEEK-08", "COCOON-SHAM-310");
+            assertThat(goVap).allSatisfy(i -> {
+                assertThat(i.atSelectedStore().inStock()).isTrue();
+                assertThat(i.atSelectedStore().storeName()).isEqualTo("OneShop Gò Vấp");
+                assertThat(i.stores()).isEmpty();
+            });
+        }
+        assertThat(item(storeProductService.getRandomSellable(storeId(GO_VAP), 8, 1), SERUM).atSelectedStore().price())
+                .isEqualByComparingTo("135000");
+        List<CatalogItemResponse> two = storeProductService.getRandomSellable(storeId(GO_VAP), 2, 7);
+        assertThat(two).hasSize(2);
+        assertThat(two).extracting(i -> i.product().id()).doesNotHaveDuplicates();
+        assertThat(storeProductService.getRandomSellable(storeId(HAI_CHAU), 8, 1)).as("INACTIVE Store").isEmpty();
+        assertThat(storeProductService.getRandomSellable(storeId(GO_VAP), 0, 1)).isEmpty();
+    }
+
+    @Test
+    void randomPickIsAFunctionOfTheSeed() {
+        Long goVap = storeId(GO_VAP);
+        List<Long> first = storeProductService.getRandomSellable(goVap, 3, 42L).stream().map(i -> i.product().id()).toList();
+        List<Long> again = storeProductService.getRandomSellable(goVap, 3, 42L).stream().map(i -> i.product().id()).toList();
+
+        assertThat(again).as("same seed, same pick and same order").isEqualTo(first);
+        long distinctPicks = java.util.stream.LongStream.rangeClosed(1, 30)
+                .mapToObj(seed -> storeProductService.getRandomSellable(goVap, 3, seed).stream()
+                        .map(i -> i.product().id()).toList())
+                .distinct().count();
+        assertThat(distinctPicks).as("different seeds give different picks").isGreaterThan(1);
+
+        List<Long> chainFirst = storeProductService.getRandomSellable(null, 3, 42L).stream().map(i -> i.product().id()).toList();
+        assertThat(storeProductService.getRandomSellable(null, 3, 42L).stream().map(i -> i.product().id()).toList())
+                .isEqualTo(chainFirst);
+    }
+
+    @Test
+    void randomPickOfTheChainIsSkusSomeActiveStoreHasInStock() {
+        List<CatalogItemResponse> chain = storeProductService.getRandomSellable(null, 8, 5L);
+
+        // the discontinued lip balm (INACTIVE SKU) is not there; every SKU is in stock at some ACTIVE Store
+        assertThat(chain).extracting(i -> i.product().sku()).doesNotContain("COCOON-LIP-05").doesNotHaveDuplicates()
+                .contains(SERUM, TONER);
+        assertThat(chain).hasSizeLessThanOrEqualTo(8);
+        assertThat(chain).allSatisfy(i -> {
+            assertThat(i.atSelectedStore()).isNull();
+            assertThat(i.stores()).isNotEmpty();
+            assertThat(i.stores()).anyMatch(s -> s.inStock());
+            assertThat(i.stores()).extracting(s -> s.storeName()).doesNotContain("OneShop Hải Châu");
+        });
+        assertThat(item(chain, SERUM).lowestPrice()).isEqualByComparingTo("129000");
+        assertThat(storeProductService.getRandomSellable(null, 3, 5L)).hasSize(3);
+    }
+
+    @Test
+    void brandProductCountsCountVisibleProductsOnly() {
+        java.util.Map<Long, Long> counts = productService.countVisibleProductsByBrand();
+        java.util.Map<String, Long> byName = new java.util.HashMap<>();
+        productService.getActiveBrands().forEach(b -> byName.put(b.name(), counts.getOrDefault(b.id(), 0L)));
+
+        // seed: BBIA 2 SKUs, Cocoon 2 ACTIVE (+ the discontinued lip balm is INACTIVE), Innisfree 2
+        assertThat(byName).containsEntry("BBIA", 2L).containsEntry("Innisfree", 2L).containsEntry("Cocoon", 2L);
+    }
+
     @Test
     void storeCatalogOfAnInactiveOrUnknownStoreIsEmpty() {
         assertThat(storeProductService.getStoreCatalog(storeId(HAI_CHAU), ProductSearchCriteria.none(), FIRST_PAGE))

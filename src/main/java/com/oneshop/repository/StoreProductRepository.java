@@ -83,6 +83,30 @@ public interface StoreProductRepository extends JpaRepository<StoreProduct, Long
                                              Pageable pageable);
 
     /**
+     * Home page "discover products", ONE Store: ids of its ACTIVE StoreProducts that are in stock (quantity is only
+     * compared here, never returned). Ordered by id so that, for the same data, the candidate list is stable.
+     */
+    @Query("""
+            select sp.id from StoreProduct sp join sp.store s join sp.product p
+              join p.category c join p.brand b
+            where s.id = :storeId
+              and s.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and sp.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and sp.quantity > 0
+              and p.status = com.oneshop.entity.ProductStatus.ACTIVE
+              and c.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+              and b.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+            order by sp.id""")
+    List<Long> findInStockIdsInStore(@Param("storeId") Long storeId, Pageable pageable);
+
+    /** The StoreProducts of an id list with Store, Product, Category and Brand: one query. */
+    @Query("""
+            select sp from StoreProduct sp join fetch sp.store s join fetch sp.product p
+              join fetch p.category c join fetch p.brand b
+            where sp.id in :ids""")
+    List<StoreProduct> findWithProductByIdIn(@Param("ids") Collection<Long> ids);
+
+    /**
      * One StoreProduct, only if a customer may buy it right now: same "on sale" rule as the catalog (StoreProduct,
      * Store, Product, Category and Brand all ACTIVE). Used when something is put into a cart.
      */

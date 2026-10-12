@@ -8,6 +8,8 @@ import com.oneshop.dto.response.StoreProductStockResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 /**
  * Availability, price and stock of a SKU per Store. StoreProduct is the source of truth for all three (BR-02).
  *
@@ -39,6 +41,17 @@ public interface StoreProductService {
      * @throws com.oneshop.exception.ResourceNotFoundException if the product does not exist or is not visible
      */
     ProductDetailResponse getProductDetail(Long productId, Long selectedStoreId);
+
+    /**
+     * Home page "discover products": up to {@code limit} different SKUs picked at random among the ones in stock
+     * (at most 200 candidates are loaded). The pick is a pure function of {@code seed} and the data, so the caller
+     * decides how long a pick lasts (the home page passes the current hour). With a selected Store only that Store's
+     * in-stock SKUs, each with its price and {@code atSelectedStore} set; for the whole chain the SKUs some ACTIVE
+     * Store has in stock, each with the Stores selling it. There is never an exact quantity (BR-15).
+     *
+     * @param selectedStoreId the validated selected Store, or {@code null} for the whole chain
+     */
+    List<CatalogItemResponse> getRandomSellable(Long selectedStoreId, int limit, long seed);
 
     // ---- Admin (exact quantity, every status) ----
 

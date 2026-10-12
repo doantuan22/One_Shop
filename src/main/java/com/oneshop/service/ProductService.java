@@ -46,6 +46,9 @@ public interface ProductService {
 
     List<BrandResponse> getActiveBrands();
 
+    /** Number of visible products per Brand id (Brands without a product are absent): one query, no stock. */
+    Map<Long, Long> countVisibleProductsByBrand();
+
     // ---- Admin: Category ----
 
     List<CategoryResponse> getAllCategories();

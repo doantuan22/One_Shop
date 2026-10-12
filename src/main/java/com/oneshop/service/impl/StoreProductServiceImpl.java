@@ -22,13 +22,19 @@ import com.oneshop.service.ProductService;
 import com.oneshop.service.StoreProductService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +43,7 @@ public class StoreProductServiceImpl implements StoreProductService {
 
     private static final String OPENING_STOCK_NOTE = "Tồn kho ban đầu khi mở bán tại chi nhánh";
     private static final String ADMIN_ADJUST_NOTE = "Quản trị viên điều chỉnh tồn kho";
+    private static final int RANDOM_CANDIDATES = 200;
     private static final String DUPLICATE_MESSAGE = "Sản phẩm này đã được gắn với chi nhánh đã chọn";
 
     private final StoreProductRepository storeProductRepository;
@@ -76,6 +83,52 @@ public class StoreProductServiceImpl implements StoreProductService {
 
         return products.map(product ->
                 new CatalogItemResponse(product, null, storesByProduct.getOrDefault(product.id(), List.of())));
+    }
+
+    @Override
+    public List<CatalogItemResponse> getRandomSellable(Long selectedStoreId, int limit, long seed) {
+        if (limit < 1) {
+            return List.of();
+        }
+        Pageable candidates = PageRequest.of(0, RANDOM_CANDIDATES);
+        if (selectedStoreId != null) {
+            List<Long> ids = pick(storeProductRepository.findInStockIdsInStore(selectedStoreId, candidates), limit, seed);
+            if (ids.isEmpty()) {
+                return List.of();
+            }
+            Map<Long, StoreProduct> rows = storeProductRepository.findWithProductByIdIn(ids).stream()
+                    .collect(Collectors.toMap(StoreProduct::getId, sp -> sp));
+            Map<Long, String> images = productService.getPrimaryImageUrls(
+                    rows.values().stream().map(sp -> sp.getProduct().getId()).toList());
+            return ids.stream().map(rows::get).filter(Objects::nonNull)
+                    .map(sp -> new CatalogItemResponse(
+                            productMapper.toResponse(sp.getProduct(), images.get(sp.getProduct().getId())),
+                            storeProductMapper.toAvailability(sp), List.of()))
+                    .toList();
+        }
+        List<Long> ids = pick(productRepository.findSellableInStockIds(candidates), limit, seed);
+        if (ids.isEmpty()) {
+            return List.of();
+        }
+        Map<Long, Product> products = productRepository.findVisibleByIdIn(ids).stream()
+                .collect(Collectors.toMap(Product::getId, p -> p));
+        // two more queries for the whole list: primary images and the Stores selling these SKUs
+        Map<Long, String> images = productService.getPrimaryImageUrls(ids);
+        Map<Long, List<StoreAvailabilityResponse>> storesByProduct = storeProductRepository
+                .findSellableByProductIds(ids).stream()
+                .collect(Collectors.groupingBy(sp -> sp.getProduct().getId(),
+                        Collectors.mapping(storeProductMapper::toAvailability, Collectors.toList())));
+        return ids.stream().map(products::get).filter(Objects::nonNull)
+                .map(product -> new CatalogItemResponse(productMapper.toResponse(product, images.get(product.getId())),
+                        null, storesByProduct.getOrDefault(product.getId(), List.of())))
+                .toList();
+    }
+
+    /** Shuffles a copy of the candidates with the seed and keeps the first {@code limit}: no id twice. */
+    private static List<Long> pick(List<Long> candidates, int limit, long seed) {
+        List<Long> shuffled = new ArrayList<>(new LinkedHashSet<>(candidates));
+        Collections.shuffle(shuffled, new Random(seed));
+        return shuffled.size() <= limit ? shuffled : List.copyOf(shuffled.subList(0, limit));
     }
 
     @Override

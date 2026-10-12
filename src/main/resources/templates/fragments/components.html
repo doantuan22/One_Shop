@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
 <!--/*
     Reusable Bootstrap building blocks for every area (client, staff, admin). Call them with th:replace, for example
       <div th:replace="~{fragments/components :: statCard('Đơn chờ xử lý', '12', 'Hôm nay')}"></div>
@@ -42,6 +43,44 @@
       th:text="${name == 'ACTIVE'} ? 'Đang hoạt động' : (${name == 'HIDDEN'} ? 'Đang ẩn' : 'Ngừng hoạt động')">Trạng thái</span>
 
 <!--/* Card with a header title; `content` is a fragment expression for the body. */-->
+<!--/*
+    Product card of the Client (ProductCardResponse). The whole card is one link to the detail page (stretched link on
+    the title). With a selected Store and in stock it also has the add to cart form (same POST /cart/items as the
+    detail page); for the whole chain it shows "Từ X" and the number of Stores that have it in stock. Never an exact
+    quantity (BR-15). The styles (.pcard) are in static/css/home.css.
+*/-->
+<article th:fragment="productCard(card)" class="pcard">
+    <div class="pcard__media">
+        <img th:if="${card.imageUrl}" th:src="${card.imageUrl}" alt="" width="400" height="400"
+             loading="lazy" decoding="async">
+        <span class="pcard__ph" th:unless="${card.imageUrl}" th:text="${card.brandName}">Cocoon</span>
+    </div>
+    <div class="pcard__body">
+        <div class="pcard__brand" th:text="${card.brandName}">Cocoon</div>
+        <h3 class="pcard__title">
+            <a class="stretched-link" th:href="@{/products/{id}(id=${card.productId})}" th:text="${card.name}">Tên sản phẩm</a>
+        </h3>
+        <div class="pcard__price" th:if="${card.price != null}">
+            <span class="pcard__from" th:if="${card.fromPrice}">Từ </span><span
+                    th:replace="~{fragments/components :: price(${card.price})}"></span>
+        </div>
+        <div class="pcard__stock">
+            <span class="badge text-bg-success" th:if="${card.inStock and card.storeProductId != null}">Còn hàng</span>
+            <span class="badge text-bg-success" th:if="${card.inStock and card.storeProductId == null}"
+                  th:text="'Còn hàng ở ' + ${card.inStockStoreCount} + ' chi nhánh'">Còn hàng ở 2 chi nhánh</span>
+            <span class="badge text-bg-secondary" th:unless="${card.inStock}">Hết hàng</span>
+        </div>
+        <div class="pcard__actions" th:if="${card.storeProductId != null and card.inStock}">
+            <form th:action="@{/cart/items}" method="post" sec:authorize="hasRole('CUSTOMER')">
+                <input type="hidden" name="storeProductId" th:value="${card.storeProductId}">
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit" class="btn btn-primary btn-sm">Thêm vào giỏ</button>
+            </form>
+            <a class="btn btn-outline-primary btn-sm" th:href="@{/login}"
+               sec:authorize="!isAuthenticated()">Đăng nhập để thêm vào giỏ</a>
+        </div>
+    </div>
+</article>
 <section th:fragment="card(title, content)" class="card h-100 shadow-sm">
     <div class="card-header bg-white fw-semibold" th:text="${title}">Tiêu đề</div>
     <div class="card-body" th:insert="${content}"></div>
