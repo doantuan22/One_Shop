@@ -13,7 +13,8 @@
     <span th:case="'image-primary'">Đã đổi ảnh đại diện.</span>
     <span th:case="*">Đã lưu.</span>
 </div>
-<div class="alert alert-danger" th:if="${param.error}" th:switch="${param.error[0]}">
+<div class="alert alert-danger" th:if="${param.error != null or error != null}" th:switch="${param.error != null ? param.error[0] : error}">
+    <span th:case="'image-size'" th:text="${errorMessage != null ? errorMessage : 'Ảnh vượt quá ' + (maxFileSize != null ? maxFileSize : '5MB') + '. Vui lòng chọn tệp nhỏ hơn.'}">Ảnh vượt quá dung lượng cho phép.</span>
     <span th:case="'image-invalid'">Tệp không hợp lệ. Vui lòng chọn một tệp hình ảnh.</span>
     <span th:case="*">Không thể làm việc với Cloudinary. Kiểm tra cấu hình CLOUDINARY_* rồi thử lại.</span>
 </div>

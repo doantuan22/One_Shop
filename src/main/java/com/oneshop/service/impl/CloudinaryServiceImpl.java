@@ -29,18 +29,42 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         this.properties = properties;
     }
 
+    public static final long MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024L;
+
+    private static final byte[] PNG_SIGNATURE = new byte[] {
+            (byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A
+    };
+
     @Override
     public ImageUploadResult uploadImage(MultipartFile file, String subFolder) {
         requireConfigured();
         if (file == null || file.isEmpty()) {
             throw new BadRequestException("Vui lòng chọn ảnh để tải lên");
         }
+        if (file.getSize() > MAX_FILE_SIZE_BYTES) {
+            throw new BadRequestException("Dung lượng ảnh tối đa 5MB");
+        }
         String contentType = file.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")) {
+        if (contentType == null) {
             throw new BadRequestException("Tệp tải lên phải là hình ảnh");
         }
+        String normalizedType = contentType.toLowerCase(java.util.Locale.ROOT).trim();
+        if (!normalizedType.equals("image/jpeg") && !normalizedType.equals("image/jpg")
+                && !normalizedType.equals("image/png") && !normalizedType.equals("image/webp")) {
+            throw new BadRequestException("Định dạng ảnh không được hỗ trợ. Chỉ chấp nhận JPEG, PNG, WebP");
+        }
+
+        byte[] bytes;
         try {
-            Map<?, ?> result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+            bytes = file.getBytes();
+        } catch (IOException ex) {
+            throw new BadRequestException("Không thể đọc nội dung tệp");
+        }
+
+        validateFileSignature(bytes);
+
+        try {
+            Map<?, ?> result = cloudinary.uploader().upload(bytes, ObjectUtils.asMap(
                     "folder", folderFor(subFolder),
                     "resource_type", "image"));
             String url = (String) result.get("secure_url");
@@ -104,5 +128,44 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             return sub;
         }
         return sub.isEmpty() ? root : root + "/" + sub;
+    }
+
+    /**
+     * Validates that the file signature (magic bytes) matches JPEG, PNG, or WebP.
+     * Rejects SVG, executable, text, or any unknown formats.
+     */
+    static void validateFileSignature(byte[] bytes) {
+        if (bytes == null || bytes.length < 12) {
+            throw new BadRequestException("Tệp tải lên không phải hình ảnh hợp lệ");
+        }
+
+        // JPEG starts with FF D8 FF
+        boolean isJpeg = (bytes[0] == (byte) 0xFF) && (bytes[1] == (byte) 0xD8) && (bytes[2] == (byte) 0xFF);
+        if (isJpeg) {
+            return;
+        }
+
+        // PNG starts with 89 50 4E 47 0D 0A 1A 0A
+        if (bytes.length >= PNG_SIGNATURE.length) {
+            boolean isPng = true;
+            for (int i = 0; i < PNG_SIGNATURE.length; i++) {
+                if (bytes[i] != PNG_SIGNATURE[i]) {
+                    isPng = false;
+                    break;
+                }
+            }
+            if (isPng) {
+                return;
+            }
+        }
+
+        // WebP: RIFF (bytes 0..3) .... WEBP (bytes 8..11)
+        boolean isWebP = bytes[0] == 'R' && bytes[1] == 'I' && bytes[2] == 'F' && bytes[3] == 'F'
+                && bytes[8] == 'W' && bytes[9] == 'E' && bytes[10] == 'B' && bytes[11] == 'P';
+        if (isWebP) {
+            return;
+        }
+
+        throw new BadRequestException("Tệp tải lên không phải hình ảnh hợp lệ");
     }
 }

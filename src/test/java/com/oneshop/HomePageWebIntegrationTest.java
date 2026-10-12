@@ -64,7 +64,8 @@ class HomePageWebIntegrationTest extends AbstractIntegrationTest {
     private static List<CategoryResponse> categories(int count) {
         List<CategoryResponse> list = new ArrayList<>();
         for (int i = 1; i <= count; i++) {
-            list.add(new CategoryResponse((long) i, i == 1 ? "Chăm sóc da" : "Danh mục " + i, "", VisibilityStatus.ACTIVE));
+            String img = i == 1 ? "/images/site/categories/category-skincare.webp" : null;
+            list.add(new CategoryResponse((long) i, i == 1 ? "Chăm sóc da" : "Danh mục " + i, "", img, VisibilityStatus.ACTIVE));
         }
         return list;
     }
@@ -251,6 +252,19 @@ class HomePageWebIntegrationTest extends AbstractIntegrationTest {
         assertThat(html).contains("/images/site/categories/category-skincare.webp", "Xem sản phẩm &rarr;");
         assertThat(count(html, "home-tile--plain")).isEqualTo(2);
         assertThat(html).containsPattern("home-tile--plain[^>]*>\\s*<span class=\"home-tile__body\">\\s*<span class=\"home-tile__name\">Danh mục 2");
+    }
+
+    @Test
+    void categoryTileTransformsCloudinaryUrlAndRendersDynamically() throws Exception {
+        when(productService.getActiveCategories()).thenReturn(List.of(
+                new CategoryResponse(99L, "Danh mục mới", "", "https://res.cloudinary.com/demo/image/upload/v1234/cat.jpg", VisibilityStatus.ACTIVE)
+        ));
+
+        String html = get("/").body();
+
+        assertThat(html).contains("https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,w_800/v1234/cat.jpg");
+        assertThat(html).contains("Danh mục mới");
+        assertThat(html).doesNotContain("home-tile--plain");
     }
 
     @Test

@@ -39,6 +39,10 @@ IF EXISTS (SELECT 1 FROM @required r
 IF COL_LENGTH('dbo.order_items', 'product_sku') IS NOT NULL
     THROW 50014, 'order_items.product_sku must not exist.', 1;
 
+/* 1e. categories co du image_url va image_public_id */
+IF COL_LENGTH('dbo.categories', 'image_url') IS NULL OR COL_LENGTH('dbo.categories', 'image_public_id') IS NULL
+    THROW 50016, 'categories image columns missing.', 1;
+
 /* 2. Payment gan Order, khong gan CheckoutSession */
 IF COL_LENGTH('dbo.payments', 'order_id') IS NULL OR COL_LENGTH('dbo.payments', 'checkout_id') IS NOT NULL
     THROW 50002, 'payments must reference order_id, not checkout_id.', 1;

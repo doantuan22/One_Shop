@@ -58,7 +58,17 @@ public interface ProductService {
     /** @throws com.oneshop.exception.BadRequestException if the name is already used */
     CategoryResponse createCategory(CategoryRequest request);
 
+    CategoryResponse createCategory(CategoryRequest request, MultipartFile file);
+
     CategoryResponse updateCategory(Long id, CategoryRequest request);
+
+    CategoryResponse updateCategory(Long id, CategoryRequest request, MultipartFile file);
+
+    /** Uploads the category image to Cloudinary, stores its URL/public id and removes previous Cloudinary image if any. */
+    CategoryResponse uploadCategoryImage(Long id, MultipartFile file);
+
+    /** Removes category image from DB and Cloudinary (only calls Cloudinary when image_public_id is not null). */
+    CategoryResponse removeCategoryImage(Long id);
 
     // ---- Admin: Brand ----
 

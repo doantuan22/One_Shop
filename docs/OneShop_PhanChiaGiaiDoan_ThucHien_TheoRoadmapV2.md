@@ -59,8 +59,19 @@ _Bản phân rã thực thi bám 100% OneShop Roadmap Kỹ thuật V2_
 | **Mức** | **Nội dung** |
 | P0 - Bắt buộc | Auth/JWT/role; Store/Staff assignment; Product/StoreProduct; selected Store; availability theo Store; Cart nhiều Store; Checkout -> nhiều Order; stock transaction; Payment theo Order; DELIVERY/STORE_PICKUP; Staff xử lý Order; Admin cơ bản; Cloudinary. |
 | P1 - Nên hoàn thiện | Store Finder metadata; pickup_code; OrderStatusHistory; InventoryMovement; review; địa chỉ khách; responsive và validation đầy đủ. |
-| P2 - Chỉ khi còn thời gian | Dashboard thống kê đơn giản, cảnh báo sắp hết hàng theo ngưỡng, polish UI. |
+| P2 - Chỉ khi còn thời gian | Dashboard thống kê đơn giản, cảnh báo sắp hết hàng theo ngưỡng, polish UI; Điều chỉnh V2.1: Thêm ảnh minh họa danh mục (categories.image_url, image_public_id) do Admin quản lý, động hóa khối danh mục trang chủ. |
 | OUT OF SCOPE | Promotion engine, loyalty, AI, recommendation, virtual try-on, warehouse, transfer stock, courier integration, geolocation/routing, curbside, subscription, marketplace seller. |
+
+## 1.4. Điều chỉnh V2.1 - Ảnh minh họa danh mục do Admin quản lý (P2)
+
+- **Bối cảnh & Lý do:** Roadmap V2 gốc quy định tải ảnh Cloudinary cho sản phẩm và logo thương hiệu. Trang chủ mới tái thiết kế khối danh mục bento grid, nhưng trước đó ảnh danh mục bị gắn cứng trong mã nguồn (`static/images/site/categories/`), đòi hỏi sửa code mỗi khi thêm danh mục mới.
+- **Phạm vi điều chỉnh (V2.1 - P2):**
+  - Mở rộng bảng `categories` thêm 2 cột NULLable: `image_url NVARCHAR(500) NULL` và `image_public_id NVARCHAR(255) NULL` theo đúng quy ước của bảng `brands`.
+  - Admin có toàn quyền tải lên/thay đổi/xóa ảnh danh mục qua Cloudinary từ trang `/admin/categories`.
+  - Quy ước an toàn: Nếu `image_public_id` là NULL (ảnh tĩnh trong repo hoặc đường dẫn ngoài), hệ thống không gọi Cloudinary để xóa.
+  - Xóa bỏ 100% ánh xạ hardcode tên/ID danh mục ra đường dẫn ảnh trong mã nguồn (`HomeController`, template, CSS).
+  - Tối ưu động trang chủ: Ảnh danh mục từ Cloudinary được tự động bổ sung biến đổi tối ưu `f_auto,q_auto,w_800` qua tiện ích `CloudinaryService.transformUrl()`.
+
 
 # 2\. TỔNG QUAN 13 GIAI ĐOẠN THỰC HIỆN
 

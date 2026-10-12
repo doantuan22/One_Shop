@@ -47,21 +47,25 @@ public class AdminProductController {
 
     @GetMapping("/new")
     public String createForm(Model model) {
-        model.addAttribute("form", new ProductRequest());
+        if (!model.containsAttribute("form")) {
+            model.addAttribute("form", new ProductRequest());
+        }
         return form(model, null);
     }
 
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable Long id, Model model) {
-        AdminProductResponse product = productService.getProductForAdmin(id);
-        ProductRequest form = new ProductRequest();
-        form.setSku(product.sku());
-        form.setName(product.name());
-        form.setDescription(product.description());
-        form.setCategoryId(product.categoryId());
-        form.setBrandId(product.brandId());
-        form.setStatus(product.status());
-        model.addAttribute("form", form);
+        if (!model.containsAttribute("form")) {
+            AdminProductResponse product = productService.getProductForAdmin(id);
+            ProductRequest form = new ProductRequest();
+            form.setSku(product.sku());
+            form.setName(product.name());
+            form.setDescription(product.description());
+            form.setCategoryId(product.categoryId());
+            form.setBrandId(product.brandId());
+            form.setStatus(product.status());
+            model.addAttribute("form", form);
+        }
         return form(model, id);
     }
 
@@ -103,7 +107,7 @@ public class AdminProductController {
             productService.addProductImage(id, file);
             outcome = "success=image-uploaded";
         } catch (BadRequestException ex) {
-            outcome = "error=image-invalid";
+            outcome = ex.getMessage() != null && ex.getMessage().contains("5MB") ? "error=image-size" : "error=image-invalid";
         } catch (ImageStorageException ex) {
             outcome = "error=image-storage";
         }

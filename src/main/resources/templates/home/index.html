@@ -76,10 +76,11 @@
         </div>
         <div class="home-cats" th:classappend="'home-cats--' + ${home.categoryLayout}">
             <a class="home-tile" th:each="category : ${home.categories}"
-               th:classappend="${category.imageUrl == null} ? 'home-tile--plain'"
+               th:classappend="${category.imageUrl == null or #strings.trim(category.imageUrl).isEmpty()} ? 'home-tile--plain'"
                th:href="@{/products(categoryId=${category.id})}">
-                <img class="home-tile__img" th:if="${category.imageUrl}" th:src="@{${category.imageUrl}}" alt=""
-                     width="1200" height="1200" loading="lazy" decoding="async">
+                <img class="home-tile__img" th:if="${category.imageUrl != null and !#strings.trim(category.imageUrl).isEmpty()}"
+                     th:src="@{${category.imageUrl}}"
+                     th:alt="${category.name}" width="800" height="800" loading="lazy" decoding="async">
                 <span class="home-tile__body">
                     <span class="home-tile__name" th:text="${category.name}">Chăm sóc da</span>
                     <span class="home-tile__cta">Xem sản phẩm &rarr;</span>

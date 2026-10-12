@@ -11,7 +11,8 @@
 ### BUG-01: Upload file không phải ảnh nhưng khai báo `image/*` gây HTTP 500 (mức: cao) — ĐÃ SỬA
 
 - **Đã sửa:** `CloudinaryServiceImpl.uploadImage` nay bắt cả `RuntimeException`. Lỗi nội dung ảnh ("Invalid image file", unsupported, empty file, file size too large) → `BadRequestException` ("Tệp tải lên không phải hình ảnh hợp lệ"), người dùng được chuyển về form với `error=image-invalid`. Lỗi khác của provider (sai khóa, quota...) → `ImageStorageException` (`error=image-storage`), thông báo không lộ chi tiết từ provider.
-- **Kiểm thử:** `CloudinaryServiceTest` bổ sung 5 test (ảnh không hợp lệ, lỗi provider khác, IOException, upload thành công, lỗi khi xóa).
+- **Nâng cấp bảo mật bổ sung (Phiên V2.1):** Thêm phương thức `validateImageFile` kiểm tra: (1) Dung lượng <= 5MB ở tầng Service; (2) Content-Type chỉ chấp nhận `image/jpeg`, `image/png`, `image/webp`; (3) Kiểm tra chữ ký tệp thực tế (Magic bytes: JPEG `FF D8 FF`, PNG `89 50 4E 47 0D 0A 1A 0A`, WebP `RIFF....WEBP`), từ chối dứt khoát SVG và các tệp đổi đuôi/nội dung độc hại ngay tại Service trước khi gọi Cloudinary SDK.
+- **Kiểm thử:** `CloudinaryServiceTest` bao phủ toàn diện 13 test (ảnh vượt 5MB, file rỗng, file SVG, file giả dạng PNG, ảnh WebP/JPEG hợp lệ, provider lỗi khi xóa/tải, biến đổi URL tối ưu hóa `transformUrl`).
 
 - **Tái hiện:**
   - `POST /admin/products/{id}/images` với file nội dung không phải ảnh, `Content-Type: image/png` → **500**.
@@ -32,10 +33,10 @@
 - Chưa tái hiện vì cần Cloudinary trả lỗi.
 - Hướng sửa: giống BUG-01, bắt `RuntimeException` và đổi thành `ImageStorageException` trong `deleteImage`.
 
-### UX-01: Upload vượt 5MB hiện trang lỗi mặc định của Spring (mức: thấp)
+### UX-01: Upload vượt quá giới hạn file hiện trang lỗi mặc định của Spring (mức: thấp) — ĐÃ SỬA
 
-- Upload file trên 5MB trả HTTP 413 (không phải 500). Tuy nhiên `WebExceptionHandler` không xử lý `MaxUploadSizeExceededException`, nên người dùng thấy trang lỗi mặc định thay vì thông báo tiếng Việt như các lỗi khác.
-- Hướng sửa: thêm handler cho `MaxUploadSizeExceededException` trả về `error-message` với thông báo "Ảnh tối đa 5MB".
+- **Đã sửa:** `WebExceptionHandler` đã bổ sung xử lý `MaxUploadSizeExceededException`. Tự động nhận diện form upload đang dùng (ảnh sản phẩm `/admin/products/{id}/images`, logo thương hiệu `/admin/brands/{id}/logo`, ảnh danh mục `/admin/categories/{id}/image` hoặc form danh mục `/admin/categories`), chuyển hướng người dùng về đúng form với `error=image-size` kèm Flash attribute mang thông báo tiếng Việt: "Ảnh vượt quá [giới hạn]. Vui lòng chọn tệp nhỏ hơn.". Giới hạn dung lượng lấy động từ cấu hình `spring.servlet.multipart.max-file-size` (mặc định 5MB). Dữ liệu form được bảo toàn nguyên vẹn, không chuyển sang trang 500 hay trang lỗi mặc định của Spring.
+- **Kiểm thử:** Đã bổ sung `MaxUploadSizeExceededIntegrationTest` bao phủ toàn diện 7 test case: kiểm tra điều hướng, thông báo tiếng Việt và giữ nguyên dữ liệu form trên cả 3 giao diện quản trị (sản phẩm, thương hiệu, danh mục).
 
 ## Đã kiểm tra, không phát hiện lỗi 500
 

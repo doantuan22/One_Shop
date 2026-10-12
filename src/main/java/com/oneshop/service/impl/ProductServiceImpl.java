@@ -49,6 +49,7 @@ public class ProductServiceImpl implements ProductService {
 
     private static final String PRODUCT_FOLDER = "products";
     private static final String BRAND_FOLDER = "brands";
+    private static final String CATEGORY_FOLDER = "categories";
 
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
@@ -146,24 +147,99 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public CategoryResponse createCategory(CategoryRequest request) {
+        return createCategory(request, null);
+    }
+
+    @Override
+    @Transactional
+    public CategoryResponse createCategory(CategoryRequest request, MultipartFile file) {
         String name = request.getName().trim();
         if (categoryRepository.existsByName(name)) {
             throw new BadRequestException("name", "Tên danh mục đã tồn tại");
         }
         Category category = new Category();
         apply(category, name, request);
+
+        if (file != null && !file.isEmpty()) {
+            ImageUploadResult uploaded = cloudinaryService.uploadImage(file, CATEGORY_FOLDER);
+            try {
+                category.setImageUrl(uploaded.url());
+                category.setImagePublicId(uploaded.publicId());
+                return catalogMapper.toResponse(categoryRepository.save(category));
+            } catch (RuntimeException ex) {
+                deleteQuietly(uploaded.publicId());
+                throw ex;
+            }
+        }
         return catalogMapper.toResponse(categoryRepository.save(category));
     }
 
     @Override
     @Transactional
     public CategoryResponse updateCategory(Long id, CategoryRequest request) {
+        return updateCategory(id, request, null);
+    }
+
+    @Override
+    @Transactional
+    public CategoryResponse updateCategory(Long id, CategoryRequest request, MultipartFile file) {
         Category category = category(id);
         String name = request.getName().trim();
         if (categoryRepository.existsByNameAndIdNot(name, id)) {
             throw new BadRequestException("name", "Tên danh mục đã tồn tại");
         }
         apply(category, name, request);
+
+        if (file != null && !file.isEmpty()) {
+            String previousPublicId = category.getImagePublicId();
+            ImageUploadResult uploaded = cloudinaryService.uploadImage(file, CATEGORY_FOLDER);
+            try {
+                category.setImageUrl(uploaded.url());
+                category.setImagePublicId(uploaded.publicId());
+                categoryRepository.saveAndFlush(category);
+            } catch (RuntimeException ex) {
+                deleteQuietly(uploaded.publicId());
+                throw ex;
+            }
+            if (StringUtils.hasText(previousPublicId)) {
+                deleteQuietly(previousPublicId);
+            }
+        }
+        return catalogMapper.toResponse(category);
+    }
+
+    @Override
+    @Transactional
+    public CategoryResponse uploadCategoryImage(Long id, MultipartFile file) {
+        Category category = category(id);
+        String previousPublicId = category.getImagePublicId();
+
+        ImageUploadResult uploaded = cloudinaryService.uploadImage(file, CATEGORY_FOLDER);
+        try {
+            category.setImageUrl(uploaded.url());
+            category.setImagePublicId(uploaded.publicId());
+            categoryRepository.saveAndFlush(category);
+        } catch (RuntimeException ex) {
+            deleteQuietly(uploaded.publicId());
+            throw ex;
+        }
+        if (StringUtils.hasText(previousPublicId)) {
+            deleteQuietly(previousPublicId);
+        }
+        return catalogMapper.toResponse(category);
+    }
+
+    @Override
+    @Transactional
+    public CategoryResponse removeCategoryImage(Long id) {
+        Category category = category(id);
+        String publicId = category.getImagePublicId();
+        category.setImageUrl(null);
+        category.setImagePublicId(null);
+        categoryRepository.saveAndFlush(category);
+        if (StringUtils.hasText(publicId)) {
+            cloudinaryService.deleteImage(publicId);
+        }
         return catalogMapper.toResponse(category);
     }
 

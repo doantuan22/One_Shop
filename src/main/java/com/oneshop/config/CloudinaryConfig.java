@@ -15,6 +15,9 @@ public class CloudinaryConfig {
                 "cloud_name", nullToEmpty(properties.cloudName()),
                 "api_key", nullToEmpty(properties.apiKey()),
                 "api_secret", nullToEmpty(properties.apiSecret()),
+                "timeout", properties.effectiveTimeoutSeconds(),
+                "connect_timeout", properties.effectiveConnectTimeoutSeconds(),
+                "read_timeout", properties.effectiveReadTimeoutSeconds(),
                 "secure", true));
     }
 

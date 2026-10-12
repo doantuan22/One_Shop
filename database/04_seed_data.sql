@@ -83,10 +83,10 @@ INSERT INTO dbo.staff_store_assignments (user_id, store_id, status) VALUES
 
 /* ---------- categories / brands ---------- */
 SET IDENTITY_INSERT dbo.categories ON;
-INSERT INTO dbo.categories (category_id, name, description, status) VALUES
- (1, N'Chăm sóc da',  N'Serum, toner, sữa rửa mặt',  N'ACTIVE'),
- (2, N'Trang điểm',   N'Má hồng, son, phấn',          N'ACTIVE'),
- (3, N'Chăm sóc tóc', N'Dầu gội, dầu xả',             N'ACTIVE');
+INSERT INTO dbo.categories (category_id, name, description, image_url, image_public_id, status) VALUES
+ (1, N'Chăm sóc da',  N'Serum, toner, sữa rửa mặt',  N'/images/site/categories/category-skincare.webp', NULL, N'ACTIVE'),
+ (2, N'Trang điểm',   N'Má hồng, son, phấn',          N'/images/site/categories/category-makeup.webp',   NULL, N'ACTIVE'),
+ (3, N'Chăm sóc tóc', N'Dầu gội, dầu xả',             N'/images/site/categories/category-haircare.webp', NULL, N'ACTIVE');
 SET IDENTITY_INSERT dbo.categories OFF;
 
 SET IDENTITY_INSERT dbo.brands ON;

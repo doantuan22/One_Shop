@@ -125,10 +125,12 @@ GO
    6. categories
    ========================================================================== */
 CREATE TABLE dbo.categories (
-    category_id BIGINT IDENTITY(1,1) NOT NULL,
-    name        NVARCHAR(150)        NOT NULL,
-    description NVARCHAR(500)        NULL,
-    status      NVARCHAR(20)         NOT NULL CONSTRAINT DF_categories_status DEFAULT N'ACTIVE',
+    category_id     BIGINT IDENTITY(1,1) NOT NULL,
+    name            NVARCHAR(150)        NOT NULL,
+    description     NVARCHAR(500)        NULL,
+    image_url       NVARCHAR(500)        NULL,
+    image_public_id NVARCHAR(255)        NULL,
+    status          NVARCHAR(20)         NOT NULL CONSTRAINT DF_categories_status DEFAULT N'ACTIVE',
     CONSTRAINT PK_categories PRIMARY KEY (category_id),
     CONSTRAINT UQ_categories_name UNIQUE (name),
     CONSTRAINT CK_categories_status CHECK (status IN (N'ACTIVE', N'HIDDEN'))

@@ -13,6 +13,8 @@ SQL Server schema theo Roadmap V2 mục 7 (19 bảng). Chỉ gồm schema, const
 | - | `migration_001_add_users_user_name.sql` | Database **đã có dữ liệu**: thêm `users.user_name` + `UX_users_user_name` (idempotent, không xóa dữ liệu; không nằm trong `00_run_all.sql`) |
 | - | `migration_002_reviews_unique_user_product.sql` | Database **đã có dữ liệu**: thêm `UNIQUE (user_id, product_id)` cho `reviews` (mỗi khách một đánh giá / Product; idempotent) |
 | - | `migration_003_review_order_and_reply.sql` | Database **đã có dữ liệu**: thêm `reviews.order_id` (đơn COMPLETED dùng để đánh giá; chi nhánh suy ra từ đơn) và phản hồi `reply`, `replied_by`, `replied_at` (idempotent; tự điền `order_id` cho đánh giá cũ) |
+| - | `migration_004_category_images.sql` | Database **đã có dữ liệu**: thêm `categories.image_url` + `categories.image_public_id` (idempotent, không xóa dữ liệu) |
+| - | `optional_set_category_images.sql` | Database **đang chạy**: tùy chọn gán ảnh tĩnh mặc định cho các danh mục seed có `image_url IS NULL` (idempotent, không ghi đè) |
 
 ## Chạy
 
@@ -32,11 +34,23 @@ Migration cho database cũ (cần `-I` vì tạo filtered index):
 sqlcmd -S localhost -E -C -f 65001 -b -I -i migration_001_add_users_user_name.sql
 ```
 
+Migration thêm cột ảnh danh mục (Migration 004):
+
+```
+sqlcmd -S localhost -E -C -f 65001 -b -i migration_004_category_images.sql
+```
+
+Script tùy chọn gán ảnh cho danh mục seed đã có sẵn trong DB đang chạy:
+
+```
+sqlcmd -S localhost -E -C -f 65001 -b -i optional_set_category_images.sql
+```
+
 ## Quy ước tự bổ sung (tài liệu không nêu chi tiết)
 
 Chỉ có 19 bảng của Roadmap 7.2; không thêm bảng nào. Các bảng ngoài 8 bảng có cột trọng tâm ở mục 7.3 dùng cột tối thiểu theo quan hệ mục 7.1:
 
-- **Cột bổ sung:** `roles.description`; `users.full_name/phone/status/created_at/updated_at`; `customer_addresses` (receiver_name, receiver_phone, address_line, is_default, created_at); `staff_store_assignments.status/assigned_at`; `categories.description/status`; `brands.description/logo_url/logo_public_id/status` (Roadmap 3.2: ảnh thương hiệu trên Cloudinary); `product_images` (image_url, public_id, is_primary, sort_order, created_at); `carts`/`cart_items` timestamps; `reviews` (rating, comment, status, created_at); `stores.created_at/updated_at`.
+- **Cột bổ sung:** `roles.description`; `users.full_name/phone/status/created_at/updated_at`; `customer_addresses` (receiver_name, receiver_phone, address_line, is_default, created_at); `staff_store_assignments.status/assigned_at`; `categories.description/image_url/image_public_id/status` (V2.1: ảnh minh họa danh mục trên Cloudinary hoặc ảnh tĩnh trong repo); `brands.description/logo_url/logo_public_id/status` (Roadmap 3.2: ảnh thương hiệu trên Cloudinary); `product_images` (image_url, public_id, is_primary, sort_order, created_at); `carts`/`cart_items` timestamps; `reviews` (rating, comment, status, created_at); `stores.created_at/updated_at`.
 - **Giá trị enum quy ước:** `orders.payment_status` = UNPAID/PAID/FAILED (FAILED phục vụ luồng ONLINE thất bại, Roadmap 6.4); `payments.status` = PENDING/SUCCESS/FAILED; Store/StoreProduct/assignment/user = ACTIVE/INACTIVE; Product = ACTIVE/INACTIVE/HIDDEN; Category/Brand/Review = ACTIVE/HIDDEN. Các enum có trong tài liệu (order_status, fulfillment_type, payment_method, inventory type, checkout status) dùng nguyên văn.
 - **CHECK nghiệp vụ dẫn xuất từ tài liệu:** trên `orders` (DELIVERY chỉ COD/ONLINE, STORE_PICKUP chỉ PAY_AT_STORE/ONLINE – Roadmap 6.4; `pickup_*` chỉ STORE_PICKUP – 7.3; READY_FOR_PICKUP có `pickup_code` + `ready_at` – 6.6; PACKED/SHIPPING chỉ DELIVERY – 6.5/6.6; PENDING_PAYMENT chỉ ONLINE; DELIVERY có `shipping_address`); trên `inventory_movements` (before/after >= 0, after = before + change; ORDER âm, CANCEL_ORDER dương và có `reference_order_id`; STOCK_ADJUST có `staff_id` – 6.7/6.8); `order_items` (quantity > 0, subtotal = unit_price × quantity); `payments` (SUCCESS có `paid_at`); `cart_items.quantity > 0`.
 - **`order_items.store_product_id` (giữ):** cần để hủy Order hoàn tồn đúng StoreProduct và ghi `InventoryMovement` (BR-12, Roadmap 6.7). Đây là FK bắt buộc cho nghiệp vụ đã chốt, không phải cột dư.

@@ -16,7 +16,7 @@ public class CatalogMapper {
 
     public CategoryResponse toResponse(Category category) {
         return new CategoryResponse(category.getId(), category.getName(), category.getDescription(),
-                category.getStatus());
+                category.getImageUrl(), category.getStatus());
     }
 
     public BrandResponse toResponse(Brand brand) {

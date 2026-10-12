@@ -6,15 +6,24 @@
 <body>
 <div th:replace="~{fragments/components :: pageHeader('Danh mục', 'Danh mục dùng chung toàn chuỗi. Danh mục đang ẩn sẽ không hiển thị cho khách cùng các sản phẩm của nó.')}"></div>
 
-<div class="alert alert-success" th:if="${param.success}"
-     th:text="${param.success[0] == 'created'} ? 'Đã thêm danh mục.' : 'Đã cập nhật danh mục.'">Đã lưu.</div>
+<div class="alert alert-success" th:if="${param.success}" th:switch="${param.success[0]}">
+    <span th:case="'created'">Đã thêm danh mục. Bạn có thể tải ảnh lên ngay bên dưới.</span>
+    <span th:case="'image-uploaded'">Đã tải ảnh lên.</span>
+    <span th:case="'image-removed'">Đã xóa ảnh.</span>
+    <span th:case="*">Đã cập nhật danh mục.</span>
+</div>
+<div class="alert alert-danger" th:if="${param.error != null or error != null}" th:switch="${param.error != null ? param.error[0] : error}">
+    <span th:case="'image-size'" th:text="${errorMessage != null ? errorMessage : 'Ảnh vượt quá ' + (maxFileSize != null ? maxFileSize : '5MB') + '. Vui lòng chọn tệp nhỏ hơn.'}">Ảnh vượt quá dung lượng cho phép.</span>
+    <span th:case="'image-invalid'">Tệp không hợp lệ. Vui lòng chọn một tệp hình ảnh (JPEG, PNG, WebP tối đa 5MB).</span>
+    <span th:case="*">Không thể làm việc với Cloudinary. Kiểm tra cấu hình CLOUDINARY_* rồi thử lại.</span>
+</div>
 
 <div class="row g-4">
     <div class="col-12 col-xl-4 order-xl-2">
-        <section class="card shadow-sm">
+        <section class="card shadow-sm mb-4">
             <div class="card-header bg-white fw-semibold" th:text="${editId == null} ? 'Thêm danh mục' : 'Sửa danh mục'">Thêm danh mục</div>
             <div class="card-body">
-                <form method="post" th:object="${form}" id="category-form" novalidate
+                <form method="post" enctype="multipart/form-data" th:object="${form}" id="category-form" novalidate
                       th:action="${editId == null} ? @{/admin/categories} : @{/admin/categories/{id}(id=${editId})}">
                     <div class="alert alert-danger" th:each="message : ${#fields.globalErrors()}" th:text="${message}">Lỗi</div>
                     <div class="mb-3">
@@ -34,8 +43,36 @@
                             <option value="HIDDEN">Đang ẩn</option>
                         </select>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="file">Ảnh minh họa</label>
+                        <input type="file" class="form-control" id="file" name="file" accept="image/jpeg,image/png,image/webp">
+                        <div class="form-text">Định dạng hỗ trợ: JPEG, PNG, WebP. Dung lượng tối đa: 5MB.</div>
+                    </div>
                     <button type="submit" class="btn btn-primary" th:text="${editId == null} ? 'Thêm' : 'Lưu thay đổi'">Lưu</button>
                     <a class="btn btn-outline-secondary" th:href="@{/admin/categories}" th:if="${editId != null}">Hủy</a>
+                </form>
+            </div>
+        </section>
+
+        <section class="card shadow-sm" id="category-image" th:if="${editCategory != null}">
+            <div class="card-header bg-white fw-semibold">Ảnh minh họa</div>
+            <div class="card-body">
+                <img th:if="${editCategory.imageUrl != null and !#strings.trim(editCategory.imageUrl).isEmpty()}"
+                     th:src="${editCategory.imageUrl}" th:alt="${editCategory.name}"
+                     class="rounded border mb-3 d-block" style="max-height: 140px; max-width: 100%; object-fit: cover;">
+                <p class="text-secondary small" th:unless="${editCategory.imageUrl != null and !#strings.trim(editCategory.imageUrl).isEmpty()}">Chưa có ảnh.</p>
+
+                <form method="post" enctype="multipart/form-data" class="mb-2"
+                      th:action="@{/admin/categories/{id}/image(id=${editId})}">
+                    <div class="input-group">
+                        <input type="file" class="form-control" name="file" accept="image/jpeg,image/png,image/webp" required aria-label="Tệp ảnh">
+                        <button type="submit" class="btn btn-outline-primary">Tải lên</button>
+                    </div>
+                    <div class="form-text">Định dạng: JPEG, PNG, WebP. Tối đa 5MB.</div>
+                </form>
+                <form method="post" th:action="@{/admin/categories/{id}/image/delete(id=${editId})}"
+                      th:if="${editCategory.imageUrl != null and !#strings.trim(editCategory.imageUrl).isEmpty()}">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">Xóa ảnh</button>
                 </form>
             </div>
         </section>
@@ -49,6 +86,7 @@
 <th:block th:remove="all">
     <thead id="category-head">
     <tr>
+        <th scope="col">Ảnh</th>
         <th scope="col">Tên</th>
         <th scope="col">Mô tả</th>
         <th scope="col">Trạng thái</th>
@@ -57,6 +95,14 @@
     </thead>
     <tbody id="category-body">
     <tr th:each="category : ${categories}" th:classappend="${category.id == editId} ? 'table-active'">
+        <td>
+            <img th:if="${category.imageUrl != null and !#strings.trim(category.imageUrl).isEmpty()}"
+                 th:src="${category.imageUrl}" th:alt="${category.name}"
+                 class="rounded border" style="width: 44px; height: 44px; object-fit: cover;">
+            <div th:unless="${category.imageUrl != null and !#strings.trim(category.imageUrl).isEmpty()}"
+                 class="rounded border d-inline-flex align-items-center justify-content-center bg-light text-secondary small"
+                 style="width: 44px; height: 44px;">&mdash;</div>
+        </td>
         <td class="fw-semibold" th:text="${category.name}">Chăm sóc da</td>
         <td class="text-secondary" th:text="${category.description}">Mô tả</td>
         <td><span th:replace="~{fragments/components :: statusBadge(${category.status})}"></span></td>
@@ -65,7 +111,7 @@
         </td>
     </tr>
     <tr th:if="${categories.isEmpty()}">
-        <td colspan="4" class="text-center text-secondary py-4">Chưa có danh mục nào.</td>
+        <td colspan="5" class="text-center text-secondary py-4">Chưa có danh mục nào.</td>
     </tr>
     </tbody>
 </th:block>

@@ -35,18 +35,22 @@ public class AdminBrandController {
 
     @GetMapping
     public String list(Model model) {
-        model.addAttribute("form", new BrandRequest());
+        if (!model.containsAttribute("form")) {
+            model.addAttribute("form", new BrandRequest());
+        }
         return page(model, null);
     }
 
     @GetMapping("/{id}/edit")
     public String edit(@PathVariable Long id, Model model) {
-        BrandResponse brand = productService.getBrand(id);
-        BrandRequest form = new BrandRequest();
-        form.setName(brand.name());
-        form.setDescription(brand.description());
-        form.setStatus(brand.status());
-        model.addAttribute("form", form);
+        if (!model.containsAttribute("form")) {
+            BrandResponse brand = productService.getBrand(id);
+            BrandRequest form = new BrandRequest();
+            form.setName(brand.name());
+            form.setDescription(brand.description());
+            form.setStatus(brand.status());
+            model.addAttribute("form", form);
+        }
         return page(model, id);
     }
 
@@ -85,7 +89,7 @@ public class AdminBrandController {
             productService.uploadBrandLogo(id, file);
             outcome = "success=logo-uploaded";
         } catch (BadRequestException ex) {
-            outcome = "error=image-invalid";
+            outcome = ex.getMessage() != null && ex.getMessage().contains("5MB") ? "error=image-size" : "error=image-invalid";
         } catch (ImageStorageException ex) {
             outcome = "error=image-storage";
         }

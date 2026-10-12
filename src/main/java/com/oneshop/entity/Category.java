@@ -24,6 +24,14 @@ public class Category {
     @Column(length = 500)
     private String description;
 
+    /** Cloudinary delivery URL or static bundled image path. */
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
+
+    /** Cloudinary public id, needed to delete or replace the image later. NULL for bundled images. */
+    @Column(name = "image_public_id")
+    private String imagePublicId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private VisibilityStatus status = VisibilityStatus.ACTIVE;
@@ -46,6 +54,22 @@ public class Category {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = (imageUrl != null && imageUrl.trim().isEmpty()) ? null : (imageUrl != null ? imageUrl.trim() : null);
+    }
+
+    public String getImagePublicId() {
+        return imagePublicId;
+    }
+
+    public void setImagePublicId(String imagePublicId) {
+        this.imagePublicId = (imagePublicId != null && imagePublicId.trim().isEmpty()) ? null : (imagePublicId != null ? imagePublicId.trim() : null);
     }
 
     public VisibilityStatus getStatus() {

@@ -7,6 +7,7 @@ import com.oneshop.dto.response.HomeCategoryTile;
 import com.oneshop.dto.response.HomeViewModel;
 import com.oneshop.dto.response.ProductCardResponse;
 import com.oneshop.dto.response.StoreResponse;
+import com.oneshop.service.CloudinaryService;
 import com.oneshop.service.ProductService;
 import com.oneshop.service.StoreProductService;
 import com.oneshop.service.StoreService;
@@ -17,11 +18,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 
-import java.text.Normalizer;
 import java.time.Clock;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /** Home page: only prepares the view model from the existing Services. */
@@ -32,14 +31,7 @@ public class HomeController {
     static final int STORES = 4;
     static final int BRANDS = 12;
     static final int SEARCH_SUGGESTIONS = 3;
-
-    private static final String IMAGES = "/images/site/categories/";
-
-    /** Bundled category photos by normalised category name; a category not listed gets a neutral tile. */
-    private static final Map<String, String> CATEGORY_IMAGES = Map.of(
-            "cham soc da", IMAGES + "category-skincare.webp",
-            "trang diem", IMAGES + "category-makeup.webp",
-            "cham soc toc", IMAGES + "category-haircare.webp");
+    private static final int CATEGORY_IMAGE_WIDTH = 800;
 
     private final ProductService productService;
     private final StoreService storeService;
@@ -99,16 +91,15 @@ public class HomeController {
     }
 
     private static HomeCategoryTile tile(CategoryResponse category) {
-        return new HomeCategoryTile(category.id(), category.name(), CATEGORY_IMAGES.get(normalise(category.name())));
+        String url = category.imageUrl();
+        if (url != null && url.isBlank()) {
+            url = null;
+        }
+        String optimizedUrl = CloudinaryService.transformUrl(url, CATEGORY_IMAGE_WIDTH);
+        return new HomeCategoryTile(category.id(), category.name(), optimizedUrl);
     }
 
     private static HomeBrandTile brandTile(BrandResponse brand, Map<Long, Long> counts) {
         return new HomeBrandTile(brand.id(), brand.name(), counts.getOrDefault(brand.id(), 0L));
-    }
-
-    private static String normalise(String name) {
-        String plain = Normalizer.normalize(name == null ? "" : name, Normalizer.Form.NFD)
-                .replaceAll("\\p{M}", "").replace('đ', 'd').replace('Đ', 'D');
-        return plain.toLowerCase(Locale.ROOT).trim();
     }
 }
