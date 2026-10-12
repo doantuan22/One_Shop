@@ -1,18 +1,319 @@
+
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Quản lý người dùng</title></head><body>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Quản lý người dùng</title>
+    <style>
+        body:has(#userName) {
+            --uf-primary: #FF7F50;
+            --uf-primary-dark: #e86738;
+            --uf-primary-soft: #fff5f2;
+            --uf-primary-light: #ffede6;
+            --uf-border: #f3e5df;
+            --uf-text: #292d32;
+            --uf-muted: #707780;
+            --uf-surface: #ffffff;
+        }
+
+        body:has(#userName) h1.h3 {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--uf-border);
+            color: var(--uf-text);
+            font-size: 1.65rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.4;
+        }
+
+        form.card.card-body:has(#userName) {
+            width: 100%;
+            max-width: 820px;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            border: 1px solid var(--uf-border);
+            border-radius: 16px;
+            background-color: var(--uf-surface);
+            box-shadow: 0 6px 24px rgba(42, 45, 50, 0.05);
+        }
+
+        form.card:has(#userName) .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--uf-text);
+            font-size: 0.9rem;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
+        form.card:has(#userName) .form-control,
+        form.card:has(#userName) .form-select {
+            width: 100%;
+            min-height: 46px;
+            padding: 0.7rem 1rem;
+            border: 1px solid #e7dedb;
+            border-radius: 10px;
+            background-color: #ffffff;
+            color: var(--uf-text);
+            font-size: 0.9rem;
+            font-weight: 500;
+            line-height: 1.5;
+            box-shadow: none;
+        }
+
+        form.card:has(#userName) .form-select {
+            padding-right: 2.5rem;
+            cursor: pointer;
+        }
+
+        form.card:has(#userName) .form-control::placeholder {
+            color: #a0a5ac;
+            opacity: 1;
+        }
+
+        form.card:has(#userName) .form-control:hover:not(:disabled):not(:read-only),
+        form.card:has(#userName) .form-select:hover:not(:disabled) {
+            border-color: #efbba9;
+        }
+
+        form.card:has(#userName) .form-control:focus,
+        form.card:has(#userName) .form-select:focus {
+            border-color: var(--uf-primary) !important;
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.15) !important;
+        }
+
+        form.card:has(#userName) .form-control:read-only {
+            border-color: #e8e1de;
+            background-color: #faf8f7;
+            color: var(--uf-muted);
+            cursor: default;
+        }
+
+        form.card:has(#userName) .form-control:disabled,
+        form.card:has(#userName) .form-select:disabled {
+            border-color: #e8e1de;
+            background-color: #f8f6f5;
+            color: #9298a0;
+            cursor: not-allowed;
+        }
+
+        form.card:has(#userName) .form-control:invalid:not(:focus) {
+            border-color: #e7dedb;
+        }
+
+        form.card:has(#userName) .form-control.is-invalid,
+        form.card:has(#userName) .form-select.is-invalid {
+            border-color: #dc3545 !important;
+        }
+
+        form.card:has(#userName) .form-control.is-invalid:focus,
+        form.card:has(#userName) .form-select.is-invalid:focus {
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.12) !important;
+        }
+
+        form.card:has(#userName) .form-text {
+            margin-top: -0.1rem;
+            color: var(--uf-muted);
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        form.card:has(#userName) .small.text-secondary {
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+            padding: 0.95rem 1.1rem;
+            border: 1px solid #f8e6dc;
+            border-left: 3px solid var(--uf-primary);
+            border-radius: 9px;
+            background-color: var(--uf-primary-soft);
+            color: var(--uf-muted) !important;
+            font-size: 0.825rem;
+            line-height: 1.7;
+        }
+
+        form.card:has(#userName) .alert-danger {
+            margin-bottom: 1.5rem;
+            padding: 1rem 1.25rem;
+            border: 1px solid #f5c6c6;
+            border-radius: 11px;
+            background-color: #fff2f2;
+            color: #b71c1c;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        form.card:has(#userName) .alert-danger ul {
+            padding-left: 1.25rem;
+        }
+
+        form.card:has(#userName) .alert-danger li + li {
+            margin-top: 0.4rem;
+        }
+
+        form.card:has(#userName) > div:has(> .btn-primary) {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--uf-border);
+        }
+
+        form.card:has(#userName) .btn-primary,
+        form.card:has(#userName) .btn-outline-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 110px;
+            min-height: 44px;
+            padding: 0.65rem 1.35rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            box-shadow: none;
+        }
+
+        form.card:has(#userName) .btn-primary {
+            border: 1px solid var(--uf-primary) !important;
+            background-color: var(--uf-primary) !important;
+            color: #ffffff !important;
+        }
+
+        form.card:has(#userName) .btn-primary:hover {
+            border-color: var(--uf-primary-dark) !important;
+            background-color: var(--uf-primary-dark) !important;
+            color: #ffffff !important;
+        }
+
+        form.card:has(#userName) .btn-primary:active {
+            border-color: #d95b2f !important;
+            background-color: #d95b2f !important;
+            color: #ffffff !important;
+        }
+
+        form.card:has(#userName) .btn-outline-secondary {
+            border: 1px solid #e3d9d4 !important;
+            background-color: #ffffff !important;
+            color: var(--uf-muted) !important;
+        }
+
+        form.card:has(#userName) .btn-outline-secondary:hover {
+            border-color: var(--uf-primary) !important;
+            background-color: var(--uf-primary-soft) !important;
+            color: var(--uf-primary-dark) !important;
+        }
+
+        form.card:has(#userName) .btn:focus-visible {
+            outline: 3px solid rgba(255, 127, 80, 0.4);
+            outline-offset: 3px;
+        }
+
+        form.card:has(#userName) label[for="password"] {
+            margin-top: 0.25rem;
+        }
+
+        form.card:has(#userName) #password {
+            margin-bottom: 1.5rem !important;
+        }
+
+        @media (max-width: 991.98px) {
+            form.card.card-body:has(#userName) {
+                max-width: 100%;
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            body:has(#userName) h1.h3 {
+                margin-bottom: 1.25rem;
+                font-size: 1.4rem;
+            }
+
+            form.card.card-body:has(#userName) {
+                padding: 1.25rem;
+                border-radius: 12px;
+            }
+
+            form.card:has(#userName) .form-label {
+                font-size: 0.875rem;
+            }
+
+            form.card:has(#userName) .form-control,
+            form.card:has(#userName) .form-select {
+                min-height: 44px;
+                padding: 0.65rem 0.9rem;
+                font-size: 0.875rem;
+            }
+
+            form.card:has(#userName) .small.text-secondary {
+                padding: 0.85rem 1rem;
+            }
+
+            form.card:has(#userName) > div:has(> .btn-primary) {
+                padding-top: 1.25rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            form.card.card-body:has(#userName) {
+                padding: 1rem;
+            }
+
+            form.card:has(#userName) > div:has(> .btn-primary) {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.65rem;
+            }
+
+            form.card:has(#userName) .btn-primary,
+            form.card:has(#userName) .btn-outline-secondary {
+                width: 100%;
+            }
+
+            form.card:has(#userName) .form-text {
+                font-size: 0.775rem;
+            }
+        }
+    </style>
+</head>
+<body>
 <h1 class="h3" th:text="${current == null} ? 'Tạo tài khoản' : 'Cập nhật người dùng'"></h1>
 <form th:object="${form}" method="post" th:action="${current == null} ? @{/admin/users} : @{/admin/users/{id}(id=${current.id})}" class="card card-body">
-    <div class="alert alert-danger" th:if="${#fields.hasAnyErrors()}"><ul class="mb-0"><li th:each="e : ${#fields.allErrors()}" th:text="${e}"></li></ul></div>
-    <label for="email" class="form-label">Email</label><input id="email" type="email" class="form-control mb-3" th:field="*{email}" th:readonly="${current != null}" maxlength="255" required>
-    <label for="userName" class="form-label">Tên đăng nhập</label><input id="userName" class="form-control mb-1" th:field="*{userName}" minlength="4" maxlength="30" pattern="[A-Za-z0-9_.]{4,30}" autocapitalize="none" spellcheck="false" autocomplete="off">
+    <div class="alert alert-danger" th:if="${#fields.hasAnyErrors()}">
+        <ul class="mb-0">
+            <li th:each="e : ${#fields.allErrors()}" th:text="${e}"></li>
+        </ul>
+    </div>
+    <label for="email" class="form-label">Email</label>
+    <input id="email" type="email" class="form-control mb-3" th:field="*{email}" th:readonly="${current != null}" maxlength="255" required>
+    <label for="userName" class="form-label">Tên đăng nhập</label>
+    <input id="userName" class="form-control mb-1" th:field="*{userName}" minlength="4" maxlength="30" pattern="[A-Za-z0-9_.]{4,30}" autocapitalize="none" spellcheck="false" autocomplete="off">
     <div class="form-text mb-3">Không bắt buộc. 4-30 ký tự: chữ, số, dấu _ và dấu chấm (không chứa @). Dùng để đăng nhập thay email.</div>
-    <label for="fullName" class="form-label">Họ tên</label><input id="fullName" class="form-control mb-3" th:field="*{fullName}" maxlength="150" required>
-    <label for="phone" class="form-label">Điện thoại</label><input id="phone" class="form-control mb-3" th:field="*{phone}" maxlength="20">
-    <label for="role" class="form-label">Vai trò</label><select id="role" th:field="*{role}" class="form-select mb-3"><option th:each="r : ${roles}" th:value="${r}" th:text="${r}"></option></select>
-    <label for="status" class="form-label">Trạng thái</label><select id="status" th:field="*{status}" class="form-select mb-3"><option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option></select>
-    <div th:if="${current == null}"><label for="password" class="form-label">Mật khẩu ban đầu</label>
-        <input id="password" name="password" type="password" class="form-control mb-3" minlength="8" maxlength="72" autocomplete="new-password" required></div>
+    <label for="fullName" class="form-label">Họ tên</label>
+    <input id="fullName" class="form-control mb-3" th:field="*{fullName}" maxlength="150" required>
+    <label for="phone" class="form-label">Điện thoại</label>
+    <input id="phone" class="form-control mb-3" th:field="*{phone}" maxlength="20">
+    <label for="role" class="form-label">Vai trò</label>
+    <select id="role" th:field="*{role}" class="form-select mb-3">
+        <option th:each="r : ${roles}" th:value="${r}" th:text="${r}"></option>
+    </select>
+    <label for="status" class="form-label">Trạng thái</label>
+    <select id="status" th:field="*{status}" class="form-select mb-3">
+        <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option>
+    </select>
+    <div th:if="${current == null}">
+        <label for="password" class="form-label">Mật khẩu ban đầu</label>
+        <input id="password" name="password" type="password" class="form-control mb-3" minlength="8" maxlength="72" autocomplete="new-password" required>
+    </div>
     <p class="small text-secondary">Đổi Staff sang vai trò khác sẽ tắt các phân công hiện có. Email giữ nguyên sau khi tạo tài khoản.</p>
-    <div><button class="btn btn-primary">Lưu</button> <a class="btn btn-outline-secondary" th:href="@{/admin/users}">Quay lại</a></div>
+    <div>
+        <button class="btn btn-primary">Lưu</button>
+        <a class="btn btn-outline-secondary" th:href="@{/admin/users}">Quay lại</a>
+    </div>
 </form>
-</body></html>
+</body>
+</html>

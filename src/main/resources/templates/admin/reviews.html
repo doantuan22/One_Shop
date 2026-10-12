@@ -1,26 +1,515 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Đánh giá</title></head><body>
-<div th:replace="~{fragments/components :: pageHeader('Đánh giá', 'Xem nội dung đánh giá và bật / ẩn theo trạng thái hiện có.')}"></div>
-<div class="alert alert-success" th:if="${param.success}">Đã cập nhật đánh giá.</div>
-<div class="alert alert-success" th:if="${param.replied}">Đã lưu phản hồi.</div>
-<div class="alert alert-danger" th:if="${param.replyError}">Phản hồi phải có từ 1 đến 1000 ký tự.</div>
-<div class="table-responsive"><table class="table table-hover"><thead><tr><th>Khách hàng</th><th>SKU / Sản phẩm</th><th>Điểm</th><th>Nội dung</th><th>Trạng thái</th><th></th></tr></thead>
-<tbody><tr th:each="r : ${reviews.content}" th:attr="data-review-id=${r.id}">
-    <td><span th:text="${r.customerName}"></span><div class="small" th:text="${r.customerEmail}"></div></td>
-    <td><span th:text="${r.sku}"></span><div th:text="${r.productName}"></div></td><td th:text="${r.rating} + ' / 5'"></td>
-    <td><span th:text="${r.comment}"></span><div class="small" th:text="${#temporals.format(r.createdAt, 'dd/MM/yyyy HH:mm')}"></div>
-        <div class="small text-secondary" th:if="${r.orderId != null}"><a th:href="@{/admin/orders/{id}(id=${r.orderId})}" th:text="'Đơn #' + ${r.orderId}"></a> &middot; <span th:text="${r.storeName}"></span></div>
-        <div class="small text-secondary" th:if="${r.orderId == null}">Không gắn với đơn nào</div>
-        <form class="mt-2" method="post" th:action="@{/admin/reviews/{id}/reply(id=${r.id})}">
-            <input type="hidden" name="page" th:value="${reviews.number}">
-            <label class="form-label small mb-1" th:for="'reply-' + ${r.id}" th:text="${r.reply != null} ? 'Phản hồi (có thể sửa)' : 'Phản hồi'">Phản hồi</label>
-            <textarea class="form-control form-control-sm mb-1" th:id="'reply-' + ${r.id}" name="reply" rows="2" maxlength="1000" required th:text="${r.reply}"></textarea>
-            <button class="btn btn-sm btn-outline-primary" type="submit" th:text="${r.reply != null} ? 'Cập nhật phản hồi' : 'Gửi phản hồi'">Gửi</button>
-        </form></td>
-    <td th:text="${r.status}"></td><td><form th:action="@{/admin/reviews/{id}/status(id=${r.id})}" method="post">
-        <input type="hidden" name="status" th:value="${r.status.name() == 'ACTIVE'} ? 'HIDDEN' : 'ACTIVE'">
-        <button class="btn btn-sm btn-outline-primary" th:text="${r.status.name() == 'ACTIVE'} ? 'Ẩn' : 'Hiện'"></button></form></td>
-</tr><tr th:if="${reviews.empty}"><td colspan="6">Chưa có đánh giá.</td></tr></tbody></table></div>
-<p>Tổng số: <strong th:text="${reviews.totalElements}"></strong></p>
-<nav th:replace="~{admin/fragments :: pagination(${reviews}, '/admin/reviews', 'storeId', ${null})}"></nav>
-</body></html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Đánh giá</title>
+    <style>
+        body {
+            --reviews-primary: #FF7F50;
+            --reviews-primary-dark: #e86738;
+            --reviews-primary-soft: #fff5f2;
+            --reviews-border: #f3e5df;
+            --reviews-text: #292d32;
+            --reviews-muted: #707780;
+            --reviews-surface: #ffffff;
+        }
+
+        body>div:first-of-type {
+            margin-bottom: 1.5rem;
+        }
+
+        body>div:first-of-type h1 {
+            color: var(--reviews-text);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        @keyframes reviewsAlertUnfold {
+            from {
+                opacity: 0;
+                clip-path: inset(0 100% 0 0);
+            }
+
+            to {
+                opacity: 1;
+                clip-path: inset(0 0 0 0);
+            }
+        }
+
+        body>.alert {
+            padding: 0.9rem 1.25rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            line-height: 1.6;
+            animation: reviewsAlertUnfold 0.3s ease-out both;
+        }
+
+        body>.alert-success {
+            border: 1px solid #cce8d3;
+            background-color: #f0faf2;
+            color: #2e7d32;
+        }
+
+        body>.alert-danger {
+            border: 1px solid #f5c6c6;
+            background-color: #fff2f2;
+            color: #b71c1c;
+        }
+
+        body>.table-responsive {
+            border: 1px solid var(--reviews-border);
+            border-radius: 14px;
+            background-color: var(--reviews-surface);
+            box-shadow: 0 4px 20px rgba(42, 45, 50, 0.04);
+            overflow-x: auto;
+        }
+
+        body .table {
+            width: 100%;
+            margin-bottom: 0;
+            border-color: var(--reviews-border);
+            vertical-align: middle;
+        }
+
+        body .table thead th {
+            padding: 1rem 1.1rem;
+            border-bottom: 2px solid #ffd5c7;
+            background-color: var(--reviews-primary-soft);
+            color: #bf360c;
+            font-size: 0.85rem;
+            font-weight: 700;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        body .table tbody td {
+            padding: 1.15rem 1.1rem;
+            border-bottom: 1px solid var(--reviews-border);
+            color: var(--reviews-text);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            vertical-align: top;
+        }
+
+        body .table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        body .table tbody tr:hover td {
+            --bs-table-bg-state: #fffaf8;
+        }
+
+        body .table tbody tr:focus-within>td {
+            border-top-color: #ffd5c7;
+            border-bottom-color: #ffd5c7;
+        }
+
+        body .table tbody tr:focus-within>td:first-child {
+            box-shadow: inset 4px 0 0 var(--reviews-primary);
+        }
+
+        body .table tbody td:nth-child(1) {
+            min-width: 170px;
+        }
+
+        body .table tbody td:nth-child(1)>span {
+            color: var(--reviews-text);
+            font-weight: 700;
+        }
+
+        body .table tbody td:nth-child(1) .small {
+            margin-top: 0.3rem;
+            color: var(--reviews-muted);
+            font-size: 0.8rem;
+            overflow-wrap: anywhere;
+        }
+
+        body .table tbody td:nth-child(2) {
+            min-width: 170px;
+        }
+
+        body .table tbody td:nth-child(2)>span {
+            color: var(--reviews-primary-dark);
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        body .table tbody td:nth-child(2)>div {
+            margin-top: 0.3rem;
+            color: var(--reviews-text);
+            font-weight: 600;
+        }
+
+        body .table tbody td:nth-child(3) {
+            min-width: 85px;
+            color: #bf360c;
+            font-weight: 800;
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+
+        body .table tbody td:nth-child(4) {
+            min-width: 280px;
+            max-width: 500px;
+        }
+
+        body .table tbody td:nth-child(4)>span {
+            display: block;
+            color: var(--reviews-text);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        body .table tbody td:nth-child(4)>.small {
+            margin-top: 0.4rem;
+            color: var(--reviews-muted);
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+
+        body .table tbody td:nth-child(4) .small.text-secondary {
+            color: var(--reviews-muted) !important;
+        }
+
+        body .table tbody td:nth-child(4) .small a {
+            color: var(--reviews-primary-dark);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        body .table tbody td:nth-child(4) .small a:hover {
+            color: #bf360c;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        body .table tbody td:nth-child(5) {
+            min-width: 115px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        body .table tbody tr[data-review-id] td:nth-child(5) {
+            color: var(--reviews-primary-dark);
+        }
+
+        body .table tbody tr[data-review-id]:has(input[name="status"][value="ACTIVE"]) td:nth-child(5) {
+            color: #777e86;
+        }
+
+        body .table tbody td:nth-child(6) {
+            min-width: 100px;
+            text-align: center;
+        }
+
+        body .table tbody td:nth-child(4) form.mt-2 {
+            margin-top: 1rem !important;
+            padding: 1rem;
+            border: 1px solid var(--reviews-border);
+            border-radius: 10px;
+            background-color: var(--reviews-primary-soft);
+            transition:
+                border-color 0.25s ease,
+                background-color 0.25s ease,
+                box-shadow 0.25s ease,
+                padding 0.25s ease;
+        }
+
+        body .table tbody td:nth-child(4) form.mt-2:focus-within {
+            padding: 1.15rem;
+            border-color: var(--reviews-primary);
+            background-color: #fff9f6;
+            box-shadow: 0 0 0 3px rgba(255, 127, 80, 0.10);
+        }
+
+        body .table form .form-label {
+            display: block;
+            margin-bottom: 0.5rem !important;
+            color: var(--reviews-text);
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        body .table form .form-control {
+            width: 100%;
+            min-height: 78px;
+            padding: 0.75rem 0.9rem;
+            border: 1px solid #e7dedb;
+            border-radius: 9px;
+            background-color: #ffffff;
+            color: var(--reviews-text);
+            font-size: 0.875rem;
+            line-height: 1.6;
+            resize: vertical;
+            box-shadow: none;
+            transition:
+                border-color 0.25s ease,
+                box-shadow 0.25s ease;
+        }
+
+        body .table form .form-control:focus {
+            border-color: var(--reviews-primary) !important;
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.15) !important;
+        }
+
+        body .table form .btn-outline-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 36px;
+            padding: 0.45rem 0.9rem;
+            border: 1px solid var(--reviews-primary) !important;
+            border-radius: 8px;
+            background-color: #ffffff !important;
+            color: var(--reviews-primary) !important;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-align: center;
+            white-space: nowrap;
+            box-shadow: none;
+        }
+
+        body .table form .btn-outline-primary:hover {
+            border-color: var(--reviews-primary) !important;
+            background-color: var(--reviews-primary) !important;
+            color: #ffffff !important;
+        }
+
+        body .table tbody td:nth-child(4) form .btn {
+            margin-top: 0.5rem;
+        }
+
+        body .table tbody td:nth-child(6) .btn {
+            min-width: 65px;
+        }
+
+        body .table tbody td[colspan="6"] {
+            padding: 3rem 1rem !important;
+            color: var(--reviews-muted);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        body>p {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            color: var(--reviews-muted);
+            font-size: 0.9rem;
+        }
+
+        body>p strong {
+            color: var(--reviews-primary-dark);
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+        }
+
+        body>nav {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        body nav .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        body nav .page-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            min-height: 40px;
+            padding: 0.5rem 0.9rem;
+            margin: 0;
+            border: 1px solid var(--reviews-border);
+            border-radius: 9px;
+            background-color: #ffffff;
+            color: var(--reviews-primary);
+            font-size: 0.875rem;
+            font-weight: 700;
+            box-shadow: none;
+        }
+
+        body nav .page-link:hover {
+            border-color: var(--reviews-primary);
+            background-color: var(--reviews-primary-soft);
+            color: var(--reviews-primary-dark);
+        }
+
+        body nav .page-item.active .page-link {
+            border-color: var(--reviews-primary) !important;
+            background-color: var(--reviews-primary) !important;
+            color: #ffffff !important;
+        }
+
+        body nav .page-item.disabled .page-link {
+            border-color: #eee7e4;
+            background-color: #faf8f7;
+            color: #a0a5ac;
+            opacity: 1;
+        }
+
+        body a:focus-visible,
+        body button:focus-visible {
+            outline: 3px solid rgba(255, 127, 80, 0.4);
+            outline-offset: 3px;
+        }
+
+        @media (max-width: 1199.98px) {
+            body .table thead th {
+                padding: 0.9rem 0.85rem;
+                font-size: 0.8rem;
+            }
+
+            body .table tbody td {
+                padding: 1rem 0.85rem;
+                font-size: 0.85rem;
+            }
+
+            body .table tbody td:nth-child(4) {
+                min-width: 250px;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            body>div:first-of-type {
+                margin-bottom: 1.25rem;
+            }
+
+            body>.table-responsive {
+                border-radius: 12px;
+            }
+
+            body .table thead th,
+            body .table tbody td {
+                padding: 0.8rem 0.7rem;
+                font-size: 0.8rem;
+            }
+
+            body .table tbody td:nth-child(4) form.mt-2 {
+                padding: 0.85rem;
+            }
+
+            body .table tbody td:nth-child(4) form.mt-2:focus-within {
+                padding: 1rem;
+            }
+
+            body .table form .form-control {
+                min-height: 72px;
+                font-size: 0.8rem;
+            }
+
+            body .table form .btn-outline-primary {
+                min-height: 34px;
+                padding: 0.4rem 0.7rem;
+                font-size: 0.75rem;
+            }
+
+            body>p {
+                font-size: 0.85rem;
+            }
+
+            body nav .page-link {
+                min-width: 36px;
+                min-height: 36px;
+                padding: 0.45rem 0.7rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            body>.alert {
+                animation: none !important;
+                opacity: 1 !important;
+                clip-path: none !important;
+            }
+
+            body .table tbody td:nth-child(4) form.mt-2,
+            body .table form .form-control {
+                transition: none !important;
+            }
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div
+        th:replace="~{fragments/components :: pageHeader('Đánh giá', 'Xem nội dung đánh giá và bật / ẩn theo trạng thái hiện có.')}">
+    </div>
+    <div class="alert alert-success" th:if="${param.success}">Đã cập nhật đánh giá.</div>
+    <div class="alert alert-success" th:if="${param.replied}">Đã lưu phản hồi.</div>
+    <div class="alert alert-danger" th:if="${param.replyError}">Phản hồi phải có từ 1 đến 1000 ký tự.</div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Khách hàng</th>
+                    <th>SKU / Sản phẩm</th>
+                    <th>Điểm</th>
+                    <th>Nội dung</th>
+                    <th>Trạng thái</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="r : ${reviews.content}" th:attr="data-review-id=${r.id}">
+                    <td>
+                        <span th:text="${r.customerName}"></span>
+                        <div class="small" th:text="${r.customerEmail}"></div>
+                    </td>
+                    <td>
+                        <span th:text="${r.sku}"></span>
+                        <div th:text="${r.productName}"></div>
+                    </td>
+                    <td th:text="${r.rating} + ' / 5'"></td>
+                    <td>
+                        <span th:text="${r.comment}"></span>
+                        <div class="small" th:text="${#temporals.format(r.createdAt, 'dd/MM/yyyy HH:mm')}"></div>
+                        <div class="small text-secondary" th:if="${r.orderId != null}">
+                            <a th:href="@{/admin/orders/{id}(id=${r.orderId})}" th:text="'Đơn #' + ${r.orderId}"></a>
+                            &middot;
+                            <span th:text="${r.storeName}"></span>
+                        </div>
+                        <div class="small text-secondary" th:if="${r.orderId == null}">Không gắn với đơn nào</div>
+                        <form class="mt-2" method="post" th:action="@{/admin/reviews/{id}/reply(id=${r.id})}">
+                            <input type="hidden" name="page" th:value="${reviews.number}">
+                            <label class="form-label small mb-1" th:for="'reply-' + ${r.id}"
+                                th:text="${r.reply != null} ? 'Phản hồi (có thể sửa)' : 'Phản hồi'">Phản hồi</label>
+                            <textarea class="form-control form-control-sm mb-1" th:id="'reply-' + ${r.id}" name="reply"
+                                rows="2" maxlength="1000" required th:text="${r.reply}"></textarea>
+                            <button class="btn btn-sm btn-outline-primary" type="submit"
+                                th:text="${r.reply != null} ? 'Cập nhật phản hồi' : 'Gửi phản hồi'">Gửi</button>
+                        </form>
+                    </td>
+                    <td th:text="${r.status}"></td>
+                    <td>
+                        <form th:action="@{/admin/reviews/{id}/status(id=${r.id})}" method="post">
+                            <input type="hidden" name="status"
+                                th:value="${r.status.name() == 'ACTIVE'} ? 'HIDDEN' : 'ACTIVE'">
+                            <button class="btn btn-sm btn-outline-primary"
+                                th:text="${r.status.name() == 'ACTIVE'} ? 'Ẩn' : 'Hiện'"></button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${reviews.empty}">
+                    <td colspan="6">Chưa có đánh giá.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p>Tổng số: <strong th:text="${reviews.totalElements}"></strong></p>
+    <nav th:replace="~{admin/fragments :: pagination(${reviews}, '/admin/reviews', 'storeId', ${null})}"></nav>
+</body>
+
+</html>

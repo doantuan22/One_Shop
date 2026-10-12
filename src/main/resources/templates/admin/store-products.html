@@ -1,83 +1,538 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Sản phẩm theo chi nhánh</title>
+    <style>
+        body:has(#store-product-filter) {
+            --sp-primary: #FF7F50;
+            --sp-primary-dark: #e86738;
+            --sp-primary-soft: #fff5f2;
+            --sp-primary-light: #ffede6;
+            --sp-border: #f3e5df;
+            --sp-text: #292d32;
+            --sp-muted: #707780;
+            --sp-surface: #ffffff;
+        }
+
+        body:has(#store-product-filter)>h1.h3 {
+            margin-bottom: 1.25rem;
+            color: var(--sp-text);
+            font-size: 1.65rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        body:has(#store-product-filter)>.d-flex {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--sp-border);
+        }
+
+        body:has(#store-product-filter)>.d-flex h1 {
+            color: var(--sp-text);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        body:has(#store-product-filter)>.d-flex .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 0.65rem 1.25rem;
+            border: 1px solid var(--sp-primary) !important;
+            border-radius: 10px;
+            background-color: var(--sp-primary) !important;
+            color: #ffffff !important;
+            font-size: 0.9rem;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.12);
+        }
+
+        body:has(#store-product-filter)>.d-flex .btn-primary:hover {
+            border-color: var(--sp-primary-dark) !important;
+            background-color: var(--sp-primary-dark) !important;
+            color: #ffffff !important;
+        }
+
+        body:has(#store-product-filter)>.alert-success {
+            margin-bottom: 1.5rem;
+            padding: 0.9rem 1.25rem;
+            border: 1px solid #cce8d3;
+            border-radius: 12px;
+            background-color: #f0faf2;
+            color: #2e7d32;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        #store-product-filter {
+            align-items: center;
+            margin-bottom: 1.5rem !important;
+            padding: 1.25rem;
+            border: 1px solid var(--sp-border);
+            border-radius: 14px;
+            background-color: var(--sp-surface);
+            box-shadow: 0 4px 18px rgba(42, 45, 50, 0.04);
+        }
+
+        #store-product-filter .form-select {
+            min-height: 44px;
+            padding: 0.65rem 2.5rem 0.65rem 1rem;
+            border: 1px solid #e7dedb;
+            border-radius: 10px;
+            background-color: #ffffff;
+            color: var(--sp-text);
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: none;
+            cursor: pointer;
+            transition:
+                border-color 0.25s ease,
+                box-shadow 0.3s ease;
+        }
+
+        #store-product-filter .form-select:hover {
+            border-color: #efbba9;
+        }
+
+        #store-product-filter .form-select:focus {
+            border-color: var(--sp-primary) !important;
+            outline: none;
+            box-shadow: 0 0 0 0.25rem rgba(255, 127, 80, 0.2) !important;
+        }
+
+        #store-product-filter .btn-outline-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 100px;
+            min-height: 44px;
+            padding: 0.65rem 1.25rem;
+            border: 1px solid var(--sp-primary) !important;
+            border-radius: 10px;
+            background-color: #ffffff !important;
+            color: var(--sp-primary) !important;
+            font-size: 0.9rem;
+            font-weight: 700;
+            box-shadow: none;
+        }
+
+        #store-product-filter .btn-outline-primary:hover {
+            border-color: var(--sp-primary) !important;
+            background-color: var(--sp-primary) !important;
+            color: #ffffff !important;
+        }
+
+        body:has(#store-product-filter) .table-responsive {
+            border-radius: 14px;
+        }
+
+        body:has(#store-product-filter) .table {
+            width: 100%;
+            margin-bottom: 0;
+            border-color: var(--sp-border);
+            vertical-align: middle;
+        }
+
+        body:has(#store-product-filter) .table thead th {
+            padding: 1rem 1.1rem;
+            border-bottom: 2px solid #ffd5c7;
+            background-color: var(--sp-primary-soft);
+            color: #bf360c;
+            font-size: 0.85rem;
+            font-weight: 700;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        body:has(#store-product-filter) .table tbody td {
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid var(--sp-border);
+            color: var(--sp-text);
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        body:has(#store-product-filter) .table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        body:has(#store-product-filter) .table tbody tr {
+            --sp-row-index: 0;
+            animation: spStaggerTableRow 0.4s ease-out both;
+            animation-delay: calc(0.08s + var(--sp-row-index) * 0.05s);
+        }
+
+        body:has(#store-product-filter) .table tbody tr:nth-child(1) {
+            --sp-row-index: 0;
+        }
+
+        body:has(#store-product-filter) .table tbody tr:nth-child(2) {
+            --sp-row-index: 1;
+        }
+
+        body:has(#store-product-filter) .table tbody tr:nth-child(3) {
+            --sp-row-index: 2;
+        }
+
+        body:has(#store-product-filter) .table tbody tr:nth-child(4) {
+            --sp-row-index: 3;
+        }
+
+        body:has(#store-product-filter) .table tbody tr:nth-child(5) {
+            --sp-row-index: 4;
+        }
+
+        body:has(#store-product-filter) .table tbody tr:nth-child(6) {
+            --sp-row-index: 5;
+        }
+
+        body:has(#store-product-filter) .table tbody tr:nth-child(7) {
+            --sp-row-index: 6;
+        }
+
+        body:has(#store-product-filter) .table tbody tr:nth-child(8) {
+            --sp-row-index: 7;
+        }
+
+        body:has(#store-product-filter) .table tbody tr:nth-child(9) {
+            --sp-row-index: 8;
+        }
+
+        body:has(#store-product-filter) .table tbody tr:nth-child(10) {
+            --sp-row-index: 9;
+        }
+
+        body:has(#store-product-filter) .table tbody tr:nth-child(n+11) {
+            --sp-row-index: 10;
+        }
+
+        @keyframes spStaggerTableRow {
+            from {
+                opacity: 0;
+                transform: translateX(-12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        body:has(#store-product-filter) .table tbody tr:hover td {
+            background-color: var(--sp-primary-soft) !important;
+            --bs-table-bg-state: var(--sp-primary-soft);
+        }
+
+        body:has(#store-product-filter) .table tbody tr td {
+            transition: background-color 0.2s ease;
+        }
+
+        body:has(#store-product-filter) .table tbody td.fw-semibold {
+            color: var(--sp-text);
+            font-weight: 700 !important;
+        }
+
+        body:has(#store-product-filter) .table tbody td:nth-child(2) {
+            color: #bf360c;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        body:has(#store-product-filter) .table tbody td:nth-child(4) {
+            color: var(--sp-text);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        body:has(#store-product-filter) .table tbody td[data-field="exact-quantity"] {
+            color: var(--sp-text);
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+        }
+
+        body:has(#store-product-filter) .table .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.4rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        body:has(#store-product-filter) .table .btn-outline-primary.btn-sm {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 65px;
+            min-height: 36px;
+            padding: 0.4rem 0.85rem;
+            border: 1px solid var(--sp-primary) !important;
+            border-radius: 8px;
+            background-color: #ffffff !important;
+            color: var(--sp-primary) !important;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        body:has(#store-product-filter) .table .btn-outline-primary.btn-sm:hover {
+            border-color: var(--sp-primary) !important;
+            background-color: var(--sp-primary) !important;
+            color: #ffffff !important;
+        }
+
+        body:has(#store-product-filter) .table tbody td[colspan="7"] {
+            padding: 3rem 1rem !important;
+            color: var(--sp-muted) !important;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        body:has(#store-product-filter)>p.small.text-secondary {
+            margin-top: 1rem !important;
+            color: var(--sp-muted) !important;
+            font-size: 0.875rem;
+        }
+
+        body:has(#store-product-filter) #stock-count {
+            color: var(--sp-primary-dark);
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+        }
+
+        body:has(#store-product-filter) nav .pagination {
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        body:has(#store-product-filter) nav .page-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            min-height: 40px;
+            padding: 0.55rem 1rem;
+            margin: 0;
+            border: 1px solid var(--sp-border);
+            border-radius: 9px;
+            background-color: #ffffff;
+            color: var(--sp-primary);
+            font-size: 0.875rem;
+            font-weight: 700;
+            box-shadow: none;
+        }
+
+        body:has(#store-product-filter) nav .page-link:hover {
+            border-color: var(--sp-primary);
+            background-color: var(--sp-primary-soft);
+            color: var(--sp-primary-dark);
+        }
+
+        body:has(#store-product-filter) nav .page-item.disabled .page-link {
+            border-color: #eee7e4;
+            background-color: #faf8f7;
+            color: #a0a5ac;
+            opacity: 1;
+        }
+
+        body:has(#store-product-filter) nav .page-item.disabled:nth-child(2) .page-link {
+            border-color: #ffd5c7;
+            background-color: var(--sp-primary-soft);
+            color: #bf360c;
+            font-weight: 800;
+        }
+
+        body:has(#store-product-filter) .btn:focus-visible,
+        body:has(#store-product-filter) nav .page-link:focus-visible {
+            outline: 3px solid rgba(255, 127, 80, 0.4);
+            outline-offset: 3px;
+            box-shadow: none !important;
+        }
+
+        @media (max-width: 991.98px) {
+
+            body:has(#store-product-filter) .table thead th,
+            body:has(#store-product-filter) .table tbody td {
+                padding: 0.85rem 0.8rem;
+                font-size: 0.85rem;
+            }
+
+            #store-product-filter {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            body:has(#store-product-filter)>.d-flex {
+                gap: 1rem !important;
+            }
+
+            body:has(#store-product-filter)>.d-flex .btn-primary {
+                min-height: 40px;
+                padding: 0.55rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            #store-product-filter {
+                padding: 1rem;
+                border-radius: 12px;
+            }
+
+            #store-product-filter .form-select {
+                min-height: 42px;
+                font-size: 0.875rem;
+            }
+
+            #store-product-filter .btn-outline-primary {
+                min-height: 42px;
+                padding: 0.55rem 1rem;
+            }
+
+            body:has(#store-product-filter) .table thead th,
+            body:has(#store-product-filter) .table tbody td {
+                padding: 0.8rem 0.7rem;
+                font-size: 0.8rem;
+            }
+
+            body:has(#store-product-filter) .table .btn-outline-primary.btn-sm {
+                min-height: 34px;
+                padding: 0.35rem 0.7rem;
+                font-size: 0.75rem;
+            }
+
+            body:has(#store-product-filter) nav .page-link {
+                min-height: 38px;
+                padding: 0.5rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 375px) {
+            #store-product-filter .col-auto {
+                width: 100%;
+            }
+
+            #store-product-filter .btn-outline-primary {
+                width: 100%;
+            }
+
+            body:has(#store-product-filter) nav .pagination {
+                gap: 0.25rem;
+            }
+
+            body:has(#store-product-filter) nav .page-link {
+                padding: 0.45rem 0.65rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            body:has(#store-product-filter) .table tbody tr {
+                animation: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+            }
+
+            #store-product-filter .form-select,
+            body:has(#store-product-filter) .table tbody tr td {
+                transition: none !important;
+            }
+        }
+    </style>
 </head>
+
 <body th:with="listPath=${inventoryView == true ? '/admin/inventory' : '/admin/store-products'}">
-<h1 class="h3" th:if="${inventoryView == true}">Tồn kho toàn chuỗi</h1>
-<div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
-    <div th:replace="~{fragments/components :: pageHeader('Sản phẩm theo chi nhánh', 'Mỗi dòng là một SKU đang gắn với một chi nhánh, có giá, tồn kho và trạng thái bán riêng của chi nhánh đó.')}"></div>
-    <a class="btn btn-primary" th:href="@{/admin/store-products/new(storeId=${storeId})}">Gắn sản phẩm vào chi nhánh</a>
-</div>
+    <h1 class="h3" th:if="${inventoryView == true}">Tồn kho toàn chuỗi</h1>
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+        <div
+            th:replace="~{fragments/components :: pageHeader('Sản phẩm theo chi nhánh', 'Mỗi dòng là một SKU đang gắn với một chi nhánh, có giá, tồn kho và trạng thái bán riêng của chi nhánh đó.')}">
+        </div>
+        <a class="btn btn-primary" th:href="@{/admin/store-products/new(storeId=${storeId})}">Gắn sản phẩm vào chi
+            nhánh</a>
+    </div>
 
-<div class="alert alert-success" th:if="${param.success}"
-     th:text="${param.success[0] == 'created'} ? 'Đã gắn sản phẩm vào chi nhánh.' : 'Đã cập nhật.'">Đã lưu.</div>
+    <div class="alert alert-success" th:if="${param.success}"
+        th:text="${param.success[0] == 'created'} ? 'Đã gắn sản phẩm vào chi nhánh.' : 'Đã cập nhật.'">Đã lưu.</div>
 
-<form method="get" th:action="@{${listPath}}" class="row g-2 mb-3" id="store-product-filter">
-    <div class="col-12 col-md-4">
-        <select class="form-select" name="storeId" aria-label="Chi nhánh">
-            <option value="">Tất cả chi nhánh</option>
-            <option th:each="store : ${stores}" th:value="${store.id}" th:text="${store.name}"
+    <form method="get" th:action="@{${listPath}}" class="row g-2 mb-3" id="store-product-filter">
+        <div class="col-12 col-md-4">
+            <select class="form-select" name="storeId" aria-label="Chi nhánh">
+                <option value="">Tất cả chi nhánh</option>
+                <option th:each="store : ${stores}" th:value="${store.id}" th:text="${store.name}"
                     th:selected="${store.id == storeId}">OneShop Thủ Đức</option>
-        </select>
-    </div>
-    <div class="col-12 col-md-5">
-        <select class="form-select" name="productId" aria-label="Sản phẩm">
-            <option value="">Tất cả sản phẩm</option>
-            <option th:each="product : ${products}" th:value="${product.id}"
-                    th:text="${product.sku} + ' - ' + ${product.name}" th:selected="${product.id == productId}">SKU - Tên</option>
-        </select>
-    </div>
-    <div class="col-auto">
-        <button type="submit" class="btn btn-outline-primary">Lọc</button>
-    </div>
-</form>
+            </select>
+        </div>
+        <div class="col-12 col-md-5">
+            <select class="form-select" name="productId" aria-label="Sản phẩm">
+                <option value="">Tất cả sản phẩm</option>
+                <option th:each="product : ${products}" th:value="${product.id}"
+                    th:text="${product.sku} + ' - ' + ${product.name}" th:selected="${product.id == productId}">SKU -
+                    Tên</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-outline-primary">Lọc</button>
+        </div>
+    </form>
 
-<div th:replace="~{fragments/components :: dataTable(~{::#sp-head}, ~{::#sp-body})}"></div>
-<p class="small text-secondary mt-2">Tổng số: <strong id="stock-count" th:text="${storeProducts.totalElements}"></strong> SKU theo chi nhánh.</p>
+    <div th:replace="~{fragments/components :: dataTable(~{::#sp-head}, ~{::#sp-body})}"></div>
+    <p class="small text-secondary mt-2">Tổng số: <strong id="stock-count"
+            th:text="${storeProducts.totalElements}"></strong> SKU theo chi nhánh.</p>
 
-<nav class="mt-3" th:if="${storeProducts.totalPages > 1}" aria-label="Phân trang">
-    <ul class="pagination justify-content-center">
-        <li class="page-item" th:classappend="${storeProducts.first} ? 'disabled'">
-            <a class="page-link" th:href="@{${listPath}(storeId=${storeId}, productId=${productId}, page=${storeProducts.number - 1})}">Trước</a>
-        </li>
-        <li class="page-item disabled">
-            <span class="page-link" th:text="${storeProducts.number + 1} + ' / ' + ${storeProducts.totalPages}">1 / 1</span>
-        </li>
-        <li class="page-item" th:classappend="${storeProducts.last} ? 'disabled'">
-            <a class="page-link" th:href="@{${listPath}(storeId=${storeId}, productId=${productId}, page=${storeProducts.number + 1})}">Sau</a>
-        </li>
-    </ul>
-</nav>
+    <nav class="mt-3" th:if="${storeProducts.totalPages > 1}" aria-label="Phân trang">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${storeProducts.first} ? 'disabled'">
+                <a class="page-link"
+                    th:href="@{${listPath}(storeId=${storeId}, productId=${productId}, page=${storeProducts.number - 1})}">Trước</a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link" th:text="${storeProducts.number + 1} + ' / ' + ${storeProducts.totalPages}">1 /
+                    1</span>
+            </li>
+            <li class="page-item" th:classappend="${storeProducts.last} ? 'disabled'">
+                <a class="page-link"
+                    th:href="@{${listPath}(storeId=${storeId}, productId=${productId}, page=${storeProducts.number + 1})}">Sau</a>
+            </li>
+        </ul>
+    </nav>
 
-<th:block th:remove="all">
-    <thead id="sp-head">
-    <tr>
-        <th scope="col">Chi nhánh</th>
-        <th scope="col">SKU</th>
-        <th scope="col">Sản phẩm</th>
-        <th scope="col" class="text-end">Giá bán</th>
-        <th scope="col" class="text-end">Tồn kho</th>
-        <th scope="col">Trạng thái</th>
-        <th scope="col" class="text-end">Thao tác</th>
-    </tr>
-    </thead>
-    <tbody id="sp-body">
-    <tr th:each="row : ${storeProducts.content}" th:attr="data-store-product-id=${row.storeProductId},data-store-id=${row.storeId}">
-        <td th:text="${row.storeName}">OneShop Thủ Đức</td>
-        <td th:text="${row.sku}">SKU-001</td>
-        <td class="fw-semibold" th:text="${row.productName}">Tên sản phẩm</td>
-        <td class="text-end"><span th:replace="~{fragments/components :: price(${row.price})}"></span></td>
-        <td class="text-end" data-field="exact-quantity" th:text="${row.quantity}">40</td>
-        <td><span th:replace="~{fragments/components :: statusBadge(${row.status})}"></span></td>
-        <td class="text-end">
-            <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/store-products/{id}/edit(id=${row.storeProductId})}">Sửa</a>
-        </td>
-    </tr>
-    <tr th:if="${storeProducts.isEmpty()}">
-        <td colspan="7" class="text-center text-secondary py-4">Chưa có sản phẩm nào được gắn.</td>
-    </tr>
-    </tbody>
-</th:block>
+    <th:block th:remove="all">
+        <thead id="sp-head">
+            <tr>
+                <th scope="col">Chi nhánh</th>
+                <th scope="col">SKU</th>
+                <th scope="col">Sản phẩm</th>
+                <th scope="col" class="text-end">Giá bán</th>
+                <th scope="col" class="text-end">Tồn kho</th>
+                <th scope="col">Trạng thái</th>
+                <th scope="col" class="text-end">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody id="sp-body">
+            <tr th:each="row : ${storeProducts.content}"
+                th:attr="data-store-product-id=${row.storeProductId},data-store-id=${row.storeId}">
+                <td th:text="${row.storeName}">OneShop Thủ Đức</td>
+                <td th:text="${row.sku}">SKU-001</td>
+                <td class="fw-semibold" th:text="${row.productName}">Tên sản phẩm</td>
+                <td class="text-end"><span th:replace="~{fragments/components :: price(${row.price})}"></span></td>
+                <td class="text-end" data-field="exact-quantity" th:text="${row.quantity}">40</td>
+                <td><span th:replace="~{fragments/components :: statusBadge(${row.status})}"></span></td>
+                <td class="text-end">
+                    <a class="btn btn-outline-primary btn-sm"
+                        th:href="@{/admin/store-products/{id}/edit(id=${row.storeProductId})}">Sửa</a>
+                </td>
+            </tr>
+            <tr th:if="${storeProducts.isEmpty()}">
+                <td colspan="7" class="text-center text-secondary py-4">Chưa có sản phẩm nào được gắn.</td>
+            </tr>
+        </tbody>
+    </th:block>
 </body>
+
 </html>

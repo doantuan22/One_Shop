@@ -1,19 +1,516 @@
+
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Người dùng</title></head><body>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Người dùng</title>
+    <style>
+        body:has(#user-count) {
+            --users-primary: #FF7F50;
+            --users-primary-dark: #e86738;
+            --users-primary-soft: #fff5f2;
+            --users-primary-light: #ffede6;
+            --users-border: #f3e5df;
+            --users-text: #292d32;
+            --users-muted: #707780;
+            --users-surface: #ffffff;
+        }
+
+        @keyframes usersStaggerTableRow {
+            from {
+                opacity: 0;
+                transform: translateX(-12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes usersSuccessAlertReveal {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        body:has(#user-count) > .alert-success {
+            animation: usersSuccessAlertReveal 0.3s ease-out both;
+        }
+
+        body:has(#user-count) > div:first-of-type {
+            margin-bottom: 1.5rem;
+        }
+
+        body:has(#user-count) > div:first-of-type h1 {
+            color: var(--users-text);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        body:has(#user-count) > a.btn-primary.mb-3 {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 0.7rem 1.25rem;
+            margin-bottom: 1.5rem !important;
+            border: 1px solid var(--users-primary) !important;
+            border-radius: 10px;
+            background-color: var(--users-primary) !important;
+            color: #ffffff !important;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.12);
+        }
+
+        body:has(#user-count) > a.btn-primary.mb-3:hover {
+            border-color: var(--users-primary-dark) !important;
+            background-color: var(--users-primary-dark) !important;
+            color: #ffffff !important;
+        }
+
+        body:has(#user-count) > .alert-success {
+            margin-bottom: 1.5rem;
+            padding: 0.9rem 1.25rem;
+            border: 1px solid #cce8d3;
+            border-radius: 12px;
+            background-color: #f0faf2;
+            color: #2e7d32;
+            font-size: 0.9rem;
+            font-weight: 600;
+            line-height: 1.6;
+        }
+
+        body:has(#user-count) > form.d-flex {
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem !important;
+            margin-bottom: 1.5rem !important;
+            padding: 1.25rem;
+            border: 1px solid var(--users-border);
+            border-radius: 14px;
+            background-color: var(--users-surface);
+            box-shadow: 0 4px 18px rgba(42, 45, 50, 0.04);
+        }
+
+        body:has(#user-count) > form.d-flex .form-select {
+            width: auto;
+            min-width: 220px;
+            min-height: 44px;
+            padding: 0.65rem 2.5rem 0.65rem 1rem;
+            border: 1px solid #e7dedb;
+            border-radius: 10px;
+            background-color: #ffffff;
+            color: var(--users-text);
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: none;
+            cursor: pointer;
+        }
+
+        body:has(#user-count) > form.d-flex .form-select:hover {
+            border-color: #efbba9;
+        }
+
+        body:has(#user-count) > form.d-flex .form-select:focus {
+            border-color: var(--users-primary) !important;
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.15) !important;
+        }
+
+        body:has(#user-count) > form.d-flex .btn-outline-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 100px;
+            min-height: 44px;
+            padding: 0.65rem 1.25rem;
+            border: 1px solid var(--users-primary) !important;
+            border-radius: 10px;
+            background-color: #ffffff !important;
+            color: var(--users-primary) !important;
+            font-size: 0.9rem;
+            font-weight: 700;
+            box-shadow: none;
+        }
+
+        body:has(#user-count) > form.d-flex .btn-outline-primary:hover {
+            border-color: var(--users-primary) !important;
+            background-color: var(--users-primary) !important;
+            color: #ffffff !important;
+        }
+
+        body:has(#user-count) > .table-responsive {
+            margin-bottom: 1.25rem;
+            border: 1px solid var(--users-border);
+            border-radius: 14px;
+            background-color: var(--users-surface);
+            box-shadow: 0 4px 20px rgba(42, 45, 50, 0.04);
+            overflow-x: auto;
+        }
+
+        body:has(#user-count) .table {
+            width: 100%;
+            margin-bottom: 0;
+            border-color: var(--users-border);
+            vertical-align: middle;
+        }
+
+        body:has(#user-count) .table thead th {
+            padding: 1rem 1.1rem;
+            border-bottom: 2px solid #ffd5c7;
+            background-color: var(--users-primary-soft);
+            color: #bf360c;
+            font-size: 0.85rem;
+            font-weight: 700;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        body:has(#user-count) .table tbody td {
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid var(--users-border);
+            color: var(--users-text);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            vertical-align: middle;
+        }
+
+        body:has(#user-count) .table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        body:has(#user-count) .table tbody tr {
+            --users-row-index: 0;
+            animation: usersStaggerTableRow 0.4s ease-out both;
+            animation-delay: calc(0.08s + var(--users-row-index) * 0.05s);
+        }
+
+        body:has(#user-count) .table tbody tr:nth-child(1) {
+            --users-row-index: 0;
+        }
+
+        body:has(#user-count) .table tbody tr:nth-child(2) {
+            --users-row-index: 1;
+        }
+
+        body:has(#user-count) .table tbody tr:nth-child(3) {
+            --users-row-index: 2;
+        }
+
+        body:has(#user-count) .table tbody tr:nth-child(4) {
+            --users-row-index: 3;
+        }
+
+        body:has(#user-count) .table tbody tr:nth-child(5) {
+            --users-row-index: 4;
+        }
+
+        body:has(#user-count) .table tbody tr:nth-child(6) {
+            --users-row-index: 5;
+        }
+
+        body:has(#user-count) .table tbody tr:nth-child(7) {
+            --users-row-index: 6;
+        }
+
+        body:has(#user-count) .table tbody tr:nth-child(8) {
+            --users-row-index: 7;
+        }
+
+        body:has(#user-count) .table tbody tr:nth-child(9) {
+            --users-row-index: 8;
+        }
+
+        body:has(#user-count) .table tbody tr:nth-child(10) {
+            --users-row-index: 9;
+        }
+
+        body:has(#user-count) .table tbody tr:nth-child(n+11) {
+            --users-row-index: 10;
+        }
+
+        body:has(#user-count) .table tbody tr:hover td {
+            --bs-table-bg-state: #fffaf8;
+            background-color: #fffaf8;
+        }
+
+        body:has(#user-count) .table tbody td:nth-child(1) {
+            min-width: 165px;
+            font-weight: 700;
+        }
+
+        body:has(#user-count) .table tbody td:nth-child(2) {
+            min-width: 190px;
+            color: var(--users-muted);
+            overflow-wrap: anywhere;
+        }
+
+        body:has(#user-count) .table tbody td:nth-child(3) {
+            min-width: 140px;
+            font-weight: 600;
+        }
+
+        body:has(#user-count) .table tbody td:nth-child(4) {
+            min-width: 140px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        body:has(#user-count) .table tbody td:nth-child(5) {
+            min-width: 105px;
+            color: var(--users-primary-dark);
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        body:has(#user-count) .table tbody td:nth-child(6) {
+            min-width: 115px;
+        }
+
+        body:has(#user-count) .table tbody td:nth-child(6) .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.4rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        body:has(#user-count) .table tbody td:nth-child(7) {
+            min-width: 95px;
+            text-align: right;
+        }
+
+        body:has(#user-count) .table tbody td:nth-child(7) .btn-outline-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 65px;
+            min-height: 36px;
+            padding: 0.4rem 0.85rem;
+            border: 1px solid var(--users-primary) !important;
+            border-radius: 8px;
+            background-color: #ffffff !important;
+            color: var(--users-primary) !important;
+            font-size: 0.8rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        body:has(#user-count) .table tbody td:nth-child(7) .btn-outline-primary:hover {
+            border-color: var(--users-primary) !important;
+            background-color: var(--users-primary) !important;
+            color: #ffffff !important;
+        }
+
+        body:has(#user-count) .table tbody td[colspan="7"] {
+            padding: 3rem 1rem !important;
+            color: var(--users-muted);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        body:has(#user-count) > p {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            color: var(--users-muted);
+            font-size: 0.9rem;
+        }
+
+        body:has(#user-count) #user-count {
+            color: var(--users-primary-dark);
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+        }
+
+        body:has(#user-count) > nav {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        body:has(#user-count) nav .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        body:has(#user-count) nav .page-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            min-height: 40px;
+            padding: 0.5rem 0.9rem;
+            margin: 0;
+            border: 1px solid var(--users-border);
+            border-radius: 9px;
+            background-color: #ffffff;
+            color: var(--users-primary);
+            font-size: 0.875rem;
+            font-weight: 700;
+            box-shadow: none;
+        }
+
+        body:has(#user-count) nav .page-link:hover {
+            border-color: var(--users-primary);
+            background-color: var(--users-primary-soft);
+            color: var(--users-primary-dark);
+        }
+
+        body:has(#user-count) nav .page-item.active .page-link {
+            border-color: var(--users-primary) !important;
+            background-color: var(--users-primary) !important;
+            color: #ffffff !important;
+        }
+
+        body:has(#user-count) nav .page-item.disabled .page-link {
+            border-color: #eee7e4;
+            background-color: #faf8f7;
+            color: #a0a5ac;
+            opacity: 1;
+        }
+
+        body:has(#user-count) a:focus-visible,
+        body:has(#user-count) button:focus-visible {
+            outline: 3px solid rgba(255, 127, 80, 0.4);
+            outline-offset: 3px;
+        }
+
+        @media (max-width: 1199.98px) {
+            body:has(#user-count) .table thead th,
+            body:has(#user-count) .table tbody td {
+                padding: 0.85rem 0.8rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            body:has(#user-count) > div:first-of-type {
+                margin-bottom: 1.25rem;
+            }
+
+            body:has(#user-count) > a.btn-primary.mb-3 {
+                min-height: 42px;
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            body:has(#user-count) > form.d-flex {
+                padding: 1rem;
+                border-radius: 12px;
+            }
+
+            body:has(#user-count) > form.d-flex .form-select {
+                min-width: 0;
+                flex: 1 1 180px;
+                font-size: 0.875rem;
+            }
+
+            body:has(#user-count) > .table-responsive {
+                border-radius: 12px;
+            }
+
+            body:has(#user-count) .table thead th,
+            body:has(#user-count) .table tbody td {
+                padding: 0.8rem 0.7rem;
+                font-size: 0.8rem;
+            }
+
+            body:has(#user-count) > p {
+                font-size: 0.85rem;
+            }
+
+            body:has(#user-count) nav .page-link {
+                min-width: 36px;
+                min-height: 36px;
+                padding: 0.45rem 0.7rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 375px) {
+            body:has(#user-count) > a.btn-primary.mb-3 {
+                width: 100%;
+            }
+
+            body:has(#user-count) > form.d-flex .form-select,
+            body:has(#user-count) > form.d-flex .btn {
+                width: 100% !important;
+                flex-basis: 100%;
+            }
+
+            body:has(#user-count) nav .pagination {
+                gap: 0.25rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            body:has(#user-count) > div:first-of-type,
+            body:has(#user-count) > a.btn-primary.mb-3,
+            body:has(#user-count) > form.d-flex,
+            body:has(#user-count) > .table-responsive,
+            body:has(#user-count) > p,
+            body:has(#user-count) > nav,
+            body:has(#user-count) > .alert-success,
+            body:has(#user-count) .table tbody tr {
+                animation: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
 <div th:replace="~{fragments/components :: pageHeader('Người dùng', 'Quản lý tài khoản, vai trò và trạng thái hoạt động.')}"></div>
 <a class="btn btn-primary mb-3" th:href="@{/admin/users/new}">Tạo tài khoản / Staff</a>
 <div class="alert alert-success" th:if="${param.success}">Đã lưu người dùng.</div>
 <form method="get" th:action="@{/admin/users}" class="d-flex gap-2 mb-3">
-    <select name="role" class="form-select w-auto" aria-label="Vai trò"><option value="">Tất cả vai trò</option>
-        <option th:each="r : ${roles}" th:value="${r}" th:text="${r}" th:selected="${r == role}"></option></select>
+    <select name="role" class="form-select w-auto" aria-label="Vai trò">
+        <option value="">Tất cả vai trò</option>
+        <option th:each="r : ${roles}" th:value="${r}" th:text="${r}" th:selected="${r == role}"></option>
+    </select>
     <button class="btn btn-outline-primary">Lọc</button>
 </form>
-<div class="table-responsive"><table class="table table-hover"><thead><tr><th>Họ tên</th><th>Email</th><th>Tên đăng nhập</th><th>Điện thoại</th><th>Vai trò</th><th>Trạng thái</th><th></th></tr></thead>
-<tbody><tr th:each="u : ${users.content}" th:attr="data-user-id=${u.id}">
-    <td th:text="${u.fullName}"></td><td th:text="${u.email}"></td><td th:text="${u.userName}"></td><td th:text="${u.phone}"></td><td th:text="${u.role}"></td>
-    <td><span th:replace="~{fragments/components :: statusBadge(${u.status})}"></span></td>
-    <td><a class="btn btn-sm btn-outline-primary" th:href="@{/admin/users/{id}/edit(id=${u.id})}">Sửa</a></td>
-</tr><tr th:if="${users.empty}"><td colspan="7">Chưa có người dùng.</td></tr></tbody></table></div>
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Họ tên</th>
+            <th>Email</th>
+            <th>Tên đăng nhập</th>
+            <th>Điện thoại</th>
+            <th>Vai trò</th>
+            <th>Trạng thái</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="u : ${users.content}" th:attr="data-user-id=${u.id}">
+            <td th:text="${u.fullName}"></td>
+            <td th:text="${u.email}"></td>
+            <td th:text="${u.userName}"></td>
+            <td th:text="${u.phone}"></td>
+            <td th:text="${u.role}"></td>
+            <td><span th:replace="~{fragments/components :: statusBadge(${u.status})}"></span></td>
+            <td><a class="btn btn-sm btn-outline-primary" th:href="@{/admin/users/{id}/edit(id=${u.id})}">Sửa</a></td>
+        </tr>
+        <tr th:if="${users.empty}">
+            <td colspan="7">Chưa có người dùng.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 <p>Tổng số: <strong id="user-count" th:text="${users.totalElements}"></strong></p>
 <nav th:replace="~{admin/fragments :: pagination(${users}, '/admin/users', 'role', ${role})}"></nav>
-</body></html>
+</body>
+</html>

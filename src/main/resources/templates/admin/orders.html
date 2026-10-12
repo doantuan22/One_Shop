@@ -1,14 +1,520 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Đơn hàng toàn hệ thống</title></head><body>
-<div th:replace="~{fragments/components :: pageHeader('Đơn hàng toàn hệ thống', 'Xem đơn của mọi chi nhánh, bao gồm lịch sử chi nhánh ngừng hoạt động.')}"></div>
-<form th:replace="~{admin/fragments :: storeFilter('/admin/orders')}"></form>
-<div class="table-responsive"><table class="table table-hover"><thead><tr><th>Mã đơn</th><th>Chi nhánh</th><th>Khách hàng</th><th>Hình thức nhận</th><th>Trạng thái</th><th>Thanh toán</th><th>Tổng tiền</th></tr></thead>
-<tbody><tr th:each="row : ${orders.content}" th:with="o=${row.order}" th:attr="data-order-id=${o.orderId},data-store-id=${o.storeId}">
-    <td><a th:href="@{/admin/orders/{id}(id=${o.orderId})}" th:text="'#' + ${o.orderId}"></a><div class="small" th:text="${#temporals.format(o.createdAt, 'dd/MM/yyyy HH:mm')}"></div></td>
-    <td th:text="${o.storeName}"></td><td><span th:text="${row.customerName}"></span><div class="small" th:text="${row.customerEmail}"></div></td>
-    <td th:text="${o.fulfillmentType}"></td><td><span th:replace="~{staff/delivery/fragments :: state(${o.orderStatus})}"></span></td>
-    <td th:text="${o.paymentMethod} + ' · ' + ${o.paymentStatus}"></td><td><span th:replace="~{fragments/components :: price(${o.totalAmount})}"></span></td>
-</tr><tr th:if="${orders.empty}"><td colspan="7">Chưa có đơn hàng nào.</td></tr></tbody></table></div>
-<p>Tổng số: <strong id="order-count" th:text="${orders.totalElements}"></strong></p>
-<nav th:replace="~{admin/fragments :: pagination(${orders}, '/admin/orders', 'storeId', ${storeId})}"></nav>
-</body></html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Đơn hàng toàn hệ thống</title>
+    <style>
+        body:has(#order-count) {
+            --orders-primary: #FF7F50;
+            --orders-primary-dark: #e86738;
+            --orders-primary-soft: #fff5f2;
+            --orders-primary-light: #ffede6;
+            --orders-border: #f3e5df;
+            --orders-text: #292d32;
+            --orders-muted: #707780;
+            --orders-surface: #ffffff;
+        }
+
+        body:has(#order-count)>div:first-of-type {
+            margin-bottom: 1.5rem;
+        }
+
+        body:has(#order-count)>div:first-of-type h1 {
+            color: var(--orders-text);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        body:has(#order-count)>form {
+            margin-bottom: 1.5rem;
+            padding: 1.25rem;
+            border: 1px solid var(--orders-border);
+            border-radius: 14px;
+            background-color: var(--orders-surface);
+            box-shadow: 0 4px 18px rgba(42, 45, 50, 0.04);
+        }
+
+        body:has(#order-count)>form .form-label {
+            margin-bottom: 0.5rem;
+            color: var(--orders-text);
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        body:has(#order-count)>form .form-control,
+        body:has(#order-count)>form .form-select {
+            min-height: 44px;
+            padding: 0.65rem 1rem;
+            border: 1px solid #e7dedb;
+            border-radius: 10px;
+            background-color: #ffffff;
+            color: var(--orders-text);
+            font-size: 0.9rem;
+            box-shadow: none;
+            transition:
+                border-color 0.25s ease,
+                box-shadow 0.3s ease;
+        }
+
+        body:has(#order-count)>form .form-control:focus,
+        body:has(#order-count)>form .form-select:focus {
+            border-color: var(--orders-primary) !important;
+            outline: none;
+            box-shadow: 0 0 0 0.25rem rgba(255, 127, 80, 0.2) !important;
+        }
+
+        body:has(#order-count)>form .btn-primary {
+            min-height: 44px;
+            padding: 0.65rem 1.25rem;
+            border: 1px solid var(--orders-primary) !important;
+            border-radius: 10px;
+            background-color: var(--orders-primary) !important;
+            color: #ffffff !important;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        body:has(#order-count)>form .btn-primary:hover {
+            border-color: var(--orders-primary-dark) !important;
+            background-color: var(--orders-primary-dark) !important;
+            color: #ffffff !important;
+        }
+
+        body:has(#order-count)>form .btn-outline-primary {
+            min-height: 44px;
+            padding: 0.65rem 1.25rem;
+            border: 1px solid var(--orders-primary) !important;
+            border-radius: 10px;
+            background-color: #ffffff !important;
+            color: var(--orders-primary) !important;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        body:has(#order-count)>form .btn-outline-primary:hover {
+            border-color: var(--orders-primary) !important;
+            background-color: var(--orders-primary) !important;
+            color: #ffffff !important;
+        }
+
+        body:has(#order-count)>.table-responsive {
+            border: 1px solid var(--orders-border);
+            border-radius: 14px;
+            background-color: var(--orders-surface);
+            box-shadow: 0 4px 20px rgba(42, 45, 50, 0.04);
+        }
+
+        body:has(#order-count) .table {
+            width: 100%;
+            margin-bottom: 0;
+            border-color: var(--orders-border);
+            vertical-align: middle;
+        }
+
+        body:has(#order-count) .table thead th {
+            padding: 1rem 1.1rem;
+            border-bottom: 2px solid #ffd5c7;
+            background-color: var(--orders-primary-soft);
+            color: #bf360c;
+            font-size: 0.85rem;
+            font-weight: 700;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        body:has(#order-count) .table tbody td {
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid var(--orders-border);
+            color: var(--orders-text);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            vertical-align: middle;
+        }
+
+        body:has(#order-count) .table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        @keyframes ordersStaggerRow {
+            from {
+                opacity: 0;
+                transform: translateX(-12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        body:has(#order-count) .table tbody tr {
+            --orders-row-index: 0;
+            animation: ordersStaggerRow 0.4s ease-out both;
+            animation-delay: calc(0.08s + var(--orders-row-index) * 0.05s);
+        }
+
+        body:has(#order-count) .table tbody tr:nth-child(1) {
+            --orders-row-index: 0;
+        }
+
+        body:has(#order-count) .table tbody tr:nth-child(2) {
+            --orders-row-index: 1;
+        }
+
+        body:has(#order-count) .table tbody tr:nth-child(3) {
+            --orders-row-index: 2;
+        }
+
+        body:has(#order-count) .table tbody tr:nth-child(4) {
+            --orders-row-index: 3;
+        }
+
+        body:has(#order-count) .table tbody tr:nth-child(5) {
+            --orders-row-index: 4;
+        }
+
+        body:has(#order-count) .table tbody tr:nth-child(6) {
+            --orders-row-index: 5;
+        }
+
+        body:has(#order-count) .table tbody tr:nth-child(7) {
+            --orders-row-index: 6;
+        }
+
+        body:has(#order-count) .table tbody tr:nth-child(8) {
+            --orders-row-index: 7;
+        }
+
+        body:has(#order-count) .table tbody tr:nth-child(9) {
+            --orders-row-index: 8;
+        }
+
+        body:has(#order-count) .table tbody tr:nth-child(10) {
+            --orders-row-index: 9;
+        }
+
+        body:has(#order-count) .table tbody tr:nth-child(n+11) {
+            --orders-row-index: 10;
+        }
+
+        body:has(#order-count) .table tbody tr:hover td {
+            --bs-table-bg-state: #fffaf8;
+            background-color: #fffaf8;
+        }
+
+        body:has(#order-count) .table tbody td:first-child {
+            min-width: 150px;
+        }
+
+        body:has(#order-count) .table tbody td:first-child a {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 2px;
+            color: var(--orders-primary-dark);
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        body:has(#order-count) .table tbody td:first-child a::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            border-radius: 2px;
+            background-color: var(--orders-primary);
+            transform: scaleX(0);
+            transform-origin: left center;
+            transition: transform 0.25s ease;
+        }
+
+        body:has(#order-count) .table tbody td:first-child a:hover,
+        body:has(#order-count) .table tbody td:first-child a:focus-visible {
+            color: #bf360c;
+        }
+
+        body:has(#order-count) .table tbody td:first-child a:hover::after,
+        body:has(#order-count) .table tbody td:first-child a:focus-visible::after {
+            transform: scaleX(1);
+        }
+
+        body:has(#order-count) .table tbody td .small {
+            margin-top: 0.3rem;
+            color: var(--orders-muted);
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+
+        body:has(#order-count) .table tbody td:nth-child(2) {
+            min-width: 140px;
+            font-weight: 600;
+        }
+
+        body:has(#order-count) .table tbody td:nth-child(3) {
+            min-width: 170px;
+        }
+
+        body:has(#order-count) .table tbody td:nth-child(3)>span {
+            color: var(--orders-text);
+            font-weight: 700;
+        }
+
+        body:has(#order-count) .table tbody td:nth-child(3) .small {
+            overflow-wrap: anywhere;
+        }
+
+        body:has(#order-count) .table tbody td:nth-child(4) {
+            min-width: 125px;
+            color: var(--orders-muted);
+            font-weight: 600;
+        }
+
+        body:has(#order-count) .table tbody td:nth-child(5) {
+            min-width: 140px;
+        }
+
+        body:has(#order-count) .table tbody td:nth-child(5) .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.4rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        body:has(#order-count) .table tbody td:nth-child(6) {
+            min-width: 170px;
+            color: var(--orders-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        body:has(#order-count) .table tbody td:nth-child(7) {
+            min-width: 130px;
+            color: var(--orders-text);
+            font-weight: 800;
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+
+        body:has(#order-count) .table tbody td[colspan="7"] {
+            padding: 3rem 1rem !important;
+            color: var(--orders-muted);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        body:has(#order-count)>p {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            color: var(--orders-muted);
+            font-size: 0.9rem;
+        }
+
+        body:has(#order-count) #order-count {
+            color: var(--orders-primary-dark);
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+        }
+
+        body:has(#order-count)>nav {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        body:has(#order-count) nav .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        body:has(#order-count) nav .page-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            min-height: 40px;
+            padding: 0.5rem 0.9rem;
+            margin: 0;
+            border: 1px solid var(--orders-border);
+            border-radius: 9px;
+            background-color: #ffffff;
+            color: var(--orders-primary);
+            font-size: 0.875rem;
+            font-weight: 700;
+            box-shadow: none;
+            transition:
+                transform 0.25s ease,
+                background-color 0.25s ease,
+                border-color 0.25s ease,
+                color 0.25s ease,
+                box-shadow 0.25s ease;
+        }
+
+        body:has(#order-count) nav .page-item:not(.disabled) .page-link:hover {
+            transform: translateY(-2px);
+            border-color: var(--orders-primary);
+            background-color: var(--orders-primary-soft);
+            color: var(--orders-primary-dark);
+            box-shadow: 0 5px 14px rgba(255, 127, 80, 0.15);
+        }
+
+        body:has(#order-count) nav .page-item:not(.disabled) .page-link:active {
+            transform: translateY(0);
+        }
+
+        body:has(#order-count) nav .page-item.active .page-link {
+            border-color: var(--orders-primary) !important;
+            background-color: var(--orders-primary) !important;
+            color: #ffffff !important;
+        }
+
+        body:has(#order-count) nav .page-item.active .page-link:hover {
+            background-color: var(--orders-primary-dark) !important;
+            border-color: var(--orders-primary-dark) !important;
+            color: #ffffff !important;
+        }
+
+        body:has(#order-count) nav .page-item.disabled .page-link {
+            border-color: #eee7e4;
+            background-color: #faf8f7;
+            color: #a0a5ac;
+            opacity: 1;
+            transform: none;
+        }
+
+        body:has(#order-count) a:focus-visible,
+        body:has(#order-count) button:focus-visible {
+            outline: 3px solid rgba(255, 127, 80, 0.4);
+            outline-offset: 3px;
+        }
+
+        @media (max-width: 1199.98px) {
+
+            body:has(#order-count) .table thead th,
+            body:has(#order-count) .table tbody td {
+                padding: 0.85rem 0.8rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            body:has(#order-count)>div:first-of-type {
+                margin-bottom: 1.25rem;
+            }
+
+            body:has(#order-count)>form {
+                padding: 1rem;
+                border-radius: 12px;
+            }
+
+            body:has(#order-count)>.table-responsive {
+                border-radius: 12px;
+            }
+
+            body:has(#order-count) .table thead th,
+            body:has(#order-count) .table tbody td {
+                padding: 0.8rem 0.7rem;
+                font-size: 0.8rem;
+            }
+
+            body:has(#order-count) .table tbody td .small {
+                font-size: 0.75rem;
+            }
+
+            body:has(#order-count)>p {
+                font-size: 0.85rem;
+            }
+
+            body:has(#order-count) nav .page-link {
+                min-width: 36px;
+                min-height: 36px;
+                padding: 0.45rem 0.7rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 375px) {
+            body:has(#order-count)>form .btn {
+                width: 100%;
+            }
+
+            body:has(#order-count) nav .pagination {
+                gap: 0.25rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            body:has(#order-count) .table tbody tr {
+                animation: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+            }
+
+            body:has(#order-count) .table tbody td:first-child a::after,
+            body:has(#order-count) nav .page-link,
+            body:has(#order-count)>form .form-control,
+            body:has(#order-count)>form .form-select {
+                transition: none !important;
+            }
+
+            body:has(#order-count) nav .page-link:hover,
+            body:has(#order-count) nav .page-link:active {
+                transform: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div
+        th:replace="~{fragments/components :: pageHeader('Đơn hàng toàn hệ thống', 'Xem đơn của mọi chi nhánh, bao gồm lịch sử chi nhánh ngừng hoạt động.')}">
+    </div>
+    <form th:replace="~{admin/fragments :: storeFilter('/admin/orders')}"></form>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Chi nhánh</th>
+                    <th>Khách hàng</th>
+                    <th>Hình thức nhận</th>
+                    <th>Trạng thái</th>
+                    <th>Thanh toán</th>
+                    <th>Tổng tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="row : ${orders.content}" th:with="o=${row.order}"
+                    th:attr="data-order-id=${o.orderId},data-store-id=${o.storeId}">
+                    <td>
+                        <a th:href="@{/admin/orders/{id}(id=${o.orderId})}" th:text="'#' + ${o.orderId}"></a>
+                        <div class="small" th:text="${#temporals.format(o.createdAt, 'dd/MM/yyyy HH:mm')}"></div>
+                    </td>
+                    <td th:text="${o.storeName}"></td>
+                    <td>
+                        <span th:text="${row.customerName}"></span>
+                        <div class="small" th:text="${row.customerEmail}"></div>
+                    </td>
+                    <td th:text="${o.fulfillmentType}"></td>
+                    <td><span th:replace="~{staff/delivery/fragments :: state(${o.orderStatus})}"></span></td>
+                    <td th:text="${o.paymentMethod} + ' · ' + ${o.paymentStatus}"></td>
+                    <td><span th:replace="~{fragments/components :: price(${o.totalAmount})}"></span></td>
+                </tr>
+                <tr th:if="${orders.empty}">
+                    <td colspan="7">Chưa có đơn hàng nào.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p>Tổng số: <strong id="order-count" th:text="${orders.totalElements}"></strong></p>
+    <nav th:replace="~{admin/fragments :: pagination(${orders}, '/admin/orders', 'storeId', ${storeId})}"></nav>
+</body>
+
+</html>

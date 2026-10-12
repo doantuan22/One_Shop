@@ -1,55 +1,437 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Chi nhánh</title>
+    <style>
+        body {
+            --stores-primary: #FF7F50;
+            --stores-primary-dark: #e86738;
+            --stores-primary-soft: #fff5f2;
+            --stores-border: #f3e5df;
+            --stores-text: #292d32;
+            --stores-muted: #707780;
+        }
+
+        @keyframes storesFadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes storesStaggerRow {
+            from {
+                opacity: 0;
+                transform: translateX(-16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes storesSuccessEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(-12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        body>.d-flex:first-of-type {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--stores-border);
+            animation: storesFadeUp .55s ease-out both;
+        }
+
+        body>.d-flex:first-of-type h1 {
+            color: var(--stores-text);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        body>.d-flex:first-of-type .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: .65rem 1.25rem;
+            border: 1px solid var(--stores-primary) !important;
+            border-radius: 10px;
+            background-color: var(--stores-primary) !important;
+            color: #fff !important;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(255, 127, 80, .12);
+            transition:
+                background-color .25s ease,
+                border-color .25s ease,
+                box-shadow .25s ease,
+                transform .25s ease;
+        }
+
+        body>.d-flex:first-of-type .btn-primary:hover {
+            background-color: var(--stores-primary-dark) !important;
+            border-color: var(--stores-primary-dark) !important;
+            color: #fff !important;
+            box-shadow: 0 8px 18px rgba(255, 127, 80, .24);
+            transform: translateY(-2px);
+        }
+
+        body>.d-flex:first-of-type .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        body>.alert-success {
+            padding: .9rem 1.25rem;
+            border: 1px solid #cce8d3;
+            border-radius: 12px;
+            background-color: #f0faf2;
+            color: #2e7d32;
+            font-weight: 600;
+            animation: storesSuccessEntrance .45s ease-out both;
+        }
+
+        body>div:has(> .table-responsive),
+        body>div:has(> .table),
+        body>.table-responsive {
+            animation: storesFadeUp .6s ease-out .15s both;
+        }
+
+        body .table-responsive {
+            border-radius: 14px;
+        }
+
+        body .table {
+            width: 100%;
+            margin-bottom: 0;
+            vertical-align: middle;
+            border-color: var(--stores-border);
+        }
+
+        body .table thead th {
+            padding: 1rem 1.1rem;
+            background-color: var(--stores-primary-soft);
+            color: #bf360c;
+            font-size: .85rem;
+            font-weight: 700;
+            vertical-align: middle;
+            white-space: nowrap;
+            border-bottom: 2px solid #ffd5c7;
+        }
+
+        body .table tbody td {
+            padding: 1rem 1.1rem;
+            color: var(--stores-text);
+            font-size: .9rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--stores-border);
+        }
+
+        body .table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        body .table tbody tr:hover td {
+            background-color: #fffaf8;
+        }
+
+        body .table tbody tr {
+            animation: storesStaggerRow .4s ease-out both;
+        }
+
+        body .table tbody tr:nth-child(1) {
+            animation-delay: .2s;
+        }
+
+        body .table tbody tr:nth-child(2) {
+            animation-delay: .25s;
+        }
+
+        body .table tbody tr:nth-child(3) {
+            animation-delay: .3s;
+        }
+
+        body .table tbody tr:nth-child(4) {
+            animation-delay: .35s;
+        }
+
+        body .table tbody tr:nth-child(5) {
+            animation-delay: .4s;
+        }
+
+        body .table tbody tr:nth-child(6) {
+            animation-delay: .45s;
+        }
+
+        body .table tbody tr:nth-child(7) {
+            animation-delay: .5s;
+        }
+
+        body .table tbody tr:nth-child(8) {
+            animation-delay: .55s;
+        }
+
+        body .table tbody tr:nth-child(9) {
+            animation-delay: .6s;
+        }
+
+        body .table tbody tr:nth-child(10) {
+            animation-delay: .65s;
+        }
+
+        body .table tbody tr:nth-child(n+11) {
+            animation-delay: .7s;
+        }
+
+        body .table tbody td.fw-semibold {
+            color: var(--stores-text);
+            font-weight: 700 !important;
+        }
+
+        body .table tbody td.text-secondary {
+            color: var(--stores-muted) !important;
+            line-height: 1.6;
+        }
+
+        body .table tbody td.text-secondary .small {
+            margin-top: .2rem;
+            color: var(--stores-muted);
+            font-size: .8rem;
+        }
+
+        body .table .badge.text-bg-light {
+            display: inline-flex;
+            align-items: center;
+            padding: .4rem .7rem;
+            margin: .15rem .2rem .15rem 0;
+            border: 1px solid #ffd5c7 !important;
+            border-radius: 999px;
+            background-color: var(--stores-primary-soft) !important;
+            color: #bf360c !important;
+            font-size: .75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        body .table td.text-end.text-nowrap {
+            white-space: nowrap;
+        }
+
+        body .table .btn-sm {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 36px;
+            padding: .4rem .85rem;
+            border-radius: 8px;
+            font-size: .8rem;
+            font-weight: 700;
+            transition:
+                background-color .25s ease,
+                border-color .25s ease,
+                color .25s ease,
+                box-shadow .25s ease,
+                transform .25s ease;
+        }
+
+        body .table .btn-sm:hover {
+            transform: translateY(-2px);
+        }
+
+        body .table .btn-sm:active {
+            transform: translateY(0);
+        }
+
+        body .table .btn-outline-primary {
+            border: 1px solid var(--stores-primary) !important;
+            background-color: #fff !important;
+            color: var(--stores-primary) !important;
+        }
+
+        body .table .btn-outline-primary:hover {
+            border-color: var(--stores-primary) !important;
+            background-color: var(--stores-primary) !important;
+            color: #fff !important;
+            box-shadow: 0 5px 14px rgba(255, 127, 80, .22);
+        }
+
+        body .table .btn-outline-secondary {
+            border: 1px solid #dedfe3 !important;
+            background-color: #fff !important;
+            color: #59616d !important;
+        }
+
+        body .table .btn-outline-secondary:hover {
+            border-color: #abb1ba !important;
+            background-color: #f6f7fb !important;
+            color: var(--stores-text) !important;
+            box-shadow: 0 5px 14px rgba(42, 45, 50, .1);
+        }
+
+        body .table td.text-end .btn+.btn {
+            margin-left: .35rem;
+        }
+
+        body .table tbody td[colspan="7"] {
+            padding: 3rem 1rem !important;
+            color: var(--stores-muted) !important;
+            font-size: .95rem;
+        }
+
+        body .pagination {
+            gap: .35rem;
+            margin-top: 1.5rem;
+        }
+
+        body .pagination .page-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 38px;
+            min-height: 38px;
+            border: 1px solid var(--stores-border);
+            border-radius: 8px;
+            background-color: #fff;
+            color: var(--stores-primary);
+            font-weight: 600;
+        }
+
+        body .pagination .page-link:hover {
+            background-color: var(--stores-primary-soft);
+            border-color: var(--stores-primary);
+            color: var(--stores-primary-dark);
+        }
+
+        body .pagination .page-item.active .page-link {
+            background-color: var(--stores-primary) !important;
+            border-color: var(--stores-primary) !important;
+            color: #fff !important;
+        }
+
+        body .form-control:focus,
+        body .form-select:focus {
+            border-color: var(--stores-primary) !important;
+            box-shadow: 0 0 0 .2rem rgba(255, 127, 80, .15) !important;
+        }
+
+        @media (max-width: 767.98px) {
+            body>.d-flex:first-of-type {
+                gap: 1rem !important;
+            }
+
+            body>.d-flex:first-of-type .btn-primary {
+                min-height: 40px;
+                padding: .55rem 1rem;
+                font-size: .85rem;
+            }
+
+            body .table thead th,
+            body .table tbody td {
+                padding: .85rem .75rem;
+                font-size: .82rem;
+            }
+
+            body .table .btn-sm {
+                min-height: 34px;
+                padding: .35rem .65rem;
+                font-size: .75rem;
+            }
+
+            body .table .badge.text-bg-light {
+                font-size: .7rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            body>.d-flex:first-of-type,
+            body>.alert-success,
+            body>div:has(> .table-responsive),
+            body>div:has(> .table),
+            body>.table-responsive,
+            body .table tbody tr {
+                animation: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+            }
+
+            body>.d-flex:first-of-type .btn-primary,
+            body .table .btn-sm {
+                transition: none !important;
+            }
+
+            body>.d-flex:first-of-type .btn-primary:hover,
+            body .table .btn-sm:hover {
+                transform: none !important;
+            }
+        }
+    </style>
 </head>
+
 <body>
-<div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
-    <div th:replace="~{fragments/components :: pageHeader('Chi nhánh', 'Các cửa hàng của chuỗi. Chi nhánh ngừng hoạt động không còn bán hàng nhưng dữ liệu vẫn được giữ.')}"></div>
-    <a class="btn btn-primary" th:href="@{/admin/stores/new}">Thêm chi nhánh</a>
-</div>
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+        <div
+            th:replace="~{fragments/components :: pageHeader('Chi nhánh', 'Các cửa hàng của chuỗi. Chi nhánh ngừng hoạt động không còn bán hàng nhưng dữ liệu vẫn được giữ.')}">
+        </div>
+        <a class="btn btn-primary" th:href="@{/admin/stores/new}">Thêm chi nhánh</a>
+    </div>
 
-<div class="alert alert-success" th:if="${param.success}"
-     th:text="${param.success[0] == 'created'} ? 'Đã thêm chi nhánh.' : 'Đã cập nhật chi nhánh.'">Đã lưu.</div>
+    <div class="alert alert-success" th:if="${param.success}"
+        th:text="${param.success[0] == 'created'} ? 'Đã thêm chi nhánh.' : 'Đã cập nhật chi nhánh.'">Đã lưu.</div>
 
-<div th:replace="~{fragments/components :: dataTable(~{::#store-head}, ~{::#store-body})}"></div>
+    <div th:replace="~{fragments/components :: dataTable(~{::#store-head}, ~{::#store-body})}"></div>
 
-<th:block th:remove="all">
-    <thead id="store-head">
-    <tr>
-        <th scope="col">Mã</th>
-        <th scope="col">Tên</th>
-        <th scope="col">Khu vực</th>
-        <th scope="col">Địa chỉ</th>
-        <th scope="col">Dịch vụ</th>
-        <th scope="col">Trạng thái</th>
-        <th scope="col" class="text-end">Thao tác</th>
-    </tr>
-    </thead>
-    <tbody id="store-body">
-    <tr th:each="store : ${stores}">
-        <td th:text="${store.code}">OS-THUDUC</td>
-        <td class="fw-semibold" th:text="${store.name}">OneShop Thủ Đức</td>
-        <td th:text="${store.area} + ', ' + ${store.provinceCity}">Thủ Đức, TP. Hồ Chí Minh</td>
-        <td class="text-secondary">
-            <div th:text="${store.address}">101 Võ Văn Ngân</div>
-            <div class="small" th:text="${store.phone}">028...</div>
-            <div class="small" th:text="${store.openingHours}">08:00 - 22:00</div>
-        </td>
-        <td>
-            <span class="badge text-bg-light border" th:if="${store.deliveryEnabled}">Giao hàng</span>
-            <span class="badge text-bg-light border" th:if="${store.pickupEnabled}">Nhận tại cửa hàng</span>
-        </td>
-        <td><span th:replace="~{fragments/components :: statusBadge(${store.status})}"></span></td>
-        <td class="text-end text-nowrap">
-            <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/store-products(storeId=${store.id})}">Sản phẩm</a>
-            <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/stores/{id}/edit(id=${store.id})}">Sửa</a>
-        </td>
-    </tr>
-    <tr th:if="${stores.isEmpty()}">
-        <td colspan="7" class="text-center text-secondary py-4">Chưa có chi nhánh nào.</td>
-    </tr>
-    </tbody>
-</th:block>
+    <th:block th:remove="all">
+        <thead id="store-head">
+            <tr>
+                <th scope="col">Mã</th>
+                <th scope="col">Tên</th>
+                <th scope="col">Khu vực</th>
+                <th scope="col">Địa chỉ</th>
+                <th scope="col">Dịch vụ</th>
+                <th scope="col">Trạng thái</th>
+                <th scope="col" class="text-end">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody id="store-body">
+            <tr th:each="store : ${stores}">
+                <td th:text="${store.code}">OS-THUDUC</td>
+                <td class="fw-semibold" th:text="${store.name}">OneShop Thủ Đức</td>
+                <td th:text="${store.area} + ', ' + ${store.provinceCity}">Thủ Đức, TP. Hồ Chí Minh</td>
+                <td class="text-secondary">
+                    <div th:text="${store.address}">101 Võ Văn Ngân</div>
+                    <div class="small" th:text="${store.phone}">028...</div>
+                    <div class="small" th:text="${store.openingHours}">08:00 - 22:00</div>
+                </td>
+                <td>
+                    <span class="badge text-bg-light border" th:if="${store.deliveryEnabled}">Giao hàng</span>
+                    <span class="badge text-bg-light border" th:if="${store.pickupEnabled}">Nhận tại cửa hàng</span>
+                </td>
+                <td><span th:replace="~{fragments/components :: statusBadge(${store.status})}"></span></td>
+                <td class="text-end text-nowrap">
+                    <a class="btn btn-outline-secondary btn-sm"
+                        th:href="@{/admin/store-products(storeId=${store.id})}">Sản phẩm</a>
+                    <a class="btn btn-outline-primary btn-sm"
+                        th:href="@{/admin/stores/{id}/edit(id=${store.id})}">Sửa</a>
+                </td>
+            </tr>
+            <tr th:if="${stores.isEmpty()}">
+                <td colspan="7" class="text-center text-secondary py-4">Chưa có chi nhánh nào.</td>
+            </tr>
+        </tbody>
+    </th:block>
 </body>
+
 </html>

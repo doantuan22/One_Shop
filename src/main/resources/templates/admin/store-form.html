@@ -1,77 +1,428 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title th:text="${editId == null} ? 'Thêm chi nhánh' : 'Sửa chi nhánh'">Chi nhánh</title>
-</head>
-<body>
-<div th:replace="~{fragments/components :: pageHeader(${editId == null} ? 'Thêm chi nhánh' : 'Sửa chi nhánh', 'Thông tin hiển thị trong Hệ thống cửa hàng của khách.')}"></div>
+    <style>
+        body:has(#store-form) {
+            --store-primary: #FF7F50;
+            --store-primary-dark: #e86738;
+            --store-primary-soft: #fff5f2;
+            --store-border: #f3e5df;
+            --store-text: #292d32;
+            --store-muted: #707780;
+            --store-surface: #ffffff;
+        }
 
-<section class="card shadow-sm">
-    <div class="card-body">
-        <form method="post" th:object="${form}" id="store-form" novalidate
-              th:action="${editId == null} ? @{/admin/stores} : @{/admin/stores/{id}(id=${editId})}">
-            <div class="alert alert-danger" th:each="message : ${#fields.globalErrors()}" th:text="${message}">Lỗi</div>
-            <div class="row g-3">
-                <div class="col-12 col-md-4">
-                    <label class="form-label" for="code">Mã chi nhánh <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" th:field="*{code}" th:errorclass="is-invalid" maxlength="30">
-                    <div class="invalid-feedback" th:errors="*{code}">Lỗi</div>
-                </div>
-                <div class="col-12 col-md-8">
-                    <label class="form-label" for="name">Tên chi nhánh <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" th:field="*{name}" th:errorclass="is-invalid" maxlength="150">
-                    <div class="invalid-feedback" th:errors="*{name}">Lỗi</div>
-                </div>
-                <div class="col-12">
-                    <label class="form-label" for="address">Địa chỉ <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" th:field="*{address}" th:errorclass="is-invalid" maxlength="500">
-                    <div class="invalid-feedback" th:errors="*{address}">Lỗi</div>
-                </div>
-                <div class="col-12 col-md-6">
-                    <label class="form-label" for="provinceCity">Tỉnh / Thành phố <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" th:field="*{provinceCity}" th:errorclass="is-invalid" maxlength="100">
-                    <div class="invalid-feedback" th:errors="*{provinceCity}">Lỗi</div>
-                </div>
-                <div class="col-12 col-md-6">
-                    <label class="form-label" for="area">Khu vực <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" th:field="*{area}" th:errorclass="is-invalid" maxlength="100">
-                    <div class="invalid-feedback" th:errors="*{area}">Lỗi</div>
-                </div>
-                <div class="col-12 col-md-6">
-                    <label class="form-label" for="phone">Điện thoại</label>
-                    <input type="tel" class="form-control" th:field="*{phone}" th:errorclass="is-invalid" maxlength="20">
-                    <div class="invalid-feedback" th:errors="*{phone}">Lỗi</div>
-                </div>
-                <div class="col-12 col-md-6">
-                    <label class="form-label" for="openingHours">Giờ mở cửa</label>
-                    <input type="text" class="form-control" th:field="*{openingHours}" th:errorclass="is-invalid" maxlength="200">
-                    <div class="invalid-feedback" th:errors="*{openingHours}">Lỗi</div>
-                </div>
-                <div class="col-12 col-md-6">
-                    <div class="form-check form-switch">
-                        <input type="checkbox" class="form-check-input" th:field="*{deliveryEnabled}">
-                        <label class="form-check-label" for="deliveryEnabled1">Hỗ trợ giao hàng tận nơi</label>
-                    </div>
-                    <div class="form-check form-switch">
-                        <input type="checkbox" class="form-check-input" th:field="*{pickupEnabled}">
-                        <label class="form-check-label" for="pickupEnabled1">Hỗ trợ nhận tại cửa hàng</label>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6">
-                    <label class="form-label" for="status">Trạng thái</label>
-                    <select class="form-select" th:field="*{status}">
-                        <option value="ACTIVE">Đang hoạt động</option>
-                        <option value="INACTIVE">Ngừng hoạt động</option>
-                    </select>
-                    <div class="form-text">Chi nhánh ngừng hoạt động không hiển thị để khách chọn mua.</div>
-                </div>
-            </div>
-            <div class="mt-4">
-                <button type="submit" class="btn btn-primary" th:text="${editId == null} ? 'Thêm chi nhánh' : 'Lưu thay đổi'">Lưu</button>
-                <a class="btn btn-outline-secondary" th:href="@{/admin/stores}">Hủy</a>
-            </div>
-        </form>
+        body:has(#store-form)>div:first-of-type {
+            margin-bottom: 1.5rem;
+        }
+
+        body:has(#store-form)>div:first-of-type h1 {
+            color: var(--store-text);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        body:has(#store-form)>section.card {
+            border: 1px solid var(--store-border);
+            border-radius: 16px;
+            background-color: var(--store-surface);
+            box-shadow: 0 5px 24px rgba(42, 45, 50, 0.05) !important;
+            overflow: hidden;
+        }
+
+        body:has(#store-form)>section.card>.card-body {
+            padding: clamp(1.25rem, 3vw, 2rem);
+        }
+
+        #store-form {
+            width: 100%;
+        }
+
+        #store-form .row.g-3 {
+            --bs-gutter-x: 1.5rem;
+            --bs-gutter-y: 1.5rem;
+        }
+
+        #store-form .form-label {
+            display: inline-block;
+            margin-bottom: 0.55rem;
+            color: var(--store-text);
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        #store-form .form-label .text-danger {
+            color: #d32f2f !important;
+            font-weight: 700;
+        }
+
+        #store-form .form-control,
+        #store-form .form-select {
+            width: 100%;
+            min-height: 46px;
+            padding: 0.7rem 1rem;
+            border: 1px solid #e7dedb;
+            border-radius: 10px;
+            background-color: #ffffff;
+            color: var(--store-text);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            box-shadow: none;
+            transition:
+                border-color 0.25s ease,
+                background-color 0.25s ease,
+                box-shadow 0.3s ease;
+        }
+
+        #store-form .form-control::placeholder {
+            color: #9aa1a9;
+            opacity: 1;
+        }
+
+        #store-form .form-control:hover,
+        #store-form .form-select:hover {
+            border-color: #efbba9;
+        }
+
+        #store-form .form-control:focus,
+        #store-form .form-select:focus {
+            border-color: var(--store-primary) !important;
+            background-color: #ffffff;
+            color: var(--store-text);
+            outline: none;
+            box-shadow: 0 0 0 0.25rem rgba(255, 127, 80, 0.18) !important;
+        }
+
+        #store-form .form-control:disabled,
+        #store-form .form-select:disabled {
+            background-color: #f6f7f8;
+            color: #8c939b;
+            border-color: #e9e9eb;
+            cursor: not-allowed;
+        }
+
+        @keyframes storeValidationShake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-4px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(4px);
+            }
+        }
+
+        #store-form .form-control.is-invalid,
+        #store-form .form-select.is-invalid {
+            border-color: #d32f2f !important;
+            background-color: #fffafa;
+            animation: storeValidationShake 0.4s ease-in-out 1;
+        }
+
+        #store-form .form-control.is-invalid:focus,
+        #store-form .form-select.is-invalid:focus {
+            box-shadow: 0 0 0 0.2rem rgba(211, 47, 47, 0.12) !important;
+        }
+
+        #store-form .invalid-feedback {
+            margin-top: 0.4rem;
+            color: #c62828;
+            font-size: 0.8rem;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        #store-form .alert-danger {
+            padding: 0.9rem 1.15rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #f5c6c6;
+            border-radius: 10px;
+            background-color: #fff2f2;
+            color: #b71c1c;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        #store-form .form-check.form-switch {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-height: 46px;
+            margin: 0;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--store-border);
+            border-radius: 10px;
+            background-color: #fffaf8;
+        }
+
+        #store-form .form-check.form-switch+.form-check.form-switch {
+            margin-top: 0.75rem;
+        }
+
+        #store-form .form-switch .form-check-input {
+            flex: 0 0 auto;
+            width: 2.5rem;
+            height: 1.35rem;
+            margin: 0;
+            border: 1px solid #d5d5d5;
+            background-color: #dfe2e6;
+            background-position: left center;
+            cursor: pointer;
+            box-shadow: none;
+            transition:
+                background-color 0.25s ease,
+                border-color 0.25s ease,
+                background-position 0.25s ease,
+                box-shadow 0.25s ease;
+        }
+
+        #store-form .form-switch .form-check-input:checked {
+            background-color: var(--store-primary) !important;
+            border-color: var(--store-primary) !important;
+            background-position: right center;
+        }
+
+        #store-form .form-switch .form-check-input:focus {
+            border-color: var(--store-primary);
+            box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.15);
+        }
+
+        #store-form .form-switch .form-check-label {
+            margin: 0;
+            color: var(--store-text);
+            font-size: 0.9rem;
+            font-weight: 600;
+            line-height: 1.5;
+            cursor: pointer;
+        }
+
+        #store-form .form-text {
+            margin-top: 0.55rem;
+            color: var(--store-muted);
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        #store-form>.mt-4 {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 2rem !important;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--store-border);
+        }
+
+        #store-form>.mt-4 .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 130px;
+            min-height: 44px;
+            padding: 0.65rem 1.25rem;
+            margin: 0;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            line-height: 1.5;
+            text-align: center;
+            text-decoration: none;
+            box-shadow: none;
+        }
+
+        #store-form>.mt-4 .btn-primary {
+            border: 1px solid var(--store-primary) !important;
+            background-color: var(--store-primary) !important;
+            color: #ffffff !important;
+        }
+
+        #store-form>.mt-4 .btn-primary:hover {
+            border-color: var(--store-primary-dark) !important;
+            background-color: var(--store-primary-dark) !important;
+            color: #ffffff !important;
+        }
+
+        #store-form>.mt-4 .btn-primary:active {
+            border-color: #cc5427 !important;
+            background-color: #cc5427 !important;
+        }
+
+        #store-form>.mt-4 .btn-outline-secondary {
+            border: 1px solid #d9dce1 !important;
+            background-color: #ffffff !important;
+            color: #59616d !important;
+        }
+
+        #store-form>.mt-4 .btn-outline-secondary:hover {
+            border-color: #c8cdd3 !important;
+            background-color: #f6f7fb !important;
+            color: var(--store-text) !important;
+        }
+
+        #store-form>.mt-4 .btn:focus-visible {
+            outline: 3px solid rgba(255, 127, 80, 0.4);
+            outline-offset: 3px;
+            box-shadow: none !important;
+        }
+
+        @media (max-width: 767.98px) {
+            body:has(#store-form)>section.card {
+                border-radius: 12px;
+            }
+
+            body:has(#store-form)>section.card>.card-body {
+                padding: 1.25rem;
+            }
+
+            #store-form .row.g-3 {
+                --bs-gutter-x: 1rem;
+                --bs-gutter-y: 1.25rem;
+            }
+
+            #store-form .form-label {
+                font-size: 0.85rem;
+            }
+
+            #store-form .form-control,
+            #store-form .form-select {
+                min-height: 44px;
+                font-size: 0.875rem;
+            }
+
+            #store-form .form-check.form-switch {
+                padding: 0.75rem;
+            }
+
+            #store-form>.mt-4 {
+                margin-top: 1.5rem !important;
+                padding-top: 1.25rem;
+            }
+
+            #store-form>.mt-4 .btn {
+                flex: 1 1 140px;
+                min-width: 0;
+            }
+        }
+
+        @media (max-width: 375px) {
+            #store-form>.mt-4 {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            #store-form>.mt-4 .btn {
+                flex: none;
+                width: 100%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            #store-form .form-control,
+            #store-form .form-select,
+            #store-form .form-switch .form-check-input {
+                transition: none !important;
+            }
+
+            #store-form .form-control.is-invalid,
+            #store-form .form-select.is-invalid {
+                animation: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div
+        th:replace="~{fragments/components :: pageHeader(${editId == null} ? 'Thêm chi nhánh' : 'Sửa chi nhánh', 'Thông tin hiển thị trong Hệ thống cửa hàng của khách.')}">
     </div>
-</section>
+
+    <section class="card shadow-sm">
+        <div class="card-body">
+            <form method="post" th:object="${form}" id="store-form" novalidate
+                th:action="${editId == null} ? @{/admin/stores} : @{/admin/stores/{id}(id=${editId})}">
+                <div class="alert alert-danger" th:each="message : ${#fields.globalErrors()}" th:text="${message}">Lỗi
+                </div>
+                <div class="row g-3">
+                    <div class="col-12 col-md-4">
+                        <label class="form-label" for="code">Mã chi nhánh <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" th:field="*{code}" th:errorclass="is-invalid"
+                            maxlength="30">
+                        <div class="invalid-feedback" th:errors="*{code}">Lỗi</div>
+                    </div>
+                    <div class="col-12 col-md-8">
+                        <label class="form-label" for="name">Tên chi nhánh <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" th:field="*{name}" th:errorclass="is-invalid"
+                            maxlength="150">
+                        <div class="invalid-feedback" th:errors="*{name}">Lỗi</div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="address">Địa chỉ <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" th:field="*{address}" th:errorclass="is-invalid"
+                            maxlength="500">
+                        <div class="invalid-feedback" th:errors="*{address}">Lỗi</div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="provinceCity">Tỉnh / Thành phố <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control" th:field="*{provinceCity}" th:errorclass="is-invalid"
+                            maxlength="100">
+                        <div class="invalid-feedback" th:errors="*{provinceCity}">Lỗi</div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="area">Khu vực <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" th:field="*{area}" th:errorclass="is-invalid"
+                            maxlength="100">
+                        <div class="invalid-feedback" th:errors="*{area}">Lỗi</div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="phone">Điện thoại</label>
+                        <input type="tel" class="form-control" th:field="*{phone}" th:errorclass="is-invalid"
+                            maxlength="20">
+                        <div class="invalid-feedback" th:errors="*{phone}">Lỗi</div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="openingHours">Giờ mở cửa</label>
+                        <input type="text" class="form-control" th:field="*{openingHours}" th:errorclass="is-invalid"
+                            maxlength="200">
+                        <div class="invalid-feedback" th:errors="*{openingHours}">Lỗi</div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-check form-switch">
+                            <input type="checkbox" class="form-check-input" th:field="*{deliveryEnabled}">
+                            <label class="form-check-label" for="deliveryEnabled1">Hỗ trợ giao hàng tận nơi</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input type="checkbox" class="form-check-input" th:field="*{pickupEnabled}">
+                            <label class="form-check-label" for="pickupEnabled1">Hỗ trợ nhận tại cửa hàng</label>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="status">Trạng thái</label>
+                        <select class="form-select" th:field="*{status}">
+                            <option value="ACTIVE">Đang hoạt động</option>
+                            <option value="INACTIVE">Ngừng hoạt động</option>
+                        </select>
+                        <div class="form-text">Chi nhánh ngừng hoạt động không hiển thị để khách chọn mua.</div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary"
+                        th:text="${editId == null} ? 'Thêm chi nhánh' : 'Lưu thay đổi'">Lưu</button>
+                    <a class="btn btn-outline-secondary" th:href="@{/admin/stores}">Hủy</a>
+                </div>
+            </form>
+        </div>
+    </section>
 </body>
+
 </html>

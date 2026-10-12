@@ -1,7 +1,280 @@
+
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title th:text="${current == null} ? 'Gắn sản phẩm vào chi nhánh' : 'Sửa sản phẩm tại chi nhánh'">Sản phẩm theo chi nhánh</title>
+    <style>
+        body:has(#store-product-form) {
+            --spf-primary: #FF7F50;
+            --spf-primary-dark: #e86738;
+            --spf-primary-soft: #fff5f2;
+            --spf-primary-light: #ffede6;
+            --spf-border: #f3e5df;
+            --spf-text: #292d32;
+            --spf-muted: #707780;
+            --spf-surface: #ffffff;
+        }
+
+        body:has(#store-product-form) > div:first-of-type {
+            margin-bottom: 1.5rem;
+        }
+
+        body:has(#store-product-form) > div:first-of-type h1 {
+            color: var(--spf-text);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        body:has(#store-product-form) > section.card {
+            border: 1px solid var(--spf-border);
+            border-radius: 16px;
+            background-color: var(--spf-surface);
+            box-shadow: 0 5px 24px rgba(42, 45, 50, 0.05) !important;
+            overflow: hidden;
+        }
+
+        body:has(#store-product-form) > section.card > .card-body {
+            padding: clamp(1.25rem, 3vw, 2rem);
+        }
+
+        #store-product-form {
+            width: 100%;
+        }
+
+        #store-product-form .row.g-3 {
+            --bs-gutter-x: 1.5rem;
+            --bs-gutter-y: 1.5rem;
+        }
+
+        #store-product-form .form-label {
+            display: inline-block;
+            margin-bottom: 0.55rem;
+            color: var(--spf-text);
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        #store-product-form .form-label .text-danger {
+            color: #d32f2f !important;
+            font-weight: 700;
+        }
+
+        #store-product-form .form-control,
+        #store-product-form .form-select {
+            width: 100%;
+            min-height: 46px;
+            padding: 0.7rem 1rem;
+            border: 1px solid #e7dedb;
+            border-radius: 10px;
+            background-color: #ffffff;
+            color: var(--spf-text);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            box-shadow: none;
+        }
+
+        #store-product-form .form-select {
+            padding-right: 2.5rem;
+            cursor: pointer;
+        }
+
+        #store-product-form .form-control::placeholder {
+            color: #9aa1a9;
+            opacity: 1;
+        }
+
+        #store-product-form .form-control:hover,
+        #store-product-form .form-select:hover {
+            border-color: #efbba9;
+        }
+
+        #store-product-form .form-control:focus,
+        #store-product-form .form-select:focus {
+            border-color: var(--spf-primary) !important;
+            background-color: #ffffff;
+            color: var(--spf-text);
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.15) !important;
+        }
+
+        #store-product-form .form-control:disabled,
+        #store-product-form .form-select:disabled {
+            background-color: #f6f7f8;
+            color: #8c939b;
+            border-color: #e9e9eb;
+            cursor: not-allowed;
+        }
+
+        #store-product-form .form-control.is-invalid,
+        #store-product-form .form-select.is-invalid {
+            border-color: #d32f2f !important;
+            background-color: #fffafa;
+        }
+
+        #store-product-form .form-control.is-invalid:focus,
+        #store-product-form .form-select.is-invalid:focus {
+            box-shadow: 0 0 0 0.2rem rgba(211, 47, 47, 0.12) !important;
+        }
+
+        #store-product-form .invalid-feedback {
+            margin-top: 0.4rem;
+            color: #c62828;
+            font-size: 0.8rem;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        #store-product-form .alert-danger {
+            padding: 0.9rem 1.15rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #f5c6c6;
+            border-radius: 10px;
+            background-color: #fff2f2;
+            color: #b71c1c;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        #store-product-form .form-control-plaintext {
+            display: flex;
+            align-items: center;
+            min-height: 46px;
+            margin: 0;
+            padding: 0.7rem 1rem;
+            border: 1px solid var(--spf-border);
+            border-radius: 10px;
+            background-color: var(--spf-primary-soft);
+            color: var(--spf-text);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        #store-product-form .form-control-plaintext.fw-semibold {
+            font-weight: 700 !important;
+        }
+
+        #store-product-form input[type="number"] {
+            font-variant-numeric: tabular-nums;
+        }
+
+        #store-product-form .form-text {
+            margin-top: 0.55rem;
+            color: var(--spf-muted);
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        #store-product-form > .mt-4 {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 2rem !important;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--spf-border);
+        }
+
+        #store-product-form > .mt-4 .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 130px;
+            min-height: 44px;
+            padding: 0.65rem 1.25rem;
+            margin: 0;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            line-height: 1.5;
+            text-align: center;
+            text-decoration: none;
+            box-shadow: none;
+        }
+
+        #store-product-form > .mt-4 .btn-primary {
+            border: 1px solid var(--spf-primary) !important;
+            background-color: var(--spf-primary) !important;
+            color: #ffffff !important;
+        }
+
+        #store-product-form > .mt-4 .btn-primary:hover {
+            border-color: var(--spf-primary-dark) !important;
+            background-color: var(--spf-primary-dark) !important;
+            color: #ffffff !important;
+        }
+
+        #store-product-form > .mt-4 .btn-primary:active {
+            border-color: #cc5427 !important;
+            background-color: #cc5427 !important;
+        }
+
+        #store-product-form > .mt-4 .btn-outline-secondary {
+            border: 1px solid #d9dce1 !important;
+            background-color: #ffffff !important;
+            color: #59616d !important;
+        }
+
+        #store-product-form > .mt-4 .btn-outline-secondary:hover {
+            border-color: #c8cdd3 !important;
+            background-color: #f6f7fb !important;
+            color: var(--spf-text) !important;
+        }
+
+        #store-product-form > .mt-4 .btn:focus-visible {
+            outline: 3px solid rgba(255, 127, 80, 0.4);
+            outline-offset: 3px;
+            box-shadow: none !important;
+        }
+
+        @media (max-width: 767.98px) {
+            body:has(#store-product-form) > section.card {
+                border-radius: 12px;
+            }
+
+            body:has(#store-product-form) > section.card > .card-body {
+                padding: 1.25rem;
+            }
+
+            #store-product-form .row.g-3 {
+                --bs-gutter-x: 1rem;
+                --bs-gutter-y: 1.25rem;
+            }
+
+            #store-product-form .form-label {
+                font-size: 0.85rem;
+            }
+
+            #store-product-form .form-control,
+            #store-product-form .form-select,
+            #store-product-form .form-control-plaintext {
+                min-height: 44px;
+                font-size: 0.875rem;
+            }
+
+            #store-product-form > .mt-4 {
+                margin-top: 1.5rem !important;
+                padding-top: 1.25rem;
+            }
+
+            #store-product-form > .mt-4 .btn {
+                flex: 1 1 140px;
+                min-width: 0;
+            }
+        }
+
+        @media (max-width: 375px) {
+            #store-product-form > .mt-4 {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            #store-product-form > .mt-4 .btn {
+                flex: none;
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{fragments/components :: pageHeader(${current == null} ? 'Gắn sản phẩm vào chi nhánh' : 'Sửa sản phẩm tại chi nhánh', 'Giá, tồn kho và trạng thái ở đây chỉ áp dụng cho chi nhánh này.')}"></div>
@@ -12,7 +285,6 @@
               th:action="${current == null} ? @{/admin/store-products} : @{/admin/store-products/{id}(id=${current.storeProductId})}">
             <div class="alert alert-danger" th:each="message : ${#fields.globalErrors()}" th:text="${message}">Lỗi</div>
             <div class="row g-3">
-                <!--/* New: choose the Store and the Product. Existing: both are fixed. */-->
                 <th:block th:if="${current == null}">
                     <div class="col-12 col-md-6">
                         <label class="form-label" for="storeId">Chi nhánh <span class="text-danger">*</span></label>
