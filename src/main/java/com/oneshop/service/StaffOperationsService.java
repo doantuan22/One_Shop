@@ -2,7 +2,9 @@ package com.oneshop.service;
 
 import com.oneshop.dto.response.*;
 import com.oneshop.entity.*;
+import com.oneshop.repository.OrderFulfillmentRepository;
 import com.oneshop.repository.OrderRepository;
+import com.oneshop.service.fulfillment.StaffFulfillmentService;
 import com.oneshop.repository.StoreProductRepository;
 import com.oneshop.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
@@ -29,24 +31,53 @@ public class StaffOperationsService {
     private final OrderViewService views;
     private final DeliveryFulfillmentService delivery;
     private final PickupFulfillmentService pickup;
-
+    private final OrderFulfillmentRepository fulfillments;
+    private final StaffFulfillmentService fulfillmentService;
     public StaffOperationsService(StaffStoreScopeService scope, OrderRepository orders,
                                   StoreProductRepository products, OrderViewService views,
-                                  DeliveryFulfillmentService delivery, PickupFulfillmentService pickup) {
+                                  DeliveryFulfillmentService delivery, PickupFulfillmentService pickup,
+                                  OrderFulfillmentRepository fulfillments, StaffFulfillmentService fulfillmentService) {
         this.scope = scope; this.orders = orders; this.products = products; this.views = views;
         this.delivery = delivery; this.pickup = pickup;
+        this.fulfillments = fulfillments; this.fulfillmentService = fulfillmentService;
     }
 
+    /**
+     * V3: the counters are Fulfillments of the assigned Stores ({@code order_fulfillments.store_id}); an Order that
+     * several Stores supply is counted once in each Store for its own part, and Orders held by the payment gate are
+     * shown separately instead of as work to do.
+     */
     public StaffDashboardResponse getDashboard() {
         var assigned = scope.getAssignedStores();
-        var counts = assigned.stream().map(s -> new StaffStoreDashboardResponse(s,
-                orders.countByStoreIdAndOrderStatusIn(s.id(), PROCESSING),
-                orders.countByStoreIdAndFulfillmentTypeAndOrderStatus(s.id(), FulfillmentType.STORE_PICKUP,
-                        OrderStatus.READY_FOR_PICKUP),
-                products.countByStoreIdAndStatusAndQuantityBetween(s.id(), ActiveStatus.ACTIVE, 1, LOW_STOCK_THRESHOLD),
-                products.countByStoreIdAndStatusAndQuantity(s.id(), ActiveStatus.ACTIVE, 0))).toList();
-        var recent = readOrders(assigned.stream().map(StoreResponse::id).toList(), 0, 5).getContent();
-        return new StaffDashboardResponse(counts, LOW_STOCK_THRESHOLD, recent);
+        var ids = assigned.stream().map(StoreResponse::id).toList();
+        var byStore = new java.util.HashMap<Long, java.util.List<OrderFulfillmentRepository.StatusCount>>();
+        fulfillments.countByStoreAndStatus(ids).forEach(c -> byStore.computeIfAbsent(c.getStoreId(),
+                k -> new java.util.ArrayList<>()).add(c));
+        var counts = assigned.stream().map(s -> {
+            var rows = byStore.getOrDefault(s.id(), java.util.List.of());
+            long open = 0;
+            long blocked = 0;
+            long waiting = 0;
+            long shipping = 0;
+            long failed = 0;
+            for (var row : rows) {
+                if (row.getStatus() == OrderFulfillmentStatus.FAILED) {
+                    failed += row.getTotal();
+                } else if (StaffFulfillmentService.openStatuses().contains(row.getStatus())) {
+                    open += row.getTotal() - row.getBlocked();
+                    blocked += row.getBlocked();
+                    if (row.getStatus() == OrderFulfillmentStatus.READY_FOR_PICKUP) {
+                        waiting += row.getTotal() - row.getBlocked();
+                    } else if (row.getStatus() == OrderFulfillmentStatus.SHIPPING) {
+                        shipping += row.getTotal() - row.getBlocked();
+                    }
+                }
+            }
+            return new StaffStoreDashboardResponse(s, open, waiting,
+                    products.countByStoreIdAndStatusAndQuantityBetween(s.id(), ActiveStatus.ACTIVE, 1, LOW_STOCK_THRESHOLD),
+                    products.countByStoreIdAndStatusAndQuantity(s.id(), ActiveStatus.ACTIVE, 0), shipping, blocked, failed);
+        }).toList();
+        return new StaffDashboardResponse(counts, LOW_STOCK_THRESHOLD, fulfillmentService.getRecent(ids, 5));
     }
 
     public Page<StaffOrderSummaryResponse> getOrders(int page) {
@@ -94,7 +125,13 @@ public class StaffOperationsService {
         if (id == null) throw new ResourceNotFoundException("Không tìm thấy đơn hàng của chi nhánh.");
         var order = orders.findByIdForUpdate(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đơn hàng của chi nhánh."));
+        if (order.getStore() == null) {
+            throw new com.oneshop.exception.BadRequestException("Đơn hàng được cấp từ nhiều chi nhánh và xử lý theo từng phần giao; chưa thể thao tác theo cả đơn.");
+        }
         scope.requireAssignedStore(order.getStore().getId()); // Recheck the locked resource's actual Store, before writes.
+        if (fulfillments.countByOrderId(order.getId()) > 0) {
+            throw new com.oneshop.exception.BadRequestException("Đơn hàng được xử lý theo từng phần giao của chi nhánh; không thể thao tác theo cả đơn. Vui lòng dùng màn hình phần giao hàng.");
+        }
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 

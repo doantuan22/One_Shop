@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Phần giao hàng của chi nhánh</title>
+</head>
+<body>
+<div class="os-staff-fulfillments">
+    <div th:replace="~{fragments/components :: pageHeader(${fixedType == null ? 'Phần giao hàng của chi nhánh' : (fixedType.name() == 'STORE_PICKUP' ? 'Hàng chờ khách nhận tại cửa hàng' : 'Phần giao hàng tận nơi')}, 'Mỗi dòng là phần hàng chi nhánh của bạn phải chuẩn bị. Đơn nhiều chi nhánh được tách thành từng phần, mỗi chi nhánh chỉ thấy phần của mình.')}"></div>
+
+    <form class="row g-2 align-items-end mb-3 os-fulfillment-filter" method="get" th:action="@{/staff/fulfillments}"
+          th:if="${fixedType == null}">
+        <div class="col-6 col-md-3" th:if="${assignedStores != null and assignedStores.size() > 1}">
+            <label class="form-label small" for="f-store">Chi nhánh</label>
+            <select class="form-select" id="f-store" name="storeId">
+                <option value="">Tất cả chi nhánh được phân công</option>
+                <option th:each="s : ${assignedStores}" th:value="${s.id}" th:text="${s.name}"
+                        th:selected="${filter.storeId != null and filter.storeId == s.id}"></option>
+            </select>
+        </div>
+        <div class="col-6 col-md-2">
+            <label class="form-label small" for="f-status">Trạng thái</label>
+            <select class="form-select" id="f-status" name="status">
+                <option value="">Đang xử lý</option>
+                <option th:each="st : ${statuses}" th:value="${st}" th:text="${st}"
+                        th:selected="${filter.status != null and filter.status == st}"></option>
+            </select>
+        </div>
+        <div class="col-6 col-md-2">
+            <label class="form-label small" for="f-type">Hình thức</label>
+            <select class="form-select" id="f-type" name="type">
+                <option value="">Tất cả</option>
+                <option value="DELIVERY" th:selected="${filter.type != null and filter.type.name() == 'DELIVERY'}">Giao tận nơi</option>
+                <option value="STORE_PICKUP" th:selected="${filter.type != null and filter.type.name() == 'STORE_PICKUP'}">Nhận tại cửa hàng</option>
+            </select>
+        </div>
+        <div class="col-6 col-md-2">
+            <label class="form-label small" for="f-order">Mã đơn</label>
+            <input class="form-control" id="f-order" name="orderId" type="number" min="1"
+                   th:value="${filter.orderId}">
+        </div>
+        <div class="col-6 col-md-2">
+            <label class="form-label small" for="f-from">Từ ngày</label>
+            <input class="form-control" id="f-from" name="from" type="date" th:value="${filter.from}">
+        </div>
+        <div class="col-6 col-md-2">
+            <label class="form-label small" for="f-to">Đến ngày</label>
+            <input class="form-control" id="f-to" name="to" type="date" th:value="${filter.to}">
+        </div>
+        <div class="col-12 col-md-auto">
+            <input type="hidden" name="open" value="true" th:if="${filter.openOnly}">
+            <button class="btn btn-primary" type="submit">Lọc</button>
+            <a class="btn btn-outline-secondary" th:href="@{/staff/fulfillments}">Xóa lọc</a>
+        </div>
+    </form>
+
+    <p class="mb-3">Tổng số phần giao: <strong id="fulfillment-count" th:text="${queue.totalElements}"></strong></p>
+
+    <div th:replace="~{staff/fulfillments/fragments :: table(${queue.content})}"></div>
+
+    <nav aria-label="Phân trang phần giao hàng" class="d-flex justify-content-center gap-3 mt-3"
+         th:if="${queue.totalPages > 1}">
+        <a class="btn btn-outline-secondary" th:if="${queue.hasPrevious()}"
+           th:href="@{${basePath}(page=${queue.number - 1},storeId=${filter.storeId},status=${filter.status},type=${filter.type},orderId=${filter.orderId},from=${filter.from},to=${filter.to},open=${filter.openOnly})}">Trang trước</a>
+        <span class="align-self-center" th:text="'Trang ' + ${queue.number + 1} + ' / ' + ${queue.totalPages}"></span>
+        <a class="btn btn-outline-secondary" th:if="${queue.hasNext()}"
+           th:href="@{${basePath}(page=${queue.number + 1},storeId=${filter.storeId},status=${filter.status},type=${filter.type},orderId=${filter.orderId},from=${filter.from},to=${filter.to},open=${filter.openOnly})}">Trang sau</a>
+    </nav>
+</div>
+</body>
+</html>

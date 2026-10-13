@@ -90,11 +90,20 @@
             <span th:if="${stats.store.openingHours}" th:text="' · ' + ${stats.store.openingHours}"></span>
         </p>
         <div class="row g-3 os-dashboard-metrics">
-            <div class="col-12 col-sm-6 col-xl-3 os-dashboard-metric" data-metric="pending-orders" th:attr="data-value=${stats.pendingOrderCount}">
-                <div th:replace="~{fragments/components :: statCard('Đơn cần xử lý', ${stats.pendingOrderCount}, 'Đã xác nhận, đang chuẩn bị, đóng gói hoặc giao hàng')}"></div>
+            <div class="col-12 col-sm-6 col-xl-3 os-dashboard-metric" data-metric="pending-orders" th:attr="data-value=${stats.openFulfillmentCount}">
+                <div th:replace="~{fragments/components :: statCard('Phần giao cần xử lý', ${stats.openFulfillmentCount}, 'Chờ chuẩn bị, đang chuẩn bị, đóng gói, giao hàng hoặc chờ khách nhận')}"></div>
             </div>
             <div class="col-12 col-sm-6 col-xl-3 os-dashboard-metric" data-metric="waiting-pickup" th:attr="data-value=${stats.waitingPickupCount}">
-                <div th:replace="~{fragments/components :: statCard('Đơn chờ khách nhận tại cửa hàng', ${stats.waitingPickupCount}, 'Nhận tại cửa hàng · Sẵn sàng nhận')}"></div>
+                <div th:replace="~{fragments/components :: statCard('Hàng chờ khách nhận tại cửa hàng', ${stats.waitingPickupCount}, 'Nhận tại cửa hàng · Sẵn sàng nhận')}"></div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3 os-dashboard-metric" data-metric="shipping" th:attr="data-value=${stats.shippingCount}">
+                <div th:replace="~{fragments/components :: statCard('Đang giao hàng', ${stats.shippingCount}, 'Đã bàn giao vận chuyển, chờ xác nhận giao')}"></div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3 os-dashboard-metric" data-metric="blocked" th:attr="data-value=${stats.blockedCount}">
+                <div th:replace="~{fragments/components :: statCard('Đang bị giữ', ${stats.blockedCount}, 'Chờ thanh toán hoặc chờ xử lý ngoại lệ')}"></div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3 os-dashboard-metric" data-metric="failed" th:attr="data-value=${stats.failedCount}">
+                <div th:replace="~{fragments/components :: statCard('Không thành công', ${stats.failedCount}, 'Chờ quản trị viên xử lý')}"></div>
             </div>
             <div class="col-12 col-sm-6 col-xl-3 os-dashboard-metric" data-metric="low-stock" th:attr="data-value=${stats.lowStockSkuCount}">
                 <div th:replace="~{fragments/components :: statCard('Sản phẩm sắp hết hàng', ${stats.lowStockSkuCount}, 'SKU đang kinh doanh · Tồn kho 1–' + ${dashboard.lowStockThreshold})}"></div>
@@ -105,11 +114,11 @@
         </div>
     </section>
     <div class="d-flex justify-content-between align-items-center mb-3 os-dashboard-orders-heading">
-        <h2 class="h5 mb-0 os-dashboard-orders-title">Đơn hàng gần đây</h2>
-        <a class="btn btn-outline-primary btn-sm" th:href="@{/staff/orders}">Xem tất cả đơn hàng</a>
+        <h2 class="h5 mb-0 os-dashboard-orders-title">Phần giao đang xử lý</h2>
+        <a class="btn btn-outline-primary btn-sm" th:href="@{/staff/fulfillments}">Xem tất cả phần giao</a>
     </div>
     <div class="os-dashboard-orders-table">
-        <div th:replace="~{staff/orders/fragments :: table(${dashboard.recentOrders})}"></div>
+        <div th:replace="~{staff/fulfillments/fragments :: table(${dashboard.recentFulfillments})}"></div>
     </div>
 </th:block>
 </main>

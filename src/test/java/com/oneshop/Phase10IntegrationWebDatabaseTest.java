@@ -94,24 +94,30 @@ class Phase10IntegrationWebDatabaseTest {
         for (long store : stores) {
             String section = sectionValue(dashboard, store);
             Map<String, Long> counts = Map.of(
-                    "pending-orders", scalar("select count(*) from dbo.orders where store_id=? and order_status in ('CONFIRMED','PREPARING','PACKED','SHIPPING')", store),
-                    "waiting-pickup", scalar("select count(*) from dbo.orders where store_id=? and fulfillment_type='STORE_PICKUP' and order_status='READY_FOR_PICKUP'", store),
+                    // V3-BE-04: counters are Fulfillments of the Store (order_fulfillments.store_id); an Order held by
+                    // the payment gate (PENDING_PAYMENT / NEEDS_ATTENTION / CANCELLED) is not work to do yet
+                    "pending-orders", scalar("select count(*) from dbo.order_fulfillments f join dbo.orders o on o.order_id=f.order_id"
+                            + " where f.store_id=? and f.status in ('CONFIRMED','PREPARING','PACKED','SHIPPING','READY_FOR_PICKUP') and o.order_status not in ('PENDING_PAYMENT','NEEDS_ATTENTION','CANCELLED')", store),
+                    "waiting-pickup", scalar("select count(*) from dbo.order_fulfillments f join dbo.orders o on o.order_id=f.order_id"
+                            + " where f.store_id=? and f.status='READY_FOR_PICKUP' and o.order_status not in ('PENDING_PAYMENT','NEEDS_ATTENTION','CANCELLED')", store),
                     "low-stock", scalar("select count(*) from dbo.store_products where store_id=? and status='ACTIVE' and quantity between 1 and 5", store),
                     "out-of-stock", scalar("select count(*) from dbo.store_products where store_id=? and status='ACTIVE' and quantity=0", store));
             counts.forEach((metric, count) -> assertThat(section)
                     .contains("data-metric=\"" + metric + "\" data-value=\"" + count + "\""));
         }
-        String orderSql = "select order_id from dbo.orders where store_id in (" + placeholders + ")";
-        String sort = " order by created_at desc,order_id desc";
+        // V3-BE-04: the work queue lists open Fulfillments of the assigned Stores, oldest first
+        String orderSql = "select fulfillment_id from dbo.order_fulfillments where store_id in (" + placeholders + ")"
+                + " and status in ('CONFIRMED','PREPARING','PACKED','SHIPPING','READY_FOR_PICKUP')";
+        String sort = " order by assigned_at asc,fulfillment_id asc";
         var orders = jdbc.queryForList(orderSql + sort, Long.class, args);
-        assertThat(ids(dashboard, "data-order-id")).containsExactlyElementsOf(orders.stream().limit(5).toList());
+        assertThat(ids(dashboard, "data-fulfillment-id")).containsExactlyElementsOf(orders.stream().limit(5).toList());
         String queue = page("/staff/orders?store_id=5", cookie);
-        assertThat(ids(queue, "data-order-id")).containsExactlyElementsOf(orders.stream().limit(20).toList());
-        assertThat(queue).contains("id=\"order-count\">" + orders.size() + "</strong>");
-        var pickups = jdbc.queryForList(orderSql + " and fulfillment_type='STORE_PICKUP' and order_status in ('CONFIRMED','PREPARING','READY_FOR_PICKUP')" + sort, Long.class, args);
-        String pickupQueue = page("/staff/pickup?store_id=5", cookie);
-        assertThat(ids(pickupQueue, "data-order-id")).containsExactlyElementsOf(pickups.stream().limit(20).toList());
-        assertThat(pickupQueue).contains("id=\"pickup-queue-count\">" + pickups.size() + "</strong>");
+        assertThat(ids(queue, "data-fulfillment-id")).containsExactlyElementsOf(orders.stream().limit(20).toList());
+        assertThat(queue).contains("id=\"fulfillment-count\">" + orders.size() + "</strong>");
+        var pickups = jdbc.queryForList(orderSql + " and fulfillment_type='STORE_PICKUP'" + sort, Long.class, args);
+        String pickupQueue = page("/staff/fulfillments/pickup?store_id=5", cookie);
+        assertThat(ids(pickupQueue, "data-fulfillment-id")).containsExactlyElementsOf(pickups.stream().limit(20).toList());
+        assertThat(pickupQueue).contains("id=\"fulfillment-count\">" + pickups.size() + "</strong>");
         var stocks = jdbc.queryForList("select sp.store_product_id,sp.quantity from dbo.store_products sp join dbo.stores s on s.store_id=sp.store_id"
                 + " join dbo.products p on p.product_id=sp.product_id where sp.store_id in (" + placeholders + ") order by s.name,p.name,sp.store_product_id", args);
         String stockPage = page("/staff/stock?store_id=5", cookie);

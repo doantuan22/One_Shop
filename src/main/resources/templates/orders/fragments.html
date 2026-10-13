@@ -26,6 +26,35 @@
             <td><span th:replace="~{fragments/components :: price(${item.unitPrice})}"></span></td><td th:text="${item.quantity}"></td>
             <td><span th:replace="~{fragments/components :: price(${item.subtotal})}"></span></td></tr></tbody></table></div>
     <p class="fw-bold">Tổng đơn: <span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></p>
+    <section id="order-fulfillments" th:if="${detail.fulfillments != null and !detail.fulfillments.isEmpty()}">
+        <h2 class="h5">Phần giao theo chi nhánh</h2>
+        <p class="small text-secondary" th:if="${detail.fulfillments.size() > 1}">
+            Đơn hàng được cung cấp bởi nhiều chi nhánh; mỗi chi nhánh chuẩn bị và giao phần hàng của mình nên có thể
+            hoàn tất vào các thời điểm khác nhau.
+        </p>
+        <div class="card mb-2 os-order-fulfillment" th:each="part : ${detail.fulfillments}"
+             th:attr="data-fulfillment-id=${part.fulfillmentId},data-status=${part.status}">
+            <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between gap-2">
+                    <strong th:text="${part.storeName}"></strong>
+                    <span th:replace="~{staff/fulfillments/fragments :: status(${part.status})}"></span>
+                </div>
+                <p class="small text-secondary mb-1" th:text="${part.storeAddress}"></p>
+                <p class="small mb-1"
+                   th:text="${part.fulfillmentType.name() == 'STORE_PICKUP'} ? 'Nhận tại cửa hàng' : 'Giao tận nơi'"></p>
+                <p class="small mb-1" th:if="${part.trackingCode != null}">Mã vận đơn:
+                    <span th:text="${part.trackingCode}"></span></p>
+                <ul class="small mb-1">
+                    <li th:each="line : ${part.items}" th:text="${line.productName} + ' × ' + ${line.quantity}"></li>
+                </ul>
+                <div class="alert alert-info mb-0" th:if="${part.pickupCode != null}">
+                    Mã nhận hàng: <strong class="fs-5 font-monospace os-fulfillment-pickup-code"
+                                          th:text="${part.pickupCode}"></strong>
+                    <p class="mb-0">Cung cấp mã này cho nhân viên tại chi nhánh để nhận hàng.</p>
+                </div>
+            </div>
+        </div>
+    </section>
     <h2 class="h5">Thanh toán</h2><p th:if="${detail.payments.isEmpty()}">Chưa ghi nhận thanh toán.</p>
     <div class="card mb-2" th:each="payment : ${detail.payments}"><div class="card-body">
         <span th:text="${payment.method} + ' · ' + ${payment.status}"></span> · <span th:replace="~{fragments/components :: price(${payment.amount})}"></span>

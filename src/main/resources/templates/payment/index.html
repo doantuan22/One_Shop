@@ -25,8 +25,14 @@
     </dl>
 </div></div>
 <div class="alert alert-info" th:if="${paymentOrder.paymentMethod.name() == 'ONLINE'}">
-    Đây là thanh toán trực tuyến mô phỏng, không thu tiền thật. Chọn kết quả để kiểm tra luồng thanh toán.
-    Nếu thanh toán thất bại, đơn hàng sẽ bị hủy. Bạn có thể đặt đơn mới để mua lại.
+    Đây là thanh toán trực tuyến mô phỏng, không thu tiền thật. Kết quả thanh toán chỉ được ghi nhận khi hệ thống
+    xác minh qua cổng thanh toán mô phỏng; bấm nút trên trình duyệt không làm thay đổi trạng thái thanh toán.
+</div>
+<div class="alert alert-warning" id="payment-deadline" th:if="${paymentOrder.paymentDeadline != null and paymentOrder.orderStatus.name() == 'PENDING_PAYMENT'}">
+    Hạn thanh toán:
+    <strong th:text="${#temporals.format(paymentOrder.paymentDeadline, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:15</strong>
+    (15 phút kể từ lúc đặt hàng, không gia hạn).
+    <span th:if="${paymentOrder.expired}">Đơn đã quá hạn thanh toán.</span>
 </div>
 <form th:if="${paymentOrder.payable() and !paymentOrder.hasPendingAttempt()}" method="post"
       th:action="@{/orders/{id}/payments/attempts(id=${paymentOrder.orderId})}">
@@ -43,14 +49,6 @@
         </p>
         <p class="small mb-1" th:if="${attempt.transactionCode}">Mã giao dịch: <span class="payment-transaction-code" th:text="${attempt.transactionCode}"></span></p>
         <p class="small mb-1" th:if="${attempt.paidAt}">Đã thanh toán lúc: <span class="payment-paid-at" th:text="${#temporals.format(attempt.paidAt, 'dd/MM/yyyy HH:mm:ss')}"></span></p>
-        <div class="d-flex flex-wrap gap-2 mt-2" th:if="${paymentOrder.payable() and attempt.status.name() == 'PENDING'}">
-            <form method="post" th:action="@{/orders/{oid}/payments/{pid}/success(oid=${paymentOrder.orderId},pid=${attempt.paymentId})}">
-                <button class="btn btn-success" type="submit">Mô phỏng thành công</button>
-            </form>
-            <form method="post" th:action="@{/orders/{oid}/payments/{pid}/failure(oid=${paymentOrder.orderId},pid=${attempt.paymentId})}">
-                <button class="btn btn-outline-danger" type="submit">Mô phỏng thất bại và hủy đơn</button>
-            </form>
-        </div>
     </div>
 </section>
 <a class="btn btn-outline-primary" th:href="@{/checkout/{id}(id=${paymentOrder.checkoutId})}">Xem lần đặt hàng</a>

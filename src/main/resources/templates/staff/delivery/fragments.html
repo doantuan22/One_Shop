@@ -6,7 +6,10 @@
     <span th:case="'PREPARING'">Đang chuẩn bị</span><span th:case="'PACKED'">Đã đóng gói</span>
     <span th:case="'READY_FOR_PICKUP'">Sẵn sàng nhận tại cửa hàng</span>
     <span th:case="'SHIPPING'">Đang giao hàng</span><span th:case="'COMPLETED'">Hoàn tất</span>
-    <span th:case="'CANCELLED'">Đã hủy</span><span th:case="*" th:text="${status}"></span>
+    <span th:case="'CANCELLED'">Đã hủy</span>
+    <span th:case="'PROCESSING'">Đang xử lý</span><span th:case="'PARTIALLY_COMPLETED'">Hoàn tất một phần</span>
+    <span th:case="'NEEDS_ATTENTION'">Cần xử lý ngoại lệ</span><span th:case="'FAILED'">Không thành công</span>
+    <span th:case="*" th:text="${status}"></span>
 </span>
 <span th:fragment="payment(status)" th:switch="${status.name()}">
     <span th:case="'UNPAID'">Chưa thanh toán</span><span th:case="'PAID'">Đã thanh toán</span>

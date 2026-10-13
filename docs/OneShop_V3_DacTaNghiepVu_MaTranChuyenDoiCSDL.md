@@ -8,6 +8,7 @@
 > **Phạm vi công nghệ giữ nguyên:** Spring Boot + Thymeleaf + Bootstrap + JPA + SQL Server + SiteMesh + JWT + Cloudinary.
 > **Cập nhật 13/10/2026 (changelog):** (1) chốt **Immediate Physical Stock Deduction** (DEC-16); (2) chốt thời hạn `PENDING_PAYMENT` **15 phút** (DEC-15), thay thế điểm `[CẦN CHỐT]` OPEN-04; (3) bổ sung quy tắc chống race giữa callback, timeout, hủy và PREPARING (§10.4). Các quyết định khác không đổi.  
 > **Cập nhật 13/10/2026 (lần 2):** chốt thêm DEC-17..DEC-22: cửa sổ đối soát 15 phút, FAILED đã xác thực là cuối cùng, Admin xử lý `NEEDS_ATTENTION` thanh toán, tên cấu hình `oneshop.payment.*`, Mock Payment Gateway phía server, không triển khai Cross-Store Transfer (xem §10.4–§10.7, §14.1, §15.2).
+> **Cập nhật 13/10/2026 (lần 3):** chốt thêm DEC-23..DEC-25 (OPEN-01/02/03): cho phép chia quantity cùng SKU giữa nhiều Store, mọi Store ACTIVE có `delivery_enabled` giao toàn quốc (không GPS), phí DELIVERY cố định 30.000 VNĐ mỗi Order, STORE_PICKUP miễn phí (xem §4, §5.2, §3.5, §14.1, §15.2, §18).
 
 ---
 
@@ -60,6 +61,9 @@ Các nhãn sau được áp dụng xuyên suốt:
 | DEC-20 | **Tên cấu hình chính thức:** `oneshop.payment.pending-timeout-minutes` (15), `oneshop.payment.reconciliation-window-minutes` (15), `oneshop.payment.timeout-scan-interval-ms` (60000); thời hạn nghiệp vụ không đổi qua biến môi trường nếu chưa được chủ dự án phê duyệt | **ĐÃ CHỐT** (13/10/2026) |
 | DEC-21 | **Mock Payment Gateway phía Backend** mô phỏng thanh toán ONLINE; kết quả chỉ được xác nhận sau khi đối chiếu mock ledger phía server; nút success/failure của browser không phải bằng chứng; không tích hợp cổng ngân hàng thật; tách mock mode khỏi production | **ĐÃ CHỐT** (13/10/2026) |
 | DEC-22 | **Không triển khai Cross-Store Transfer.** Đơn nhiều Store là Multi-Store Fulfillment: mỗi Store chỉ xử lý phần đã phân bổ; không chuyển kho, không stock transfer movement, không transfer request, không warehouse module/bảng chuyển kho | **ĐÃ CHỐT** (13/10/2026) |
+| DEC-23 | **OPEN-01:** cho phép chia quantity của **cùng một SKU** giữa nhiều StoreProduct/Store. Một Product có thể xuất hiện ở nhiều OrderItem của cùng Order, mỗi OrderItem truy vết một StoreProduct và một Fulfillment; tổng quantity bằng quantity khách xác nhận; không chuyển kho | **ĐÃ CHỐT** (13/10/2026) |
+| DEC-24 | **OPEN-02:** mọi Store `ACTIVE` có `delivery_enabled = true` được cấp hàng giao tới **mọi địa chỉ hợp lệ trên toàn lãnh thổ Việt Nam**. Không GPS, không khoảng cách, không nearest-store, không bắt buộc cùng tỉnh/quận | **ĐÃ CHỐT** (13/10/2026) |
+| DEC-25 | **OPEN-03:** phí DELIVERY **30.000 VNĐ cho mỗi Order**, không nhân theo số Fulfillment; mỗi Order độc lập của COD split chịu phí riêng; STORE_PICKUP phí 0 | **ĐÃ CHỐT** (13/10/2026) |
 
 ### 0.2. Kết luận kiến trúc
 
@@ -143,7 +147,7 @@ Không thay stack, không thêm React/Vue/Angular, microservices, Redis, message
 1. Customer chọn CartItem, địa chỉ, phương thức DELIVERY + ONLINE.
 2. Backend đọc lại Product/Cart/địa chỉ, xác thực giá chung, status và quantity.
 3. Bộ phân bổ tìm một Store có đủ **toàn bộ** giỏ trước; nếu không có, ưu tiên Store bao phủ nhiều mặt hàng rồi bổ sung từ Store khác.
-4. Xác thực tất cả Store có thể giao tới khu vực nhận theo quy tắc cấu hình; không lấy Store hết hàng/INACTIVE.
+4. Xác thực địa chỉ nhận hàng hợp lệ (cấu trúc; xem §4.1) và chỉ dùng Store `ACTIVE` có `delivery_enabled`, StoreProduct `ACTIVE` còn khả dụng; **không** giới hạn theo tỉnh/thành của địa chỉ (DEC-24).
 5. Trong transaction: khóa các `StoreProduct` cấp hàng, xác minh lại, tạo **một Order**, tạo các `OrderFulfillment` theo Store, tạo `OrderItem` gắn đúng StoreProduct/Fulfillment, ghi movements trừ kho, xóa những CartItem đã checkout.
 6. Tạo payment attempt ONLINE của toàn bộ Order; trạng thái Order `PENDING_PAYMENT` cho tới khi thanh toán được xác nhận hoặc **hết hạn sau 15 phút kể từ `Order.created_at`** (**[ĐÃ CHỐT]**, xem DEC-15, §10.4).
 7. Sau thành công, một Payment thành công cho **tổng Order**; mỗi Staff Store nhìn thấy Fulfillment được giao.
@@ -168,6 +172,8 @@ Khi đơn chỉ có thể phân bổ từ nhiều Store và khách chọn COD, U
 
 **Lưu ý cốt lõi:** Đây là **nhiều đơn độc lập** khi khách chọn COD, **không phải Order con**, **không phải** cấu trúc Order tổng → Order con; và **không áp dụng cho ONLINE**. Mỗi Order COD có thể được hủy/theo dõi/thu tiền độc lập. Phải hiển thị trước số đơn, sản phẩm từng đơn và tiền phải trả mỗi lần nhận; chỉ tạo sau khi khách đồng ý. **[ĐỀ XUẤT]** Toàn bộ các Order COD tách được tạo atomic trong một transaction ở bước xác nhận.
 
+**Phí giao hàng của COD split [ĐÃ CHỐT — DEC-25]:** mỗi Order độc lập có phí giao hàng **30.000 VNĐ riêng**; màn xác nhận phải hiển thị, cho từng Order, tiền hàng, phí giao và số tiền phải trả khi nhận, cùng tổng của cả lần đặt. Nếu số Order hoặc phí thay đổi giữa preview và lúc đặt, khách phải xác nhận lại.
+
 ### 3.6. STORE_PICKUP
 
 - Khách chọn STORE_PICKUP khi checkout, hệ thống cho chọn Store đang ACTIVE, `pickup_enabled`, có đủ toàn bộ giỏ.
@@ -190,7 +196,7 @@ Khi đơn chỉ có thể phân bổ từ nhiều Store và khách chọn COD, U
 ### 4.1. Ràng buộc cứng
 
 - Chỉ Store ACTIVE và StoreProduct ACTIVE với tồn không âm/đủ cho lượng phân bổ; DELIVERY yêu cầu delivery_enabled; PICKUP yêu cầu pickup_enabled.
-- Chỉ Store thỏa **vùng phục vụ** khách. `province_city/area` là địa chỉ Store, **không tự là chứng cứ Store phục vụ mọi địa chỉ cùng tỉnh**. V3 phải có quy tắc vùng phục vụ tối giản trước khi triển khai; không giả định GPS/nearest.
+- **[ĐÃ CHỐT — DEC-24]** Mọi Store `ACTIVE` có `delivery_enabled = true` đủ điều kiện giao tới mọi địa chỉ hợp lệ ở Việt Nam; `province_city/area` là địa chỉ của Store, không được dùng để loại Store. Không GPS/tọa độ, không khoảng cách, không nearest-store. Địa chỉ chỉ được kiểm tra **cấu trúc** (độ dài, số từ, ký tự); schema chỉ có một dòng `address_line` nên **không thể xác minh quốc gia**, điều này là giới hạn đã biết, không được tuyên bố là đã xác minh.
 - Tồn được tính theo từng StoreProduct; **không** dùng tổng tồn toàn chuỗi làm bằng chứng một Store đủ giỏ.
 - Nếu không phân bổ đủ toàn bộ giỏ, phải thất bại toàn bộ checkout (không tạo Order thiếu sản phẩm) theo chính sách P0.
 - Khi checkout kiểm tra hàng và giá từ DB, khóa/ghi với transaction; không tin product_price/store_id/allocatedStore từ request.
@@ -199,13 +205,13 @@ Khi đơn chỉ có thể phân bổ từ nhiều Store và khách chọn COD, U
 
 ### 4.2. Chiến lược ưu tiên
 
-**Mức 1 — One-Store Full Cart:** lọc các Store có đủ toàn bộ số lượng mỗi SKU, sau đó chọn Store có khả năng phục vụ địa chỉ phù hợp nhất; ưu tiên vùng và tiêu chí nhất quán khi hòa.
+**Mức 1 — One-Store Full Cart:** lọc các Store có đủ toàn bộ số lượng mỗi SKU; nếu có, chọn Store có **tổng khả dụng lớn nhất** của các SKU cần mua, hòa thì `store_id` nhỏ nhất.
 
-**Mức 2 — Multi-Store Coverage:** nếu không một Store đủ giỏ, tìm Store phù hợp bao phủ nhiều **dòng SKU đủ lượng** nhất rồi tìm Store khác cho các dòng còn thiếu. Mục tiêu hạn chế số Fulfillment, nhưng **không cần giải bài toán tối ưu tuyến giao hàng**.
+**Mức 2 — Multi-Store, dòng nguyên vẹn:** nếu không một Store đủ giỏ, chọn lần lượt Store phủ nhiều **dòng SKU đủ lượng** nhất rồi tìm Store khác cho phần còn thiếu. Mục tiêu hạn chế số Fulfillment (greedy, **không bảo đảm tối ưu toàn cục**, không xét khoảng cách hay phí vận chuyển).
 
-**Mức 3 — Trường hợp thiếu lượng của một SKU:** nếu không Store nào có đủ trọn quantity nhưng tổng khả dụng đủ, dữ liệu `order_items` được thiết kế hỗ trợ nhiều dòng cùng Product ở nhiều Store; **[CẦN CHỐT]** V3 P0 có bật tách quantity trong một SKU hay chỉ hỗ trợ SKU nguyên dòng.
+**Mức 3 — Chia quantity của cùng một SKU [ĐÃ CHỐT — DEC-23]:** chỉ khi **không Store nào còn đủ trọn lượng còn thiếu của dòng đó**, dòng được chia cho nhiều Store: mỗi Store được chọn cấp phần nó có, tối đa bằng lượng còn thiếu. Không bắt buộc dùng mọi Store; không phân bổ một đơn vị hai lần; mỗi đoạn là một OrderItem riêng gắn StoreProduct nguồn và Fulfillment của Store đó. Bất biến: với mỗi SKU, tổng quantity phân bổ = quantity khách mua; mỗi đoạn `> 0` và `≤ quantity - reserved_quantity` của StoreProduct. Chỉ khi tổng khả dụng của các Store hợp lệ vẫn thiếu thì từ chối **toàn bộ** checkout.
 
-**Tie-break [ĐỀ XUẤT]:** khu vực đã cấu hình phục vụ → số dòng SKU thỏa mãn → tổng khả dụng của các SKU cần mua → `store_id` tăng dần. Đây là chính sách xác định nguồn, **không cam kết tối ưu chi phí vận chuyển thực tế**.
+**Tie-break [ĐÃ CHỐT]:** số dòng SKU cấp **nguyên vẹn** → số đơn vị cấp được → Store đã nằm trong plan (không thêm Fulfillment) → tổng khả dụng của các SKU còn thiếu → `store_id` tăng dần. Không có yếu tố địa lý. Kết quả xác định với cùng dữ liệu và snapshot tồn kho.
 
 ### 4.3. Ví dụ phân bổ
 
@@ -248,10 +254,10 @@ Không có `orders.parent_order_id` và không có entity `SubOrder` trong luồ
 ### 5.2. Tính tiền
 
 - `OrderItem.unit_price = Product.price` snapshot lúc chốt; `subtotal = unit_price × quantity`.
-- `Order.total_amount = Σ OrderItem.subtotal + phí giao (nếu có chính sách được chốt)`.
+- `Order.total_amount = Σ OrderItem.subtotal + shipping_fee`, với `shipping_fee = 30.000 VNĐ` cho Order DELIVERY và `0` cho STORE_PICKUP **[ĐÃ CHỐT — DEC-25]**; `CheckoutSession.total_amount = Σ total_amount của các Order độc lập`.
 - `Payment.amount = Order.total_amount` cho lần thanh toán thành công; không phân chia Payment theo StoreProduct.
 - Hiển thị giá chung nhất quán trên catalog, detail, cart, checkout, OrderItem và hóa đơn giao dịch; thay đổi Product.price không ảnh hưởng Order cũ.
-- **[CẦN CHỐT]** cách tính phí giao khi một Order có nhiều kiện; không tự thêm N phí vận chuyển sau khi khách đã xác nhận tổng.
+- **[ĐÃ CHỐT — DEC-25]** Một Order ONLINE nhiều Fulfillment chỉ chịu **một** phí giao 30.000 VNĐ (không nhân theo số Fulfillment); mỗi Order độc lập của COD split chịu phí riêng. Phí tính ở Backend bằng `BigDecimal`, không nhận từ browser; không `StoreProduct.price`.
 
 ### 5.3. Quan hệ giữa Order và OrderItem
 
@@ -295,7 +301,7 @@ ONLINE bình thường: 1 CheckoutSession → 1 Order → N Fulfillment. COD tá
 | **`order_fulfillments`** | Một bản ghi phân công và tiến độ xử lý cho mỗi Store thuộc một Order; ràng buộc quyền Staff | **P0 bắt buộc để đáp ứng đa Store/độc lập trạng thái** | Không nên bỏ; nếu không sẽ phải nhồi trạng thái đa Store vào `orders`/`order_items` thiếu rõ ràng |
 | **`order_fulfillment_status_history`** | Lưu transition riêng của từng phần giao, ai đổi, lúc nào | **P0/P1: khuyến nghị P0** | Có thể P1 nếu hạn chế thời gian, nhưng mất lịch sử chi tiết phần giao |
 | **`review_replies`** | Lưu phản hồi Staff có kiểm tra Store scope, tách khỏi đánh giá khách | **P0 nếu chức năng phản hồi Review nằm trong MVP V3** | Nếu schema thực tế đã có bảng/thuộc tính đạt yêu cầu thì tái sử dụng, không tạo trùng |
-| `store_delivery_areas` *(tùy chọn)* | Mapping Store với khu vực được phép giao, không dùng tọa độ | **CẦN CHỐT** | Có, nếu toàn bộ Store dùng một chính sách vùng phục vụ đơn giản đã được chốt |
+| `store_delivery_areas` *(tùy chọn)* | Mapping Store với khu vực được phép giao, không dùng tọa độ | **Không cần** — DEC-24 chốt giao toàn quốc | Bỏ: không tạo bảng vùng phục vụ |
 
 **Tổng kết DDL dự kiến:** tối thiểu thay đổi cấu trúc tại `products`, `cart_items`, `orders`, `order_items`, `reviews` và có thể `customer_addresses`, `payments`, `store_products`; thêm `order_fulfillments`, đề xuất `order_fulfillment_status_history`, `review_replies`. **Không công bố con số chính xác “X bảng thay đổi” khi schema repo chưa được xác minh.**
 
@@ -888,6 +894,10 @@ Báo cáo B2 có nhắc các tên class `CartServiceImpl`, `CheckoutServiceImpl`
 | V3-BR-22 | Kết quả thanh toán chỉ được xác nhận sau khi đối chiếu Mock Payment Gateway phía server; browser success/failure không phải bằng chứng (DEC-21) | Đã chốt |
 | V3-BR-23 | Order đã `CANCELLED` không bao giờ hồi sinh; khoản thu muộn đi vào đối soát và đúng một refund mô phỏng, không hoàn kho hai lần | Đã chốt |
 | V3-BR-24 | Không chuyển kho giữa chi nhánh; đơn nhiều Store là Multi-Store Fulfillment độc lập (DEC-22) | Đã chốt |
+| V3-BR-25 | Quantity của một SKU có thể được chia cho nhiều Store khi không Store nào đủ trọn lượng còn thiếu; tổng phân bổ = quantity mua; mỗi đoạn truy vết StoreProduct/Fulfillment (DEC-23) | Đã chốt |
+| V3-BR-26 | DELIVERY: mọi Store `ACTIVE` + `delivery_enabled` đủ điều kiện, địa chỉ hợp lệ toàn quốc; không GPS/khoảng cách/nearest-store (DEC-24) | Đã chốt |
+| V3-BR-27 | Phí DELIVERY 30.000 VNĐ mỗi Order (một lần cho ONLINE nhiều Fulfillment; mỗi Order độc lập của COD split một lần); STORE_PICKUP 0; tính ở Backend (DEC-25) | Đã chốt |
+| V3-BR-28 | Chữ ký plan gồm khách, SKU/quantity, nguồn StoreProduct, cách nhận/thanh toán, Store pickup hoặc địa chỉ, phí, số Order và tổng tiền; thay đổi bất kỳ yếu tố nào giữa preview và đặt hàng yêu cầu xác nhận lại | Ràng buộc kỹ thuật bắt buộc |
 
 ---
 
@@ -925,7 +935,7 @@ Báo cáo B2 có nhắc các tên class `CartServiceImpl`, `CheckoutServiceImpl`
 | V3-T03 | Một Store có đủ toàn giỏ | Allocation chọn một Store, một Fulfillment |
 | V3-T04 | Store A thiếu một SKU, Store B có | Một Order ONLINE, hai Fulfillments và các dòng nguồn đúng |
 | V3-T05 | Ba Store cung cấp ba SKU | Một Order, một lần thu, ba Fulfillments; không sinh Order con |
-| V3-T06 | Một SKU quantity lớn | Quyết định theo rule chốt: chia 2 Store hoặc báo thiếu; không oversell |
+| V3-T06 | Một SKU quantity lớn, không Store nào đủ trọn | Chia thành nhiều OrderItem/Fulfillment theo DEC-23; tổng quantity đúng; không oversell; thiếu tổng thì từ chối toàn bộ |
 | V3-T07 | Tổng toàn chuỗi đủ nhưng một Store không đủ | Phân bổ hợp lệ hoặc lỗi đúng rule, không dựa SUM làm bằng chứng đủ từng Store |
 | V3-T08 | Không đủ hàng cuối cùng | Không tạo Order nửa chừng; transaction rollback |
 | V3-T09 | Hai checkout cạnh tranh SKU cuối ở hai Store | Không âm kho; tất cả FK/quantity đúng, retry/deadlock kiểm soát |
@@ -947,7 +957,7 @@ Báo cáo B2 có nhắc các tên class `CartServiceImpl`, `CheckoutServiceImpl`
 | V3-T25 | Review phần A COMPLETED, B đang giao | Khách được Review OrderItem A, chưa được Review B |
 | V3-T26 | Staff A reply Review từ Store B | Backend từ chối; Staff đúng Store A và ACTIVE được reply nguồn A |
 | V3-T27 | Review trùng trên cùng OrderItem | Bị chặn bằng Service + UNIQUE tương ứng |
-| V3-T28 | Không phục vụ địa chỉ giao | Không phân bổ Store dù còn hàng; thông báo đúng |
+| V3-T28 | Store ở tỉnh khác địa chỉ nhận | Vẫn đủ điều kiện nếu `ACTIVE` + `delivery_enabled` (DEC-24); địa chỉ sai cấu trúc bị từ chối, không tạo Order |
 | V3-T29 | Store INACTIVE sau khi có lịch sử | Không cấp đơn mới, Order/Fulfillment/Review cũ vẫn đọc và audit được |
 | V3-T30 | Chuyển dữ liệu Order V2 | Một Fulfillment/Store lịch sử backfill đúng, totals/history/reviews không sai |
 | V3-T31 | ONLINE thanh toán trong 15 phút | `CONFIRMED`, tồn không đổi sau thanh toán, Staff mới được PREPARING |
@@ -969,6 +979,18 @@ Báo cáo B2 có nhắc các tên class `CartServiceImpl`, `CheckoutServiceImpl`
 | V3-T47 | Browser gửi success/failure trực tiếp (kể cả URL V2 `/payments/{id}/success|failure`) | Không cập nhật trạng thái thanh toán; mock endpoint tắt ở production |
 | V3-T48 | Đơn nhiều Store, một Store thiếu hàng | Không có stock transfer movement; tồn Store khác không đổi vì lý do thiếu hàng; chỉ có `ORDER`, `CANCEL_ORDER`, `STOCK_ADJUST` |
 | V3-T49 | Race: Admin vs timeout/callback muộn; hai Admin | Đúng một kết quả, không movement/refund trùng |
+| V3-T50 | SKU x5, Store A có 3 và Store B có 2 (ONLINE) | 1 Order, 2 Fulfillment, 2 OrderItem cùng SKU khác StoreProduct, phí giao 30.000 một lần |
+| V3-T51 | SKU chia 3 Store | Tổng quantity chính xác, mỗi StoreProduct một movement `ORDER` |
+| V3-T52 | Giỏ nhiều SKU, một SKU cần chia | Allocation hợp lệ, đúng nguồn từng dòng |
+| V3-T53 | Tổng khả dụng của Store hợp lệ vẫn thiếu | Không tạo Order, không trừ tồn, giỏ giữ nguyên |
+| V3-T54 | `reserved_quantity > 0` | Chỉ phân bổ phần `quantity - reserved`, CHECK vẫn thỏa |
+| V3-T55 | Khách HCM, Store Hà Nội có hàng và `delivery_enabled` | Store được dùng; không giới hạn theo tỉnh |
+| V3-T56 | ONLINE DELIVERY 1/2/3 Store | Phí giao đúng 30.000 mỗi Order; `total = items + 30.000` |
+| V3-T57 | COD split 2 và 3 Order | Mỗi Order 30.000 riêng; `session total = Σ Order` |
+| V3-T58 | STORE_PICKUP ONLINE / PAY_AT_STORE | Phí 0 |
+| V3-T59 | Client gửi `shippingFee`/tổng giả; phí đổi sau preview | Backend không tin; yêu cầu xác nhận lại (`TOTAL_CHANGED`/`PLAN_CHANGED`) |
+| V3-T60 | Địa chỉ không hợp lệ (rỗng, quá ngắn, ký tự lạ, > 500) | Từ chối trước khi tạo gì |
+| V3-T61 | Hai khách tranh SKU phải chia, race Store/StoreProduct/reserved đổi sau preview, COD split lỗi ở Order thứ hai | Đúng một kết quả, rollback toàn bộ, không âm kho |
 
 **Kiểm thử hệ thống thật:** Test DB cần chạy transaction rollback/seed riêng, không xóa cứng dữ liệu lịch sử; đo số Order trong ONLINE đa Store, vì nhầm Fulfillment thành Order là regression nghiêm trọng. Các test thời gian dùng `Clock` giả/điều khiển được, không chờ 15 phút thật.
 
@@ -1065,7 +1087,7 @@ Báo cáo B2 có nhắc các tên class `CartServiceImpl`, `CheckoutServiceImpl`
 | V3-P6 | Staff vận hành | Index Store queue, history | Fulfillment Service + Store scope | Staff queue/Detail/Pickup | Staff Store A không sửa Store B |
 | V3-P7 | Review và Reply | Review.order_item_id, replies | ReviewService + authorization | Review/Reply views | Đúng quyền nguồn và tránh review trùng |
 | V3-P8 | Cancel/Refund/Exception | Audit & refund simulation | Atomic cancel/restore, timeout worker 15 phút, cửa sổ đối soát 15 phút, FAILED cuối cùng, Admin xử lý `NEEDS_ATTENTION`, Mock Gateway verify, đối soát callback muộn, aggregate state | Cancel UI, refund simulation | Không hủy sau PREPARING, không hoàn kho 2 lần |
-| V3-P9 | Regression + deploy | Dry-run/validation/contract plan | Tests concurrency/security | Responsive flow/UI tests | TC-V2 chuyển đổi + V3-T01..T49 đạt |
+| V3-P9 | Regression + deploy | Dry-run/validation/contract plan | Tests concurrency/security | Responsive flow/UI tests | TC-V2 chuyển đổi + V3-T01..T61 đạt |
 
 Đây là **phân chia chuyển đổi kiến trúc**, không thay thế hay tự tuyên bố DONE cho các phase V2; thực thi chỉ sau khi chủ dự án xác nhận.
 
@@ -1075,9 +1097,9 @@ Báo cáo B2 có nhắc các tên class `CartServiceImpl`, `CheckoutServiceImpl`
 
 | Mã | Điểm cần xác nhận | Phương án khuyến nghị | Tác động nếu khác |
 |---|---|---|---|
-| OPEN-01 | Một SKU quantity lớn có được chia nguồn A/B? | Hỗ trợ trong schema; có thể bật ngay V3 P0 nếu mong muốn không bỏ lỡ đơn | Allocation, số OrderItem/review, thông báo nhiều kiện |
-| OPEN-02 | Quy tắc địa bàn Store giao hàng | Chỉ những vùng được cấu hình/được phép; không mặc định cùng tỉnh là phục vụ | CSDL vùng giao, form địa chỉ, StoreAllocation |
-| OPEN-03 | Khi giao từ nhiều Store tính phí giao ra sao? | Một tổng phí được hiển thị trước xác nhận; không phát sinh phí ẩn | Pricing/Payment/UX |
+| OPEN-01 | ~~Một SKU quantity lớn có được chia nguồn A/B?~~ **[ĐÃ CHỐT 13/10/2026 — DEC-23]**: được chia; mỗi đoạn là một OrderItem | Còn mở ở Review: mỗi OrderItem tối đa một Review (OPEN-05) | Review/Reply theo Store nguồn |
+| OPEN-02 | ~~Quy tắc địa bàn Store giao hàng~~ **[ĐÃ CHỐT 13/10/2026 — DEC-24]**: mọi Store `ACTIVE` + `delivery_enabled`, toàn quốc, không GPS | Không có | — |
+| OPEN-03 | ~~Phí giao khi nhiều Store~~ **[ĐÃ CHỐT 13/10/2026 — DEC-25]**: 30.000 VNĐ mỗi Order; pickup 0 | Không có | — |
 | OPEN-04 | ~~Timeout PENDING_PAYMENT và auto cancel/restore~~ **[ĐÃ CHỐT 13/10/2026 — DEC-15, DEC-17, DEC-18, DEC-20]**: 15 phút từ `created_at`; đối soát 15 phút cho UNKNOWN; FAILED đã xác thực là cuối cùng; Spring `@Scheduled`, idempotent, không queue | Chỉ còn chi tiết triển khai (plan §5.11): lưu mock ledger, mã lỗi hủy trong đối soát, quy ước `note` audit | Scheduler trong monolith, cấu hình |
 | OPEN-05 | Một SKU phân bổ hai Store, khách có thể đánh giá hai lần? | Mỗi OrderItem tối đa một Review | DB UNIQUE, UX Review |
 | OPEN-06 | Review Reply có cho Admin trả lời thay Staff không? | Giữ quyền trả lời theo Staff Store như yêu cầu, Admin chỉ moderation trừ khi duyệt khác | Authorization |
@@ -1086,7 +1108,7 @@ Báo cáo B2 có nhắc các tên class `CartServiceImpl`, `CheckoutServiceImpl`
 | OPEN-09 | Giá bán Product.price = 0 có hợp lệ với SKU ACTIVE? | Chặn bán nếu giá chưa được Admin xác nhận, trừ sản phẩm tặng nếu scope khác | Constraint/business validation |
 | OPEN-10 | Trạng thái FAILED/NEEDS_ATTENTION và xử lý **giao thất bại** *(phần thanh toán đã chốt: DEC-17..DEC-19, §10.5)* | Lưu ngoại lệ và Admin can thiệp; không auto refund/restore | State machine, permissions |
 
-**Không phải câu hỏi mở**: thời hạn `PENDING_PAYMENT` là 15 phút từ `created_at`; cửa sổ đối soát 15 phút chỉ cho UNKNOWN; FAILED đã xác thực là cuối cùng; Admin xử lý `NEEDS_ATTENTION` thanh toán theo §10.5; tên cấu hình `oneshop.payment.*`; Mock Payment Gateway phía server; không Cross-Store Transfer; trừ tồn vật lý ngay khi tạo Order; ONLINE nhiều Store vẫn một Order; COD nếu nhiều Store thì chỉ tách Order khi Customer xác nhận; hủy chỉ trước PREPARING; hoàn tiền chỉ mô phỏng; một SKU chỉ một mức giá bán online. Các quyết định này đã được chốt.
+**Không phải câu hỏi mở**: chia quantity cùng SKU giữa các Store (DEC-23); giao toàn quốc bởi mọi Store ACTIVE + `delivery_enabled`, không GPS (DEC-24); phí DELIVERY 30.000 VNĐ mỗi Order, pickup miễn phí (DEC-25); thời hạn `PENDING_PAYMENT` là 15 phút từ `created_at`; cửa sổ đối soát 15 phút chỉ cho UNKNOWN; FAILED đã xác thực là cuối cùng; Admin xử lý `NEEDS_ATTENTION` thanh toán theo §10.5; tên cấu hình `oneshop.payment.*`; Mock Payment Gateway phía server; không Cross-Store Transfer; trừ tồn vật lý ngay khi tạo Order; ONLINE nhiều Store vẫn một Order; COD nếu nhiều Store thì chỉ tách Order khi Customer xác nhận; hủy chỉ trước PREPARING; hoàn tiền chỉ mô phỏng; một SKU chỉ một mức giá bán online. Các quyết định này đã được chốt.
 
 ---
 
@@ -1097,7 +1119,7 @@ Báo cáo B2 có nhắc các tên class `CartServiceImpl`, `CheckoutServiceImpl`
 - [ ] Chủ dự án phê duyệt BR mới và chính sách mở cần thiết trong mục 18.
 - [ ] Bản chụp schema V2 thực tế (PK/FK/CHECK/INDEX/NULL/status) đối chiếu với mục 6–8, mọi khác biệt được ghi nhận.
 - [ ] Có bảng giá chung Product được phê duyệt; không lấy MIN/AVG price một cách tự phát.
-- [ ] Chốt cách phân bổ SKU, vùng giao hàng, cách tính phí nhiều kiện. *(Payment timeout, đối soát, FAILED, Admin, cấu hình, mock gateway, không chuyển kho đã chốt: DEC-15..DEC-22.)*
+- [x] Cách phân bổ SKU, vùng giao hàng, phí giao: đã chốt (DEC-23..DEC-25). *(Payment timeout, đối soát, FAILED, Admin, cấu hình, mock gateway, không chuyển kho đã chốt: DEC-15..DEC-22.)*
 - [ ] Chốt refund simulation, cancellation, review source, Staff permission và exception.
 - [ ] Kiểm tra dry-run migration có thể bảo toàn Order/OrderItem/Review/Payment/InventoryMovement cũ.
 

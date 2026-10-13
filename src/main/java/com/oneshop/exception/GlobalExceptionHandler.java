@@ -26,6 +26,12 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.NOT_FOUND, ex.getMessage(), request, null);
     }
 
+    @ExceptionHandler(FulfillmentConflictException.class)
+    public ResponseEntity<ApiErrorResponse> handleFulfillmentConflict(FulfillmentConflictException ex,
+                                                                      HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), request, null);
+    }
+
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ApiErrorResponse> handleBadRequest(BadRequestException ex, HttpServletRequest request) {
         return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request, null);

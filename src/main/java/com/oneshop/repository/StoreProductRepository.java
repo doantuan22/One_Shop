@@ -132,6 +132,35 @@ public interface StoreProductRepository extends JpaRepository<StoreProduct, Long
               and b.status = com.oneshop.entity.VisibilityStatus.ACTIVE""")
     List<Long> findSellableIdsIn(@Param("ids") Collection<Long> ids);
 
+    /**
+     * V3 checkout candidates, ids only: every StoreProduct of the given SKUs that may supply an order right now
+     * (StoreProduct, Store, Product, Category and Brand ACTIVE). Scalar ids on purpose: no entity is loaded, so the
+     * locking read that follows in the same transaction returns the row as it is at that moment, not an older copy.
+     */
+    @Query("""
+            select sp.id from StoreProduct sp join sp.store s join sp.product p join p.category c join p.brand b
+            where p.id in :productIds
+              and sp.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and s.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and p.status = com.oneshop.entity.ProductStatus.ACTIVE
+              and c.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+              and b.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+            order by sp.id""")
+    List<Long> findCheckoutCandidateIdsByProductIds(@Param("productIds") Collection<Long> productIds);
+
+    /** Same candidates as entities (Store and Product fetched) for the read-only checkout preview. */
+    @Query("""
+            select sp from StoreProduct sp join fetch sp.store s join fetch sp.product p
+              join p.category c join p.brand b
+            where p.id in :productIds
+              and sp.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and s.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and p.status = com.oneshop.entity.ProductStatus.ACTIVE
+              and c.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+              and b.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+            order by sp.id""")
+    List<StoreProduct> findCheckoutCandidatesByProductIds(@Param("productIds") Collection<Long> productIds);
+
     // ---- Admin: every status, exact quantity. ----
 
     @Query(value = """

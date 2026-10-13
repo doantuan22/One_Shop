@@ -168,8 +168,12 @@ class StaffStoreScopeDatabaseIntegrationTest {
     }
     @Test void existingOrderUrlsStillEnforceStoreScopeWithForgedRequestStore() throws Exception {
         String cookie = verifier.account(STAFF);
-        assertThat(verifier.get("/staff/orders/delivery/1?store_id=2&storeId=2", cookie).statusCode()).isEqualTo(200);
-        assertThat(verifier.get("/staff/orders/pickup/2?store_id=1&storeId=1", cookie).statusCode()).isEqualTo(404);
+        // V3-BE-04: the Staff unit is the Fulfillment, authorized by order_fulfillments.store_id (spec V3-T16)
+        long own = jdbc.queryForObject("select min(fulfillment_id) from dbo.order_fulfillments where store_id=1", Long.class);
+        long foreign = jdbc.queryForObject("select min(fulfillment_id) from dbo.order_fulfillments where store_id=2", Long.class);
+        assertThat(verifier.get("/staff/fulfillments/" + own + "?store_id=2&storeId=2", cookie).statusCode()).isEqualTo(200);
+        assertThat(verifier.get("/staff/fulfillments/" + foreign + "?store_id=1&storeId=1", cookie).statusCode()).isEqualTo(403);
+        assertThat(verifier.get("/staff/fulfillments/999999999?store_id=1", cookie).statusCode()).isEqualTo(404);
     }
 
     /** Test-only adapter exercises actual HTTP security/context; adds no production Staff stock API or UI. */

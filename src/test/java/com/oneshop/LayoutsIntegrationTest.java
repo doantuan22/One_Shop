@@ -92,10 +92,10 @@ class LayoutsIntegrationTest extends AbstractIntegrationTest {
         String html = response.body();
         assertThat(html).contains("data-layout=\"staff\"", "os-sidebar", "id=\"staff-store-scope\"",
                 "Chi nhánh được phân công", "OneShop Thủ Đức");
-        assertThat(html).contains("<title>Tổng quan chi nhánh | OneShop Staff</title>", "Đơn cần xử lý");
+        assertThat(html).contains("<title>Tổng quan chi nhánh | OneShop Staff</title>", "Phần giao cần xử lý");
         // not the client chrome, and the sample page's own table parts are rendered once (inside the table)
         assertThat(html).doesNotContain("data-layout=\"client\"", "os-topbar", "os-footer", "Toàn chuỗi");
-        assertThat(count(html, "id=\"orders-body\"")).isEqualTo(1);
+        assertThat(count(html, "id=\"fulfillments-body\"")).isEqualTo(1);
         assertThat(count(html, "<table")).isEqualTo(1);
         assertThat(count(html, "<title>")).isEqualTo(1);
     }

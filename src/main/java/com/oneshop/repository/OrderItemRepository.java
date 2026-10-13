@@ -13,6 +13,9 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
     List<OrderItem> findByOrderId(Long orderId);
 
+    /** Item snapshots of Fulfillments (Staff queue/detail, customer detail), one query. */
+    List<OrderItem> findByFulfillmentIdInOrderByIdAsc(Collection<Long> fulfillmentIds);
+
     /** Item snapshots of several Orders in one query. */
     List<OrderItem> findByOrderIdInOrderByIdAsc(Collection<Long> orderIds);
 

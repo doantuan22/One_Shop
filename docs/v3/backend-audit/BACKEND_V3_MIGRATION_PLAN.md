@@ -29,6 +29,9 @@ The goal of the subsequent backend phases is to incrementally transition the bus
    - **DEC-20 Configuration:** `oneshop.payment.pending-timeout-minutes`, `oneshop.payment.reconciliation-window-minutes`, `oneshop.payment.timeout-scan-interval-ms`.
    - **DEC-21 Mock Payment Gateway:** server-side mock ledger; a browser "success/failure" action is never evidence of payment.
    - **DEC-22 No Cross-Store Transfer:** multi-store orders are fulfilled by independent Fulfillments; stock is never moved between stores.
+   - **DEC-23 Same-SKU split (OPEN-01):** the quantity of one SKU may come from several StoreProducts; one OrderItem per source.
+   - **DEC-24 National delivery (OPEN-02):** every ACTIVE store with `delivery_enabled` may supply any valid address in Vietnam; no GPS, no distance, no nearest-store, no province rule.
+   - **DEC-25 Shipping fee (OPEN-03):** DELIVERY costs 30.000 VND once per Order (not per Fulfillment); every independent Order of a COD split pays its own; STORE_PICKUP is free; computed on the backend.
    - Payment callback, timeout worker, customer cancellation, Admin resolution and Staff `PREPARING` are serialized by the Order row lock; every path is idempotent (no double restoration, no double simulated refund, no duplicate payment confirmation).
    - An Order already `CANCELLED` is never revived by a late callback; collected money is reconciled through the simulated refund.
 4. **Zero Schema Modification:** The SQL Server schema is frozen and locked; no DDL alterations are permitted.
@@ -79,7 +82,8 @@ flowchart TD
 1. **Store Allocation Engine (`StoreAllocationService`):**
    - Implement greedy/priority allocation algorithm:
      * **Strategy 1 (Single Store Priority):** If a single active store has sufficient stock for all cart items, allocate 100% of the order to that store (minimizing shipping packages).
-     * **Strategy 2 (Split Store Allocation):** If no single store can fulfill the entire order, allocate lines to the minimum number of stores based on stock availability and province/city proximity.
+     * **Strategy 2 (Multi-Store, whole lines):** If no single store can fulfill the entire order, repeatedly take the store that supplies the most still-missing lines in full (tie-break: units, store already in the plan, total available, lowest `store_id`). Greedy: it does not guarantee the minimum number of stores and uses stock only, never distance, province or shipping cost.
+     * **Strategy 2b (same-SKU quantity split, DEC-23):** only when no single store can still supply the whole remaining quantity of a line, that quantity is split between stores (each gives what it has, up to the missing quantity). Each part is its own `OrderItem` (one `StoreProduct`, one Fulfillment). Invariant: per SKU the allocated quantities add up to the requested quantity, each part `> 0` and `<= quantity - reserved_quantity`.
      * **Strategy 3 (Store Pickup):** If fulfillment type is `STORE_PICKUP`, strictly validate that the chosen store has all items in stock. Stock is never transferred between stores to satisfy a pickup (DEC-22).
    - Multi-store allocation produces independent Fulfillments only. No stock transfer movement, no transfer request, no warehouse module, no table for stock transfers, and a store's quantity is never changed because another store is short.
 2. **Immediate Stock Deduction (replaces former "Pessimistic Stock Reservation"):**
@@ -110,7 +114,9 @@ flowchart TD
 5. **Phase Deliverables & Verification:**
    - Concurrency tests: parallel checkouts for the same SKU never drive `quantity` below 0 and never oversell; total deducted equals the total of successful orders.
    - Rollback test: a forced failure after deduction leaves no Order and unchanged `quantity` and movements.
-   - Allocation tests: Test single-store vs. split-store allocation scenarios against real seed data.
+   - Allocation tests: single-store vs. multi-store vs. same-SKU split scenarios against real seed data (BE03-F01..F30); invariants (totals, bounds, determinism) over generated carts.
+   - Delivery/fee tests: national coverage by delivery-enabled stores, address validation, 30.000 per Order (ONLINE 1/2/3 stores, COD split 2/3 Orders), pickup 0, forged/changed fee refused.
+   - Status after the completion work: **DONE for the BE-03 scope**; ONLINE checkout stays closed (`oneshop.checkout.online-enabled=false`) until BE-05.
 
 ---
 
@@ -142,6 +148,15 @@ flowchart TD
    - Payment-gate test: Staff cannot move a Fulfillment of a `PENDING_PAYMENT` Order (including one under reconciliation) or of a payment `NEEDS_ATTENTION` Order to `PREPARING`.
    - Assert that no code path writes a stock-transfer movement (only `ORDER`, `CANCEL_ORDER`, `STOCK_ADJUST` exist).
    - Race test: Customer cancel vs. Staff `PREPARING` on the same Order ends in exactly one outcome (cancelled with stock restored, or 409 `ORDER_ALREADY_PREPARING`), never both.
+
+#### Implementation status (13/10/2026)
+
+- **DONE for the BE-04 scope.** Documents: `docs/v3/backend-fulfillment/` (`V3_BE04_IMPLEMENTATION_REPORT.md`, `V3_BE04_STATE_MACHINE_AND_AUTHORIZATION.md`, `V3_BE04_COMPONENT_CHANGE_MATRIX.md`, `V3_BE04_TEST_RESULTS.md`, `V3_BE04_HANDOVER.md`).
+- Endpoints as built: `POST /staff/fulfillments/{id}/{prepare|pack|ship|ready-for-pickup|handover}` plus the explicit `complete-delivery`, `complete-pickup`, `fail-delivery`, `fail-pickup`. `handover` completes a DELIVERY or a STORE_PICKUP Fulfillment by its type (pickup code required for pickup).
+- The aggregator class is `OrderStatusAggregator` (`com.oneshop.service.fulfillment`). Where the task list above says "some `COMPLETED` and others `CANCELLED` -> `PARTIALLY_COMPLETED`", the build follows spec 9.3 instead (all live parts `COMPLETED` -> `COMPLETED`): the situation cannot occur because a whole-Order cancel needs every part `CONFIRMED`.
+- `FAILED` is allowed from `SHIPPING` (DELIVERY) and `READY_FOR_PICKUP` (STORE_PICKUP) with a mandatory reason and only moves the Order to `NEEDS_ATTENTION` (no restock, no refund); resolving it is BE-05.
+- Offline collection (COD at delivery confirmation, PAY_AT_STORE after the code) goes through `PaymentService.recordOfflineCollected`, never through the V2 order-level primitives.
+- Staff authorization uses `order_fulfillments.store_id`; the V2 order-level Staff controllers/templates were removed and the old URLs only redirect.
 
 ---
 

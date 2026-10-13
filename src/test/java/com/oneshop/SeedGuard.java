@@ -60,6 +60,10 @@ final class SeedGuard {
         jdbc.update("delete from dbo.order_status_history where history_id > ?", maxHistory);
         jdbc.update("delete from dbo.payments where order_id > ?", maxOrder);
         jdbc.update("delete from dbo.order_items where order_id > ?", maxOrder);
+        // V3: Fulfillments of Orders a test created (BE-04 fixtures); their history goes first
+        jdbc.update("delete from dbo.order_fulfillment_status_history where fulfillment_id in "
+                + "(select fulfillment_id from dbo.order_fulfillments where order_id > ?)", maxOrder);
+        jdbc.update("delete from dbo.order_fulfillments where order_id > ?", maxOrder);
         jdbc.update("delete from dbo.orders where order_id > ?", maxOrder);
         jdbc.update("delete from dbo.checkout_sessions where checkout_id > ?", maxCheckout);
 

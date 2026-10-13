@@ -25,6 +25,20 @@ public class PickupFulfillmentServiceImpl implements PickupFulfillmentService {
     private final PickupCodeService codes;
     private final OrderViewService views;
 
+    private com.oneshop.repository.OrderFulfillmentRepository fulfillmentRepository;
+
+    /** V3: an Order with Fulfillments is handled per Fulfillment (BE-04), never by this order-level path. */
+    @org.springframework.beans.factory.annotation.Autowired
+    void setFulfillmentRepository(com.oneshop.repository.OrderFulfillmentRepository fulfillmentRepository) {
+        this.fulfillmentRepository = fulfillmentRepository;
+    }
+
+    private void refuseWhenFulfillmentsExist(Long orderId) {
+        if (fulfillmentRepository != null && orderId != null && fulfillmentRepository.countByOrderId(orderId) > 0) {
+            throw new BadRequestException("Đơn hàng được xử lý theo từng phần giao của chi nhánh; không thể thao tác theo cả đơn. Vui lòng dùng màn hình phần giao hàng.");
+        }
+    }
+
     public PickupFulfillmentServiceImpl(OrderRepository orders, UserRepository users, PaymentRepository receipts,
             StoreService stores, OrderService stateMachine, PaymentService payments, PickupCodeService codes, OrderViewService views) {
         this.orders = orders; this.users = users; this.receipts = receipts; this.stores = stores;
@@ -55,6 +69,10 @@ public class PickupFulfillmentServiceImpl implements PickupFulfillmentService {
     private void perform(String email, Long id, PickupAction action, String code) {
         if (id == null) throw new BadRequestException("Thiếu mã đơn hàng.");
         Order order = orders.findByIdForUpdate(id).orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đơn hàng."));
+        if (order.getStore() == null) {
+            throw new BadRequestException("Đơn hàng được cấp từ nhiều chi nhánh và xử lý theo từng phần giao; chưa thể thao tác theo cả đơn.");
+        }
+        refuseWhenFulfillmentsExist(order.getId());
         stores.requireAssignedStore(email, order.getStore().getId());
         User actor = users.findByEmail(email).filter(u -> u.isActive() && u.getRole().getName() == RoleName.STAFF)
                 .orElseThrow(() -> new AccessDeniedException("Tài khoản nhân viên không hợp lệ."));

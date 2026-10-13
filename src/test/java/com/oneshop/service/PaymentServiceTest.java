@@ -41,6 +41,8 @@ class PaymentServiceTest {
         order.setFulfillmentType(FulfillmentType.DELIVERY);
         order.setOrderStatus(OrderStatus.PENDING_PAYMENT);
         order.setTotalAmount(new BigDecimal("200000.00"));
+        order.setPaymentStatus(OrderPaymentStatus.UNPAID);
+        ReflectionTestUtils.setField(order, "createdAt", java.time.LocalDateTime.now().minusMinutes(1));
         payment = new Payment();
         ReflectionTestUtils.setField(payment, "id", 20L);
         payment.setOrder(order);
@@ -60,50 +62,34 @@ class PaymentServiceTest {
         assertThat(created.method()).isEqualTo(PaymentMethod.ONLINE);
         assertThat(created.status()).isEqualTo(PaymentStatus.PENDING);
         assertThat(created.paidAt()).isNull();
-        assertThat(created.transactionCode()).isNull();
+        // V3: a backend-made mock reference exists from the start; the browser never supplies it
+        assertThat(created.transactionCode()).startsWith("MOCK-");
         when(payments.findFirstByOrderIdAndStatusOrderByIdAsc(10L, PaymentStatus.PENDING)).thenReturn(Optional.of(payment));
         assertThat(service.createOnlinePaymentAttempt("alice@test", 10L).paymentId()).isEqualTo(20L);
         verify(payments, times(1)).saveAndFlush(any());
     }
 
     @Test
-    void successIsIdempotentAndNeverRestoresOrDeductsStock() {
-        var result = service.markOnlinePaymentSuccess("alice@test", 10L, 20L);
-        assertThat(result.status()).isEqualTo(PaymentStatus.SUCCESS);
-        assertThat(result.paidAt()).isNotNull();
-        assertThat(result.transactionCode()).startsWith("PAY-");
-        assertThat(order.getPaymentStatus()).isEqualTo(OrderPaymentStatus.PAID);
-        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.CONFIRMED);
-        assertThat(service.markOnlinePaymentSuccess("alice@test", 10L, 20L)).isEqualTo(result);
-        verify(history, times(1)).save(any());
-        verifyNoInteractions(inventory);
-    }
-
-    @Test
-    void failureIsIdempotentAndRestoresOnce() {
-        var result = service.markOnlinePaymentFailed("alice@test", 10L, 20L);
-        assertThat(result.status()).isEqualTo(PaymentStatus.FAILED);
-        assertThat(result.paidAt()).isNull();
-        assertThat(order.getPaymentStatus()).isEqualTo(OrderPaymentStatus.FAILED);
-        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.CANCELLED);
-        service.markOnlinePaymentFailed("alice@test", 10L, 20L);
-        verify(inventory, times(1)).restoreForCancelledOrder(order);
-        verify(history, times(1)).save(any());
-        assertThatThrownBy(() -> service.createOnlinePaymentAttempt("alice@test", 10L)).isInstanceOf(BadRequestException.class);
-    }
-
-    @Test
-    void conflictingResultsAreRefused() {
-        service.markOnlinePaymentSuccess("alice@test", 10L, 20L);
-        assertThatThrownBy(() -> service.markOnlinePaymentFailed("alice@test", 10L, 20L)).isInstanceOf(BadRequestException.class);
-        verifyNoInteractions(inventory);
-    }
-
-    @Test
-    void failedCannotBecomeSuccessful() {
-        service.markOnlinePaymentFailed("alice@test", 10L, 20L);
+    void aBrowserCanNeitherConfirmNorFailAPayment() {
+        // DEC-21: the result of a payment is never taken from the browser; BE-05 verifies it through the mock gateway
         assertThatThrownBy(() -> service.markOnlinePaymentSuccess("alice@test", 10L, 20L)).isInstanceOf(BadRequestException.class);
-        verify(history, times(1)).save(any());
+        assertThatThrownBy(() -> service.markOnlinePaymentFailed("alice@test", 10L, 20L)).isInstanceOf(BadRequestException.class);
+        assertThat(payment.getStatus()).isEqualTo(PaymentStatus.PENDING);
+        assertThat(order.getPaymentStatus()).isEqualTo(OrderPaymentStatus.UNPAID);
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PENDING_PAYMENT);
+        verifyNoInteractions(inventory, history);
+    }
+
+    @Test
+    void noNewAttemptAfterThePaymentDeadline() {
+        // 20 minutes after creation: the 15 minute window has ended and does not move
+        ReflectionTestUtils.setField(order, "createdAt", java.time.LocalDateTime.now().minusMinutes(20));
+        when(payments.findFirstByOrderIdAndStatusOrderByIdAsc(10L, PaymentStatus.PENDING)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.createOnlinePaymentAttempt("alice@test", 10L)).isInstanceOf(BadRequestException.class)
+                .hasMessageContaining("quá hạn");
+
+        verify(payments, never()).saveAndFlush(any());
     }
 
     @ParameterizedTest
@@ -122,15 +108,12 @@ class PaymentServiceTest {
     @Test
     void ownershipIsCheckedBeforeAccessingPayments() {
         assertThatThrownBy(() -> service.createOnlinePaymentAttempt("bob@test", 10L)).isInstanceOf(ResourceNotFoundException.class);
-        assertThatThrownBy(() -> service.markOnlinePaymentSuccess("bob@test", 10L, 20L)).isInstanceOf(ResourceNotFoundException.class);
-        assertThatThrownBy(() -> service.markOnlinePaymentFailed("bob@test", 10L, 20L)).isInstanceOf(ResourceNotFoundException.class);
         verifyNoInteractions(payments, inventory, history);
     }
 
     @Test
-    void missingOrderOrAttemptIsNotFound() {
+    void missingOrderIsNotFound() {
         assertThatThrownBy(() -> service.createOnlinePaymentAttempt("alice@test", 99L)).isInstanceOf(ResourceNotFoundException.class);
-        assertThatThrownBy(() -> service.markOnlinePaymentSuccess("alice@test", 10L, 99L)).isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test

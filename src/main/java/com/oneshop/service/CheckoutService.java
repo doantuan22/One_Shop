@@ -1,50 +1,76 @@
 package com.oneshop.service;
 
 import com.oneshop.dto.request.CheckoutRequest;
+import com.oneshop.dto.request.PlaceOrderRequest;
 import com.oneshop.dto.response.CheckoutPreviewResponse;
 import com.oneshop.dto.response.CheckoutResultResponse;
+import com.oneshop.entity.FulfillmentType;
+import com.oneshop.entity.PaymentMethod;
+import com.oneshop.exception.BadRequestException;
 
 import java.util.Collection;
 
 /**
- * Turns the cart lines a customer chose into one CheckoutSession and one Order per Store (BR-07 to BR-10).
+ * V3 Centralized Checkout. Turns the cart lines a customer chose into one CheckoutSession and:
+ * <ul>
+ *   <li><b>ONLINE</b> (any number of Stores): exactly one Order, one payment obligation, one Fulfillment per supplying
+ *       Store; the Order waits in PENDING_PAYMENT for 15 minutes;</li>
+ *   <li><b>COD from one Store</b>: one Order; <b>COD that needs several Stores</b>: only after the customer's explicit
+ *       consent, one independent Order per Store (never a parent/child Order);</li>
+ *   <li><b>STORE_PICKUP</b>: one Order and one Fulfillment at the Store the customer chose, which must hold the
+ *       whole cart.</li>
+ * </ul>
+ * Stock is deducted at once, inside the same transaction, with an ORDER InventoryMovement per StoreProduct.
  *
- * <p>The customer is always the authenticated user (e-mail of the security principal). Nothing the cart or the
- * browser showed is trusted: lines, StoreProducts, prices and stock are read again from the database, and the Store of
- * an Order is the Store of its StoreProducts, never a value from the request or the selected Store.
+ * <p>The customer never chooses a Store for DELIVERY and nothing the browser showed is trusted: lines, prices,
+ * stock, the allocation and the total are read and decided again from the database under row locks.
  *
- * <p>This phase stops at the created Orders. Collecting payments, moving an Order through its fulfillment states and
- * cancelling belong to later phases.
+ * <p>Payment collection, the timeout, reconciliation, cancellation and refund simulation are BE-05; Staff handling
+ * of Fulfillments is BE-04.
  */
 public interface CheckoutService {
 
-    /**
-     * The chosen lines grouped by Store with current prices, for the checkout page. Read only.
-     *
-     * @throws com.oneshop.exception.BadRequestException if nothing is chosen, an id is not a line of this customer's
-     *                                                   cart, or a chosen line cannot be bought right now
-     */
+    /** The checkout page for the chosen lines with its default choices (delivery, COD). Read only. */
     CheckoutPreviewResponse prepare(String customerEmail, Collection<Long> cartItemIds);
 
     /**
-     * Places the order, all or nothing, in one transaction:
-     * <ol>
-     *   <li>loads the chosen lines from the customer's own cart;</li>
-     *   <li>locks their StoreProducts (ascending id) and reads price, stock and status under that lock;</li>
-     *   <li>checks every line and every Store group; one failure fails the whole checkout;</li>
-     *   <li>creates the CheckoutSession, one Order per Store with its own fulfillment type and payment method, and
-     *       OrderItems that freeze product name, unit price, quantity and subtotal;</li>
-     *   <li>deducts stock with an ORDER InventoryMovement per line;</li>
-     *   <li>removes exactly the checked-out lines from the cart.</li>
-     * </ol>
-     * If anything fails, nothing of the above is kept and the cart is as it was.
+     * The checkout page for the chosen lines and choices: allocation plan, shipping fee, number of Orders and total.
+     * Read only; it reserves nothing and the plan may be outdated by the time the order is placed.
      *
-     * @throws com.oneshop.exception.BadRequestException if the request or the current data does not allow the order
+     * @throws BadRequestException if nothing is chosen, an id is not a line of this customer's cart, or a chosen
+     *                             line cannot be bought right now
      */
-    CheckoutResultResponse placeOrder(String customerEmail, CheckoutRequest request);
+    CheckoutPreviewResponse preview(String customerEmail, Collection<Long> cartItemIds,
+                                    FulfillmentType fulfillmentType, PaymentMethod paymentMethod, Long pickupStoreId,
+                                    String shippingAddress);
 
     /**
-     * A checkout of this customer with the Orders it created and their item snapshots.
+     * Places the order, all or nothing, in one transaction: loads the lines of the customer's own cart under the
+     * cart lock; allocates under row locks; creates the session, Order(s), Fulfillments and OrderItems with the
+     * single online price; deducts stock with ORDER movements; writes the initial histories; creates the PENDING
+     * payment attempt of an ONLINE Order; removes exactly the checked-out lines. If anything fails nothing is kept.
+     *
+     * @throws com.oneshop.exception.CheckoutConflictException if what the customer confirmed no longer matches
+     *                                                         (plan, total), the COD split consent is missing, or the
+     *                                                         flow is closed pending a business decision
+     * @throws BadRequestException                             if the request or the current data does not allow it
+     */
+    CheckoutResultResponse placeOrder(String customerEmail, PlaceOrderRequest request);
+
+    /**
+     * V2 checkout (one Order per Store, a Store chosen per group). It no longer exists: V3 allocates the Store and
+     * never splits an ONLINE order into several Orders. Always refused.
+     *
+     * @deprecated use {@link #placeOrder(String, PlaceOrderRequest)}
+     */
+    @Deprecated
+    default CheckoutResultResponse placeOrder(String customerEmail, CheckoutRequest legacyRequest) {
+        throw new BadRequestException("Luồng đặt hàng theo từng chi nhánh (V2) đã ngừng. "
+                + "Vui lòng đặt hàng lại từ giỏ hàng.");
+    }
+
+    /**
+     * A checkout of this customer with the Orders it created, their Fulfillments and item snapshots.
      *
      * @throws com.oneshop.exception.ResourceNotFoundException if the customer has no such checkout
      */

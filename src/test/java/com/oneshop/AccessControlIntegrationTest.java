@@ -176,7 +176,7 @@ class AccessControlIntegrationTest extends AbstractIntegrationTest {
     void assignedStaffSeesTheirStore() throws Exception {
         HttpResponse<String> response = get("/staff", as(STAFF));
 
-        assertThat(response.body()).contains("OneShop Thủ Đức", "Đơn cần xử lý");
+        assertThat(response.body()).contains("OneShop Thủ Đức", "Phần giao cần xử lý");
         assertThat(response.body()).doesNotContain("id=\"no-store-scope\"", "Chưa được phân công");
     }
 
@@ -187,7 +187,7 @@ class AccessControlIntegrationTest extends AbstractIntegrationTest {
         // the landing page only explains the situation: no Store, no Store sections
         assertThat(landing.statusCode()).isEqualTo(200);
         assertThat(landing.body()).contains("id=\"no-store-scope\"", "Chưa được phân công");
-        assertThat(landing.body()).doesNotContain("Đơn cần xử lý", "<table", "OneShop Thủ Đức");
+        assertThat(landing.body()).doesNotContain("Phần giao cần xử lý", "<table", "OneShop Thủ Đức");
 
         // everything else in the Staff area is refused by the backend
         assertThat(status("/staff/orders", as(UNASSIGNED_STAFF))).isEqualTo(403);

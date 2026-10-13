@@ -58,16 +58,20 @@ class StaffOperationsDatabaseIntegrationTest {
     }
     private long count(String sql, Object... args) { return jdbc.queryForObject(sql, Long.class, args); }
     private List<Long> ids(long store) {
-        return jdbc.queryForList("select order_id from dbo.orders where store_id=? order by created_at desc,order_id desc", Long.class, store);
+        // V3-BE-04: the queue is the Store's Fulfillments, open work first (oldest first), then finished work
+        return jdbc.queryForList("select fulfillment_id from dbo.order_fulfillments where store_id=? order by case when status in ('CONFIRMED','PREPARING','PACKED','SHIPPING','READY_FOR_PICKUP')"
+                + " then 0 else 1 end, assigned_at asc, fulfillment_id asc", Long.class, store);
     }
     private static List<Long> htmlIds(String html) {
-        var matcher = Pattern.compile("data-order-id=\"(\\d+)\"").matcher(html); List<Long> ids = new ArrayList<>();
+        var matcher = Pattern.compile("data-fulfillment-id=\"(\\d+)\"").matcher(html); List<Long> ids = new ArrayList<>();
         while (matcher.find()) ids.add(Long.parseLong(matcher.group(1))); return ids;
     }
     private void assertCounts(StaffStoreDashboardResponse stats, long store) {
         assertThat(stats.store().id()).isEqualTo(store);
-        assertThat(stats.pendingOrderCount()).isEqualTo(count("select count(*) from dbo.orders where store_id=? and order_status in ('CONFIRMED','PREPARING','PACKED','SHIPPING')", store));
-        assertThat(stats.waitingPickupCount()).isEqualTo(count("select count(*) from dbo.orders where store_id=? and fulfillment_type='STORE_PICKUP' and order_status='READY_FOR_PICKUP'", store));
+        assertThat(stats.pendingOrderCount()).isEqualTo(count("select count(*) from dbo.order_fulfillments f join dbo.orders o on o.order_id=f.order_id"
+                + " where f.store_id=? and f.status in ('CONFIRMED','PREPARING','PACKED','SHIPPING','READY_FOR_PICKUP') and o.order_status not in ('PENDING_PAYMENT','NEEDS_ATTENTION','CANCELLED')", store));
+        assertThat(stats.waitingPickupCount()).isEqualTo(count("select count(*) from dbo.order_fulfillments f join dbo.orders o on o.order_id=f.order_id"
+                + " where f.store_id=? and f.status='READY_FOR_PICKUP' and o.order_status not in ('PENDING_PAYMENT','NEEDS_ATTENTION','CANCELLED')", store));
         assertThat(stats.lowStockSkuCount()).isEqualTo(count("select count(*) from dbo.store_products where store_id=? and status='ACTIVE' and quantity between 1 and 5", store));
         assertThat(stats.outOfStockSkuCount()).isEqualTo(count("select count(*) from dbo.store_products where store_id=? and status='ACTIVE' and quantity=0", store));
     }
@@ -81,7 +85,7 @@ class StaffOperationsDatabaseIntegrationTest {
                     "data-metric=\"low-stock\" data-value=\"" + stats.lowStockSkuCount() + "\"",
                     "data-metric=\"out-of-stock\" data-value=\"" + stats.outOfStockSkuCount() + "\"");
         }
-        assertThat(htmlIds(html)).containsExactlyElementsOf(dashboard.recentOrders().stream().map(o -> o.order().orderId()).toList());
+        assertThat(htmlIds(html)).containsExactlyElementsOf(dashboard.recentOrders().stream().map(o -> o.fulfillmentId()).toList());
     }
     private long fixtureOrder(long store, String status) {
         boolean pickup = status.equals("READY_FOR_PICKUP");
@@ -94,6 +98,15 @@ class StaffOperationsDatabaseIntegrationTest {
                 """, Long.class, store, pickup ? "STORE_PICKUP" : "DELIVERY", pickup ? "PAY_AT_STORE" : "ONLINE",
                 status, pickup ? null : "Phase10 fixture address", pickup ? "TEST1234" : null,
                 pickup ? java.time.LocalDateTime.of(2026, 10, 6, 9, 0) : null);
+    }
+    private long fixtureOrderWithFulfillment(long store, String status) {
+        long order = fixtureOrder(store, status);
+        // the Fulfillment status a V3 checkout/step sequence would show for that Order status
+        String fulfillmentStatus = status.equals("PENDING_PAYMENT") ? "CONFIRMED" : status;
+        jdbc.update("insert into dbo.order_fulfillments(order_id,store_id,fulfillment_type,status,assigned_at)"
+                + " select order_id,store_id,fulfillment_type,?,'2026-10-06T09:00:00' from dbo.orders where order_id=?",
+                fulfillmentStatus, order);
+        return order;
     }
 
     @Test void dashboardAndLandingShowOnlyAssignedStoreWithExactSqlCounts() throws Exception {
@@ -126,39 +139,39 @@ class StaffOperationsDatabaseIntegrationTest {
     void eachOrderStateCountsOnlyInTheCorrectDashboardMetricAndStore(String status) {
         try (var ignored = scenario.cleanup()) {
             var original = as(STAFF, operations::getDashboard).stores().get(0);
-            fixtureOrder(1, status); fixtureOrder(2, status); fixtureOrder(2, status);
+            fixtureOrderWithFulfillment(1, status); fixtureOrderWithFulfillment(2, status); fixtureOrderWithFulfillment(2, status);
             var stats = as(STAFF, operations::getDashboard).stores().get(0); assertCounts(stats, 1);
+            // V3: PENDING_PAYMENT is held by the payment gate, COMPLETED / CANCELLED are finished: none is work to do
             assertThat(stats.pendingOrderCount()).isEqualTo(original.pendingOrderCount()
-                    + (Set.of("CONFIRMED", "PREPARING", "PACKED", "SHIPPING").contains(status) ? 1 : 0));
+                    + (Set.of("CONFIRMED", "PREPARING", "PACKED", "SHIPPING", "READY_FOR_PICKUP").contains(status) ? 1 : 0));
             assertThat(stats.waitingPickupCount()).isEqualTo(original.waitingPickupCount() + (status.equals("READY_FOR_PICKUP") ? 1 : 0));
         }
     }
     @Test void queueHasOnlyAssignedOrdersAllRequiredColumnsAndNoTransitionControls() throws Exception {
-        var response = scenario.get("/staff/orders", scenario.account(STAFF));
+        var response = scenario.get("/staff/orders?open=false", scenario.account(STAFF));
         assertThat(response.statusCode()).isEqualTo(200);
-        assertThat(htmlIds(response.body())).containsExactlyElementsOf(ids(1));
-        assertThat(response.body()).contains("Khách hàng", "Hình thức nhận", "Thanh toán", "Trạng thái đơn", "Tổng tiền", "Ngày tạo")
+        assertThat(htmlIds(response.body())).containsExactlyElementsOf(ids(1).stream().limit(20).toList());
+        assertThat(response.body()).contains("Khách hàng", "Hình thức", "Thanh toán", "Trạng thái phần giao", "Trạng thái đơn", "Phân công lúc")
                 .doesNotContain("data-store-id=\"2\"", "/prepare", "/pack", "/ship", "/ready", "/complete");
-        var orders = as(STAFF, () -> operations.getOrders(0));
-        assertThat(orders.getTotalElements()).isEqualTo(ids(1).size());
-        assertThat(orders.getContent()).allSatisfy(o -> { assertThat(o.order().storeId()).isEqualTo(1L); assertThat(o.customerName()).isNotBlank(); });
+        var queue = scenario.get("/staff/orders?open=false", scenario.account(STAFF)).body();
+        assertThat(queue).contains("id=\"fulfillment-count\">" + ids(1).size() + "</strong>");
     }
     @Test void paginationAndTotalAreScopedInSqlWithStableOrderingAndBoundedPages() throws Exception {
         try (var ignored = scenario.cleanup()) {
-            for (int i = 0; i < 23; i++) fixtureOrder(1, "CONFIRMED");
-            for (int i = 0; i < 27; i++) fixtureOrder(2, "CONFIRMED");
+            for (int i = 0; i < 23; i++) fixtureOrderWithFulfillment(1, "CONFIRMED");
+            for (int i = 0; i < 27; i++) fixtureOrderWithFulfillment(2, "CONFIRMED");
             var own = ids(1); String cookie = scenario.account(STAFF);
-            var first = as(STAFF, () -> operations.getOrders(0));
-            assertThat(first.getTotalElements()).isEqualTo(own.size()); assertThat(first.getSize()).isEqualTo(20);
-            assertThat(first.getContent().stream().map(o -> o.order().orderId())).containsExactlyElementsOf(own.subList(0, 20));
-            var html = scenario.get("/staff/orders?page=0", cookie).body();
+            var html = scenario.get("/staff/orders?open=false&page=0", cookie).body();
+            assertThat(html).contains("id=\"fulfillment-count\">" + own.size() + "</strong>");
             assertThat(htmlIds(html)).containsExactlyElementsOf(own.subList(0, 20));
             assertThat(html).contains("/staff/orders?page=1").doesNotContain("data-store-id=\"2\"");
-            assertThat(htmlIds(scenario.get("/staff/orders?page=1", cookie).body())).containsExactlyElementsOf(own.subList(20, own.size()));
-            assertThat(htmlIds(scenario.get("/staff/orders?page=-1", cookie).body())).containsExactlyElementsOf(own.subList(0, 20));
-            assertThat(as(STAFF, () -> operations.getOrders(999)).getContent()).isEmpty();
+            assertThat(htmlIds(scenario.get("/staff/orders?open=false&page=1", cookie).body())).containsExactlyElementsOf(own.subList(20, own.size()));
+            assertThat(htmlIds(scenario.get("/staff/orders?open=false&page=-1", cookie).body())).containsExactlyElementsOf(own.subList(0, 20));
+            assertThat(htmlIds(scenario.get("/staff/orders?open=false&page=999", cookie).body())).isEmpty();
             var dashboard = as(STAFF, operations::getDashboard);
-            assertThat(dashboard.recentOrders().stream().map(o -> o.order().orderId())).containsExactlyElementsOf(own.subList(0, 5));
+            var open = own.stream().filter(id -> jdbc.queryForObject("select status from dbo.order_fulfillments where fulfillment_id=?", String.class, id)
+                    .matches("CONFIRMED|PREPARING|PACKED|SHIPPING|READY_FOR_PICKUP")).toList();
+            assertThat(dashboard.recentOrders().stream().map(o -> o.fulfillmentId())).containsExactlyElementsOf(open.subList(0, 5));
         }
     }
     @ParameterizedTest @ValueSource(longs = {1, 2})

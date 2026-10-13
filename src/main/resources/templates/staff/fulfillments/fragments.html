@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--/* Status of one Fulfillment (order_fulfillments.status). */-->
+<span th:fragment="status(status)" class="badge os-fulfillment-status" th:attr="data-status=${status}"
+      th:with="n=${status.name()}"
+      th:classappend="${n == 'COMPLETED'} ? 'text-bg-success' : (${n == 'FAILED'} ? 'text-bg-danger' : (${n == 'CANCELLED'} ? 'text-bg-secondary' : (${n == 'CONFIRMED'} ? 'text-bg-light border' : 'text-bg-warning')))"
+      th:switch="${n}">
+    <span th:case="'CONFIRMED'">Chờ chuẩn bị</span>
+    <span th:case="'PREPARING'">Đang chuẩn bị</span>
+    <span th:case="'PACKED'">Đã đóng gói</span>
+    <span th:case="'SHIPPING'">Đang giao hàng</span>
+    <span th:case="'READY_FOR_PICKUP'">Sẵn sàng cho khách nhận</span>
+    <span th:case="'COMPLETED'">Hoàn tất</span>
+    <span th:case="'CANCELLED'">Đã hủy</span>
+    <span th:case="'FAILED'">Không thành công</span>
+    <span th:case="*" th:text="${n}"></span>
+</span>
+
+<div th:fragment="table(rows)" class="table-responsive">
+    <table class="table os-table align-middle">
+        <thead>
+        <tr>
+            <th>Phần giao</th><th>Đơn</th><th>Chi nhánh</th><th>Khách hàng</th><th>Hình thức</th>
+            <th>Thanh toán</th><th>Trạng thái phần giao</th><th>Trạng thái đơn</th>
+            <th class="text-end">Sản phẩm</th><th>Phân công lúc</th><th>Thao tác tiếp theo</th>
+        </tr>
+        </thead>
+        <tbody id="fulfillments-body">
+        <tr th:each="row : ${rows}"
+            th:attr="data-fulfillment-id=${row.fulfillmentId},data-order-id=${row.orderId},data-store-id=${row.storeId}">
+            <td><a th:href="@{/staff/fulfillments/{id}(id=${row.fulfillmentId})}" th:text="'#' + ${row.fulfillmentId}"></a></td>
+            <td th:text="'#' + ${row.orderId}"></td>
+            <td th:text="${row.storeName}"></td>
+            <td th:text="${row.customerName}"></td>
+            <td th:text="${row.fulfillmentType.name() == 'STORE_PICKUP'} ? 'Nhận tại cửa hàng' : 'Giao tận nơi'"></td>
+            <td>
+                <span th:replace="~{staff/delivery/fragments :: method(${row.paymentMethod})}"></span><br>
+                <span class="small text-secondary"><span th:replace="~{staff/delivery/fragments :: payment(${row.paymentStatus})}"></span></span>
+            </td>
+            <td><span th:replace="~{staff/fulfillments/fragments :: status(${row.status})}"></span></td>
+            <td><span th:replace="~{staff/delivery/fragments :: state(${row.orderStatus})}"></span></td>
+            <td class="text-end" th:text="${row.totalQuantity} + ' (' + ${row.itemCount} + ' dòng)'"></td>
+            <td th:text="${#temporals.format(row.assignedAt, 'dd/MM/yyyy HH:mm')}"></td>
+            <td>
+                <span th:if="${row.blockedReason != null}" class="small text-warning-emphasis os-blocked"
+                      th:text="${row.blockedReason}"></span>
+                <span th:if="${row.blockedReason == null and row.nextAction != null}" class="small"
+                      th:text="${row.nextAction.label}"></span>
+                <span th:if="${row.blockedReason == null and row.nextAction == null}" class="small text-secondary">—</span>
+            </td>
+        </tr>
+        <tr th:if="${rows.isEmpty()}"><td colspan="11" class="text-center text-secondary">Chưa có phần giao hàng nào.</td></tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

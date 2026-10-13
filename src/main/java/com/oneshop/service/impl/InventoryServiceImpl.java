@@ -77,8 +77,10 @@ public class InventoryServiceImpl implements InventoryService {
         if (quantity <= 0) {
             throw new BadRequestException("quantity", "Số lượng đặt hàng không hợp lệ.");
         }
-        if (quantity > before) {
-            // last line of defence in the application; CK_store_products_quantity is the one in the database
+        // available = quantity - reserved_quantity: a legacy reservation is never eaten by an order, and the stock
+        // after the deduction still satisfies reserved_quantity <= quantity (CK_store_products_reserved).
+        // Last line of defence in the application; the CHECK constraints are the ones in the database.
+        if (quantity > before || quantity > lockedStoreProduct.getAvailableQuantity()) {
             throw new BadRequestException("quantity", "Chi nhánh không đủ hàng cho số lượng đã chọn.");
         }
         int after = before - quantity;
@@ -121,7 +123,11 @@ public class InventoryServiceImpl implements InventoryService {
         }
         for (OrderItem item : items) {
             StoreProduct stock = locked.get(item.getStoreProduct().getId());
-            if (item.getQuantity() <= 0 || !stock.getStore().getId().equals(order.getStore().getId())) {
+            // V3: the Store of a line is the Store of its Fulfillment (an Order may have several, or no orders.store_id)
+            Long expectedStoreId = item.getFulfillment() != null ? item.getFulfillment().getStore().getId()
+                    : order.getStore() != null ? order.getStore().getId() : null;
+            if (item.getQuantity() <= 0 || expectedStoreId == null
+                    || !stock.getStore().getId().equals(expectedStoreId)) {
                 throw new BadRequestException("Sản phẩm hoàn tồn không hợp lệ với chi nhánh của đơn hàng.");
             }
             int before = stock.getQuantity();
