@@ -17,11 +17,22 @@ The goal of the subsequent backend phases is to incrementally transition the bus
 ### Core Principles:
 1. **Incremental Delivery:** Each phase addresses a self-contained domain (Catalog/Cart -> Checkout/Allocation -> Fulfillment -> Payments/Refunds -> Reviews).
 2. **Atomic Invariants:**
-   - Physical stock (`quantity`) is never deducted before fulfillment packing.
-   - Reserved stock (`reserved_quantity`) must always satisfy: `0 <= reserved_quantity <= quantity`.
-   - Master `Order.order_status` must always be a deterministic function of its underlying `OrderFulfillment` package statuses.
-3. **Zero Schema Modification:** The SQL Server schema is frozen and locked; no DDL alterations are permitted.
-4. **Comprehensive Automated Verification:** Every phase concludes with targeted integration tests matching the domain before proceeding to the next phase.
+   - **Inventory decision (FINAL, project owner):** physical stock (`StoreProduct.quantity`) is deducted **immediately and atomically at successful order creation**. There is no reservation-based checkout; `reserved_quantity` is never incremented by checkout.
+   - `reserved_quantity` stays in the schema for compatibility only. Availability = `quantity - reserved_quantity` (counts any pre-existing reservation), and the DB invariant `0 <= reserved_quantity <= quantity` must still hold after every deduction.
+   - Stock is deducted exactly once per OrderItem and restored at most once (idempotent). Staff status changes (`PREPARING`/`PACKED`/`SHIPPING`/`COMPLETED`) never touch stock.
+   - Master `Order.order_status` must always be a deterministic function of its underlying `OrderFulfillment` package statuses, subject to the payment gate (an ONLINE Order in `PENDING_PAYMENT` is never advanced by Staff actions).
+3. **ONLINE Payment Policy (FINAL, project owner; mirrors DEC-15..DEC-22 of the business specification):** the full policy is in Section 5.
+   - **DEC-15 / DEC-16:** `PENDING_PAYMENT` lasts **15 minutes** from `orders.created_at` (fixed, never extended); stock is deducted immediately at order creation; paid in time -> `CONFIRMED` with **no second deduction**.
+   - **DEC-17 Reconciliation window:** 15 minutes after the payment deadline (`reconciliation deadline = created_at + 15 + 15 minutes`), used **only** for payment results that cannot be concluded (UNKNOWN/PENDING). Still unknown when the window ends -> Order `NEEDS_ATTENTION`, stock stays deducted.
+   - **DEC-18 Verified FAILED is terminal:** the current ONLINE Order is cancelled and stock restored; no automatic payment retry on the same Order; buying again is a new checkout. A gateway request timeout / lost connection is **not** FAILED.
+   - **DEC-19 Admin resolution:** `NEEDS_ATTENTION` payment cases are resolved by Admin only with verifiable evidence; no arbitrary status/stock edits.
+   - **DEC-20 Configuration:** `oneshop.payment.pending-timeout-minutes`, `oneshop.payment.reconciliation-window-minutes`, `oneshop.payment.timeout-scan-interval-ms`.
+   - **DEC-21 Mock Payment Gateway:** server-side mock ledger; a browser "success/failure" action is never evidence of payment.
+   - **DEC-22 No Cross-Store Transfer:** multi-store orders are fulfilled by independent Fulfillments; stock is never moved between stores.
+   - Payment callback, timeout worker, customer cancellation, Admin resolution and Staff `PREPARING` are serialized by the Order row lock; every path is idempotent (no double restoration, no double simulated refund, no duplicate payment confirmation).
+   - An Order already `CANCELLED` is never revived by a late callback; collected money is reconciled through the simulated refund.
+4. **Zero Schema Modification:** The SQL Server schema is frozen and locked; no DDL alterations are permitted.
+5. **Comprehensive Automated Verification:** Every phase concludes with targeted integration tests matching the domain before proceeding to the next phase.
 
 ---
 
@@ -32,7 +43,7 @@ flowchart TD
     V3_BE_01["V3-BE-01: Audit & JPA Compatibility (DONE)"] --> V3_BE_02["V3-BE-02: Catalog & Central Cart"]
     V3_BE_02 --> V3_BE_03["V3-BE-03: Centralized Checkout & Store Allocation"]
     V3_BE_03 --> V3_BE_04["V3-BE-04: Multi-Branch Fulfillment Operations"]
-    V3_BE_04 --> V3_BE_05["V3-BE-05: Payments & Simulated Refunds"]
+    V3_BE_04 --> V3_BE_05["V3-BE-05: Mock Gateway, 15-Min Timeout, Reconciliation, Cancellation & Simulated Refund"]
     V3_BE_05 --> V3_BE_06["V3-BE-06: Customer Reviews & Staff Replies"]
     V3_BE_06 --> V3_BE_07["V3-BE-07: End-to-End Regression & Verification"]
 ```
@@ -62,25 +73,43 @@ flowchart TD
 
 ### Phase V3-BE-03: Centralized Checkout & Multi-Branch Order Allocation
 **Estimated Duration:** 3 Days  
-**Primary Focus:** Single order creation, inventory reservation, and dynamic store allocation.
+**Primary Focus:** Single order creation, immediate stock deduction, and dynamic store allocation.
 
 #### Tasks:
 1. **Store Allocation Engine (`StoreAllocationService`):**
    - Implement greedy/priority allocation algorithm:
      * **Strategy 1 (Single Store Priority):** If a single active store has sufficient stock for all cart items, allocate 100% of the order to that store (minimizing shipping packages).
      * **Strategy 2 (Split Store Allocation):** If no single store can fulfill the entire order, allocate lines to the minimum number of stores based on stock availability and province/city proximity.
-     * **Strategy 3 (Store Pickup):** If fulfillment type is `STORE_PICKUP`, strictly validate that the chosen store has all items in stock.
-2. **Pessimistic Stock Reservation:**
-   - Lock `StoreProduct` rows via `storeProductRepository.findAllByIdForUpdate()`.
-   - Increment `StoreProduct.reserved_quantity` atomically.
-   - Reject checkout immediately with descriptive error if stock is insufficient.
+     * **Strategy 3 (Store Pickup):** If fulfillment type is `STORE_PICKUP`, strictly validate that the chosen store has all items in stock. Stock is never transferred between stores to satisfy a pickup (DEC-22).
+   - Multi-store allocation produces independent Fulfillments only. No stock transfer movement, no transfer request, no warehouse module, no table for stock transfers, and a store's quantity is never changed because another store is short.
+2. **Immediate Stock Deduction (replaces former "Pessimistic Stock Reservation"):**
+   - Lock the allocated `StoreProduct` rows in ascending id order via `storeProductRepository.findAllByIdForUpdate()`; re-read the latest `quantity`/`reserved_quantity` after the lock.
+   - Per allocated line require `quantity - reserved_quantity >= requested`; otherwise reject the whole checkout (or re-allocate within a bounded retry). No partial order, no partial deduction.
+   - In the **same transaction** as order creation: decrement `StoreProduct.quantity` by the allocated quantity and write `InventoryMovement(type = ORDER, quantity_before, quantity_change < 0, quantity_after, reference_order_id)` per `StoreProduct`.
+   - Do **not** touch `reserved_quantity`. Do **not** add `RESERVE`/`RELEASE`/`OUTBOUND` movement types (the DB `CK_inventory_movements_type` only allows `ORDER`, `CANCEL_ORDER`, `STOCK_ADJUST`, and DDL is frozen).
+   - Applies to every Order produced by a checkout: ONLINE multi-store = 1 Order; COD split (after explicit consent) = N independent Orders, each deducting its own lines.
+   - ONLINE `PENDING_PAYMENT`: stock is already deducted at creation and the payment deadline is 15 minutes from `created_at` (Section 5). Verified payment failure, expiry with a concluded "not paid" result, or valid cancellation goes through the cancel-and-restore path implemented in BE-05; an inconclusive (UNKNOWN) payment is **not** cancelled automatically (reconciliation window, Section 5.1).
 3. **Order & Fulfillment Creation:**
-   - Create 1 `Order` record per checkout session (store `store_id = NULL` for multi-store delivery).
+   - Create 1 `Order` record per checkout for ONLINE / COD single-store / PICKUP (`store_id = NULL` for multi-store delivery); N independent Orders only for consented COD split.
    - Create `OrderFulfillment` records (1 per allocated store branch).
    - Create `OrderItem` records linking each line to its parent `OrderFulfillment` and `StoreProduct`.
    - Write initial `OrderStatusHistory` and `OrderFulfillmentStatusHistory` entries.
-4. **Phase Deliverables & Verification:**
-   - Concurrency tests: Verify that parallel checkout requests for the same SKU never exceed physical inventory.
+   - Delete the checked-out `CartItem` rows. Any failure rolls back Order, Fulfillments, Items, deduction, movements, history and cart changes together.
+4. **PENDING_PAYMENT Initialization & Payment Deadline:**
+   - Create ONLINE Orders with `order_status = PENDING_PAYMENT`, `payment_status = UNPAID`, one `Payment` attempt `PENDING` (`refund_status = NONE`), and Fulfillments in `CONFIRMED` (the only initial value the schema allows; they stay payment-gated).
+   - Payment deadline = `Order.created_at + 15 minutes`, computed (no new column), read through one injectable `Clock`; expose it in the checkout result/order detail so the UI can show the remaining time. The value comes from `oneshop.payment.pending-timeout-minutes` (default 15), never from the client. Reconciliation deadline = payment deadline + `oneshop.payment.reconciliation-window-minutes` (default 15).
+   - Stock is deducted inside the order-creation transaction (`ORDER`, negative `quantity_change`); Cart does not hold stock.
+   - **Mock Payment Gateway preparation:** when the Payment attempt is created, the backend creates the gateway-side transaction reference (the mock ledger entry) and links it to the attempt. BE-03 defines the integration boundary only; simulating results, verification and callbacks belong to BE-05.
+   - **No client confirmation:** BE-03 never accepts `PAID` / `SUCCESS` / `FAILED` from the browser, never marks an ONLINE Order `CONFIRMED`/`PAID`, and never simulates a successful payment without a verified confirmation. The V2 customer-triggered `/orders/{orderId}/payments/{paymentId}/success|failure` endpoints must not be a path to payment confirmation in V3.
+   - Prepare the service boundary BE-05 will use: a single place that answers "is this Order still payable now?" (`ONLINE`, `PENDING_PAYMENT`, `UNPAID`, `now < deadline`, no UNKNOWN payment under reconciliation) and a single cancel-and-restore operation under the Order lock. BE-03 may define these contracts but must not implement the timeout worker, reconciliation, Admin resolution or refund engine.
+   - Block Staff transition of any Fulfillment to `PREPARING` while an ONLINE Order is not `PAID`/`CONFIRMED` (`PENDING_PAYMENT`, or `NEEDS_ATTENTION` for a payment case), enforced in the Service, not only in the UI.
+   - Block the remaining V2 checkout paths: the current `CheckoutServiceImpl.placeOrder` resolves `line.getStoreProduct()` (nullable since BE-02) and creates one Order per Store from `StoreGroupCheckoutRequest`; this path must be replaced, not kept reachable alongside V3.
+   - `CheckoutSession` is only the record of one confirmation action; it is never a payment object (`Payment` stays attached to `Order`).
+   - ONLINE multi-store = 1 Order and N Fulfillments (no reservation-based checkout). COD multi-store creates independent Orders only after the customer explicitly confirms the split.
+   - **Release gate:** ONLINE checkout must not be declared safe for real operation until BE-05 (timeout worker, reconciliation, cancel/restore, refund simulation) is complete; before that, an unpaid ONLINE Order would hold stock indefinitely.
+5. **Phase Deliverables & Verification:**
+   - Concurrency tests: parallel checkouts for the same SKU never drive `quantity` below 0 and never oversell; total deducted equals the total of successful orders.
+   - Rollback test: a forced failure after deduction leaves no Order and unchanged `quantity` and movements.
    - Allocation tests: Test single-store vs. split-store allocation scenarios against real seed data.
 
 ---
@@ -94,37 +123,88 @@ flowchart TD
    - Refactor `StaffDeliveryController` and `StaffPickupController` to query `OrderFulfillmentRepository` scoped to the staff member's assigned store (`staff_store_assignments`).
    - Transition endpoints:
      * `POST /staff/fulfillments/{id}/prepare` -> `status = PREPARING`
-     * `POST /staff/fulfillments/{id}/pack` -> `status = PACKED` (deducts physical `quantity`, decrements `reserved_quantity`, writes `InventoryMovement`)
+     * `POST /staff/fulfillments/{id}/pack` -> `status = PACKED` (status + history only; **no stock change**, stock was already deducted at order creation)
      * `POST /staff/fulfillments/{id}/ship` -> `status = SHIPPING` (records `tracking_code`)
      * `POST /staff/fulfillments/{id}/ready-for-pickup` -> `status = READY_FOR_PICKUP` (generates pickup code)
      * `POST /staff/fulfillments/{id}/handover` -> `status = COMPLETED`
+   - Every transition runs under the Order lock (Section 5.3) and re-checks the current state: it is rejected when an ONLINE Order is not yet paid (`PENDING_PAYMENT`, including while a payment result is being reconciled, or `NEEDS_ATTENTION` for a payment case), when it is `CANCELLED`, or when the Fulfillment is not in the expected source state. Staff never write `orders.order_status` directly.
+   - A Staff member operates only the Fulfillments of the Store they are assigned to. There is no Cross-Store Transfer: no stock movement between stores, no "transfer" action, no handing a Fulfillment to another store (DEC-22).
 2. **Order State Aggregation Engine (`OrderStateAggregator`):**
    - Automatically recompute master `Order.order_status` on every fulfillment state change:
      * If all fulfillments are `COMPLETED` -> `Order.order_status = COMPLETED`.
      * If any fulfillment is `SHIPPING` or `READY_FOR_PICKUP` -> `Order.order_status = SHIPPING` or `PROCESSING`.
      * If all fulfillments are `CANCELLED` -> `Order.order_status = CANCELLED`.
      * If some fulfillments are `COMPLETED` and others `CANCELLED` -> `Order.order_status = PARTIALLY_COMPLETED`.
+   - Payment gate first: while an ONLINE Order is `PENDING_PAYMENT` the aggregator never changes `order_status`; the only exits are payment confirmation (`CONFIRMED`) or cancellation (`CANCELLED`), both owned by BE-05.
 3. **Phase Deliverables & Verification:**
    - Fulfillment transition unit and integration tests.
-   - Verification of `InventoryMovement` audit records upon stock release.
+   - Assert that PREPARING/PACKED/SHIPPING/READY_FOR_PICKUP/COMPLETED leave `StoreProduct.quantity` and the `inventory_movements` row count unchanged (no second deduction).
+   - Payment-gate test: Staff cannot move a Fulfillment of a `PENDING_PAYMENT` Order (including one under reconciliation) or of a payment `NEEDS_ATTENTION` Order to `PREPARING`.
+   - Assert that no code path writes a stock-transfer movement (only `ORDER`, `CANCEL_ORDER`, `STOCK_ADJUST` exist).
+   - Race test: Customer cancel vs. Staff `PREPARING` on the same Order ends in exactly one outcome (cancelled with stock restored, or 409 `ORDER_ALREADY_PREPARING`), never both.
 
 ---
 
-### Phase V3-BE-05: Payments & Simulated Refund Workflows
-**Estimated Duration:** 2 Days  
-**Primary Focus:** Central order payment processing and refund simulation.
+### Phase V3-BE-05: Payments, 15-Minute Timeout, Cancellation & Simulated Refund
+**Estimated Duration:** 2 Days (scope enlarged by the 15-minute policy, reconciliation, Admin resolution and mock gateway; re-estimate before starting)
+**Primary Focus:** Mock payment gateway and verified confirmation, payment deadline and reconciliation, terminal FAILED, whole-Order cancellation with exact stock restoration, Admin resolution of `NEEDS_ATTENTION`, and refund simulation.
 
 #### Tasks:
 1. **Central Payment Handling:**
-   - Bind `Payment` to the master `Order.total_amount` (items subtotal + `shipping_fee`).
-   - Support `ONLINE` (VNPay/Card simulation), `COD` (collected upon delivery of final fulfillment package), and `PAY_AT_STORE`.
-2. **Simulated Refund Engine (`RefundService`):**
-   - When an order with `payment_status = PAID` is cancelled (in full or partially due to an unfulfillable package):
-     * Set `Payment.refund_status = PENDING_SIMULATION`.
-     * Execute mock refund transaction: set `Payment.refund_amount`, `Payment.refunded_at = now()`, `Payment.refund_status = SIMULATED_REFUNDED`.
-     * Update `Order.payment_status = REFUNDED`.
-3. **Phase Deliverables & Verification:**
-   - Refund workflow integration tests for full and partial cancellations.
+   - Bind `Payment` to the master `Order.total_amount` (items subtotal + `shipping_fee`); never to an `OrderItem`.
+   - Support `ONLINE` (Mock Payment Gateway only), `COD` (collected upon delivery) and `PAY_AT_STORE`. The payment deadline and reconciliation apply to `ONLINE` only.
+2. **Mock Payment Gateway (server side, DEC-21):**
+   - A gateway abstraction with a mock implementation enabled only in dev/test/demo configuration; simulation endpoints are not registered/enabled in production.
+   - Flow: backend creates the Payment attempt -> mock gateway creates its own transaction reference -> a server-side mock ledger holds the simulated transaction (state, amount, Order id, Payment id, reference, server timestamp) -> the demo UI triggers a **controlled** simulation of SUCCESS / FAILED / UNKNOWN (authenticated owner + CSRF) that settles the ledger entry -> the backend confirms only after verifying the ledger entry (or an authenticated mock callback).
+   - Verified fields: Order id, Payment id, transaction reference, amount (`== Order.total_amount`), state and server-side time. The browser can never supply `payment_status`, `paid_at`, amount or time; browser timestamps are ignored.
+   - Duplicate callbacks are idempotent (de-duplicated by transaction reference under the Order lock).
+   - Result handling: verified SUCCESS -> confirm if payable; verified FAILED -> terminal cancel (task 5); PENDING -> no decision; UNKNOWN or gateway timeout -> reconciliation; transaction recorded after the deadline or on a cancelled Order -> no normal confirmation, refund simulation if the mock ledger shows money collected.
+   - A mock SUCCESS is never described as money really collected by a bank.
+3. **Payment confirmation before the deadline:**
+   - Under the Order lock verify the Order is still `ONLINE` + `PENDING_PAYMENT` + `UNPAID`, the Payment belongs to it, the transaction was not already recorded, and the verified transaction time is before the deadline.
+   - Record `Payment` `SUCCESS` (+ `paid_at` from the server clock/ledger, `transaction_code`), set `payment_status = PAID`, `order_status = CONFIRMED`, write history. **No stock change.** No duplicate `SUCCESS`.
+4. **Timeout worker (Spring `@Scheduled`, no Redis / queue):**
+   - Interval `oneshop.payment.timeout-scan-interval-ms` (default 60000). Candidate query: `payment_method = ONLINE`, `order_status = PENDING_PAYMENT`, `created_at <= now - pending-timeout`.
+   - Per candidate, three steps: (a) verify the payment state with the mock gateway/ledger **outside** any DB transaction; (b) open a short transaction, lock the Order, re-read state; (c) apply the decision and commit. No gateway call is made while a SQL Server transaction is open.
+   - Whether a payment is still in time is decided from the deadline and the verified transaction time, never from when the scheduler happens to run.
+   - Decision at/after the deadline: **A** concluded "not paid" -> cancel immediately (task 6), stock is not held for another 15 minutes; **B** verified valid SUCCESS in time and Order still open -> `CONFIRMED`, no second deduction, no duplicate `SUCCESS`; **C** UNKNOWN/PENDING -> reconciliation (task 7).
+5. **Verified FAILED is terminal (DEC-18):**
+   - On a verified FAILED: lock Order, check the current Payment, confirm no successful collection exists, then Order `CANCELLED`, every Fulfillment `CANCELLED`, exact per-`StoreProduct` restoration (`CANCEL_ORDER`), history, one atomic commit.
+   - No automatic payment retry on the same Order. A new purchase is a new checkout. An existing `PENDING` attempt may be continued (it is the same attempt; the deadline does not move).
+   - Distinguish verified FAILED / PENDING / UNKNOWN; a request timeout or lost connection to the gateway is not FAILED and never triggers cancel/restore by itself.
+6. **Customer cancellation:**
+   - Owner only; whole Order only; no Fulfillment may have reached `PREPARING`; otherwise `409 ORDER_ALREADY_PREPARING` with no side effect. Partial cancellation does not exist in P0.
+   - While the payment result is UNKNOWN under reconciliation the Order must not be cancelled/restored by the customer (money may have been collected); the request is rejected with a business error until the result is concluded. This follows from DEC-17 and must be confirmed during implementation.
+7. **Cancel-and-restore (single shared operation for timeout, verified FAILED, customer cancel and Admin resolution):**
+   - Lock Order -> check/lock Fulfillments in ascending id -> lock source `StoreProduct` rows in ascending id -> re-check state -> mutate -> commit.
+   - Order `CANCELLED`; Fulfillments `CANCELLED`; restore each OrderItem quantity to its source `StoreProduct`; write `InventoryMovement(CANCEL_ORDER, quantity_change > 0, reference_order_id)`; write `OrderStatusHistory` and `OrderFulfillmentStatusHistory`; close the pending `Payment` attempt as `FAILED` (the schema has no `CANCELLED`/`EXPIRED` payment status).
+   - Restoration happens only on the transition into `CANCELLED`; a second execution finds `CANCELLED` and does nothing.
+8. **Reconciliation window (DEC-17):**
+   - Window: `[payment deadline, payment deadline + reconciliation-window-minutes]`, only for UNKNOWN/PENDING results that cannot be concluded. The deadline is **not** extended; the customer cannot start a new payment; Staff cannot `PREPARING`; the Order is not cancelled and stock is not restored while it is unknown.
+   - Each worker scan re-verifies. A conclusive result inside the window is handled by tasks 3/5/7. If still UNKNOWN when the window ends -> Order `NEEDS_ATTENTION`, one history note with the reconciliation evidence (transaction reference, last verification result, timestamps), stock stays deducted.
+   - `NEEDS_ATTENTION` is an **Order** status; no new Payment status, enum or column is introduced.
+9. **Admin resolution of `NEEDS_ATTENTION` payment cases (DEC-19):**
+   - Authorization: `ADMIN` only, checked in the backend (JWT/role), CSRF on mutations.
+   - Admin may view the Order, Payment attempts, Fulfillments, history and the reason; re-run reconciliation against the mock gateway; confirm payment **when the verification shows a collected payment within the deadline**; confirm "no money collected" and cancel+restore; process the simulated refund for money actually collected on an Order that cannot continue.
+   - Admin may **not**: set an arbitrary `order_status`, mark `PAID` without evidence, edit `StoreProduct.quantity`, create manual `InventoryMovement`, revive a `CANCELLED` Order, skip Fulfillment status/history, or perform a partial refund.
+   - Outcomes: paid in time -> `CONFIRMED`/`PAID`, no second deduction; not paid -> cancel and restore once; money collected but Order cancelled or collected after the deadline -> Order not confirmed (cancelled and restored once if it was not already), simulated refund for the collected amount once, no second restoration; still unknown -> stays `NEEDS_ATTENTION` with the reason recorded.
+   - Audit with existing columns only: `changed_by_user_id`, `changed_at`, `old_status`/`new_status`, and a structured `note` (action, result, reason; max 500 chars) in `order_status_history` / `order_fulfillment_status_history`, plus `payments.refund_reason`. Limit: there is no dedicated audit table; very long reasons must be abbreviated. Do not add tables/columns.
+   - Idempotent: the action runs under the Order lock and re-checks status; a repeated request finds the terminal state and returns the same result without side effects.
+10. **Late and uncertain payments:**
+    - Late callback for an already `CANCELLED` Order: never set it back to `CONFIRMED`, never re-deduct stock. If the mock ledger shows money collected, record it (new `Payment` row `SUCCESS`, de-duplicated by transaction reference under the Order lock) and apply the simulated refund once.
+    - Payment completed after the deadline: not confirmed through the normal flow, even if the callback arrives while the Order is still `PENDING_PAYMENT`.
+11. **Simulated Refund Engine (`RefundService`):**
+    - Only for money recorded as collected (`Payment` `SUCCESS`) on an Order that is validly cancelled or reconciled as late/invalid.
+    - Guard `refund_status = NONE` under the Order lock, then `PENDING_SIMULATION` -> set `refund_amount` (= collected amount), `refunded_at` -> `SIMULATED_REFUNDED`; set `Order.payment_status = REFUNDED`. The original `SUCCESS` record is kept as audit evidence.
+    - Existing enum values only: `NONE`, `PENDING_SIMULATION`, `SIMULATED_REFUNDED`, `SIMULATION_FAILED`. No real bank refund, no partial refund, no new enum/CHECK.
+12. **Configuration (DEC-20):** the three `oneshop.payment.*` properties of Section 5.10 are read through a configuration-properties class; the deadline logic uses the injected `Clock`.
+13. **Out of scope / excluded:**
+    - No automatic restock for delivered goods or for Fulfillments that failed after `PREPARING` (exception policy, Admin decision).
+    - No logistics module, no real payment gateway integration, no Cross-Store Transfer.
+14. **Phase Deliverables & Verification:**
+    - Callback, deadline-boundary, timeout, reconciliation, terminal FAILED, customer-cancel, Admin-resolution and refund-simulation tests, plus the full race matrix of Section 5.5.
+    - Per-`StoreProduct` restoration test across multiple stores; double-restoration and double-refund guard tests.
+    - All timing tests use a controlled/fake `Clock`.
 
 ---
 
@@ -157,9 +237,29 @@ flowchart TD
    - Scenario A: Central checkout resulting in 2 fulfillment packages across Thu Duc and Binh Thanh stores.
    - Scenario B: Store staff independently packing and dispatching their packages.
    - Scenario C: Customer tracking multi-package order status in personal order history.
-   - Scenario D: Cancellation of 1 package triggering inventory restock, simulated partial refund, and master order transition to `PARTIALLY_COMPLETED`.
+   - Scenario D: Cancellation of a whole multi-store Order before any `PREPARING`, restoring every OrderItem to its source `StoreProduct` atomically, with a simulated full refund when PAID. Cancellation after any fulfillment reached `PREPARING` is rejected (409) with no stock, money or status change.
+   - Scenario E: Repeated cancel / payment-failure callback / timeout produces exactly one restoration and one simulated refund.
+   - Scenario F: ONLINE payment SUCCESS verified before 15 minutes -> `CONFIRMED`, stock unchanged after payment.
+   - Scenario G: Verified FAILED -> terminal: cancel and restore once; no retry on the same Order; a new checkout is required.
+   - Scenario H: Deadline reached with a concluded "not paid" result -> timeout cancels, all stores restored, history written, stock not held for the reconciliation window.
+   - Scenario I: Payment UNKNOWN at the deadline -> reconciliation starts: no new payment allowed, no `PREPARING`, no cancel/restore, deadline not extended.
+   - Scenario J: UNKNOWN verified as SUCCESS (transaction before the deadline) within the window -> `CONFIRMED`, no second deduction.
+   - Scenario K: UNKNOWN verified as FAILED within the window -> cancel and restore once.
+   - Scenario L: UNKNOWN still unknown after the 15-minute window -> `NEEDS_ATTENTION`, history note, stock still deducted.
+   - Scenario M: Admin confirms a payment with evidence -> `CONFIRMED`; Admin cannot mark `PAID` without evidence.
+   - Scenario N: Admin verifies no money was collected -> cancel and restore once, actor audited; non-Admin gets 403.
+   - Scenario O: Customer cancels a `PENDING_PAYMENT` Order before the deadline -> restore once, no refund (nothing collected); a late callback afterwards -> Order stays `CANCELLED`, exactly one simulated refund, no re-deduction.
+   - Scenario P: Payment completed after the deadline or after cancellation -> never confirms the Order; simulated refund once; no second restoration.
+   - Scenario Q: Duplicate callback, duplicate cancel, concurrent cancel -> one confirmation / one restoration / one refund.
+   - Scenario R: Races: timeout vs callback, cancel vs `PREPARING`, two timeout workers, Admin vs worker/late callback, two Admins.
+   - Scenario S: Browser-supplied success/failure (including the V2 `/payments/{id}/success|failure` URLs) never updates payment state; simulation endpoints are disabled outside dev/test/demo.
+   - Scenario T: Multi-store full restoration; no `PACKED` deduction; no double `InventoryMovement`; no negative stock; no Cross-Store Transfer movement (only `ORDER`, `CANCEL_ORDER`, `STOCK_ADJUST`).
+   - Scenario U: Orders `COMPLETED` / `CONFIRMED` / `PROCESSING` / `SHIPPING` are never touched by the timeout worker.
 2. **Performance & Concurrency Stress Test:**
-   - Multi-threaded checkout competition for low-stock SKUs.
+   - Multi-threaded checkout competition for low-stock SKUs across single and multiple stores: no negative stock, no oversell, no deadlock beyond bounded retry.
+   - Concurrent cancel vs. Staff `PREPARING` race: exactly one wins; no half-cancelled order.
+   - Double-restoration guard under concurrent duplicate cancel requests.
+   - Timeout/callback/cancel/Admin interleavings run against SQL Server with real locks, using a controlled/fake `Clock` so no test waits 15 real minutes. Integration tests use the dedicated test database and never touch existing data.
 3. **Documentation Finalization:**
    - Complete technical migration summary and operational handover report.
 
@@ -173,7 +273,7 @@ flowchart TD
 | **V3-BE-02** | Catalog & Central Cart Refactoring | 2 Days | V3-BE-01 |
 | **V3-BE-03** | Central Checkout & Store Allocation | 3 Days | V3-BE-02 |
 | **V3-BE-04** | Multi-Branch Fulfillment Operations | 3 Days | V3-BE-03 |
-| **V3-BE-05** | Payments & Simulated Refunds | 2 Days | V3-BE-04 |
+| **V3-BE-05** | Mock Payment Gateway, 15-Min Timeout, Reconciliation, Admin Resolution, Cancellation & Simulated Refund | 2 Days (re-estimate) | V3-BE-04 |
 | **V3-BE-06** | Reviews & Staff Replies | 2 Days | V3-BE-04 |
 | **V3-BE-07** | Full Regression & Live Integration | 2 Days | V3-BE-05, V3-BE-06 |
 
@@ -184,3 +284,134 @@ flowchart TD
 * **Database Schema Immobility:** No DDL scripts or schema modifications will be executed during any of the above phases. If any backend phase encounters an unexpected blocker, the code branch can be rolled back via Git without requiring database rollbacks or reseeding.
 * **Compatibility Layer Retention:** Until Phase V3-BE-07, all backward-compatibility helper methods in entities (`setStoreProduct`, nullable store getters) will remain active to prevent unexpected regressions in legacy endpoints.
 
+---
+
+## 5. ONLINE Payment Deadline, Timeout & Concurrency Policy (cross-phase, FINAL)
+
+This section is the single reference for BE-03, BE-04, BE-05 and BE-07. It uses only existing schema columns and CHECK values (DEC-15..DEC-22).
+
+### 5.1 Deadline and reconciliation rules
+
+- Applies only to `payment_method = ONLINE`. COD and PAY_AT_STORE have no payment deadline.
+- `payment deadline = orders.created_at + pending-timeout (15 minutes)`; `reconciliation deadline = payment deadline + reconciliation-window (15 minutes)`. Both are computed; no `payment_expires_at` column is added.
+- `created_at` is `DATETIME2(0)` (whole seconds) written by application auditing (`@CreatedDate`, JVM local time) inside the order-creation transaction. The deadline is anchored to this value only: not to opening checkout, opening the payment screen, creating an attempt or receiving a callback.
+- Every comparison uses one injectable server `Clock` (`LocalDateTime.now(clock)`), the same time source that writes `created_at` and `paid_at`. Browser-supplied time is never used. Java and SQL Server are assumed to share one timezone convention; tests use a fake `Clock`.
+- The deadline is never extended: reloads, continuing a pending attempt and repeated callbacks do not move it. Whether a payment is in time is decided from the deadline and the verified transaction time, not from when the scheduler runs.
+- Boundary: `now < deadline` -> a payment may be accepted if state and transaction data are valid. `now >= deadline` -> no new attempt may be created or confirmed through the normal flow.
+- The timeout worker may run a few seconds after the deadline. The right to pay ends at the deadline, not at the moment the worker runs.
+- At the deadline, three cases:
+  - **A. Concluded "not paid"** (verified FAILED, or verified no successful collection): cancel and restore immediately. Stock is not held for the reconciliation window.
+  - **B. Verified valid SUCCESS** (transaction time before the deadline, Order still open): `CONFIRMED`, no second deduction, no duplicate `SUCCESS`.
+  - **C. UNKNOWN / PENDING that cannot be concluded:** reconciliation window. No new payment, no deadline extension, no Staff `PREPARING`, no automatic cancel/restore while it is unknown. A conclusive result inside the window is handled as A or B; still unknown at the reconciliation deadline -> Order `NEEDS_ATTENTION`, history note with evidence, stock stays deducted until the exception is resolved.
+- A payment whose verified transaction time is after the deadline is not confirmed through the normal flow. If the mock ledger shows money collected, it goes to reconciliation/simulated refund (Section 5.6).
+- `NEEDS_ATTENTION` is an Order status. It is not a Payment status; no new enum, CHECK or column is introduced.
+
+### 5.2 Mapping onto the existing schema
+
+| Situation | `orders.order_status` | `orders.payment_status` | `payments.status` | `payments.refund_status` | `order_fulfillments.status` | Stock |
+|---|---|---|---|---|---|---|
+| ONLINE created | `PENDING_PAYMENT` | `UNPAID` | `PENDING` | `NONE` | `CONFIRMED` (payment-gated) | deducted (`ORDER`, negative) |
+| Verified SUCCESS before deadline | `CONFIRMED` | `PAID` | `SUCCESS` (+`paid_at`, `transaction_code`) | `NONE` | `CONFIRMED`, now workable | unchanged |
+| Verified FAILED (terminal) / concluded "not paid" at deadline | `CANCELLED` | `FAILED` | `FAILED` | `NONE` | `CANCELLED` | restored (`CANCEL_ORDER`, positive) |
+| UNKNOWN inside reconciliation window | `PENDING_PAYMENT` | `UNPAID` | `PENDING` | `NONE` | `CONFIRMED` (gated) | still deducted |
+| UNKNOWN after reconciliation window | `NEEDS_ATTENTION` | `UNPAID` | `PENDING` | `NONE` | `CONFIRMED` (gated) | still deducted until Admin resolves |
+| Customer cancels while unpaid (result concluded) | `CANCELLED` | `UNPAID` | `PENDING` -> `FAILED` | `NONE` | `CANCELLED` | restored |
+| Customer cancels after PAID, before `PREPARING` | `CANCELLED` | `PAID` -> `REFUNDED` | `SUCCESS` (kept) | `PENDING_SIMULATION` -> `SIMULATED_REFUNDED` | `CANCELLED` | restored |
+| Late/after-deadline `SUCCESS` for a `CANCELLED` Order | `CANCELLED` (never revived) | `REFUNDED` | new row `SUCCESS` | `PENDING_SIMULATION` -> `SIMULATED_REFUNDED` | unchanged | unchanged (no second restoration) |
+| Admin: payment verified in time | `CONFIRMED` | `PAID` | `SUCCESS` | `NONE` | workable | unchanged |
+| Admin: no money collected | `CANCELLED` | `FAILED` | `FAILED` | `NONE` | `CANCELLED` | restored once |
+| Admin: money collected after deadline / invalid | `CANCELLED` | `REFUNDED` | `SUCCESS` (kept/recorded) | `PENDING_SIMULATION` -> `SIMULATED_REFUNDED` | `CANCELLED` | restored once (not twice) |
+
+Notes:
+- `payments.status` has only `PENDING`/`SUCCESS`/`FAILED`; `orders.order_status` has no `EXPIRED`. `UNKNOWN` therefore exists only as a verification result (mock ledger / gateway answer), represented in the database by a `PENDING` attempt. The reason (timeout, payment failure, customer cancel, reconciliation, Admin action) is recorded in the `note` of `order_status_history` / `order_fulfillment_status_history` and `payments.refund_reason`.
+- If the refund simulation fails: `refund_status = SIMULATION_FAILED`, `payment_status` stays `PAID`, an Admin retries. Stock restoration is not repeated.
+- DDL has no unique index on successful payments or `transaction_code`; "one successful payment per obligation" and de-duplication are enforced in the Service under the Order lock.
+- A `NEEDS_ATTENTION` Order caused by payment is not cleared by the Order State Aggregator; only the Admin resolution (or a conclusive reconciliation result) leaves this state.
+
+### 5.3 Lock order (all competing flows)
+
+1. Lock the `Order` row.
+2. Check/lock the related `OrderFulfillment` rows in ascending id when needed.
+3. Lock the `StoreProduct` rows in ascending id when stock changes.
+4. Re-read and re-validate state after the locks are held.
+5. Apply the mutation.
+6. Commit.
+
+Order creation has no Order id yet: lock candidate `StoreProduct` rows in ascending id, then create the Order in the same transaction. A consistent order reduces but does not eliminate deadlocks: every flow needs lock timeout handling and a bounded, safe retry. No payment gateway call is made while a database transaction is open.
+
+### 5.4 Timeout worker
+
+- Spring Boot `@Scheduled`; interval `oneshop.payment.timeout-scan-interval-ms` (default 60000); no Redis, no message queue.
+- Candidates: `ONLINE`, `PENDING_PAYMENT`, `created_at <= now - pending-timeout`. "In reconciliation" is derived from time (`deadline <= now < reconciliation deadline`) and the verification result, so no extra marker column is needed. The worker does not write a history row for every scan.
+- Verify payment state with the mock gateway/ledger outside the transaction; then short transaction: lock Order, re-read, decide (A/B/C of Section 5.1), commit.
+- Only if it is certain that no successful payment exists and nothing awaits reconciliation -> cancel-and-restore. A gateway timeout or lost connection is UNKNOWN, not FAILED.
+- Multiple instances / overlapping runs are safe because the decision is taken under the Order lock and re-checks `PENDING_PAYMENT`.
+
+### 5.5 Mandatory race cases
+
+| # | Race | Required outcome |
+|---|---|---|
+| 1 | Callback succeeds before timeout | Order `CONFIRMED`; worker re-reads, sees non-`PENDING_PAYMENT`, does nothing; no restore |
+| 2 | Timeout before callback | Cancel + one restoration; later callback cannot make the Order `CONFIRMED`; if money verifiably collected -> reconciliation + one simulated refund |
+| 3 | Customer cancel vs. callback | Whoever gets the Order lock first decides. Payment confirmed first -> valid cancel then cancels the whole Order with simulated refund. Cancel first -> callback cannot confirm. Never `CONFIRMED` with a cancelled payment, never restored twice |
+| 4 | Customer cancel vs. Staff `PREPARING` | Cancel first -> Staff cannot start `PREPARING` on a `CANCELLED` Fulfillment. `PREPARING` first -> cancel rejected `409 ORDER_ALREADY_PREPARING`. Never both |
+| 5 | Two timeout workers | Exactly one performs `PENDING_PAYMENT` -> `CANCELLED`; the other finds the new state and writes no movement |
+| 6 | Two cancel requests | One state transition and one restoration; the other has no side effect and returns a consistent idempotent response |
+| 7 | Duplicate payment callback | One `SUCCESS`, no duplicate history, no second refund; client state is never proof of payment |
+| 8 | Payment right at the deadline | Decided by the verified transaction time (Section 5.1). Order already cancelled -> not revived, restored stock not re-taken; money actually collected goes to reconciliation/simulated refund, never ignored |
+| 9 | Admin resolution vs. timeout worker / late callback | Order lock decides; the second actor re-reads the terminal state and has no side effect |
+| 10 | Two Admin actions at once | One transition and one restoration/refund; the other returns the same result |
+| 11 | Customer cancel during reconciliation | Rejected until the result is concluded; no restore while money may have been collected |
+
+### 5.6 Late callback and uncertainty
+
+- A callback for an Order that is `CANCELLED` is verified (source, transaction reference, amount, Order ownership). If valid and the mock ledger shows money collected: record it, simulate the refund once, keep the Order `CANCELLED`.
+- A transaction recorded after the deadline is never turned into a normal confirmation, even when the Order is still `PENDING_PAYMENT`.
+- An invalid or unverifiable callback changes nothing and is logged.
+- "No callback yet" is not "failed". Uncertain Orders are re-checked for the reconciliation window, then escalated to `NEEDS_ATTENTION`; they are never pending without end.
+- If a mock transaction is recorded with a timestamp, the timestamp comes from the server-side mock ledger, not the browser.
+
+### 5.7 Admin resolution of payment `NEEDS_ATTENTION` (DEC-19)
+
+- **Allowed:** view Order / Payment attempts / Fulfillments / history / reason; re-run reconciliation with the mock gateway; confirm payment when verification shows money collected within the deadline; confirm no money collected and cancel + restore; process the simulated refund for collected money on an Order that cannot continue.
+- **Forbidden:** arbitrary `order_status` edits; marking `PAID` without evidence; editing `StoreProduct.quantity`; manual/fake `InventoryMovement`; reviving a `CANCELLED` Order; bypassing Fulfillment status/history; partial refund (P0).
+- **Resolution paths:** paid in time -> `CONFIRMED`/`PAID`, no second deduction; no money -> cancel + restore once, history with actor; money collected but Order already cancelled or collected after the deadline -> Order not confirmed, simulated refund once, no second restoration; still unknown -> remains `NEEDS_ATTENTION` with the reason recorded.
+- **Authorization and audit:** `ADMIN` role checked in the backend; actor, time, action, result and reason stored in existing `order_status_history.changed_by_user_id` / `changed_at` / `note` (and `payments.refund_reason`). Limit: no dedicated audit table and `note` is 500 characters. Idempotent under the Order lock.
+- Illustrative routes (not binding): `GET /admin/orders/{id}` (already shows Order/Payments/Fulfillments), `POST /admin/orders/{id}/payment-reconciliation/recheck`, `POST /admin/orders/{id}/payment-reconciliation/resolve`.
+
+### 5.8 Mock Payment Gateway (DEC-21)
+
+- Server-side only; no real bank/gateway integration. Enabled only in dev/test/demo configuration; the simulation endpoints are disabled/not registered in production.
+- Flow: Payment attempt created -> mock gateway creates its own transaction reference -> mock ledger records the simulated transaction (state, amount, Order id, Payment id, reference, server timestamp) -> the demo UI triggers a controlled simulation of SUCCESS/FAILED/UNKNOWN -> the backend confirms only after verifying the ledger entry (or an authenticated/signed mock callback) against Order id, Payment id, reference, amount, state and time.
+- The browser never sends `payment_status`, `paid_at` or amount that is trusted. CSRF and ownership checks apply to Customer-triggered simulation. The V2 `/orders/{id}/payments/{paymentId}/success|failure` routes must be removed or rewritten to this flow.
+- Result matrix: verified SUCCESS -> `PAID` if payable; verified FAILED -> terminal cancel + restore; PENDING -> no decision; UNKNOWN -> reconciliation when needed; duplicate callback -> no side effect; transaction after deadline or on cancelled Order -> no normal confirmation, simulated refund if the ledger shows collection, no second restoration.
+- A mock SUCCESS is not a claim that a bank collected real money.
+
+### 5.9 Configuration (DEC-20)
+
+```properties
+oneshop.payment.pending-timeout-minutes=${ONESHOP_PAYMENT_PENDING_TIMEOUT_MINUTES:15}
+oneshop.payment.reconciliation-window-minutes=${ONESHOP_PAYMENT_RECONCILIATION_WINDOW_MINUTES:15}
+oneshop.payment.timeout-scan-interval-ms=${ONESHOP_PAYMENT_TIMEOUT_SCAN_INTERVAL_MS:60000}
+```
+
+- `pending-timeout-minutes`: 15 minutes for the customer to pay. `reconciliation-window-minutes`: 15 minutes after the deadline for UNKNOWN results. `timeout-scan-interval-ms`: scan interval, default 60 seconds.
+- On the demo environment the approved values are 15 and 15; the business deadline is not changed through environment variables without the project owner's approval. The scan interval may be tuned operationally.
+- Use an injectable `Clock`; one consistent time convention between Java and SQL Server; never client time; the scheduler's schedule never decides whether a payment is in time; no Redis/message queue; no DB transaction open during a gateway call.
+- This document only specifies the properties; `application.properties` is not modified by this documentation task.
+
+### 5.10 No Cross-Store Transfer (DEC-22)
+
+- Multi-store ONLINE = 1 Order, N independent Fulfillments; each Store handles only its allocated part and the parts may be delivered separately.
+- No transfer of Product between stores, no stock-transfer movement, no transfer request, no warehouse module, no stock-transfer table; a store's quantity never changes because another store is short.
+
+### 5.11 Items left for implementation only
+
+| Item | Notes |
+|---|---|
+| Persistence of the mock ledger | Existing tables only. The ledger is a server-side component; final outcomes are written to `payments`. A restart may lose in-flight simulated states, which then surface as UNKNOWN and follow reconciliation. Any richer persistence needs a separate owner decision (no schema change here) |
+| Customer cancel during reconciliation | Rejection rule is derived from DEC-17; confirm exact error code/UX |
+| Exact `note` format for audit | Convention (action / result / reason) within 500 characters |
+| `OrderTransitionPolicy` | New explicit transitions for `NEEDS_ATTENTION` -> `CONFIRMED` / `CANCELLED` by Admin; aggregator must not override a payment `NEEDS_ATTENTION` |
+| Signed vs. internal mock callback | Choose a simple mechanism; do not build a complex payment system |
+| Final route names and error codes | Illustrative routes above are not binding |

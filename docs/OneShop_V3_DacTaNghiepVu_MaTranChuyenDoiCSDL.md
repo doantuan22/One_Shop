@@ -6,6 +6,8 @@
 > **Ngày biên soạn:** 12/10/2026  
 > **Trạng thái:** **CHỈ ĐẶC TẢ VÀ PHÂN TÍCH — KHÔNG TRIỂN KHAI**  
 > **Phạm vi công nghệ giữ nguyên:** Spring Boot + Thymeleaf + Bootstrap + JPA + SQL Server + SiteMesh + JWT + Cloudinary.
+> **Cập nhật 13/10/2026 (changelog):** (1) chốt **Immediate Physical Stock Deduction** (DEC-16); (2) chốt thời hạn `PENDING_PAYMENT` **15 phút** (DEC-15), thay thế điểm `[CẦN CHỐT]` OPEN-04; (3) bổ sung quy tắc chống race giữa callback, timeout, hủy và PREPARING (§10.4). Các quyết định khác không đổi.  
+> **Cập nhật 13/10/2026 (lần 2):** chốt thêm DEC-17..DEC-22: cửa sổ đối soát 15 phút, FAILED đã xác thực là cuối cùng, Admin xử lý `NEEDS_ATTENTION` thanh toán, tên cấu hình `oneshop.payment.*`, Mock Payment Gateway phía server, không triển khai Cross-Store Transfer (xem §10.4–§10.7, §14.1, §15.2).
 
 ---
 
@@ -50,6 +52,14 @@ Các nhãn sau được áp dụng xuyên suốt:
 | DEC-12 | Khách hủy được khi Order/chưa phần nào chuyển sang PREPARING; phải hoàn tồn đúng StoreProduct | **ĐÃ CHỐT** |
 | DEC-13 | Hủy Order đã thanh toán ONLINE: thông báo, ghi nhận **hoàn tiền mô phỏng**, không thực hiện hoàn tiền thật | **ĐÃ CHỐT** |
 | DEC-14 | Review có thể truy nguồn tới chi nhánh của OrderItem; Staff đúng chi nhánh được phản hồi Review | **ĐÃ CHỐT** |
+| DEC-15 | Thời hạn chờ thanh toán ONLINE (`PENDING_PAYMENT`) là **15 phút**, tính từ `Order.created_at`, cố định, không gia hạn. Hết hạn/thanh toán thất bại cuối cùng/hủy hợp lệ → hủy toàn Order và hoàn tồn chính xác. Thay thế OPEN-04 | **ĐÃ CHỐT** (13/10/2026) |
+| DEC-16 | **Immediate Physical Stock Deduction:** trừ `StoreProduct.quantity` ngay trong transaction tạo Order thành công; không reservation-based checkout; thanh toán đúng hạn không trừ lần hai; `reserved_quantity` chỉ giữ để tương thích | **ĐÃ CHỐT** (13/10/2026) |
+| DEC-17 | **Cửa sổ đối soát thanh toán:** 15 phút sau mốc hết hạn (`reconciliation deadline = created_at + 15 phút + 15 phút`), chỉ dùng cho kết quả UNKNOWN/PENDING chưa kết luận được; hết cửa sổ vẫn UNKNOWN → Order `NEEDS_ATTENTION`, giữ nguyên tồn đã trừ. `NEEDS_ATTENTION` là trạng thái của Order, không phải Payment status | **ĐÃ CHỐT** (13/10/2026) |
+| DEC-18 | **FAILED đã xác thực = thất bại cuối cùng** của Order ONLINE hiện tại: hủy Order, hủy Fulfillment, hoàn tồn; không tự retry Payment trên cùng Order; mua lại là lượt đặt hàng mới. Network timeout/mất kết nối gateway **không** đồng nghĩa FAILED | **ĐÃ CHỐT** (13/10/2026) |
+| DEC-19 | **Admin xử lý Order thanh toán `NEEDS_ATTENTION`** khi có bằng chứng: đối soát lại, xác nhận thu tiền đúng hạn, xác nhận không thu và hủy + hoàn tồn, refund mô phỏng cho khoản đã thu; có audit và idempotency; không sửa tùy ý status/quantity, không đánh dấu PAID không bằng chứng, không partial refund | **ĐÃ CHỐT** (13/10/2026) |
+| DEC-20 | **Tên cấu hình chính thức:** `oneshop.payment.pending-timeout-minutes` (15), `oneshop.payment.reconciliation-window-minutes` (15), `oneshop.payment.timeout-scan-interval-ms` (60000); thời hạn nghiệp vụ không đổi qua biến môi trường nếu chưa được chủ dự án phê duyệt | **ĐÃ CHỐT** (13/10/2026) |
+| DEC-21 | **Mock Payment Gateway phía Backend** mô phỏng thanh toán ONLINE; kết quả chỉ được xác nhận sau khi đối chiếu mock ledger phía server; nút success/failure của browser không phải bằng chứng; không tích hợp cổng ngân hàng thật; tách mock mode khỏi production | **ĐÃ CHỐT** (13/10/2026) |
+| DEC-22 | **Không triển khai Cross-Store Transfer.** Đơn nhiều Store là Multi-Store Fulfillment: mỗi Store chỉ xử lý phần đã phân bổ; không chuyển kho, không stock transfer movement, không transfer request, không warehouse module/bảng chuyển kho | **ĐÃ CHỐT** (13/10/2026) |
 
 ### 0.2. Kết luận kiến trúc
 
@@ -69,7 +79,7 @@ Khách vãng lai/khách hàng: danh mục toàn chuỗi, tra cứu còn hàng, g
 
 ### 1.2. Out of scope giữ từ V2
 
-Không thay stack, không thêm React/Vue/Angular, microservices, Redis, message queue, GPS/bản đồ định tuyến, kho trung tâm/chuyển kho, courier integration, AI recommendation, promotion/voucher engine, loyalty, marketplace và các hệ thống hoàn tiền ngân hàng thật. **Fulfillment nhiều Store là yêu cầu nghiệp vụ mới; việc cập nhật quy trình này không đồng nghĩa triển khai logistics tối ưu phức tạp.**
+Không thay stack, không thêm React/Vue/Angular, microservices, Redis, message queue, GPS/bản đồ định tuyến, kho trung tâm/chuyển kho, courier integration, AI recommendation, promotion/voucher engine, loyalty, marketplace và các hệ thống hoàn tiền ngân hàng thật. **Fulfillment nhiều Store là yêu cầu nghiệp vụ mới; việc cập nhật quy trình này không đồng nghĩa triển khai logistics tối ưu phức tạp.** Multi-Store Fulfillment **không phải** chuyển kho giữa chi nhánh (DEC-22).
 
 ### 1.3. Thuật ngữ nghiệp vụ
 
@@ -135,12 +145,12 @@ Không thay stack, không thêm React/Vue/Angular, microservices, Redis, message
 3. Bộ phân bổ tìm một Store có đủ **toàn bộ** giỏ trước; nếu không có, ưu tiên Store bao phủ nhiều mặt hàng rồi bổ sung từ Store khác.
 4. Xác thực tất cả Store có thể giao tới khu vực nhận theo quy tắc cấu hình; không lấy Store hết hàng/INACTIVE.
 5. Trong transaction: khóa các `StoreProduct` cấp hàng, xác minh lại, tạo **một Order**, tạo các `OrderFulfillment` theo Store, tạo `OrderItem` gắn đúng StoreProduct/Fulfillment, ghi movements trừ kho, xóa những CartItem đã checkout.
-6. Tạo payment attempt ONLINE của toàn bộ Order; trạng thái Order `PENDING_PAYMENT` cho tới khi thanh toán được xác nhận.
+6. Tạo payment attempt ONLINE của toàn bộ Order; trạng thái Order `PENDING_PAYMENT` cho tới khi thanh toán được xác nhận hoặc **hết hạn sau 15 phút kể từ `Order.created_at`** (**[ĐÃ CHỐT]**, xem DEC-15, §10.4).
 7. Sau thành công, một Payment thành công cho **tổng Order**; mỗi Staff Store nhìn thấy Fulfillment được giao.
 8. Khách nhận nhiều phần/kiện giao, nhưng chỉ có **một mã Order và một lần thanh toán**.
 9. Order hoàn tất khi tất cả Fulfillment hoàn tất và điều kiện thanh toán thỏa mãn.
 
-**Transaction với payment gateway:** trong phạm vi V3 demo, không giữ transaction SQL mở trong lúc chờ thanh toán; stock đã được trừ/dành trong transaction tạo đơn và cần chính sách hủy/giải phóng tồn cho `PENDING_PAYMENT` quá hạn hoặc FAILED. Không gọi thanh toán bên ngoài trong transaction dài. **[CẦN CHỐT]** timeout/huỷ pending payment cụ thể.
+**Transaction với payment gateway [ĐÃ CHỐT — DEC-15..DEC-21]:** không giữ transaction SQL mở trong lúc chờ thanh toán và không gọi gateway khi đang giữ transaction. Tồn kho đã bị **trừ vật lý** trong transaction tạo đơn. Thời hạn chờ thanh toán là **15 phút**, mốc hết hạn = `Order.created_at + 15 phút` (không tính từ lúc mở checkout/trang thanh toán, không gia hạn khi tải lại trang, tiếp tục attempt đang chờ hay callback gửi lại; dùng giờ máy chủ, không dùng giờ trình duyệt). Thanh toán thành công đã xác thực đúng hạn → Order `CONFIRMED`, không trừ tồn lần hai. Kết quả "chưa thu" đã xác định (FAILED đã xác thực hoặc hết hạn mà chắc chắn chưa thu) hoặc khách hủy hợp lệ → hủy toàn Order và hoàn đúng tồn từng `StoreProduct`. Kết quả chưa xác định (UNKNOWN/PENDING) → cửa sổ đối soát thêm 15 phút, không tự hủy, không cho thanh toán mới, không cho PREPARING; hết cửa sổ vẫn chưa rõ → `NEEDS_ATTENTION` (§10.4–§10.5). Kết quả thanh toán chỉ được xác nhận sau khi đối chiếu Mock Payment Gateway phía server (§10.6); bấm nút success/failure ở browser không phải bằng chứng. Không cần thêm cột `payment_expires_at`.
 
 ### 3.4. DELIVERY với COD một Store
 
@@ -185,6 +195,7 @@ Khi đơn chỉ có thể phân bổ từ nhiều Store và khách chọn COD, U
 - Nếu không phân bổ đủ toàn bộ giỏ, phải thất bại toàn bộ checkout (không tạo Order thiếu sản phẩm) theo chính sách P0.
 - Khi checkout kiểm tra hàng và giá từ DB, khóa/ghi với transaction; không tin product_price/store_id/allocatedStore từ request.
 - Phân bổ có tính xác định (deterministic): quy tắc tie-break rõ và test được.
+- **Không chuyển kho giữa chi nhánh (DEC-22):** phân bổ chỉ chọn nguồn từ tồn sẵn có của từng Store; không sinh stock transfer movement hay yêu cầu chuyển hàng, không thay đổi tồn của Store này vì Store khác thiếu hàng.
 
 ### 4.2. Chiến lược ưu tiên
 
@@ -343,7 +354,7 @@ checkout_id         FK -> checkout_sessions
 user_id             FK -> users
 fulfillment_type    DELIVERY | STORE_PICKUP
 payment_method      ONLINE | COD | PAY_AT_STORE
-payment_status      PENDING | UNPAID | PAID | REFUND_* (quy ước chi tiết bên dưới)
+payment_status      UNPAID | PAID | FAILED | REFUNDED (đúng CHECK `CK_orders_payment_status`; PENDING thuộc `payments.status`, không thuộc orders)
 order_status        enum tổng hợp V3
 receiver_name/phone, shipping_address snapshot (nếu Delivery)
 total_amount        DECIMAL(18,2)
@@ -518,14 +529,14 @@ erDiagram
 
 | Status đề xuất | Điều kiện điển hình | Ghi chú |
 |---|---|---|
-| `PENDING_PAYMENT` | ONLINE chờ xác nhận thanh toán | Không cho Staff chuyển phần hàng sang PREPARING |
+| `PENDING_PAYMENT` | ONLINE chờ xác nhận thanh toán, tối đa **15 phút** từ `created_at` | Không cho Staff chuyển phần hàng sang PREPARING; thoát khỏi trạng thái này chỉ bằng thanh toán hợp lệ (`CONFIRMED`) hoặc hủy (`CANCELLED`) |
 | `CONFIRMED` | Đã đủ điều kiện xử lý; toàn bộ Fulfillment còn `CONFIRMED` | Với COD là đã tạo hợp lệ; với ONLINE là PAID |
 | `PROCESSING` | Có phần đang PREPARING hoặc PACKED, chưa hoàn tất phần nào | Trạng thái tổng |
 | `SHIPPING` | Có phần đang SHIPPING, chưa phần nào COMPLETED; chỉ DELIVERY | Không áp dụng Pickup thuần túy |
 | `PARTIALLY_COMPLETED` | Ít nhất một phần COMPLETED, vẫn còn phần chưa COMPLETED | Không xem Order đã giao đủ |
 | `COMPLETED` | **Tất cả** Fulfillment COMPLETED và điều kiện thanh toán đúng | Có thể cho review từng dòng sớm hơn khi phần đó hoàn tất |
 | `CANCELLED` | Cả Order đã được hủy hợp lệ và hoàn tồn/tạo yêu cầu refund theo rule | Không dùng trạng thái này cho một Fulfillment giao thất bại riêng |
-| `NEEDS_ATTENTION` | Có phần FAILED hoặc ngoại lệ giao hàng/thanh toán cần xử lý | Đề xuất P1/P0 tùy scope |
+| `NEEDS_ATTENTION` | Có phần FAILED hoặc ngoại lệ giao hàng/thanh toán cần xử lý. **Với thanh toán [ĐÃ CHỐT — DEC-17]:** kết quả vẫn UNKNOWN khi hết cửa sổ đối soát 15 phút; tồn giữ nguyên; Admin xử lý theo §10.5. Aggregator không tự xóa trạng thái này | Giao hàng: đề xuất P1/P0 tùy scope; thanh toán: đã chốt |
 
 **Phân biệt:** `order.payment_status` / refund_status là chiều **tiền**, `orders.order_status` là chiều **vòng đời đơn**, `order_fulfillments.status` là chiều **vận hành từng Store**. Không đồng nhất ba khái niệm.
 
@@ -550,7 +561,7 @@ erDiagram
 
 | Phương thức | Khi tạo Order | Khi xử lý | Khi hoàn tất | Khi hủy đủ điều kiện |
 |---|---|---|---|---|
-| ONLINE | PENDING_PAYMENT, Payment pending | Đã thu thành công → PAID và mở xử lý Fulfillment | Không thu lại | `refund_status = PENDING_SIMULATION → SIMULATED_REFUNDED`; Order CANCELLED, hoàn tồn; giữ audit thanh toán cũ |
+| ONLINE | PENDING_PAYMENT, Payment `PENDING`; tồn đã trừ; hạn 15 phút | Đã thu thành công **trước hạn** → PAID, Order `CONFIRMED`, mở xử lý Fulfillment, không trừ tồn lần hai. Hết hạn với kết quả chưa thu đã xác định, hoặc FAILED đã xác thực (cuối cùng, không retry trên cùng Order) → Order `CANCELLED`, `payment_status = FAILED`, hoàn tồn; kết quả UNKNOWN → đối soát tối đa 15 phút rồi `NEEDS_ATTENTION`, giữ tồn (§10.4–§10.5) | Không thu lại | `refund_status = PENDING_SIMULATION → SIMULATED_REFUNDED`; Order CANCELLED, hoàn tồn; giữ audit thanh toán cũ |
 | COD 1 Store | UNPAID, Order CONFIRMED | Staff chuẩn bị/giao | Xác nhận thu đủ một lần khi giao: PAID | Hủy Order, hoàn tồn, không refund (chưa thu) |
 | PAY_AT_STORE Pickup | UNPAID, Order CONFIRMED | PREPARING → READY_FOR_PICKUP | Xác nhận mã + thu tiền tại quầy trước COMPLETED | Hủy Order, hoàn tồn, không refund nếu chưa thu |
 | COD N Store (khách xác nhận tách) | **N Order độc lập**, mỗi Order UNPAID | Mỗi Store xử lý Order của mình | Mỗi Order được thu riêng | Hủy độc lập Order chưa PREPARING |
@@ -567,7 +578,8 @@ Không triển khai refund tiền thật; UI **phải ghi rõ “Hoàn tiền m�
 
 - Owner đúng User; Order chưa CANCELLED/COMPLETED và không trong xử lý ngoại lệ khóa.
 - **Tất cả** Fulfillment của Order còn `CONFIRMED` (hoặc chưa bắt đầu) — không có phần nào PREPARING, PACKED, SHIPPING, READY_FOR_PICKUP, COMPLETED.
-- Với ONLINE PENDING_PAYMENT, hủy theo rule và vô hiệu payment attempt đang chờ nếu có; nếu tiền vừa về đồng thời, dùng transaction/idempotent logic quyết định có refund hay không.
+- Với ONLINE PENDING_PAYMENT, hủy theo rule và đóng payment attempt đang chờ (schema chỉ có `FAILED`, không có `CANCELLED`); nếu tiền vừa về đồng thời, quyết định theo thứ tự khóa Order (§10.4) để xác định có refund mô phỏng hay không.
+- **[ĐỀ XUẤT — suy ra từ DEC-17]** Khi kết quả thanh toán đang UNKNOWN trong cửa sổ đối soát, khách chưa được hủy/hoàn tồn (tiền có thể đã thu); yêu cầu bị từ chối bằng lỗi nghiệp vụ cho tới khi kết quả được kết luận. Mã lỗi/UX chốt khi triển khai.
 - Nếu bất kỳ Fulfillment chuyển PREPARING trước thao tác hủy: trả lỗi nghiệp vụ (ví dụ HTTP 409, `ORDER_ALREADY_PREPARING`); **không hủy nửa đơn**.
 
 **Transaction hủy:** Lock Order và những StoreProduct tương ứng → xác minh trạng thái hiện tại của mọi Fulfillment → đánh dấu CANCELLED Order & Fulfillments → hoàn đúng quantity của từng OrderItem về đúng StoreProduct → ghi `InventoryMovement(CANCEL_ORDER)` cho mỗi dòng/StoreProduct theo cách idempotent → ghi cả hai tầng history. Nếu Order ONLINE đã PAID, ghi yêu cầu refund mô phỏng gắn Payment tương ứng; trạng thái hoàn tiền có thể hoàn tất theo mô phỏng sau đó.
@@ -589,6 +601,99 @@ Không triển khai refund tiền thật; UI **phải ghi rõ “Hoàn tiền m�
 - Nếu đủ điều kiện: nút “Hủy đơn”, hộp xác nhận, thông báo giải phóng hàng; ONLINE hiển thị rõ **“Yêu cầu hoàn tiền mô phỏng đã được ghi nhận”** và trạng thái hoàn tiền giả lập.
 - Nếu không đủ: ẩn/disable nút với giải thích hoặc cho xem chính sách; backend vẫn bắt buộc chặn URL/API trực tiếp.
 - Trên Order detail nhiều Store: hiển thị thông báo **“Bạn chỉ có thể hủy toàn bộ trước khi bất kỳ chi nhánh nào bắt đầu chuẩn bị”**.
+- Đơn ONLINE `PENDING_PAYMENT`: hiển thị thời gian còn lại đến hạn (từ `created_at + 15 phút`) và nêu rõ đơn sẽ tự hủy, tồn được hoàn, nếu quá hạn.
+
+### 10.4. Hết hạn thanh toán, đối soát, callback muộn và chống race [ĐÃ CHỐT — DEC-15..DEC-18, DEC-20]
+
+**Mốc thời gian.** `payment deadline = Order.created_at + 15 phút`; `reconciliation deadline = payment deadline + 15 phút`. Cấu hình bằng `oneshop.payment.pending-timeout-minutes` và `oneshop.payment.reconciliation-window-minutes` (§10.7). Dùng một `Clock` máy chủ inject được; không dùng giờ trình duyệt; không phụ thuộc lịch quét của scheduler để quyết định một thanh toán còn trong hạn hay không.
+
+**Hết hạn tự động.** Spring Boot `@Scheduled` (chu kỳ `oneshop.payment.timeout-scan-interval-ms`, mặc định 60 giây; không Redis/message queue) tìm Order `ONLINE` + `PENDING_PAYMENT` đã quá `created_at + 15 phút`. Với mỗi Order: xác minh trạng thái thanh toán với Mock Gateway **ngoài** transaction; mở transaction ngắn, khóa Order, đọc lại; rồi xử lý theo ba trường hợp tại mốc hết hạn:
+
+| Trường hợp | Kết quả thanh toán | Xử lý |
+|---|---|---|
+| A | Chưa thành công và kết quả cuối cùng đã xác định | `CANCELLED` ngay, hủy Fulfillment, hoàn từng OrderItem về đúng `StoreProduct` (`CANCEL_ORDER`, biến động dương), ghi hai tầng lịch sử, đóng payment attempt thành `FAILED`; **không giữ tồn thêm 15 phút** |
+| B | Đã thành công hợp lệ (thời điểm giao dịch xác thực trước hạn, Order còn mở) | `CONFIRMED`, `payment_status = PAID`, **không trừ tồn lần hai**, không tạo `SUCCESS` trùng |
+| C | UNKNOWN/PENDING không kết luận được | Vào cửa sổ đối soát (dưới đây) |
+
+**Cửa sổ đối soát 15 phút (chỉ cho trường hợp C).** Không cho khách bắt đầu thanh toán mới, không gia hạn deadline, không cho Staff PREPARING, không tự hủy/hoàn tồn khi chưa biết tiền đã thu hay chưa. Mỗi lần quét xác minh lại; có kết quả xác thực trong cửa sổ thì xử lý như A hoặc B. Hết cửa sổ vẫn UNKNOWN → Order `NEEDS_ATTENTION`, ghi `OrderStatusHistory` kèm thông tin đối soát (mã giao dịch, kết quả xác minh gần nhất, mốc thời gian), **giữ nguyên tồn đã trừ** cho tới khi ngoại lệ được giải quyết. `NEEDS_ATTENTION` là trạng thái của Order; không thêm Payment status/enum/cột mới. UNKNOWN chỉ tồn tại như kết quả xác minh, trong DB là attempt `PENDING`.
+
+**FAILED đã xác thực là cuối cùng (DEC-18).** Khóa Order → kiểm tra Payment hiện tại → xác nhận chưa có khoản thu thành công → Order và mọi Fulfillment `CANCELLED` → hoàn tồn chính xác → ghi `CANCEL_ORDER` và lịch sử → commit atomic. Không tự retry Payment trên cùng Order; khách muốn mua lại phải đặt hàng mới. Phân biệt bắt buộc: FAILED đã xác thực ≠ PENDING (chưa có kết quả) ≠ UNKNOWN (không đủ thông tin). Request gọi gateway bị network timeout hoặc mất kết nối **không** đồng nghĩa FAILED và không được dẫn tới hủy/hoàn kho.
+
+**Thanh toán đúng hạn.** Xác thực nguồn, mã giao dịch, số tiền, Payment thuộc đúng Order, giao dịch chưa ghi nhận; khóa Order; kiểm tra còn `PENDING_PAYMENT` và thời điểm giao dịch xác thực trước hạn; ghi `Payment SUCCESS`, `payment_status = PAID`, `order_status = CONFIRMED`. **Không trừ tồn lần hai.** Không dùng trạng thái do client gửi làm bằng chứng thanh toán.
+
+**Callback muộn.** Nếu chứng minh giao dịch thành công **trước** deadline nhưng callback đến sau: Order chưa `CANCELLED` thì xác nhận dưới khóa Order và kiểm tra điều kiện; Order đã `CANCELLED` thì **tuyệt đối không hồi sinh**. Giao dịch thực hiện **sau** deadline không được xác nhận theo luồng thường. Khoản tiền thực sự được thu sau khi Order đã hủy → đối soát và **một** hoàn tiền mô phỏng (`NONE → PENDING_SIMULATION → SIMULATED_REFUNDED`, `payment_status = REFUNDED`), không hoàn kho lần hai. Timestamp của giao dịch mock lấy từ mock ledger phía server, không từ browser.
+
+**Thứ tự khóa thống nhất:** Order → Fulfillment (id tăng dần) → StoreProduct (id tăng dần) → đọc lại trạng thái → thay đổi → commit. Thứ tự này giảm nhưng không loại bỏ tuyệt đối deadlock; cần xử lý lock timeout và retry an toàn.
+
+| Race | Kết quả bắt buộc |
+|---|---|
+| Callback thành công trước timeout | Order `CONFIRMED`; worker đọc lại, không hủy, không hoàn tồn |
+| Timeout trước callback | Hủy + hoàn tồn một lần; callback sau không xác nhận được Order; tiền đã thu thật → đối soát + refund mô phỏng |
+| Khách hủy đồng thời callback | Ai giữ khóa Order trước quyết định; không để Order `CONFIRMED` mà Payment bị hủy; không hoàn tồn hai lần |
+| Khách hủy đồng thời Staff PREPARING | Hủy commit trước → Staff không PREPARING được; PREPARING trước → hủy bị 409 `ORDER_ALREADY_PREPARING` |
+| Hai worker timeout | Chỉ một chuyển `CANCELLED`; worker sau không ghi movement |
+| Hai request hủy | Một transition, một lần hoàn tồn; request còn lại không có side effect |
+| Callback trùng | Một `SUCCESS`; không trùng lịch sử, không hai lần refund |
+| Thanh toán sát thời điểm hết hạn | Quyết định theo thời điểm giao dịch xác thực; Order đã hủy không hồi sinh; tiền đã thu không bị bỏ sót |
+| Admin xử lý đồng thời worker/callback muộn | Khóa Order quyết định; bên sau đọc lại trạng thái cuối, không side effect |
+| Hai thao tác Admin đồng thời | Một transition, một lần hoàn tồn/refund; thao tác còn lại trả cùng kết quả |
+| Khách hủy trong cửa sổ đối soát | Bị từ chối tới khi kết luận; không hoàn tồn khi có thể đã thu tiền |
+
+Hoàn tiền chỉ **mô phỏng**, chỉ cho khoản đã ghi nhận thu, không hoàn một phần, không tạo nhiều refund cho cùng khoản phải thu; không thêm enum/CHECK mới; không tự hoàn tồn cho hàng đã giao hoặc Fulfillment FAILED sau PREPARING (§10.2). Không có hoàn tiền ngân hàng thật.
+
+### 10.5. Admin xử lý Order thanh toán `NEEDS_ATTENTION` [ĐÃ CHỐT — DEC-19]
+
+**Được phép:** xem Order, Payment attempts, Fulfillments, lịch sử và lý do chuyển `NEEDS_ATTENTION`; đối soát lại với Mock Payment Gateway; xác nhận thanh toán thành công khi có bằng chứng đáng tin cậy (giao dịch hợp lệ trong hạn); xác nhận không có khoản thu và hủy Order + hoàn tồn; xử lý refund mô phỏng cho khoản đã thu của Order không thể tiếp tục.
+
+**Không được phép:** sửa tùy ý `order_status`; tự đánh dấu PAID không bằng chứng; sửa trực tiếp `StoreProduct.quantity` để xử lý Order treo; tạo `InventoryMovement` giả; hồi sinh Order đã `CANCELLED`; bỏ qua trạng thái Fulfillment và lịch sử; partial refund (P0).
+
+**Quy trình giải quyết:**
+
+| Kết quả xác minh | Xử lý |
+|---|---|
+| Đã thu tiền đúng hạn | Khóa Order, kiểm tra còn `NEEDS_ATTENTION` và đủ điều kiện → `PAID`/`CONFIRMED`, ghi lịch sử; **không trừ tồn lần hai** |
+| Không thu tiền | Hủy toàn Order, hoàn tồn đúng `StoreProduct`, ghi `CANCEL_ORDER`, lịch sử và người thao tác |
+| Có khoản thu nhưng Order đã hủy, hoặc khoản thu sau deadline | Không xác nhận/hồi sinh Order; refund mô phỏng đúng một lần cho khoản đã thu; không hoàn kho lần hai nếu Order đã được hoàn trước đó (Order chưa hủy thì hủy và hoàn một lần) |
+| Vẫn không xác định | Giữ `NEEDS_ATTENTION`, ghi lý do và yêu cầu xử lý; không tự kết luận thành công hay thất bại |
+
+**Phân quyền và audit:** chỉ role `ADMIN` (kiểm tra JWT/role ở Backend, CSRF với thao tác ghi); ghi người xử lý, thời điểm, hành động, kết quả, lý do bằng các trường hiện có (`order_status_history.changed_by_user_id/changed_at/note`, `payments.refund_reason`). **Giới hạn:** không có bảng audit riêng; `note` tối đa 500 ký tự nên nội dung phải cô đọng theo quy ước (hành động / kết quả / lý do); không thêm bảng/cột. Thao tác idempotent dưới khóa Order.
+
+### 10.6. Mock Payment Gateway [ĐÃ CHỐT — DEC-21]
+
+OneShop V3 dùng Mock Payment Gateway phía Backend; không tích hợp cổng ngân hàng thật. Các endpoint `/orders/{id}/payments/{paymentId}/success|failure` do khách bấm **không được coi là bằng chứng giao dịch tài chính**.
+
+1. Backend tạo Payment attempt gắn Order.
+2. Mock Gateway tạo transaction reference riêng.
+3. Mock ledger phía server lưu trạng thái giao dịch giả lập (trạng thái, số tiền, Order, Payment, reference, thời gian máy chủ).
+4. UI demo kích hoạt mô phỏng SUCCESS/FAILED/UNKNOWN qua luồng được kiểm soát (đúng chủ sở hữu, CSRF).
+5. Backend chỉ xác nhận sau khi đối chiếu mock ledger (hoặc callback mock đã xác thực/ký nội bộ): Order ID, Payment ID, transaction reference, số tiền, trạng thái, thời gian.
+6. Callback trùng được idempotent theo transaction reference dưới khóa Order.
+7. Client không bao giờ truyền được `payment_status=PAID` hay `paid_at` để cập nhật DB.
+8. Mock mode tách khỏi production; endpoint mô phỏng không được bật ở production.
+
+| Kết quả mock | Xử lý |
+|---|---|
+| SUCCESS đã xác thực | Có thể `PAID` nếu Order đủ điều kiện (trong hạn, còn mở) |
+| FAILED đã xác thực | Hủy Order + hoàn tồn (cuối cùng) |
+| PENDING | Chưa quyết định |
+| UNKNOWN | Đưa vào đối soát khi cần |
+| Callback trùng | Không thêm side effect |
+| Ghi nhận sau deadline hoặc Order đã hủy | Không xác nhận theo luồng thường; refund mô phỏng nếu ledger ghi nhận thu; không hoàn kho hai lần |
+
+Mock SUCCESS **không** được tuyên bố là tiền ngân hàng đã thực thu. Hạn chế: không thêm bảng cho ledger; ledger là thành phần phía server, kết quả cuối ghi vào `payments`; trạng thái mô phỏng chưa kết thúc có thể mất khi khởi động lại và sẽ hiện ra như UNKNOWN rồi đi vào đối soát.
+
+### 10.7. Cấu hình [ĐÃ CHỐT — DEC-20]
+
+```properties
+oneshop.payment.pending-timeout-minutes=${ONESHOP_PAYMENT_PENDING_TIMEOUT_MINUTES:15}
+oneshop.payment.reconciliation-window-minutes=${ONESHOP_PAYMENT_RECONCILIATION_WINDOW_MINUTES:15}
+oneshop.payment.timeout-scan-interval-ms=${ONESHOP_PAYMENT_TIMEOUT_SCAN_INTERVAL_MS:60000}
+```
+
+- `pending-timeout-minutes`: 15 phút để khách thanh toán. `reconciliation-window-minutes`: 15 phút đối soát giao dịch UNKNOWN sau deadline. `timeout-scan-interval-ms`: chu kỳ kiểm tra, mặc định 60 giây.
+- Trên môi trường demo áp dụng đúng 15 + 15 phút; không tự đổi thời hạn nghiệp vụ qua biến môi trường nếu chưa được chủ dự án phê duyệt. Chu kỳ quét có thể điều chỉnh theo vận hành.
+- Dùng `Clock` inject được để test; thời gian chuẩn hóa nhất quán giữa Java và SQL Server; không tin giờ từ client; không giữ DB transaction mở khi gọi gateway; không Redis/message queue.
+- Tài liệu này chỉ đặc tả; không sửa `application.properties`.
 
 ---
 
@@ -629,6 +734,7 @@ Staff đăng nhập
 | Sửa Fulfillment B | Không | **Không** | Có nếu hợp lệ | Có theo quyền Admin |
 | Xem exact stock A | Không | Có | Không | Có |
 | Hủy Order trước PREPARING | Có nếu owner | Không mặc định | Không mặc định | Theo chính sách Admin |
+| Giải quyết Order thanh toán `NEEDS_ATTENTION` (§10.5) | Không | **Không** | **Không** | Có, có bằng chứng, audit, idempotent |
 | Review một OrderItem đã nhận | Có nếu đã mua | Không | Không | Không đại diện khách |
 | Reply Review nguồn A | Không | Có nếu assignment A ACTIVE | **Không** | **[CẦN CHỐT]** quyền phản hồi đại diện Admin |
 
@@ -687,7 +793,7 @@ Nếu Review V2 chỉ có Product/User hoặc Order, không phải lúc nào cũ
 | `OrderFulfillmentService` | **NEW / hoặc tách từ OrderService** | Staff queue, transition, pickup, multi-Store scope |
 | `StoreAllocationService` / Policy | **NEW / hoặc lớp bên trong CheckoutService** | Chọn nguồn ưu tiên one-Store, fallback đa Store, tie-break |
 | `InventoryService` | MODIFY + reuse | Batch deduct/restore đúng nhiều `StoreProduct`, idempotency |
-| `PaymentService` | MODIFY | ONLINE một Payment charge toàn Order, COD one-Store, refund simulation |
+| `PaymentService` | MODIFY | ONLINE một Payment cho toàn Order qua Mock Payment Gateway phía server, xác minh deadline, đối soát 15 phút, FAILED cuối cùng, COD one-Store, refund simulation, Admin resolution `NEEDS_ATTENTION` |
 | `ReviewService` | MODIFY | Gắn review OrderItem, kiểm chứng giao thành công, reply Store scope |
 | `CloudinaryService` | KEEP | Ảnh chung Product/Brand; URL/public_id |
 | `AuthService`, JWT, SiteMesh | KEEP phần lớn | Auth/role HttpOnly, Staff Store Scope được dùng lại và mở rộng |
@@ -707,6 +813,8 @@ Báo cáo B2 có nhắc các tên class `CartServiceImpl`, `CheckoutServiceImpl`
 | `POST /staff/fulfillments/{id}/status` | trạng thái tiếp theo | Quyền Store, state transition, history |
 | `POST /reviews` | orderItemId, rating/content | Fulfillment đã hoàn tất, đúng Customer, không trùng |
 | `POST /staff/reviews/{id}/reply` | content | Staff đúng Store nguồn, lưu Reply |
+| `POST /admin/orders/{id}/payment-reconciliation/recheck` | Auth ADMIN, CSRF | Đối soát lại với Mock Gateway; idempotent |
+| `POST /admin/orders/{id}/payment-reconciliation/resolve` | Auth ADMIN, CSRF, hành động, lý do | Chỉ theo bằng chứng đã xác minh; không partial refund; audit |
 
 **Bảo vệ:** POST/PUT/PATCH/DELETE dùng CSRF phù hợp JWT cookie HttpOnly như V2; lỗi input và permissions không tiết lộ kho nội bộ ngoài quyền.
 
@@ -772,6 +880,14 @@ Báo cáo B2 có nhắc các tên class `CartServiceImpl`, `CheckoutServiceImpl`
 | V3-BR-14 | Một Order COMPLETED khi toàn bộ Fulfillment COMPLETED và điều kiện tiền hợp lệ | Đề xuất state aggregation |
 | V3-BR-15 | Hệ thống không thu cùng khoản tiền ONLINE hai lần kể cả retry/callback trùng | Ràng buộc kỹ thuật bắt buộc |
 | V3-BR-16 | Không xác nhận giỏ chỉ vì tổng tồn toàn chuỗi đủ; mỗi lượng hàng phải phân bổ được Store hợp lệ | Ràng buộc kỹ thuật bắt buộc |
+| V3-BR-17 | ONLINE `PENDING_PAYMENT` có hạn 15 phút kể từ `Order.created_at`, cố định, không gia hạn (DEC-15) | Đã chốt |
+| V3-BR-18 | Trừ `StoreProduct.quantity` ngay khi tạo Order thành công; thanh toán đúng hạn và các bước Staff không trừ lần hai (DEC-16) | Đã chốt |
+| V3-BR-19 | Cửa sổ đối soát 15 phút chỉ dùng cho kết quả UNKNOWN/PENDING; trong cửa sổ không thanh toán mới, không PREPARING, không tự hủy/hoàn tồn; hết cửa sổ → `NEEDS_ATTENTION` (DEC-17) | Đã chốt |
+| V3-BR-20 | FAILED đã xác thực là cuối cùng của Order hiện tại; không retry Payment trên cùng Order; network timeout không phải FAILED (DEC-18) | Đã chốt |
+| V3-BR-21 | `NEEDS_ATTENTION` thanh toán chỉ được Admin giải quyết khi có bằng chứng, có audit và idempotent; không sửa tùy ý, không partial refund (DEC-19) | Đã chốt |
+| V3-BR-22 | Kết quả thanh toán chỉ được xác nhận sau khi đối chiếu Mock Payment Gateway phía server; browser success/failure không phải bằng chứng (DEC-21) | Đã chốt |
+| V3-BR-23 | Order đã `CANCELLED` không bao giờ hồi sinh; khoản thu muộn đi vào đối soát và đúng một refund mô phỏng, không hoàn kho hai lần | Đã chốt |
+| V3-BR-24 | Không chuyển kho giữa chi nhánh; đơn nhiều Store là Multi-Store Fulfillment độc lập (DEC-22) | Đã chốt |
 
 ---
 
@@ -834,8 +950,27 @@ Báo cáo B2 có nhắc các tên class `CartServiceImpl`, `CheckoutServiceImpl`
 | V3-T28 | Không phục vụ địa chỉ giao | Không phân bổ Store dù còn hàng; thông báo đúng |
 | V3-T29 | Store INACTIVE sau khi có lịch sử | Không cấp đơn mới, Order/Fulfillment/Review cũ vẫn đọc và audit được |
 | V3-T30 | Chuyển dữ liệu Order V2 | Một Fulfillment/Store lịch sử backfill đúng, totals/history/reviews không sai |
+| V3-T31 | ONLINE thanh toán trong 15 phút | `CONFIRMED`, tồn không đổi sau thanh toán, Staff mới được PREPARING |
+| V3-T32 | ONLINE quá 15 phút, timeout worker | `CANCELLED`, hoàn đúng mọi `StoreProduct` một lần, đủ lịch sử, payment attempt `FAILED` |
+| V3-T33 | Payment FAILED | Hủy + hoàn tồn một lần |
+| V3-T34 | Khách hủy đơn `PENDING_PAYMENT` | Hoàn tồn một lần, không refund |
+| V3-T35 | Callback đến muộn sau khi hủy | Order giữ `CANCELLED`, không trừ lại tồn, đúng một refund mô phỏng |
+| V3-T36 | Callback/cancel trùng, cancel đồng thời | Một lần thu, một lần hoàn tồn, một refund |
+| V3-T37 | Race timeout vs callback; cancel vs PREPARING; hai worker | Đúng một kết quả, không âm kho, không movement trùng |
+| V3-T38 | Order đã `COMPLETED`/đang xử lý | Timeout worker không tác động |
+| V3-T39 | Payment UNKNOWN tại mốc hết hạn | Vào đối soát: không cho thanh toán mới, không PREPARING, deadline không gia hạn, tồn giữ nguyên, không tự hủy; khách hủy bị từ chối `[ĐỀ XUẤT]` |
+| V3-T40 | UNKNOWN được xác thực SUCCESS (giao dịch trước hạn) trong cửa sổ | `CONFIRMED`, không trừ tồn lần hai, không `SUCCESS` trùng |
+| V3-T41 | UNKNOWN được xác thực FAILED trong cửa sổ | Hủy + hoàn tồn đúng một lần |
+| V3-T42 | UNKNOWN quá 15 phút đối soát | `NEEDS_ATTENTION`, có lịch sử đối soát, tồn vẫn bị trừ, Staff không PREPARING |
+| V3-T43 | FAILED đã xác thực | Hủy + hoàn tồn; không retry Payment trên cùng Order; network timeout gateway **không** làm hủy/hoàn kho |
+| V3-T44 | Admin xác nhận thanh toán có bằng chứng | `CONFIRMED`/`PAID`, không trừ tồn lần hai; Admin không thể đánh dấu PAID khi thiếu bằng chứng |
+| V3-T45 | Admin xác minh không thu tiền | Hủy + hoàn tồn một lần, ghi người thao tác; role khác ADMIN bị 403; lặp lại không có side effect |
+| V3-T46 | Giao dịch sau deadline hoặc sau khi Order đã hủy | Không hồi sinh/xác nhận Order; đúng một refund mô phỏng; không hoàn kho hai lần |
+| V3-T47 | Browser gửi success/failure trực tiếp (kể cả URL V2 `/payments/{id}/success|failure`) | Không cập nhật trạng thái thanh toán; mock endpoint tắt ở production |
+| V3-T48 | Đơn nhiều Store, một Store thiếu hàng | Không có stock transfer movement; tồn Store khác không đổi vì lý do thiếu hàng; chỉ có `ORDER`, `CANCEL_ORDER`, `STOCK_ADJUST` |
+| V3-T49 | Race: Admin vs timeout/callback muộn; hai Admin | Đúng một kết quả, không movement/refund trùng |
 
-**Kiểm thử hệ thống thật:** Test DB cần chạy transaction rollback/seed riêng, không xóa cứng dữ liệu lịch sử; đo số Order trong ONLINE đa Store, vì nhầm Fulfillment thành Order là regression nghiêm trọng.
+**Kiểm thử hệ thống thật:** Test DB cần chạy transaction rollback/seed riêng, không xóa cứng dữ liệu lịch sử; đo số Order trong ONLINE đa Store, vì nhầm Fulfillment thành Order là regression nghiêm trọng. Các test thời gian dùng `Clock` giả/điều khiển được, không chờ 15 phút thật.
 
 ---
 
@@ -926,11 +1061,11 @@ Báo cáo B2 có nhắc các tên class `CartServiceImpl`, `CheckoutServiceImpl`
 | V3-P2 | Giá chung | Product.price, legacy price plan | Product/Catalog/Admin Price | Giá SKU trên client/admin | Một giá online, Order cũ bất biến |
 | V3-P3 | Cart thống nhất | CartItem → Product | CartService | Cart/Buy Now | Add no Store, migration cart đúng |
 | V3-P4 | Multi-Store fulfillment data | Fulfillment/history, OrderItem FK | StoreAllocation, Inventory | Order preview nhiều Store | Phân bổ/trừ kho an toàn |
-| V3-P5 | Checkout và Payment | Order semantics/refund fields | One Order ONLINE, COD split consent, payment idempotency | One-page checkout và COD prompt | ONLINE multi Store = 1 Order/1 charge |
+| V3-P5 | Checkout và Payment | Order semantics/refund fields | One Order ONLINE, trừ kho ngay, hạn 15 phút, chuẩn bị Mock Gateway (không xác nhận từ client), COD split consent, payment idempotency | One-page checkout và COD prompt | ONLINE multi Store = 1 Order/1 charge |
 | V3-P6 | Staff vận hành | Index Store queue, history | Fulfillment Service + Store scope | Staff queue/Detail/Pickup | Staff Store A không sửa Store B |
 | V3-P7 | Review và Reply | Review.order_item_id, replies | ReviewService + authorization | Review/Reply views | Đúng quyền nguồn và tránh review trùng |
-| V3-P8 | Cancel/Refund/Exception | Audit & refund simulation | Atomic cancel/restore, aggregate state | Cancel UI, refund simulation | Không hủy sau PREPARING, không hoàn kho 2 lần |
-| V3-P9 | Regression + deploy | Dry-run/validation/contract plan | Tests concurrency/security | Responsive flow/UI tests | TC-V2 chuyển đổi + V3-T01..T30 đạt |
+| V3-P8 | Cancel/Refund/Exception | Audit & refund simulation | Atomic cancel/restore, timeout worker 15 phút, cửa sổ đối soát 15 phút, FAILED cuối cùng, Admin xử lý `NEEDS_ATTENTION`, Mock Gateway verify, đối soát callback muộn, aggregate state | Cancel UI, refund simulation | Không hủy sau PREPARING, không hoàn kho 2 lần |
+| V3-P9 | Regression + deploy | Dry-run/validation/contract plan | Tests concurrency/security | Responsive flow/UI tests | TC-V2 chuyển đổi + V3-T01..T49 đạt |
 
 Đây là **phân chia chuyển đổi kiến trúc**, không thay thế hay tự tuyên bố DONE cho các phase V2; thực thi chỉ sau khi chủ dự án xác nhận.
 
@@ -943,15 +1078,15 @@ Báo cáo B2 có nhắc các tên class `CartServiceImpl`, `CheckoutServiceImpl`
 | OPEN-01 | Một SKU quantity lớn có được chia nguồn A/B? | Hỗ trợ trong schema; có thể bật ngay V3 P0 nếu mong muốn không bỏ lỡ đơn | Allocation, số OrderItem/review, thông báo nhiều kiện |
 | OPEN-02 | Quy tắc địa bàn Store giao hàng | Chỉ những vùng được cấu hình/được phép; không mặc định cùng tỉnh là phục vụ | CSDL vùng giao, form địa chỉ, StoreAllocation |
 | OPEN-03 | Khi giao từ nhiều Store tính phí giao ra sao? | Một tổng phí được hiển thị trước xác nhận; không phát sinh phí ẩn | Pricing/Payment/UX |
-| OPEN-04 | Timeout PENDING_PAYMENT và auto cancel/restore | Có TTL rõ và xử lý idempotent, không bắt buộc background queue | Stock reservation, scheduler nếu dùng trong monolith |
+| OPEN-04 | ~~Timeout PENDING_PAYMENT và auto cancel/restore~~ **[ĐÃ CHỐT 13/10/2026 — DEC-15, DEC-17, DEC-18, DEC-20]**: 15 phút từ `created_at`; đối soát 15 phút cho UNKNOWN; FAILED đã xác thực là cuối cùng; Spring `@Scheduled`, idempotent, không queue | Chỉ còn chi tiết triển khai (plan §5.11): lưu mock ledger, mã lỗi hủy trong đối soát, quy ước `note` audit | Scheduler trong monolith, cấu hình |
 | OPEN-05 | Một SKU phân bổ hai Store, khách có thể đánh giá hai lần? | Mỗi OrderItem tối đa một Review | DB UNIQUE, UX Review |
 | OPEN-06 | Review Reply có cho Admin trả lời thay Staff không? | Giữ quyền trả lời theo Staff Store như yêu cầu, Admin chỉ moderation trừ khi duyệt khác | Authorization |
 | OPEN-07 | Refund chỉ full trước PREPARING hay có partial refund sau giao lỗi? | P0 refund mô phỏng full cancellation; ngoại lệ sau giao để quy trình riêng | Schema refund/exception |
 | OPEN-08 | Với COD split, cho một CheckoutSession liên kết N Order độc lập? | Có, để truy xuất nguồn của một lượt xác nhận | DB không đổi; semantics API/UX |
 | OPEN-09 | Giá bán Product.price = 0 có hợp lệ với SKU ACTIVE? | Chặn bán nếu giá chưa được Admin xác nhận, trừ sản phẩm tặng nếu scope khác | Constraint/business validation |
-| OPEN-10 | Trạng thái FAILED/NEEDS_ATTENTION và xử lý giao thất bại | Lưu ngoại lệ và Admin can thiệp; không auto refund/restore | State machine, permissions |
+| OPEN-10 | Trạng thái FAILED/NEEDS_ATTENTION và xử lý **giao thất bại** *(phần thanh toán đã chốt: DEC-17..DEC-19, §10.5)* | Lưu ngoại lệ và Admin can thiệp; không auto refund/restore | State machine, permissions |
 
-**Không phải câu hỏi mở**: ONLINE nhiều Store vẫn một Order; COD nếu nhiều Store thì chỉ tách Order khi Customer xác nhận; hủy chỉ trước PREPARING; hoàn tiền chỉ mô phỏng; một SKU chỉ một mức giá bán online. Các quyết định này đã được chốt.
+**Không phải câu hỏi mở**: thời hạn `PENDING_PAYMENT` là 15 phút từ `created_at`; cửa sổ đối soát 15 phút chỉ cho UNKNOWN; FAILED đã xác thực là cuối cùng; Admin xử lý `NEEDS_ATTENTION` thanh toán theo §10.5; tên cấu hình `oneshop.payment.*`; Mock Payment Gateway phía server; không Cross-Store Transfer; trừ tồn vật lý ngay khi tạo Order; ONLINE nhiều Store vẫn một Order; COD nếu nhiều Store thì chỉ tách Order khi Customer xác nhận; hủy chỉ trước PREPARING; hoàn tiền chỉ mô phỏng; một SKU chỉ một mức giá bán online. Các quyết định này đã được chốt.
 
 ---
 
@@ -962,7 +1097,7 @@ Báo cáo B2 có nhắc các tên class `CartServiceImpl`, `CheckoutServiceImpl`
 - [ ] Chủ dự án phê duyệt BR mới và chính sách mở cần thiết trong mục 18.
 - [ ] Bản chụp schema V2 thực tế (PK/FK/CHECK/INDEX/NULL/status) đối chiếu với mục 6–8, mọi khác biệt được ghi nhận.
 - [ ] Có bảng giá chung Product được phê duyệt; không lấy MIN/AVG price một cách tự phát.
-- [ ] Chốt cách phân bổ SKU, vùng giao hàng, cách tính phí nhiều kiện, payment timeout.
+- [ ] Chốt cách phân bổ SKU, vùng giao hàng, cách tính phí nhiều kiện. *(Payment timeout, đối soát, FAILED, Admin, cấu hình, mock gateway, không chuyển kho đã chốt: DEC-15..DEC-22.)*
 - [ ] Chốt refund simulation, cancellation, review source, Staff permission và exception.
 - [ ] Kiểm tra dry-run migration có thể bảo toàn Order/OrderItem/Review/Payment/InventoryMovement cũ.
 
@@ -978,6 +1113,12 @@ Báo cáo B2 có nhắc các tên class `CartServiceImpl`, `CheckoutServiceImpl`
 - [ ] Staff không đọc/sửa trái quyền Store; Staff đúng Store mới reply Review nguồn.
 - [ ] Khách chỉ hủy Order trước khi bất kỳ Fulfillment nào PREPARING; hoàn đúng kho atomic.
 - [ ] Hủy PAID ONLINE ghi refund simulation rõ, không thực chuyển tiền; không thể refund giả lập/trừ kho hai lần.
+- [ ] Đơn ONLINE quá 15 phút chưa thanh toán tự hủy và hoàn đúng tồn; callback muộn không hồi sinh Order; callback/timeout/hủy/PREPARING cạnh tranh chỉ cho ra một kết quả.
+- [ ] Kết quả UNKNOWN được đối soát tối đa 15 phút sau deadline, không tự hủy/hoàn tồn khi chưa rõ, hết cửa sổ → `NEEDS_ATTENTION` với tồn giữ nguyên.
+- [ ] FAILED đã xác thực là cuối cùng, không retry trên cùng Order; network timeout gateway không bị coi là FAILED.
+- [ ] Admin xử lý `NEEDS_ATTENTION` chỉ khi có bằng chứng, có audit/idempotency; không sửa tùy ý status/quantity.
+- [ ] Thanh toán chỉ được xác nhận qua đối chiếu Mock Payment Gateway phía server; browser success/failure không đổi trạng thái; mock bị tắt ở production.
+- [ ] Không có Cross-Store Transfer: không stock transfer movement, không transfer request, không bảng chuyển kho.
 - [ ] Historical price, Order V2, Review cũ, logs/audit và các ràng buộc DB được giữ nhất quán.
 - [ ] Bộ test tương ứng TC-01..TC-18 cũ sau điều chỉnh và bộ V3 mới đạt, không có blocking security/concurrency issues.
 - [ ] Giữ nguyên Spring Boot/Thymeleaf/Bootstrap/JPA/SQL Server/SiteMesh/JWT/Cloudinary và các giới hạn out-of-scope.
@@ -1024,5 +1165,8 @@ Báo cáo B2 có nhắc các tên class `CartServiceImpl`, `CheckoutServiceImpl`
 - **COD split consent:** xác nhận rõ của Customer để chuyển giỏ nhiều Store thành **các Order độc lập** khi thanh toán lúc nhận hàng.
 - **Simulated refund:** ghi nhận hoàn tiền cho mục đích demo, không chuyển tiền thật.
 - **Legacy compatibility:** cột/hành vi V2 tạm giữ để đọc dữ liệu cũ trong quá trình nâng cấp.
+- **Reconciliation window:** khoảng 15 phút sau deadline thanh toán, chỉ để đối soát kết quả UNKNOWN/PENDING; không gia hạn quyền thanh toán.
+- **Mock Payment Gateway / mock ledger:** thành phần phía server mô phỏng giao dịch ONLINE; kết quả phải được Backend xác minh, không phải xác nhận từ browser; không phải tiền ngân hàng thực thu.
+- **Multi-Store Fulfillment:** một Order được nhiều Store xử lý bằng các Fulfillment độc lập. **Cross-Store Transfer** (chuyển hàng giữa chi nhánh) không được triển khai.
 
 **HẾT TÀI LIỆU — ONESHOP V3.0**
