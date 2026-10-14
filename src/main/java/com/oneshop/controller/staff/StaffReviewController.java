@@ -38,6 +38,12 @@ public class StaffReviewController {
         return back + "&replied";
     }
 
+    @GetMapping("/{id}")
+    public String detail(@PathVariable Long id, Model model) {
+        model.addAttribute("review", reviews.getStaffReview(id));
+        return "staff/reviews/detail";
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ModelAndView denied(AccessDeniedException ex) {
         ModelAndView view = new ModelAndView("error-message");

@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Phase 5 against the real SQL Server and its seed data ({@code database/04_seed_data.sql}): login of the three roles,
+ * Phase 5 against the real SQL Server and its seed data ({@code database/02_seed.sql}): login of the three roles,
  * registration and the Staff Store scope read from {@code staff_store_assignments}.
  *
  * <p>Skipped without a configured database, like {@link DatabaseFoundationIntegrationTest}. Every test that writes

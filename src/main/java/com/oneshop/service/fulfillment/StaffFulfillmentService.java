@@ -152,15 +152,20 @@ public class StaffFulfillmentService {
                 && summary.actions().stream().anyMatch(FulfillmentAction::isCompletion);
         List<FulfillmentHistoryResponse> history = histories.findByFulfillmentIdOrderByChangedAtAscIdAsc(f.getId())
                 .stream().map(h -> new FulfillmentHistoryResponse(h.getOldStatus(), h.getNewStatus(),
-                        h.getChangedBy() == null ? "Hệ thống" : h.getChangedBy().getFullName(), h.getNote(),
+                        h.getChangedBy() == null ? "Hệ thống" : h.getChangedBy().getFullName(), redactPickupCode(h.getNote(), f),
                         h.getChangedAt())).toList();
         boolean delivery = f.getFulfillmentType() == FulfillmentType.DELIVERY;
         return new FulfillmentDetailResponse(summary, order.getReceiverPhone(),
                 delivery ? order.getShippingAddress() : null, f.getTrackingCode(), f.getPickupCode() != null,
                 subtotal, collecting ? order.getTotalAmount() : null, collecting ? order.getTotalAmount() : null,
-                f.getNote(), f.getCancelReason(), f.getPreparedAt(), f.getPackedAt(), f.getShippedAt(), f.getReadyAt(),
+                redactPickupCode(f.getNote(), f), redactPickupCode(f.getCancelReason(), f), f.getPreparedAt(), f.getPackedAt(), f.getShippedAt(), f.getReadyAt(),
                 f.getCompletedAt(), lines.stream().map(i -> new OrderItemResponse(i.getProductName(),
                         i.getUnitPrice(), i.getQuantity(), i.getSubtotal())).toList(), history);
+    }
+
+    private static String redactPickupCode(String text, OrderFulfillment fulfillment) {
+        String code = fulfillment.getPickupCode();
+        return text == null || code == null || code.isBlank() ? text : text.replace(code, "[đã ẩn mã nhận]");
     }
 
     // ----------------------------------------------------------------------------------------------- writes

@@ -21,6 +21,9 @@ import com.oneshop.service.InventoryService;
 import com.oneshop.service.OrderService;
 import com.oneshop.service.PaymentDeadlinePolicy;
 import com.oneshop.service.PaymentService;
+import com.oneshop.service.payment.LedgerState;
+import com.oneshop.service.payment.MockLedger;
+import com.oneshop.service.payment.PaymentGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +31,7 @@ import org.springframework.transaction.annotation.Propagation;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 /** ONLINE workflow and COD collection. Every mutation starts with the caller's or this service's Order lock. */
@@ -55,15 +59,35 @@ public class PaymentServiceImpl implements PaymentService {
         this.deadlines = deadlines;
     }
 
+    private PaymentGateway gateway;
+
+    /** The mock gateway, for the ledger state shown on the payment page (setter keeps the old constructor usable). */
+    @Autowired(required = false)
+    void setGateway(PaymentGateway gateway) {
+        this.gateway = gateway;
+    }
+
     @Override
     @Transactional(readOnly = true)
     public OrderPaymentResponse getOrderPayments(String customerEmail, Long orderId) {
         Order order = orderRepository.findByIdAndUserEmail(orderId, customerEmail)
                 .orElseThrow(PaymentServiceImpl::orderNotFound);
+        List<Payment> rows = paymentRepository.findByOrderIdOrderByIdAsc(orderId);
+        String ledger = null;
+        boolean reconciling = false;
+        if (order.getPaymentMethod() == PaymentMethod.ONLINE) {
+            // the state of the attempt the customer can act on: the latest one that is still pending
+            LedgerState state = rows.stream().filter(p -> p.getStatus() == PaymentStatus.PENDING)
+                    .map(MockLedger::stateOf).findFirst().orElse(null);
+            ledger = state == null ? null : state.name();
+            reconciling = state == LedgerState.IN_DOUBT && order.getOrderStatus() == OrderStatus.PENDING_PAYMENT
+                    && deadlines.isExpired(order);
+        }
         return new OrderPaymentResponse(order.getId(), order.getCheckoutSession().getId(), storeLabel(order),
                 order.getTotalAmount(), order.getPaymentMethod(), order.getPaymentStatus(), order.getOrderStatus(),
-                paymentRepository.findByOrderIdOrderByIdAsc(orderId).stream().map(PaymentServiceImpl::response).toList(),
-                deadlines.paymentDeadline(order), deadlines.isExpired(order));
+                rows.stream().map(PaymentServiceImpl::response).toList(),
+                deadlines.paymentDeadline(order), deadlines.isExpired(order),
+                gateway != null && gateway.enabled(), ledger, reconciling);
     }
 
     @Override
@@ -289,7 +313,7 @@ public class PaymentServiceImpl implements PaymentService {
     private static String transactionCode() { return "PAY-" + UUID.randomUUID(); }
 
     /** Reference made by the backend for the mock gateway; the browser never supplies it. */
-    private static String mockReference() { return "MOCK-" + UUID.randomUUID(); }
+    private static String mockReference() { return MockLedger.newReference(); }
 
     private static BadRequestException browserConfirmationRefused() {
         return new BadRequestException("Kết quả thanh toán chỉ được xác nhận qua cổng thanh toán mô phỏng của hệ thống; "
@@ -305,7 +329,9 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private static PaymentResponse response(Payment payment) {
+        // the in-doubt marker is an internal ledger detail, never shown as part of the reference
         return new PaymentResponse(payment.getId(), payment.getOrder().getId(), payment.getMethod(), payment.getAmount(),
-                payment.getStatus(), payment.getTransactionCode(), payment.getPaidAt(), payment.getCreatedAt());
+                payment.getStatus(), MockLedger.reference(payment.getTransactionCode()), payment.getPaidAt(),
+                payment.getCreatedAt());
     }
 }

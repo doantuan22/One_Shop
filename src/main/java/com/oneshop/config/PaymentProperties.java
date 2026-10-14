@@ -13,8 +13,17 @@ public class PaymentProperties {
     private int pendingTimeoutMinutes = 15;
     /** Minutes after the payment deadline during which an UNKNOWN result is reconciled (used from BE-05). */
     private int reconciliationWindowMinutes = 15;
-    /** Interval of the timeout scan (used from BE-05). */
+    /** Interval of the timeout scan (BE-05). */
     private long timeoutScanIntervalMs = 60000;
+    /** Runs the {@code @Scheduled} timeout worker. Off in tests (they call the scan directly) and may be off per node. */
+    private boolean timeoutWorkerEnabled = true;
+    /** At most this many Orders are examined per scan; the next scan continues. */
+    private int scanBatchSize = 200;
+    /**
+     * The server-side mock payment gateway (DEC-21): demo/test/dev only. When false the customer simulation and the
+     * Admin gateway console are refused, so nothing in production can settle a payment by a button.
+     */
+    private boolean mockGatewayEnabled = true;
 
     public int getPendingTimeoutMinutes() {
         return pendingTimeoutMinutes;
@@ -47,5 +56,32 @@ public class PaymentProperties {
             throw new IllegalArgumentException("oneshop.payment.timeout-scan-interval-ms must be >= 1000");
         }
         this.timeoutScanIntervalMs = timeoutScanIntervalMs;
+    }
+
+    public boolean isTimeoutWorkerEnabled() {
+        return timeoutWorkerEnabled;
+    }
+
+    public void setTimeoutWorkerEnabled(boolean timeoutWorkerEnabled) {
+        this.timeoutWorkerEnabled = timeoutWorkerEnabled;
+    }
+
+    public int getScanBatchSize() {
+        return scanBatchSize;
+    }
+
+    public void setScanBatchSize(int scanBatchSize) {
+        if (scanBatchSize < 1) {
+            throw new IllegalArgumentException("oneshop.payment.scan-batch-size must be >= 1");
+        }
+        this.scanBatchSize = scanBatchSize;
+    }
+
+    public boolean isMockGatewayEnabled() {
+        return mockGatewayEnabled;
+    }
+
+    public void setMockGatewayEnabled(boolean mockGatewayEnabled) {
+        this.mockGatewayEnabled = mockGatewayEnabled;
     }
 }

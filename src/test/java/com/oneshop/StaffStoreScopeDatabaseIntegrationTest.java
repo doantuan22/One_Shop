@@ -128,12 +128,12 @@ class StaffStoreScopeDatabaseIntegrationTest {
         try {
             jdbc.update("insert into dbo.staff_store_assignments(user_id,store_id,status,assigned_at) values (?,2,'ACTIVE',SYSDATETIME()),(?,4,'INACTIVE',SYSDATETIME())", user, user);
             assertThat(as(STAFF, "STAFF", scope::getAssignedStoreIds)).containsExactlyInAnyOrder(1L, 2L);
-            assertThat(as(STAFF, "STAFF", () -> scope.requireOrder(2L)).getStore().getId()).isEqualTo(2L);
+            assertThat(as(STAFF, "STAFF", () -> scope.requireOrder(5L)).getStore().getId()).isEqualTo(2L);
             assertThat(as(STAFF, "STAFF", () -> scope.requireStoreProduct(product(2))).getStore().getId()).isEqualTo(2L);
             assertThatThrownBy(() -> as(STAFF, "STAFF", () -> scope.requireStoreProduct(product(4)))).isInstanceOf(ResourceNotFoundException.class);
             jdbc.update("update dbo.staff_store_assignments set status='INACTIVE' where assignment_id>? and store_id=2", max);
             assertThat(as(STAFF, "STAFF", scope::getAssignedStoreIds)).containsExactly(1L);
-            assertThatThrownBy(() -> as(STAFF, "STAFF", () -> scope.requireOrder(2L))).isInstanceOf(ResourceNotFoundException.class);
+            assertThatThrownBy(() -> as(STAFF, "STAFF", () -> scope.requireOrder(5L))).isInstanceOf(ResourceNotFoundException.class);
         } finally { jdbc.update("delete from dbo.staff_store_assignments where assignment_id>? and user_id=?", max, user); }
     }
     @ParameterizedTest @ValueSource(strings = {"query", "form", "body", "path"})

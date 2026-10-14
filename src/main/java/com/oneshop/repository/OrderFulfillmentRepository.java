@@ -48,8 +48,9 @@ public interface OrderFulfillmentRepository extends JpaRepository<OrderFulfillme
     Optional<OrderFulfillment> findByIdForUpdate(@Param("id") Long id);
 
     /** Locks every Fulfillment of one Order in id order, after the Order lock, for the status aggregation. */
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select f from OrderFulfillment f where f.order.id = :orderId order by f.id asc")
+    @Query(value = "select f.* from dbo.order_fulfillments f with "
+            + "(updlock, rowlock, index(UQ_order_fulfillments_order_store), forceseek) "
+            + "where f.order_id = :orderId order by f.fulfillment_id", nativeQuery = true)
     List<OrderFulfillment> findByOrderIdForUpdate(@Param("orderId") Long orderId);
 
     /**

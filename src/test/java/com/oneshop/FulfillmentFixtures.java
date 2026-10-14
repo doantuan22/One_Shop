@@ -116,16 +116,32 @@ final class FulfillmentFixtures {
         return storeProducts.findByStoreIdAndProductId(storeId(storeCode), productId(sku)).orElseThrow().getId();
     }
 
-    /** Only {@code storeCode} sells {@code sku} (quantity {@code quantity}); every other Store has none of it. */
-    void isolate(String sku, String storeCode, int quantity) {
+    /** Makes sure the StoreProduct exists (the seed does not stock every SKU everywhere; the guard removes it later). */
+    private void ensureStoreProduct(String sku, String storeCode) {
         long store = storeId(storeCode);
         long product = productId(sku);
         if (storeProducts.findByStoreIdAndProductId(store, product).isEmpty()) {
-            // the seed does not stock every SKU everywhere: the guard removes this row afterwards
             jdbc.update("insert into dbo.store_products (store_id, product_id, price, quantity, reserved_quantity, "
                     + "status) select ?, product_id, price, 0, 0, 'ACTIVE' from dbo.products where product_id = ?",
                     store, product);
         }
+    }
+
+    /** Sets the quantity of {@code sku} at one Store, leaving every other Store untouched. */
+    void stockAt(String sku, String storeCode, int quantity) {
+        ensureStoreProduct(sku, storeCode);
+        jdbc.update("update dbo.store_products set quantity = ?, reserved_quantity = 0, status = 'ACTIVE' "
+                + "where store_product_id = ?", quantity, storeProduct(sku, storeCode));
+    }
+
+    int quantityAt(String sku, String storeCode) {
+        return jdbc.queryForObject("select quantity from dbo.store_products where store_product_id = ?",
+                Integer.class, storeProduct(sku, storeCode));
+    }
+
+    /** Only {@code storeCode} sells {@code sku} (quantity {@code quantity}); every other Store has none of it. */
+    void isolate(String sku, String storeCode, int quantity) {
+        ensureStoreProduct(sku, storeCode);
         long only = storeProduct(sku, storeCode);
         jdbc.update("update dbo.store_products set quantity = 0, reserved_quantity = 0 "
                 + "where product_id = ? and store_product_id <> ?", productId(sku), only);
@@ -191,6 +207,42 @@ final class FulfillmentFixtures {
             throw new IllegalStateException("expected one Order, got " + result.orders().size());
         }
         return result.orders().get(0).orderId();
+    }
+
+    /**
+     * One ONLINE DELIVERY Order whose single SKU is split between two Stores because neither holds the whole
+     * quantity (PENDING_PAYMENT until paid).
+     */
+    long onlineSplitSameSku(String sku, String storeA, int qtyA, String storeB, int qtyB, int requested) {
+        isolate(sku, storeA, qtyA);
+        stockAt(sku, storeB, qtyB);
+        long line = addToCart(ALICE, sku, requested);
+        return place(ALICE, new PlaceOrderRequest(List.of(line), FulfillmentType.DELIVERY, PaymentMethod.ONLINE,
+                "Người Nhận", "0912345678", ADDRESS, null, false, null, null));
+    }
+
+    /** Moves the creation time of an Order back, which is how a payment deadline is brought closer in tests. */
+    void ageOrder(long orderId, long minutes) {
+        jdbc.update("update dbo.orders set created_at = ? where order_id = ?",
+                java.time.LocalDateTime.now().minusMinutes(minutes).withNano(0), orderId);
+    }
+
+    /** Id of the (single) payment attempt of an Order. */
+    long attemptId(long orderId) {
+        return jdbc.queryForObject("select min(payment_id) from dbo.payments where order_id = ?", Long.class, orderId);
+    }
+
+    java.util.Map<String, Object> payment(long paymentId) {
+        return jdbc.queryForMap("select * from dbo.payments where payment_id = ?", paymentId);
+    }
+
+    List<java.util.Map<String, Object>> payments(long orderId) {
+        return jdbc.queryForList("select * from dbo.payments where order_id = ? order by payment_id", orderId);
+    }
+
+    int cancelRestores(long orderId) {
+        return jdbc.queryForObject("select count(*) from dbo.inventory_movements where reference_order_id = ? "
+                + "and type = 'CANCEL_ORDER'", Integer.class, orderId);
     }
 
     /** Writes what a verified ONLINE payment result (BE-05) would write: Payment SUCCESS, Order PAID + CONFIRMED. */

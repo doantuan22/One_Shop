@@ -16,8 +16,8 @@ import java.util.List;
 @PreAuthorize("hasRole('ADMIN')")
 @Transactional(readOnly = true)
 public class AdminOperationsService {
-    private static final List<OrderStatus> PROCESSING = List.of(OrderStatus.CONFIRMED, OrderStatus.PREPARING,
-            OrderStatus.PACKED, OrderStatus.SHIPPING, OrderStatus.READY_FOR_PICKUP);
+    private static final List<OrderStatus> PROCESSING = List.of(OrderStatus.CONFIRMED, OrderStatus.PROCESSING,
+            OrderStatus.SHIPPING, OrderStatus.PARTIALLY_COMPLETED);
     private final OrderRepository orders;
     private final StoreProductRepository stock;
     private final StaffStoreAssignmentRepository assignments;

@@ -49,8 +49,8 @@ public class Review extends CreatedAtEntity {
     private String comment;
 
     /**
-     * The COMPLETED Order the Customer used to be allowed to review. Assigned once, at creation; the Store of the
-     * review is {@code order.store}. Null for older reviews that could not be traced to an Order.
+     * Legacy Order context, also populated on new reviews for history. Never used to determine the source Store;
+     * only a consistent OrderItem -> Fulfillment -> Store grants Staff access.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")

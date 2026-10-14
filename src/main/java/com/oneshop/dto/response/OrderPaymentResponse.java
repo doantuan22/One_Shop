@@ -17,14 +17,29 @@ import java.util.List;
 public record OrderPaymentResponse(Long orderId, Long checkoutId, String storeName, BigDecimal totalAmount,
                                    PaymentMethod paymentMethod, OrderPaymentStatus paymentStatus,
                                    OrderStatus orderStatus, List<PaymentResponse> attempts,
-                                   LocalDateTime paymentDeadline, boolean expired) {
+                                   LocalDateTime paymentDeadline, boolean expired, boolean gatewayEnabled,
+                                   String ledgerState, boolean reconciling) {
+    /** Shape of BE-03 (deadline, no gateway information). */
+    public OrderPaymentResponse(Long orderId, Long checkoutId, String storeName, BigDecimal totalAmount,
+                                PaymentMethod paymentMethod, OrderPaymentStatus paymentStatus,
+                                OrderStatus orderStatus, List<PaymentResponse> attempts,
+                                LocalDateTime paymentDeadline, boolean expired) {
+        this(orderId, checkoutId, storeName, totalAmount, paymentMethod, paymentStatus, orderStatus, attempts,
+                paymentDeadline, expired, false, null, false);
+    }
+
 
     /** Legacy shape without a deadline, kept for V2 callers and tests. */
     public OrderPaymentResponse(Long orderId, Long checkoutId, String storeName, BigDecimal totalAmount,
                                 PaymentMethod paymentMethod, OrderPaymentStatus paymentStatus,
                                 OrderStatus orderStatus, List<PaymentResponse> attempts) {
         this(orderId, checkoutId, storeName, totalAmount, paymentMethod, paymentStatus, orderStatus, attempts, null,
-                false);
+                false, false, null, false);
+    }
+
+    /** The demo gateway offers its scenarios only while the customer can still pay a not-yet-submitted attempt. */
+    public boolean canSimulate() {
+        return gatewayEnabled && payable() && "AWAITING".equals(ledgerState);
     }
 
     public boolean payable() {

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thanh toán cần xử lý</title>
+</head>
+<body>
+<div class="os-admin-payments">
+    <div th:replace="~{fragments/components :: pageHeader('Thanh toán cần xử lý', 'Đơn ONLINE đang chờ đối soát hoặc cần quản trị viên quyết định. Cổng thanh toán là mô phỏng, không thu tiền thật.')}"></div>
+
+    <p class="mb-3">Tổng số đơn: <strong id="payment-case-count" th:text="${cases.totalElements}"></strong></p>
+
+    <div class="table-responsive">
+        <table class="table os-table align-middle">
+            <thead>
+            <tr>
+                <th>Đơn</th><th>Khách hàng</th><th>Trạng thái đơn</th><th>Thanh toán</th><th>Cổng trả lời</th>
+                <th>Hạn thanh toán</th><th>Đối soát đến</th><th class="text-end">Tổng tiền</th><th>Hoàn tiền mô phỏng</th>
+            </tr>
+            </thead>
+            <tbody id="payment-cases-body">
+            <tr th:each="c : ${cases.content}" th:attr="data-order-id=${c.orderId},data-order-status=${c.orderStatus}">
+                <td><a th:href="@{/admin/payments/{id}(id=${c.orderId})}" th:text="'#' + ${c.orderId}"></a></td>
+                <td><span th:text="${c.customerName}"></span><br><span class="small text-secondary" th:text="${c.customerEmail}"></span></td>
+                <td><span th:replace="~{staff/delivery/fragments :: state(${c.orderStatus})}"></span></td>
+                <td><span th:replace="~{staff/delivery/fragments :: payment(${c.paymentStatus})}"></span></td>
+                <td th:text="${c.verification}"></td>
+                <td th:text="${c.paymentDeadline != null} ? ${#temporals.format(c.paymentDeadline, 'dd/MM/yyyy HH:mm')} : '—'"></td>
+                <td th:text="${c.reconciliationDeadline != null} ? ${#temporals.format(c.reconciliationDeadline, 'dd/MM/yyyy HH:mm')} : '—'"></td>
+                <td class="text-end"><span th:replace="~{fragments/components :: price(${c.totalAmount})}"></span></td>
+                <td th:text="${c.refundStatus}"></td>
+            </tr>
+            <tr th:if="${cases.content.isEmpty()}"><td colspan="9" class="text-center text-secondary">Không có đơn nào cần xử lý thanh toán.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <nav class="d-flex justify-content-center gap-3 mt-3" th:if="${cases.totalPages > 1}" aria-label="Phân trang">
+        <a class="btn btn-outline-secondary" th:if="${cases.hasPrevious()}" th:href="@{/admin/payments(page=${cases.number - 1})}">Trang trước</a>
+        <span class="align-self-center" th:text="'Trang ' + ${cases.number + 1} + ' / ' + ${cases.totalPages}"></span>
+        <a class="btn btn-outline-secondary" th:if="${cases.hasNext()}" th:href="@{/admin/payments(page=${cases.number + 1})}">Trang sau</a>
+    </nav>
+</div>
+</body>
+</html>

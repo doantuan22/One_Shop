@@ -9,6 +9,7 @@
 > **Cập nhật 13/10/2026 (changelog):** (1) chốt **Immediate Physical Stock Deduction** (DEC-16); (2) chốt thời hạn `PENDING_PAYMENT` **15 phút** (DEC-15), thay thế điểm `[CẦN CHỐT]` OPEN-04; (3) bổ sung quy tắc chống race giữa callback, timeout, hủy và PREPARING (§10.4). Các quyết định khác không đổi.  
 > **Cập nhật 13/10/2026 (lần 2):** chốt thêm DEC-17..DEC-22: cửa sổ đối soát 15 phút, FAILED đã xác thực là cuối cùng, Admin xử lý `NEEDS_ATTENTION` thanh toán, tên cấu hình `oneshop.payment.*`, Mock Payment Gateway phía server, không triển khai Cross-Store Transfer (xem §10.4–§10.7, §14.1, §15.2).
 > **Cập nhật 13/10/2026 (lần 3):** chốt thêm DEC-23..DEC-25 (OPEN-01/02/03): cho phép chia quantity cùng SKU giữa nhiều Store, mọi Store ACTIVE có `delivery_enabled` giao toàn quốc (không GPS), phí DELIVERY cố định 30.000 VNĐ mỗi Order, STORE_PICKUP miễn phí (xem §4, §5.2, §3.5, §14.1, §15.2, §18).
+> **Cập nhật 14/10/2026 — BE-06:** chủ dự án chốt OPEN-05/DEC-26: mỗi OrderItem tối đa một Review, kể cả cùng SKU từ nhiều Store; cho phép ngoại lệ migration UNIQUE bảo toàn dữ liệu. Chốt OPEN-06/DEC-27: Admin chỉ moderation; chỉ Staff có assignment ACTIVE đúng Store nguồn được tạo/sửa Reply. Điều kiện Review là Fulfillment của dòng hàng COMPLETED, không cần toàn Order COMPLETED. Hồ sơ triển khai: `docs/v3/backend-reviews/`.
 
 ---
 
@@ -64,6 +65,8 @@ Các nhãn sau được áp dụng xuyên suốt:
 | DEC-23 | **OPEN-01:** cho phép chia quantity của **cùng một SKU** giữa nhiều StoreProduct/Store. Một Product có thể xuất hiện ở nhiều OrderItem của cùng Order, mỗi OrderItem truy vết một StoreProduct và một Fulfillment; tổng quantity bằng quantity khách xác nhận; không chuyển kho | **ĐÃ CHỐT** (13/10/2026) |
 | DEC-24 | **OPEN-02:** mọi Store `ACTIVE` có `delivery_enabled = true` được cấp hàng giao tới **mọi địa chỉ hợp lệ trên toàn lãnh thổ Việt Nam**. Không GPS, không khoảng cách, không nearest-store, không bắt buộc cùng tỉnh/quận | **ĐÃ CHỐT** (13/10/2026) |
 | DEC-25 | **OPEN-03:** phí DELIVERY **30.000 VNĐ cho mỗi Order**, không nhân theo số Fulfillment; mỗi Order độc lập của COD split chịu phí riêng; STORE_PICKUP phí 0 | **ĐÃ CHỐT** (13/10/2026) |
+| DEC-26 | **OPEN-05:** mỗi OrderItem tối đa một Review; cùng SKU từ hai Store có hai dòng Review độc lập khi từng Fulfillment COMPLETED. Cho phép migration thay `UQ_reviews_user_product` bằng UNIQUE filtered trên `order_item_id IS NOT NULL`, giữ UNIQUE legacy `(user_id, product_id)` cho dòng chưa có nguồn | **ĐÃ CHỐT** bởi chủ dự án (14/10/2026) |
+| DEC-27 | **OPEN-06:** Admin xem và bật/ẩn Review; tạo/sửa Reply thuộc Staff có assignment ACTIVE tại đúng Store nguồn. Không cho Admin trả lời thay Staff | **ĐÃ CHỐT** bởi chủ dự án (14/10/2026) |
 
 ### 0.2. Kết luận kiến trúc
 
@@ -436,7 +439,8 @@ order_item_id       FK -> order_items   -- NEW / cần enforce đúng nguồn
 rating              INT CHECK BETWEEN 1 AND 5
 content             ...
 created_at, updated_at, status ...
-UNIQUE(user_id, order_item_id) hoặc UNIQUE(order_item_id) tùy model owner
+UNIQUE filtered(order_item_id) WHERE order_item_id IS NOT NULL -- DEC-26, SQL Server unique index
+UNIQUE filtered(user_id, product_id) WHERE order_item_id IS NULL -- bảo toàn quy tắc Review legacy
 ```
 
 **ReviewReplies [ĐỀ XUẤT]:**
@@ -445,7 +449,7 @@ UNIQUE(user_id, order_item_id) hoặc UNIQUE(order_item_id) tùy model owner
 reply_id       PK
 review_id      FK -> reviews
 staff_user_id  FK -> users
-content        NVARCHAR(MAX) NOT NULL
+content        NVARCHAR(1000) NOT NULL -- độ dài thực tế của schema V3
 created_at, updated_at
 UNIQUE(review_id)      -- một phản hồi chính thức mỗi Review, phiên bản MVP
 ```
@@ -688,6 +692,18 @@ OneShop V3 dùng Mock Payment Gateway phía Backend; không tích hợp cổng n
 
 Mock SUCCESS **không** được tuyên bố là tiền ngân hàng đã thực thu. Hạn chế: không thêm bảng cho ledger; ledger là thành phần phía server, kết quả cuối ghi vào `payments`; trạng thái mô phỏng chưa kết thúc có thể mất khi khởi động lại và sẽ hiện ra như UNKNOWN rồi đi vào đối soát.
 
+**[ĐÃ TRIỂN KHAI — V3-BE-05, 14/10/2026]** Mock ledger **không** thêm bảng/cột: trạng thái giao dịch giả lập được lưu bền trong chính dòng `payments` của lần thanh toán ONLINE (xem `docs/v3/backend-payments/V3_BE05_PAYMENT_STATE_MACHINE_AND_TRANSACTIONS.md` mục 1):
+
+| Trạng thái ledger | `payments.status` | `paid_at` | `transaction_code` |
+|---|---|---|---|
+| AWAITING (chưa thanh toán) | PENDING | NULL | `MOCK-<ref>` |
+| IN_DOUBT (UNKNOWN) | PENDING | thời điểm khách gửi | `MOCK-<ref>~UNKNOWN` |
+| CAPTURED (đã thu, Order chưa áp dụng) | PENDING | thời điểm thu | `MOCK-<ref>` |
+| DECLINED | FAILED | NULL | `MOCK-<ref>` |
+| SETTLED | SUCCESS | thời điểm thu | `MOCK-<ref>` |
+
+Vì ledger nằm trong `payments`, một lần khởi động lại không làm mất trạng thái UNKNOWN hoặc khoản đã thu chưa áp dụng; worker quét lại và xử lý tiếp. Callback đến muộn trên Order đã `CANCELLED` được ghi nhận bằng một dòng `SUCCESS` mới (cùng reference, chỉ một dòng cho mỗi reference), refund mô phỏng đúng một lần, Order không được hồi sinh. Cổng mock tắt ở production (`oneshop.payment.mock-gateway-enabled=false` trong `application-prod.properties`).
+
 ### 10.7. Cấu hình [ĐÃ CHỐT — DEC-20]
 
 ```properties
@@ -699,7 +715,7 @@ oneshop.payment.timeout-scan-interval-ms=${ONESHOP_PAYMENT_TIMEOUT_SCAN_INTERVAL
 - `pending-timeout-minutes`: 15 phút để khách thanh toán. `reconciliation-window-minutes`: 15 phút đối soát giao dịch UNKNOWN sau deadline. `timeout-scan-interval-ms`: chu kỳ kiểm tra, mặc định 60 giây.
 - Trên môi trường demo áp dụng đúng 15 + 15 phút; không tự đổi thời hạn nghiệp vụ qua biến môi trường nếu chưa được chủ dự án phê duyệt. Chu kỳ quét có thể điều chỉnh theo vận hành.
 - Dùng `Clock` inject được để test; thời gian chuẩn hóa nhất quán giữa Java và SQL Server; không tin giờ từ client; không giữ DB transaction mở khi gọi gateway; không Redis/message queue.
-- Tài liệu này chỉ đặc tả; không sửa `application.properties`.
+- Đã triển khai ở BE-05: ba thuộc tính trên nằm trong `application.properties`; thêm `oneshop.payment.timeout-worker-enabled` (mặc định true), `oneshop.payment.scan-batch-size` (200) và `oneshop.payment.mock-gateway-enabled` (true; false ở prod). `oneshop.checkout.online-enabled` vẫn mặc định `false`.
 
 ---
 
@@ -765,6 +781,7 @@ Staff đăng nhập
 3. Staff có `StaffStoreAssignment ACTIVE` tại đúng Store đó mới có thể tạo/sửa reply theo quyền.
 4. Reply ghi `staff_user_id`, nội dung và timestamp; nếu có mô hình chỉ một phản hồi chính thức thì `UNIQUE(review_id)`.
 5. Không cho Staff sửa rating/nội dung Review của khách; quyền kiểm duyệt giữ riêng.
+6. **[ĐÃ CHỐT — DEC-27]** Admin chỉ xem/kiểm duyệt, không được tạo hoặc sửa Reply thay Staff. Reply V3 lưu trong `review_replies`; các cột reply legacy được giữ nguyên để bảo toàn lịch sử.
 
 ### 12.3. Trường hợp một SKU lấy từ hai Store
 
@@ -776,7 +793,7 @@ Order #1001
   OrderItem #12 -> SKU X x2 -> Fulfillment B -> Review #R12 -> Staff B
 ```
 
-Đây là hệ quả tự nhiên khi Review dựa trên nguồn; UI có thể nhóm “SKU X” nhưng cần giữ review context từng Store. **[CẦN CHỐT]** có muốn khách được review hai lần cho cùng SKU cùng Order nếu lấy từ hai Store hay không; phương án P0 an toàn là **mỗi OrderItem chỉ một Review**, phù hợp phân quyền trả lời.
+**[ĐÃ CHỐT 14/10/2026 — DEC-26 / OPEN-05]** Mỗi OrderItem tối đa một Review. Trong ví dụ trên, A COMPLETED và B SHIPPING thì chỉ được review dòng A; khi B COMPLETED khách được tạo Review riêng cho dòng B, cùng SKU và cùng Order. Không áp dụng giới hạn một Review cho toàn Product/Order. Chủ dự án cho phép migration UNIQUE có transaction, bảo toàn dữ liệu: `database/migrations/20261014_be06_review_uniqueness.sql`. Không tự backfill nguồn cho Review cũ.
 
 ### 12.4. Review cũ khi migration
 
@@ -1097,12 +1114,12 @@ Báo cáo B2 có nhắc các tên class `CartServiceImpl`, `CheckoutServiceImpl`
 
 | Mã | Điểm cần xác nhận | Phương án khuyến nghị | Tác động nếu khác |
 |---|---|---|---|
-| OPEN-01 | ~~Một SKU quantity lớn có được chia nguồn A/B?~~ **[ĐÃ CHỐT 13/10/2026 — DEC-23]**: được chia; mỗi đoạn là một OrderItem | Còn mở ở Review: mỗi OrderItem tối đa một Review (OPEN-05) | Review/Reply theo Store nguồn |
+| OPEN-01 | ~~Một SKU quantity lớn có được chia nguồn A/B?~~ **[ĐÃ CHỐT 13/10/2026 — DEC-23]**: được chia; mỗi đoạn là một OrderItem | Review đã chốt mỗi OrderItem tối đa một Review (DEC-26) | Review/Reply theo Store nguồn |
 | OPEN-02 | ~~Quy tắc địa bàn Store giao hàng~~ **[ĐÃ CHỐT 13/10/2026 — DEC-24]**: mọi Store `ACTIVE` + `delivery_enabled`, toàn quốc, không GPS | Không có | — |
 | OPEN-03 | ~~Phí giao khi nhiều Store~~ **[ĐÃ CHỐT 13/10/2026 — DEC-25]**: 30.000 VNĐ mỗi Order; pickup 0 | Không có | — |
 | OPEN-04 | ~~Timeout PENDING_PAYMENT và auto cancel/restore~~ **[ĐÃ CHỐT 13/10/2026 — DEC-15, DEC-17, DEC-18, DEC-20]**: 15 phút từ `created_at`; đối soát 15 phút cho UNKNOWN; FAILED đã xác thực là cuối cùng; Spring `@Scheduled`, idempotent, không queue | Chỉ còn chi tiết triển khai (plan §5.11): lưu mock ledger, mã lỗi hủy trong đối soát, quy ước `note` audit | Scheduler trong monolith, cấu hình |
-| OPEN-05 | Một SKU phân bổ hai Store, khách có thể đánh giá hai lần? | Mỗi OrderItem tối đa một Review | DB UNIQUE, UX Review |
-| OPEN-06 | Review Reply có cho Admin trả lời thay Staff không? | Giữ quyền trả lời theo Staff Store như yêu cầu, Admin chỉ moderation trừ khi duyệt khác | Authorization |
+| OPEN-05 | **[ĐÃ CHỐT 14/10/2026 — DEC-26]** Một Review mỗi OrderItem; cùng SKU ở hai Store có hai Review khi từng phần đã nhận | Migration UNIQUE bảo toàn dữ liệu được chủ dự án cho phép; 22 bảng, không sửa cột/seed | DB UNIQUE, UX Review |
+| OPEN-06 | **[ĐÃ CHỐT 14/10/2026 — DEC-27]** Admin chỉ moderation; Staff ACTIVE đúng Store nguồn mới tạo/sửa Reply | Không cấp quyền Admin trả lời thay Staff | Authorization |
 | OPEN-07 | Refund chỉ full trước PREPARING hay có partial refund sau giao lỗi? | P0 refund mô phỏng full cancellation; ngoại lệ sau giao để quy trình riêng | Schema refund/exception |
 | OPEN-08 | Với COD split, cho một CheckoutSession liên kết N Order độc lập? | Có, để truy xuất nguồn của một lượt xác nhận | DB không đổi; semantics API/UX |
 | OPEN-09 | Giá bán Product.price = 0 có hợp lệ với SKU ACTIVE? | Chặn bán nếu giá chưa được Admin xác nhận, trừ sản phẩm tặng nếu scope khác | Constraint/business validation |
@@ -1192,3 +1209,14 @@ Báo cáo B2 có nhắc các tên class `CartServiceImpl`, `CheckoutServiceImpl`
 - **Multi-Store Fulfillment:** một Order được nhiều Store xử lý bằng các Fulfillment độc lập. **Cross-Store Transfer** (chuyển hàng giữa chi nhánh) không được triển khai.
 
 **HẾT TÀI LIỆU — ONESHOP V3.0**
+
+---
+
+## Phụ lục C. Nghiệm thu BE-07 (14-10-2026)
+
+- Full regression trên SQL Server `oneshop_test`: **1.585 PASS, 0 failure, 0 error, 0 skipped**.
+- `05_verify.sql` PASS 12/12; 22 bảng, FK/CHECK trusted và checksum nội dung trước/sau test giống nhau. Database vận hành `oneshop` chỉ được đọc, không deploy hay migrate trong BE-07.
+- Migration Review đã duyệt `20261014_be06_review_uniqueness.sql` được kiểm tra chạy lặp lại trên test database: Review mới unique theo `order_item_id`; Review legacy không nguồn giữ unique theo `(user_id, product_id)`.
+- Staff chỉ tạo/sửa Reply khi có assignment `ACTIVE` tại đúng source Store; Admin chỉ xem/bật/ẩn Review.
+- V3-T30 backfill Order V2 **ngoài phạm vi nghiệm thu** theo xác nhận chủ dự án: repo không có backup/dataset V2. Nghiệm thu này không tuyên bố đã kiểm chứng chuyển đổi V2→V3.
+- Chứng cứ và runbook: `docs/v3/backend-regression/`.

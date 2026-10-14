@@ -124,6 +124,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void writeStatusAndHistory(Order order, OrderStatus target, User actor, String note) {
+        // BE-07: the retained V2 primitive must never bypass the V3 Fulfillment/payment orchestration.
+        // Spring always injects this repository; constructor-only legacy unit fixtures remain compilable.
+        if (fulfillmentRepository != null && order.getId() != null
+                && fulfillmentRepository.countByOrderId(order.getId()) > 0) {
+            throw new BadRequestException("Đơn V3 phải được xử lý qua phần giao hoặc luồng thanh toán/hủy đã xác thực.");
+        }
         if (note != null && note.length() > 500) {
             throw new BadRequestException("Ghi chú lịch sử không được vượt quá 500 ký tự.");
         }

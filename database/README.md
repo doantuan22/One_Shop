@@ -1,55 +1,31 @@
-# OneShop – Database (Phase 2)
+# OneShop V3 database
 
-SQL Server schema theo Roadmap V2 mục 7 (19 bảng). Chỉ gồm schema, constraint, index và seed – chưa có code Java.
+`database/` contains the canonical fresh-install path for OneShop V3. It has no drop/reseed utility and never upgrades an existing database implicitly.
 
-| Thứ tự | File | Nội dung |
-| --- | --- | --- |
-| 0 | `00_run_all.sql` | Chạy 01→05 (SQLCMD mode) |
-| 1 | `01_create_database.sql` | Tạo database `oneshop` nếu chưa có |
-| 2 | `02_create_tables.sql` | Drop + tạo 19 bảng, PK/FK/UNIQUE/CHECK |
-| 3 | `03_create_indexes.sql` | 6 index theo Roadmap 7.4 |
-| 4 | `04_seed_data.sql` | Dữ liệu mẫu duy nhất: dữ liệu nền (5 Store, 7 SKU, 5 order…) + khối seed lớn (xem dưới) |
-| 5 | `05_verify.sql` | Kiểm tra tự động, `THROW` nếu sai |
-
-## Chạy
-
-Từ thư mục `database/`:
-
-```
-sqlcmd -S localhost -E -C -f 65001 -b -i 00_run_all.sql
-```
-
-(SQL login: thay `-E` bằng `-U <user> -P <password>`.) Cần `-f 65001` để đọc UTF-8. Chạy lại được nhiều lần: `02` drop/tạo lại bảng, `04` tự dọn dữ liệu cũ. **Lưu ý: chạy lại sẽ xóa dữ liệu hiện có trong database `oneshop`.**
-
-Khớp `application.properties` (`databaseName=oneshop`). Tài khoản demo: mật khẩu `OneShop@123` (BCrypt) – chỉ dùng demo.
-
-Không còn script migration: `02_create_tables.sql` và `03_create_indexes.sql` đã gồm mọi cột/ràng buộc (`users.user_name`,
-`UNIQUE (user_id, product_id)` của `reviews`, `reviews.order_id/reply`, ảnh danh mục). Muốn nâng cấp DB cũ, dựng lại bằng `00_run_all.sql`.
-
-## Quy ước tự bổ sung (tài liệu không nêu chi tiết)
-
-Chỉ có 19 bảng của Roadmap 7.2; không thêm bảng nào. Các bảng ngoài 8 bảng có cột trọng tâm ở mục 7.3 dùng cột tối thiểu theo quan hệ mục 7.1:
-
-- **Cột bổ sung:** `roles.description`; `users.full_name/phone/status/created_at/updated_at`; `customer_addresses` (receiver_name, receiver_phone, address_line, is_default, created_at); `staff_store_assignments.status/assigned_at`; `categories.description/image_url/image_public_id/status` (V2.1: ảnh minh họa danh mục trên Cloudinary hoặc ảnh tĩnh trong repo); `brands.description/logo_url/logo_public_id/status` (Roadmap 3.2: ảnh thương hiệu trên Cloudinary); `product_images` (image_url, public_id, is_primary, sort_order, created_at); `carts`/`cart_items` timestamps; `reviews` (rating, comment, status, created_at); `stores.created_at/updated_at`.
-- **Giá trị enum quy ước:** `orders.payment_status` = UNPAID/PAID/FAILED (FAILED phục vụ luồng ONLINE thất bại, Roadmap 6.4); `payments.status` = PENDING/SUCCESS/FAILED; Store/StoreProduct/assignment/user = ACTIVE/INACTIVE; Product = ACTIVE/INACTIVE/HIDDEN; Category/Brand/Review = ACTIVE/HIDDEN. Các enum có trong tài liệu (order_status, fulfillment_type, payment_method, inventory type, checkout status) dùng nguyên văn.
-- **CHECK nghiệp vụ dẫn xuất từ tài liệu:** trên `orders` (DELIVERY chỉ COD/ONLINE, STORE_PICKUP chỉ PAY_AT_STORE/ONLINE – Roadmap 6.4; `pickup_*` chỉ STORE_PICKUP – 7.3; READY_FOR_PICKUP có `pickup_code` + `ready_at` – 6.6; PACKED/SHIPPING chỉ DELIVERY – 6.5/6.6; PENDING_PAYMENT chỉ ONLINE; DELIVERY có `shipping_address`); trên `inventory_movements` (before/after >= 0, after = before + change; ORDER âm, CANCEL_ORDER dương và có `reference_order_id`; STOCK_ADJUST có `staff_id` – 6.7/6.8); `order_items` (quantity > 0, subtotal = unit_price × quantity); `payments` (SUCCESS có `paid_at`); `cart_items.quantity > 0`.
-- **`order_items.store_product_id` (giữ):** cần để hủy Order hoàn tồn đúng StoreProduct và ghi `InventoryMovement` (BR-12, Roadmap 6.7). Đây là FK bắt buộc cho nghiệp vụ đã chốt, không phải cột dư.
-- **`order_items.product_sku` (đã loại):** Roadmap 6.3 chỉ yêu cầu snapshot `product_name, unit_price, quantity, subtotal`; SKU luôn truy được qua `store_product_id → products.sku` và SKU không đổi. Bảng `order_items` còn: order_item_id, order_id, store_product_id, product_name, unit_price, quantity, subtotal.
-- **Ngoài phạm vi schema (Service kiểm tra ở phase sau):** item cùng Store với Order, transition trạng thái, Store scope của Staff, chỉ Staff role mới được assignment, đánh giá chỉ sau COMPLETED. `05_verify.sql` chỉ kiểm tra dữ liệu seed.
-- **Seed:** `product_images`, logo thương hiệu và ảnh danh mục là URL/public_id Cloudinary (khối seed lớn trong `04_seed_data.sql`).
-
-## Dữ liệu mẫu: một bộ duy nhất (`04_seed_data.sql`)
-
-`04_seed_data.sql` chứa **toàn bộ** dữ liệu: dữ liệu nền (ID < 1000) + khối seed lớn (ID ≥ 1000) nằm giữa
-`BEGIN LARGE SEED` và `END LARGE SEED` (99 sản phẩm, 9 chi nhánh, 165 đơn, ảnh Cloudinary). Khối này do
-`src/test/java/com/oneshop/seed/LargeSeedGenerator.java` sinh, không sửa tay. `05_verify.sql` kiểm tra cả hai phần.
-Chi tiết, tài khoản thử nghiệm, ca biên, ảnh: `docs/SEED_LARGE.md`.
-
-| File | Dùng khi |
+| File | Purpose |
 | --- | --- |
-| `00_run_all.sql` | Chạy 01 → 05 một lần (SQLCMD mode, từ thư mục `database/`): `sqlcmd -S localhost -E -C -f 65001 -b -I -i 00_run_all.sql` |
-| `rebuild_dev_db.ps1` | Dựng lại DB **cục bộ** có sao lưu (`REBUILD_CONFIRM` = tên DB). `-BaseDataOnly` chỉ nạp dữ liệu nền (DB test `oneshop_test`) |
-| `seed_large/images/` | `image_plan.csv`, `image_sources.csv`, `image_manifest.csv` của ảnh seed |
+| `01_schema.sql` | Creates a new, empty database with all 22 V3 tables, keys, checks and indexes. It refuses an existing database. DEC-26 Review filtered unique indexes are included. |
+| `02_seed.sql` | Loads the deterministic V3 fixture only when the schema has no data. It never deletes existing rows. |
+| `03_verify.sql` | Read-only validation of schema, seed and integrity. |
+| `migrations/20261014_be06_review_uniqueness.sql` | Controlled, data-preserving upgrade for an existing database that still has the old Review uniqueness key. |
 
-Máy đích cần SQL Server có collation `Vietnamese_100_CI_AI`, `sqlcmd` và Internet (ảnh là URL Cloudinary công khai).
-Chạy sẽ **xóa và tạo lại** database `oneshop`. Mật khẩu tài khoản thử nghiệm `OneShop@123`: chỉ dùng cho phát triển/thử nghiệm.
+## Fresh install
+
+Choose a new database name. The commands below create **only** that database; `01_schema.sql` fails if it already exists.
+
+```powershell
+$db = 'oneshop_v3_local_test'
+sqlcmd -S localhost,1433 -E -C -b -I -f 65001 -v "DatabaseName=$db" -i database/01_schema.sql
+sqlcmd -S localhost,1433 -E -C -b -I -f 65001 -v "DatabaseName=$db" -i database/02_seed.sql
+sqlcmd -S localhost,1433 -E -C -b -I -f 65001 -v "DatabaseName=$db" -i database/03_verify.sql
+```
+
+For SQL authentication, replace `-E` with `-U <user>` and provide the password through `SQLCMDPASSWORD` or the platform secret mechanism. `-f 65001` preserves UTF-8 content.
+
+The seed supplies the V3 regression fixture: CUSTOMER/STAFF/ADMIN accounts, active and inactive Store assignments, catalog and stock allocation cases, Order/Fulfillment/Payment history, Reviews and Staff Replies. Product image rows use repository-local URLs; no Cloudinary upload or external image workflow runs as part of the SQL installation.
+
+## Existing database upgrade
+
+Do **not** run `01_schema.sql` or `02_seed.sql` against an existing database. Back up and restore-test first. The only retained upgrade script is `migrations/20261014_be06_review_uniqueness.sql`; it checks for duplicates, changes no rows and replaces the obsolete global Review `(user_id, product_id)` uniqueness with the approved filtered keys. Run `03_verify.sql` and application validation after the controlled upgrade.
+
+The old split create/index/seed scripts, destructive rebuild helper, large-seed generator and Cloudinary seed tooling were removed after the canonical SQL path passed fresh database verification and full regression.

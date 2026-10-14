@@ -53,9 +53,14 @@ public class CheckoutController {
                        @RequestParam(name = "paymentMethod", required = false) PaymentMethod paymentMethod,
                        @RequestParam(name = "pickupStoreId", required = false) Long pickupStoreId,
                        @RequestParam(name = "shippingAddress", required = false) String shippingAddress,
+                       @RequestParam(name = "receiverName", required = false) String receiverName,
+                       @RequestParam(name = "receiverPhone", required = false) String receiverPhone,
                        Principal principal, Model model, HttpServletResponse response) {
+        PlaceOrderRequest edited = receiverName == null && receiverPhone == null ? null
+                : new PlaceOrderRequest(cartItemIds, fulfillmentType, paymentMethod, receiverName, receiverPhone,
+                shippingAddress, pickupStoreId, false, null, null);
         return checkoutPage(principal, model, response, cartItemIds, fulfillmentType, paymentMethod, pickupStoreId,
-                shippingAddress, null, null, null);
+                shippingAddress, edited, null, null);
     }
 
     /** Places the order. On any refusal nothing was created and the page says why, with a fresh preview. */

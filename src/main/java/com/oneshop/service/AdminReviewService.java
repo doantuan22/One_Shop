@@ -4,6 +4,7 @@ import com.oneshop.dto.response.AdminReviewResponse;
 import com.oneshop.entity.VisibilityStatus;
 import com.oneshop.exception.ResourceNotFoundException;
 import com.oneshop.repository.ReviewRepository;
+import com.oneshop.service.review.ReviewReadMapper;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,15 +21,12 @@ public class AdminReviewService {
     private final ReviewRepository reviews;
     public AdminReviewService(ReviewRepository reviews) { this.reviews = reviews; }
     public Page<AdminReviewResponse> getReviews(int page) {
-        return reviews.findAllByOrderByCreatedAtDescIdDesc(PageRequest.of(Math.max(0, page), 20)).map(r ->
-                new AdminReviewResponse(r.getId(), r.getUser().getFullName(), r.getUser().getEmail(), r.getProduct().getId(),
-                        r.getProduct().getSku(), r.getProduct().getName(), r.getRating(), r.getComment(), r.getStatus(), r.getCreatedAt(),
-                        r.getOrder() == null ? null : r.getOrder().getId(),
-                        r.getOrder() == null ? null : r.getOrder().getStore().getName(), r.getReply(), r.getRepliedAt()));
+        return reviews.findAllByOrderByCreatedAtDescIdDesc(PageRequest.of(Math.max(0, page), 20))
+                .map(ReviewReadMapper::adminReview);
     }
     @Transactional
     public void setStatus(Long id, @NotNull VisibilityStatus status) {
-        var review = reviews.findById(id).orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đánh giá."));
+        var review = reviews.findByIdForUpdate(id).orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đánh giá."));
         review.setStatus(status);
         reviews.flush();
     }

@@ -114,6 +114,13 @@ public class WebExceptionHandler {
         return errorView(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    @ExceptionHandler(PaymentConflictException.class)
+    public ModelAndView handlePaymentConflict(PaymentConflictException ex) {
+        ModelAndView mav = errorView(HttpStatus.CONFLICT, ex.getMessage());
+        mav.addObject("code", ex.getCode());
+        return mav;
+    }
+
     @ExceptionHandler(FulfillmentConflictException.class)
     public ModelAndView handleFulfillmentConflict(FulfillmentConflictException ex) {
         ModelAndView mav = errorView(HttpStatus.CONFLICT, ex.getMessage());

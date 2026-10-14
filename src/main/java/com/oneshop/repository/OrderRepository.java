@@ -17,15 +17,21 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
+    String STORE_SOURCE = " (exists (select f.id from OrderFulfillment f where f.order.id=o.id and f.store.id=:storeId)"
+            + " or (o.store.id=:storeId and not exists (select f.id from OrderFulfillment f where f.order.id=o.id)))";
 
     /** Admin sees every status, including historical orders of inactive Stores. */
     @EntityGraph(attributePaths = {"store", "user"})
-    @Query("select o from Order o where (:storeId is null or o.store.id = :storeId) order by o.createdAt desc, o.id desc")
+    @Query("select o from Order o where (:storeId is null or exists (select f.id from OrderFulfillment f "
+            + "where f.order.id=o.id and f.store.id=:storeId) or (o.store.id=:storeId and not exists "
+            + "(select f.id from OrderFulfillment f where f.order.id=o.id))) order by o.createdAt desc, o.id desc")
     Page<Order> searchAdmin(@Param("storeId") Long storeId, Pageable pageable);
 
-    long countByStoreId(Long storeId);
+    @Query("select count(o) from Order o where" + STORE_SOURCE)
+    long countByStoreId(@Param("storeId") Long storeId);
 
-    long countByStoreIdAndOrderStatus(Long storeId, OrderStatus status);
+    @Query("select count(o) from Order o where" + STORE_SOURCE + " and o.orderStatus=:status")
+    long countByStoreIdAndOrderStatus(@Param("storeId") Long storeId, @Param("status") OrderStatus status);
 
     Optional<Order> findByIdAndUserEmail(Long orderId, String email);
 
@@ -63,7 +69,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Page<Order> findByStoreIdAndOrderStatusIn(Long storeId, Collection<OrderStatus> statuses, Pageable pageable);
 
-    long countByStoreIdAndOrderStatusIn(Long storeId, Collection<OrderStatus> statuses);
+    @Query("select count(o) from Order o where" + STORE_SOURCE + " and o.orderStatus in :statuses")
+    long countByStoreIdAndOrderStatusIn(@Param("storeId") Long storeId, @Param("statuses") Collection<OrderStatus> statuses);
 
     long countByStoreIdAndFulfillmentTypeAndOrderStatus(Long storeId, FulfillmentType type, OrderStatus status);
 
@@ -75,4 +82,32 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @EntityGraph(attributePaths = {"store", "user"})
     Page<Order> findByStoreIdInAndFulfillmentTypeAndOrderStatusInOrderByCreatedAtDescIdDesc(
             Collection<Long> storeIds, FulfillmentType type, Collection<OrderStatus> statuses, Pageable pageable);
+
+    // ---- V3-BE-05: payment timeout / reconciliation candidates ----
+
+    /**
+     * ONLINE Orders a scan has to look at: still pending and past the payment cutoff, or pending with a settled-but-
+     * unapplied ledger entry (a declined attempt, or a collection not applied: crash recovery), or waiting for an
+     * administrator because of a payment result (UNPAID NEEDS_ATTENTION). Ids only; every decision re-reads under lock.
+     */
+    @Query("select o.id from Order o where o.paymentMethod = com.oneshop.entity.PaymentMethod.ONLINE and ("
+            + "o.id > :afterId and ("
+            + "(o.orderStatus = com.oneshop.entity.OrderStatus.PENDING_PAYMENT and (o.createdAt <= :cutoff or exists ("
+            + "select 1 from Payment p where p.order = o and (p.status = com.oneshop.entity.PaymentStatus.FAILED"
+            + " or (p.status = com.oneshop.entity.PaymentStatus.PENDING and p.paidAt is not null)))))"
+            + " or (o.orderStatus = com.oneshop.entity.OrderStatus.NEEDS_ATTENTION"
+            + " and o.paymentStatus = com.oneshop.entity.OrderPaymentStatus.UNPAID))) order by o.id")
+    List<Long> findPaymentCandidateIds(@Param("cutoff") java.time.LocalDateTime cutoff,
+                                       @Param("afterId") long afterId, Pageable pageable);
+
+    /** Admin list: ONLINE Orders whose payment needs a person (or is being reconciled). */
+    @EntityGraph(attributePaths = {"user"})
+    @Query("select o from Order o where o.paymentMethod = com.oneshop.entity.PaymentMethod.ONLINE and ("
+            + "o.orderStatus = com.oneshop.entity.OrderStatus.NEEDS_ATTENTION or (o.orderStatus = "
+            + "com.oneshop.entity.OrderStatus.PENDING_PAYMENT and o.createdAt <= :cutoff) or exists ("
+            + "select 1 from Payment p where p.order = o and p.status = com.oneshop.entity.PaymentStatus.SUCCESS"
+            + " and p.refundStatus in (com.oneshop.entity.PaymentRefundStatus.SIMULATION_FAILED,"
+            + " com.oneshop.entity.PaymentRefundStatus.PENDING_SIMULATION))) order by o.createdAt desc, o.id desc")
+    org.springframework.data.domain.Page<Order> findPaymentCasesForAdmin(@Param("cutoff") java.time.LocalDateTime cutoff,
+                                                                         Pageable pageable);
 }

@@ -120,8 +120,10 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
-                        <!-- overrides DB_NAME of .env for the forked test JVM; build the database with database/rebuild_dev_db.ps1 -Database oneshop_test -BaseDataOnly -->
+                        <!-- overrides DB_NAME of .env for the forked test JVM; provision a fresh *_test database with database/01_schema.sql and 02_seed.sql -->
                         <DB_NAME>${oneshop.test.db}</DB_NAME>
+                        <!-- the timeout worker would cancel the seeded expired ONLINE Order of the test database; tests call the scan directly -->
+                        <oneshop.payment.timeout-worker-enabled>false</oneshop.payment.timeout-worker-enabled>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

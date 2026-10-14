@@ -2,7 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head><title>Đánh giá của chi nhánh</title></head>
 <body>
-<div th:replace="~{fragments/components :: pageHeader('Đánh giá của chi nhánh', 'Chỉ hiển thị đánh giá của đơn thuộc chi nhánh được phân công. Mỗi đánh giá có một phản hồi, có thể sửa lại.')}"></div>
+<div th:replace="~{fragments/components :: pageHeader('Đánh giá của chi nhánh', 'Đánh giá từ phần hàng đã giao của chi nhánh được phân công. Mỗi đánh giá có một phản hồi, có thể sửa lại.')}"></div>
 <div class="alert alert-success" th:if="${param.replied}">Đã lưu phản hồi.</div>
 <div class="alert alert-danger" th:if="${param.replyError}">Phản hồi phải có từ 1 đến 1000 ký tự.</div>
 <p class="text-secondary">Tổng số đánh giá: <strong id="review-count" th:text="${reviews.totalElements}"></strong></p>
@@ -11,12 +11,14 @@
     <div class="card-body">
         <div class="d-flex flex-wrap justify-content-between gap-2">
             <div>
-                <div class="fw-semibold" th:text="${r.productName}">Sản phẩm</div>
+                <a class="fw-semibold" th:href="@{/staff/reviews/{id}(id=${r.id})}" th:text="${r.productName}">Sản phẩm</a>
                 <div class="small text-secondary"><span th:text="${r.sku}">SKU</span> &middot; <span th:text="${r.storeName}">Chi nhánh</span></div>
             </div>
             <div class="text-end">
                 <div th:text="${r.rating} + ' / 5 sao'">5 / 5 sao</div>
-                <a class="small" th:href="@{/staff/orders/{id}(id=${r.orderId})}" th:text="'Đơn #' + ${r.orderId}">Đơn</a>
+                <span class="small" th:text="'Đơn #' + ${r.orderId}">Đơn</span>
+                <a class="small d-block" th:if="${r.fulfillmentId != null}" th:href="@{/staff/fulfillments/{id}(id=${r.fulfillmentId})}"
+                   th:text="'Phần giao #' + ${r.fulfillmentId}">Phần giao</a>
             </div>
         </div>
         <p class="mb-1 mt-2" style="white-space: pre-line" th:if="${r.comment}" th:text="${r.comment}">Nhận xét</p>

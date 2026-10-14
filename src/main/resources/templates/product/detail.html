@@ -407,10 +407,12 @@
 
                 <div class="stock-status-pill">
                     <span class="text-secondary small me-1">Tình trạng:</span>
-                    <span th:if="${selectedStore != null and detail.atSelectedStore != null}"
-                          th:replace="~{fragments/components :: availability(${detail.atSelectedStore.inStock})}"></span>
-                    <span th:unless="${selectedStore != null and detail.atSelectedStore != null}"
-                          th:replace="~{fragments/components :: availability(${detail.inStock()})}"></span>
+                    <th:block th:if="${selectedStore != null and detail.atSelectedStore != null}">
+                        <span th:replace="~{fragments/components :: availability(${detail.atSelectedStore.inStock})}"></span>
+                    </th:block>
+                    <th:block th:unless="${selectedStore != null and detail.atSelectedStore != null}">
+                        <span th:replace="~{fragments/components :: availability(${detail.inStock()})}"></span>
+                    </th:block>
                 </div>
 
                 <div id="add-to-cart" th:if="${detail.inStock()}">
@@ -511,7 +513,7 @@
             <div class="alert alert-danger" th:if="${param.reviewError != null and #strings.equals(param.reviewError[0], 'invalid')}">
                 Vui lòng chọn từ 1 đến 5 sao; nhận xét tối đa 1000 ký tự.</div>
             <div class="alert alert-warning" th:if="${param.reviewError != null and !#strings.equals(param.reviewError[0], 'invalid')}">
-                Không thể gửi đánh giá. Bạn chỉ đánh giá được sản phẩm đã nhận trong đơn hoàn tất, mỗi sản phẩm một lần.</div>
+                Không thể gửi đánh giá. Mỗi dòng hàng đã nhận chỉ được đánh giá một lần.</div>
 
             <p class="text-secondary" id="no-reviews" th:if="${productReviews.count == 0}">Chưa có đánh giá nào.</p>
             <p id="review-summary" th:unless="${productReviews.count == 0}">
@@ -525,6 +527,7 @@
                         <span th:text="${review.rating} + ' / 5 sao'">5 / 5 sao</span>
                     </div>
                     <div class="small text-secondary" th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}">01/01/2026</div>
+                    <div class="small text-secondary" th:if="${review.replyStoreName != null}" th:text="${review.replyStoreName}">Chi nhánh cấp hàng</div>
                     <p class="mb-0 mt-1" style="white-space: pre-line" th:if="${review.comment}" th:text="${review.comment}">Nhận xét</p>
                     <div class="os-review-reply border-start border-3 ps-2 mt-2 small" th:if="${review.reply != null}">
                         <div class="fw-semibold"
@@ -534,18 +537,25 @@
                 </li>
             </ul>
 
-            <form th:if="${canReview == true}" th:action="@{/reviews}" method="post" class="card card-body">
+            <form th:each="item : ${reviewItems}" th:if="${item.reviewable()}" th:action="@{/reviews}" method="post" class="card card-body mb-2"
+                  th:attr="data-review-item=${item.orderItemId}">
+                <div class="small text-secondary mb-2">
+                    <a th:href="@{/orders/{id}(id=${item.orderId})}" th:text="'Đơn #' + ${item.orderId}">Đơn đã mua</a>
+                    &middot; <span th:text="${item.storeName}">Chi nhánh cấp hàng</span>
+                </div>
+                <input type="hidden" name="orderItemId" th:value="${item.orderItemId}">
+                <input type="hidden" name="orderId" th:value="${item.orderId}">
                 <input type="hidden" name="productId" th:value="${product.id}">
                 <div class="mb-2">
-                    <label class="form-label" for="review-rating">Số sao</label>
-                    <select class="form-select w-auto" id="review-rating" name="rating" required>
+                    <label class="form-label" th:for="'review-rating-' + ${item.orderItemId}">Số sao</label>
+                    <select class="form-select w-auto" th:id="'review-rating-' + ${item.orderItemId}" name="rating" required>
                         <option value="">Chọn</option>
                         <option th:each="n : ${#numbers.sequence(5, 1, -1)}" th:value="${n}" th:text="${n} + ' sao'"></option>
                     </select>
                 </div>
                 <div class="mb-2">
-                    <label class="form-label" for="review-comment">Nhận xét (không bắt buộc)</label>
-                    <textarea class="form-control" id="review-comment" name="comment" rows="3" maxlength="1000"></textarea>
+                    <label class="form-label" th:for="'review-comment-' + ${item.orderItemId}">Nhận xét (không bắt buộc)</label>
+                    <textarea class="form-control" th:id="'review-comment-' + ${item.orderItemId}" name="comment" rows="3" maxlength="1000"></textarea>
                 </div>
                 <div><button type="submit" class="btn btn-primary">Gửi đánh giá</button></div>
             </form>

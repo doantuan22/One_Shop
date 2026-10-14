@@ -463,7 +463,7 @@
                   </div>
                   <div class="col-12" th:if="${preview.fulfillmentType.name() == 'DELIVERY'}">
                     <label class="field-label" for="shippingAddress">Địa chỉ giao hàng</label>
-                    <input type="text" id="shippingAddress" name="shippingAddress" class="form-control form-control-custom"
+                    <input type="text" id="shippingAddress" name="shippingAddress" class="form-control form-control-custom os-refresh"
                            maxlength="500"
                            th:value="${form != null ? form.shippingAddress : preview.shippingAddress}" />
                   </div>
@@ -614,6 +614,10 @@
             if (pay && input.name !== "fulfillmentType") params.set("paymentMethod", pay.value);
             if (store && input.name !== "fulfillmentType") params.set("pickupStoreId", store.value);
             if (addr && addr.value) params.set("shippingAddress", addr.value);
+            ["receiverName", "receiverPhone"].forEach(function (name) {
+              var field = form.querySelector('input[name="' + name + '"]');
+              if (field) params.set(name, field.value);
+            });
             window.location.href = form.getAttribute("data-refresh-url") + "?" + params.toString();
           });
         });

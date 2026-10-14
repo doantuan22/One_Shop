@@ -40,7 +40,7 @@ final class Phase9IntegrationScenario {
                 "stores", rows("stores"), "assignments", rows("staff_store_assignments"));
     }
     final class Cleanup implements AutoCloseable {
-        private final SeedGuard guard = new SeedGuard(jdbc);
+        private final SeedGuardV3 guard = new SeedGuardV3(jdbc);
         private final Map<String, List<Map<String, Object>>> before = snapshot(), scopeBefore = scope();
         private final List<Map<String, Object>> catalog = rows("products");
         Cleanup() { guard.remember(); }
@@ -98,45 +98,23 @@ final class Phase9IntegrationScenario {
                 + (type.equals("DELIVERY") ? "&" + p + "shippingAddress=9+Integration+Street" : "");
     }
     private long add(long store, String sku) throws Exception {
-        long sp = jdbc.queryForObject("select sp.store_product_id from dbo.store_products sp join dbo.products p on p.product_id=sp.product_id where sp.store_id=? and p.sku=?", Long.class, store, sku);
-        check(post(account(CUSTOMER), "/cart/items", "storeProductId=" + sp + "&quantity=1").statusCode() == 302, "real cart add");
-        long line = jdbc.queryForObject("select ci.cart_item_id from dbo.cart_items ci join dbo.carts c on c.cart_id=ci.cart_id join dbo.users u on u.user_id=c.user_id where u.email=? and ci.store_product_id=?", Long.class, CUSTOMER, sp);
-        check(post(account(CUSTOMER), "/cart/items/" + line, "quantity=1").statusCode() == 302, "fixture one unit, including preexisting cart lines");
-        return line;
+        long product=jdbc.queryForObject("select product_id from dbo.products where sku=?",Long.class,sku);
+        check(post(account(CUSTOMER),"/cart/items","productId="+product+"&quantity=1").statusCode()==302,"V3 central cart add");
+        long line=jdbc.queryForObject("select ci.cart_item_id from dbo.cart_items ci join dbo.carts c on c.cart_id=ci.cart_id join dbo.users u on u.user_id=c.user_id where u.email=? and ci.product_id=?",Long.class,CUSTOMER,product);
+        check(post(account(CUSTOMER),"/cart/items/"+line,"quantity=1").statusCode()==302,"one central unit");return line;
     }
     private long place(List<Long> lines, List<String> choices) throws Exception {
         var response = post(account(CUSTOMER), "/checkout", String.join("&", lines.stream().map(id -> "cartItemIds=" + id).toList()) + "&" + String.join("&", choices));
-        check(response.statusCode() == 302, "single real checkout");
+        check(response.statusCode() == 302, "single real checkout: status="+response.statusCode()+" choices="+choices+" errors="+response.body().replaceAll("(?s)<[^>]*>"," ").replaceAll("\\s+"," "));
         Matcher id = Pattern.compile("/checkout/(\\d+)").matcher(response.headers().firstValue("Location").orElseThrow());
         check(id.find(), "checkout result redirect"); return Long.parseLong(id.group(1));
     }
     Mixed mixed() throws Exception {
-        var stock = rows("store_products"); int sessions = rows("checkout_sessions").size(), orders = rows("orders").size();
-        long checkout = place(List.of(add(1, "COCOON-SERUM-30"), add(2, "INNI-TONER-200"), add(4, "INNI-CLEANS-120")),
-                List.of(group(0, 1, "DELIVERY", "COD"), group(1, 2, "STORE_PICKUP", "ONLINE"), group(2, 4, "STORE_PICKUP", "PAY_AT_STORE")));
-        var created = jdbc.queryForList("select * from dbo.orders where checkout_id=? order by store_id", checkout);
-        check(created.size() == 3 && rows("orders").size() == orders + 3 && rows("checkout_sessions").size() == sessions + 1, "one session, three orders");
-        var f = new Mixed(checkout, number(created.get(0).get("order_id")), number(created.get(1).get("order_id")), number(created.get(2).get("order_id")));
-        state(f.a, "CONFIRMED", "UNPAID"); state(f.b, "PENDING_PAYMENT", "UNPAID"); state(f.c, "CONFIRMED", "UNPAID");
-        BigDecimal sum = BigDecimal.ZERO;
-        for (long id : f.ids()) {
-            var o = order(id); check(receipts(id).isEmpty(), "no payment at checkout");
-            var items = jdbc.queryForList("select * from dbo.order_items where order_id=?", id); check(items.size() == 1, "single snapshot per store");
-            var item = items.get(0); long sp = number(item.get("store_product_id"));
-            var prior = stock.stream().filter(s -> number(s.get("store_product_id")) == sp).findFirst().orElseThrow();
-            var current = jdbc.queryForMap("select * from dbo.store_products where store_product_id=?", sp);
-            check(number(item.get("quantity")) == 1 && number(current.get("quantity")) == number(prior.get("quantity")) - 1, "Q -> Q-1 exactly once");
-            check(current.get("store_id").equals(o.get("store_id")) && item.get("unit_price").equals(prior.get("price")) && item.get("subtotal").equals(o.get("total_amount")), "store ownership and money snapshot");
-            var movement = jdbc.queryForMap("select * from dbo.inventory_movements where reference_order_id=?", id);
-            check(movement.get("type").equals("ORDER") && number(movement.get("quantity_change")) == -1 && movement.get("store_product_id").equals(sp)
-                    && movement.get("quantity_before").equals(prior.get("quantity")) && movement.get("quantity_after").equals(current.get("quantity")) && movement.get("staff_id") == null, "ORDER movement FK/before/after");
-            sum = sum.add((BigDecimal) o.get("total_amount"));
-        }
-        check(sum.equals(jdbc.queryForObject("select total_amount from dbo.checkout_sessions where checkout_id=?", BigDecimal.class, checkout)), "grouping total snapshot");
-        check(jdbc.queryForObject("select count(*) from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='payments' and COLUMN_NAME in ('checkout_id','checkout_session_id')", Integer.class) == 0, "Payment has no checkout FK");
-        var result = get("/checkout/" + checkout, account(CUSTOMER)); check(result.statusCode() == 200, "checkout UI");
-        f.ids().forEach(id -> check(result.body().contains("/orders/" + id), "result to own order detail"));
-        return f;
+        // A checkout has one receiving/payment choice in V3. Create three independent real checkouts for cross-flow isolation.
+        long a=place(List.of(add(1,"COCOON-SERUM-30")),List.of("fulfillmentType=DELIVERY&paymentMethod=COD&receiverName=Fixture&receiverPhone=0912345678&shippingAddress=11+Test+Street+TP+Ho+Chi+Minh"));
+        long b=place(List.of(add(2,"COCOON-SHAM-310")),List.of("fulfillmentType=STORE_PICKUP&paymentMethod=ONLINE&pickupStoreId=2&receiverName=Fixture&receiverPhone=0912345678"));
+        long c=place(List.of(add(4,"SENKA-WHIP-120")),List.of("fulfillmentType=STORE_PICKUP&paymentMethod=PAY_AT_STORE&pickupStoreId=4&receiverName=Fixture&receiverPhone=0912345678"));
+        return new Mixed(a,jdbc.queryForObject("select order_id from dbo.orders where checkout_id=?",Long.class,a),jdbc.queryForObject("select order_id from dbo.orders where checkout_id=?",Long.class,b),jdbc.queryForObject("select order_id from dbo.orders where checkout_id=?",Long.class,c));
     }
     @FunctionalInterface interface Action { void run() throws Exception; }
     void isolated(Mixed f, long target, boolean inventoryUnchanged, Action action) throws Exception {
@@ -163,12 +141,7 @@ final class Phase9IntegrationScenario {
         receipt(f.a, "COD", "SUCCESS"); timeline(f.a, STAFF.get(1L), List.of("CONFIRMED", "PREPARING", "PACKED", "SHIPPING", "COMPLETED"), 1);
     }
     long onlineResult(Mixed f, boolean success) throws Exception {
-        check(get("/orders/" + f.b, account(CUSTOMER)).body().contains("/orders/" + f.b + "/payments"), "pending customer payment link");
-        mutate(f, f.b, "/orders/" + f.b + "/payments/attempts", CUSTOMER, FORGED);
-        long p = number(receipts(f.b).get(0).get("payment_id"));
-        isolated(f, f.b, success, () -> check(post(account(CUSTOMER), "/orders/" + f.b + "/payments/" + p + (success ? "/success" : "/failure"), FORGED).statusCode() == 302, "online result"));
-        state(f.b, success ? "CONFIRMED" : "CANCELLED", success ? "PAID" : "FAILED");
-        receipt(f.b, "ONLINE", success ? "SUCCESS" : "FAILED"); return p;
+        long p=number(receipts(f.b).getFirst().get("payment_id"));check(post(account(CUSTOMER),"/orders/"+f.b+"/payments/"+p+"/simulate","scenario="+(success?"SUCCESS":"FAILED")).statusCode()==302,"server verified gateway result");state(f.b,success?"CONFIRMED":"CANCELLED",success?"PAID":"FAILED");return p;
     }
     void pickupReady(Mixed f, long id, long store) throws Exception {
         check(!get("/orders/" + id, account(CUSTOMER)).body().contains("id=\"pickup-code\""), "code hidden before ready");

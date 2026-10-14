@@ -34,7 +34,7 @@ The goal of the subsequent backend phases is to incrementally transition the bus
    - **DEC-25 Shipping fee (OPEN-03):** DELIVERY costs 30.000 VND once per Order (not per Fulfillment); every independent Order of a COD split pays its own; STORE_PICKUP is free; computed on the backend.
    - Payment callback, timeout worker, customer cancellation, Admin resolution and Staff `PREPARING` are serialized by the Order row lock; every path is idempotent (no double restoration, no double simulated refund, no duplicate payment confirmation).
    - An Order already `CANCELLED` is never revived by a late callback; collected money is reconciled through the simulated refund.
-4. **Zero Schema Modification:** The SQL Server schema is frozen and locked; no DDL alterations are permitted.
+4. **Schema freeze with one explicit owner-approved exception (14/10/2026, BE-06 / DEC-26):** replace review uniqueness only, using `database/migrations/20261014_be06_review_uniqueness.sql`: unique non-null `order_item_id`, plus unique `(user_id, product_id)` for legacy null-source rows. No table/column/seed change; all 22 tables remain. Other phases' schema freeze still applies.
 5. **Comprehensive Automated Verification:** Every phase concludes with targeted integration tests matching the domain before proceeding to the next phase.
 
 ---
@@ -221,6 +221,15 @@ flowchart TD
     - Per-`StoreProduct` restoration test across multiple stores; double-restoration and double-refund guard tests.
     - All timing tests use a controlled/fake `Clock`.
 
+#### Implementation status (14/10/2026)
+
+- **DONE for the BE-05 scope.** Documents: `docs/v3/backend-payments/` (`V3_BE05_IMPLEMENTATION_REPORT.md`, `V3_BE05_COMPONENT_CHANGE_MATRIX.md`, `V3_BE05_PAYMENT_STATE_MACHINE_AND_TRANSACTIONS.md`, `V3_BE05_TEST_RESULTS.md`, `V3_BE05_HANDOVER.md`). ONLINE checkout is **not** opened: `oneshop.checkout.online-enabled=false` remains the default.
+- **Item "Persistence of the mock ledger" (Section 5.11) resolved without a schema change:** the ledger is the `payments` row of the attempt. AWAITING = `PENDING`/no `paid_at`; IN_DOUBT (UNKNOWN) = `PENDING` + `paid_at` (submission time) + `~UNKNOWN` suffix on `transaction_code`; CAPTURED = `PENDING` + `paid_at` (collection time); DECLINED = `FAILED`; SETTLED = `SUCCESS`. The reference never changes, so de-duplication and late callbacks work across restarts. A restart therefore does **not** lose in-flight simulated states.
+- **Items "Customer cancel during reconciliation" and "Final route names and error codes" decided:** `409 PAYMENT_RECONCILING` for cancel and for new payment while UNKNOWN; customer `POST /orders/{id}/payments/{paymentId}/simulate`; Admin `/admin/payments`, `/admin/payments/{orderId}/recheck|gateway|refund`; codes `PAYMENT_RECONCILING`, `PAYMENT_NOT_PAYABLE`, `PAYMENT_ALREADY_FINAL`, `GATEWAY_DISABLED`, `NOT_A_PAYMENT_CASE`, `NOTHING_TO_REFUND`.
+- **Item `OrderTransitionPolicy`:** the payment-domain edges (`PENDING_PAYMENT -> NEEDS_ATTENTION`, `NEEDS_ATTENTION -> CONFIRMED/CANCELLED`, `CONFIRMED -> CANCELLED`) live in `OrderStatusWriter`; the V2 graph is untouched.
+- Added properties: `oneshop.payment.timeout-worker-enabled` (true; the test suite sets false), `oneshop.payment.scan-batch-size` (200), `oneshop.payment.mock-gateway-enabled` (true; **false in `application-prod.properties`**).
+- Test timing uses `orders.created_at` moved back in the test database (the production code reads the injected `Clock`); a fake `Clock` bean was not introduced.
+
 ---
 
 ### Phase V3-BE-06: Customer Reviews & Staff Replies
@@ -230,7 +239,7 @@ flowchart TD
 #### Tasks:
 1. **Purchased Item Verification:**
    - Update `ReviewService.createReview` to require `orderItemId`.
-   - Validate that `orderItem.order.user.id == currentUserId` and `orderItem.order.orderStatus == COMPLETED`.
+   - Validate ownership and complete source consistency. Eligibility is `orderItem.fulfillment.status == COMPLETED`, with PAID and not CANCELLED/REFUNDED; the whole Order need not be COMPLETED (PARTIALLY_COMPLETED is allowed).
    - Ensure a user can only review each `order_item_id` once.
 2. **Staff Review Reply Operations:**
    - Refactor `StaffReviewController`:
@@ -240,6 +249,20 @@ flowchart TD
 3. **Phase Deliverables & Verification:**
    - Review eligibility and unique constraint tests.
    - Review reply integration tests.
+
+#### Approved BE-06 policy (14/10/2026)
+
+- **DEC-26 / OPEN-05 closed by the owner:** one Review per OrderItem, including same-SKU allocations across Stores. The real SQL Server UNIQUE(user_id, product_id) prevented this; the owner explicitly authorized the data-preserving UNIQUE migration above. Applied to `oneshop_test`; operational database upgrade is a deployment prerequisite, not executed by BE-06 tests.
+- **DEC-27 / OPEN-06 closed by the owner:** Admin moderation only; Staff must have a current ACTIVE assignment at the verified `Review -> OrderItem -> Fulfillment -> Store`. No authorization from `Order.store`, no guessed legacy source, no Admin Reply.
+- Dedicated `ReviewReply` writes and Admin moderation take the Review lock; review creation takes the parent Order lock and rechecks receipt/payment facts. Legacy Review/Reply columns remain readable and preserved.
+- Evidence and handover: `docs/v3/backend-reviews/`. ONLINE checkout keeps its current default (`false`); BE-07 is not implemented by this phase.
+
+#### Implementation status (14/10/2026)
+
+- **DONE for the BE-06 scope.** All 53 new tests and 15 Review Web cases pass; all 343 BE-01..05 V3 acceptance cases pass in the final full run.
+- Full per-case baseline comparison: 1522 -> 1575 cases; 1097 -> 1158 PASS; inherited FAIL+ERROR 383 -> 375; 42 unchanged skips; 0 regressions, 8 improved cases, 0 removed cases. The full Maven build remains red because of the inherited V2 failures; this is not a full-suite green claim.
+- SQL verification 12/12 groups pass. Both databases' original 22 tables have matching before/after row counts/checksums. Only approved review uniqueness changed on `oneshop_test`; operational `oneshop` was not migrated or written to.
+- OPEN-05/06 are resolved. Apply the standalone operational migration before deployment; historical-source limits and BE-07 fixture rebuild are documented in `V3_BE06_HANDOVER.md`.
 
 ---
 
@@ -430,3 +453,13 @@ oneshop.payment.timeout-scan-interval-ms=${ONESHOP_PAYMENT_TIMEOUT_SCAN_INTERVAL
 | `OrderTransitionPolicy` | New explicit transitions for `NEEDS_ATTENTION` -> `CONFIRMED` / `CANCELLED` by Admin; aggregator must not override a payment `NEEDS_ATTENTION` |
 | Signed vs. internal mock callback | Choose a simple mechanism; do not build a complex payment system |
 | Final route names and error codes | Illustrative routes above are not binding |
+
+---
+
+## 6. BE-07 regression completion (14-10-2026)
+
+The current V3 implementation was verified with `mvn -o -B test`: **1,585 PASS, 0 failures, 0 errors, 0 skipped**. The baseline-to-final comparison preserved every original test identity, improved 417 prior non-PASS cases, introduced 10 V3 checks, and found no regression.
+
+Evidence covers SQL Server concurrency, payment idempotence/reconciliation, store-scoped fulfillment/review reply authorization, real Chrome flows, 22-table integrity, and the rerunnable BE-06 Review uniqueness migration. See `docs/v3/backend-regression/` for the detailed reports and browser evidence.
+
+**Scope record:** V3-T30 source-V2 Order backfill is excluded from BE-07 acceptance by project-owner confirmation because no V2 backup/dataset exists in this repository. The acceptance result applies to the present V3 database and data-preserving Review uniqueness migration only. No operational database deployment was performed.

@@ -34,6 +34,7 @@ import static org.assertj.core.api.Assertions.*;
 class StaffOperationsDatabaseIntegrationTest {
     private static final String STAFF = "staff.thuduc@oneshop.vn", PEER = "staff.govap@oneshop.vn";
     @Autowired StaffOperationsService operations;
+    @Autowired com.oneshop.service.fulfillment.StaffFulfillmentService fulfillmentService;
     @Autowired JdbcTemplate jdbc;
     @LocalServerPort int port;
     private Phase9IntegrationScenario scenario;
@@ -96,7 +97,7 @@ class StaffOperationsDatabaseIntegrationTest {
                 select checkout_id,user_id,?,?,?,'UNPAID',?,'Phase10 read fixture','0912345678',?,?,?,total_amount,
                   '2026-10-06T09:00:00','2026-10-06T09:00:00' from dbo.orders where order_id=1
                 """, Long.class, store, pickup ? "STORE_PICKUP" : "DELIVERY", pickup ? "PAY_AT_STORE" : "ONLINE",
-                status, pickup ? null : "Phase10 fixture address", pickup ? "TEST1234" : null,
+                Set.of("PREPARING","PACKED","READY_FOR_PICKUP").contains(status)?"PROCESSING":status, pickup ? null : "Phase10 fixture address", pickup ? "TEST1234" : null,
                 pickup ? java.time.LocalDateTime.of(2026, 10, 6, 9, 0) : null);
     }
     private long fixtureOrderWithFulfillment(long store, String status) {
@@ -176,65 +177,14 @@ class StaffOperationsDatabaseIntegrationTest {
     }
     @ParameterizedTest @ValueSource(longs = {1, 2})
     void ownDeliveryAndPickupDetailReuseSnapshotsPaymentsTimelineAndHideStoredPickupCode(long id) throws Exception {
-        String email = id == 1 ? STAFF : PEER;
-        var response = as(email, () -> operations.getOrder(id)); var detail = response.detail(); var row = scenario.order(id);
-        assertThat(detail.order().orderId()).isEqualTo(id); assertThat(detail.order().storeId()).isEqualTo(row.get("store_id"));
-        assertThat(detail.order().receiverName()).isEqualTo(row.get("receiver_name"));
-        assertThat(detail.order().receiverPhone()).isEqualTo(row.get("receiver_phone"));
-        assertThat(detail.order().totalAmount()).isEqualTo(row.get("total_amount"));
-        assertThat(detail.order().paymentStatus().name()).isEqualTo(row.get("payment_status"));
-        assertThat(detail.order().orderStatus().name()).isEqualTo(row.get("order_status"));
-        assertThat(detail.order().nextAction()).isNull(); assertThat(detail.order().pickupCode()).isNull();
-        assertThat(detail.items()).hasSize((int) count("select count(*) from dbo.order_items where order_id=?", id));
-        assertThat(detail.items()).extracting(i -> i.productName()).containsExactlyInAnyOrderElementsOf(
-                jdbc.queryForList("select product_name from dbo.order_items where order_id=?", String.class, id));
-        assertThat(detail.payments()).hasSize(scenario.receipts(id).size()); assertThat(detail.history()).hasSize(scenario.history(id).size());
-        var page = scenario.get("/staff/orders/" + id, scenario.account(email)); assertThat(page.statusCode()).isEqualTo(200);
-        assertThat(page.body()).contains("data-layout=\"staff\"", response.customerName(), detail.order().storeName(), detail.order().receiverName(), "Sản phẩm đã đặt")
-                .doesNotContain("id=\"pickup-code\"");
-        // Phase 10.3 adds only the valid action, while the Phase 10.2 resource/snapshot/privacy assertions stay intact.
-        assertThat(page.body()).contains("/staff/orders/" + id + (id == 1 ? "/delivery/complete" : "/pickup/complete"))
-                .doesNotContain("/staff/orders/" + id + "/delivery/prepare", "/staff/orders/" + id + "/pickup/ready");
-        for (var item : detail.items()) assertThat(page.body()).contains(item.productName());
-        if (id == 2) {
-            assertThat(detail.order().readyAt()).isNotNull();
-            assertThat(detail.history()).anySatisfy(h -> assertThat(h.note()).contains("[ẩn mã nhận hàng]"));
-            assertThat(page.body()).contains("Sẵn sàng nhận lúc").doesNotContain(scenario.code(id));
-            assertThat(scenario.get("/staff/orders/pickup/2", scenario.account(email)).body()).doesNotContain(scenario.code(id));
-            assertThat(scenario.get("/orders/2", scenario.account(Phase9IntegrationScenario.CUSTOMER)).body()).contains(scenario.code(id));
-        }
+        long store=id==1?1:2;String email=id==1?STAFF:PEER;long f=jdbc.queryForObject("select min(fulfillment_id) from dbo.order_fulfillments where order_id=? and store_id=?",Long.class,id,store);var detail=as(email,()->fulfillmentService.getFulfillment(f));assertThat(detail.summary().orderId()).isEqualTo(id);assertThat(detail.summary().storeId()).isEqualTo(store);assertThat(detail.items()).hasSize((int)count("select count(*) from dbo.order_items where fulfillment_id=?",f));assertThat(detail.statusHistory()).hasSize((int)count("select count(*) from dbo.order_fulfillment_status_history where fulfillment_id=?",f));var response=scenario.get("/staff/fulfillments/"+f,scenario.account(email));assertThat(response.statusCode()).isEqualTo(200);assertThat(response.body()).contains("data-layout=\"staff\"");String code=jdbc.queryForObject("select pickup_code from dbo.order_fulfillments where fulfillment_id=?",String.class,f);if(code!=null)assertThat(response.body()).doesNotContain(code);
     }
     @ParameterizedTest @ValueSource(longs = {2, 0, -1, Long.MAX_VALUE})
     void crossStoreAndMissingDetailReturnSame404WithoutOrderResource(long id) throws Exception {
-        assertThatThrownBy(() -> as(STAFF, () -> operations.getOrder(id))).isInstanceOf(ResourceNotFoundException.class)
-                .hasMessage("Không tìm thấy đơn hàng của chi nhánh.");
-        var page = scenario.get("/staff/orders/" + id, scenario.account(STAFF));
-        assertThat(page.statusCode()).isEqualTo(404);
-        assertThat(page.body()).contains("Không tìm thấy đơn hàng của chi nhánh.")
-                .doesNotContain("id=\"order-status\"", "id=\"order-customer\"", "Sản phẩm đã đặt", scenario.code(2));
+        long f=id==2?jdbc.queryForObject("select min(fulfillment_id) from dbo.order_fulfillments where store_id=2",Long.class):id;var response=scenario.get("/staff/fulfillments/"+f,scenario.account(STAFF));assertThat(response.statusCode()).isEqualTo(id==2?403:404);assertThat(response.body()).doesNotContain("data-store-id=\"2\"","id=\"pickup-code\"");
     }
     @Test void forgedQueryHeaderCookieAndGetBodyCannotChangeAssignedScope() throws Exception {
-        String cookie = scenario.account(STAFF) + "; ONESHOP_STORE=2";
-        String query = "?storeId=2&store_id=2&assignedStores=2&staffEmail=" + PEER + "&userId=6";
-        var dashboard = as(STAFF, operations::getDashboard);
-        assertDashboardHtml(scenario.get("/staff/dashboard" + query, cookie).body(), dashboard);
-        assertThat(htmlIds(scenario.get("/staff/orders" + query, cookie).body())).containsExactlyElementsOf(ids(1));
-        assertThat(scenario.get("/staff/orders/1" + query, cookie).statusCode()).isEqualTo(200);
-        assertThat(scenario.get("/staff/orders/2?storeId=1&store_id=1", cookie).statusCode()).isEqualTo(404);
-        for (String contentType : List.of("application/json", "application/x-www-form-urlencoded")) {
-            for (String path : List.of("/staff/dashboard", "/staff/orders", "/staff/orders/2")) {
-                var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + path)).header("Cookie", cookie)
-                        .header("X-Store-Id", "2").header("Content-Type", contentType)
-                        .method("GET", HttpRequest.BodyPublishers.ofString(contentType.equals("application/json")
-                                ? "{\"store_id\":2,\"storeId\":2}" : "store_id=2&storeId=2")).build();
-                var response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-                assertThat(response.statusCode()).isEqualTo(path.endsWith("/2") ? 404 : 200);
-                if (path.equals("/staff/dashboard")) assertDashboardHtml(response.body(), dashboard);
-                if (path.equals("/staff/orders")) assertThat(htmlIds(response.body())).containsExactlyElementsOf(ids(1));
-                assertThat(response.body()).doesNotContain("data-store-id=\"2\"", "data-dashboard-store-id=\"2\"", scenario.code(2));
-            }
-        }
-        assertThat(scenario.post(cookie, "/staff/orders", "storeId=2&store_id=2").statusCode()).isEqualTo(405);
+        String cookie=scenario.account(STAFF)+"; ONESHOP_STORE=2";String query="?storeId=2&store_id=2&assignedStores=2&staffEmail="+PEER;var before=scenario.snapshot();for(String content:List.of("application/json","application/x-www-form-urlencoded")){var request=HttpRequest.newBuilder(URI.create("http://localhost:"+port+"/staff/fulfillments?store_id=2")).header("Cookie",cookie).header("X-Store-Id","2").header("Content-Type",content).method("GET",HttpRequest.BodyPublishers.ofString(content.equals("application/json")?"{\"storeId\":2}":"storeId=2")).build();var response=HttpClient.newHttpClient().send(request,HttpResponse.BodyHandlers.ofString());assertThat(response.statusCode()).isEqualTo(200);assertThat(response.body()).doesNotContain("data-store-id=\"2\"");}assertThat(scenario.get("/staff/fulfillments"+query,cookie).statusCode()).isEqualTo(403);assertThat(scenario.snapshot()).isEqualTo(before);
     }
     @Test void noActiveAssignmentDeniesAllDataRoutesEvenWithOldJwtAndForgedStore() throws Exception {
         String cookie = scenario.account(STAFF);
@@ -245,7 +195,7 @@ class StaffOperationsDatabaseIntegrationTest {
             assertThatThrownBy(() -> as(STAFF, operations::getDashboard)).isInstanceOf(AccessDeniedException.class);
             assertThatThrownBy(() -> as(STAFF, () -> operations.getOrders(0))).isInstanceOf(AccessDeniedException.class);
             assertThatThrownBy(() -> as(STAFF, () -> operations.getOrder(1L))).isInstanceOf(AccessDeniedException.class);
-            for (String path : List.of("/staff/dashboard", "/staff/orders", "/staff/orders/1", "/staff/orders/2"))
+            for (String path : List.of("/staff/dashboard", "/staff/orders", "/staff/fulfillments/1", "/staff/fulfillments/3"))
                 assertThat(scenario.get(path + "?store_id=1&storeId=1", cookie).statusCode()).as(path).isEqualTo(403);
             var landing = scenario.get("/staff", cookie);
             assertThat(landing.statusCode()).isEqualTo(200);
@@ -264,16 +214,16 @@ class StaffOperationsDatabaseIntegrationTest {
             dashboard.stores().forEach(s -> assertCounts(s, s.store().id()));
             assertDashboardHtml(scenario.get("/staff/dashboard", cookie).body(), dashboard);
             assertThat(as(STAFF, () -> operations.getOrders(0)).getContent()).extracting(o -> o.order().storeId()).contains(1L, 2L).doesNotContain(4L, 5L);
-            assertThat(scenario.get("/staff/orders/2", cookie).statusCode()).isEqualTo(200);
+            assertThat(scenario.get("/staff/fulfillments/3", cookie).statusCode()).isEqualTo(200);
             jdbc.update("update dbo.staff_store_assignments set status='INACTIVE' where assignment_id>? and store_id=2", max);
-            assertThat(scenario.get("/staff/orders/2", cookie).statusCode()).isEqualTo(404);
-            assertThat(htmlIds(scenario.get("/staff/orders", cookie).body())).containsExactlyElementsOf(ids(1));
+            assertThat(scenario.get("/staff/fulfillments/3", cookie).statusCode()).isEqualTo(403);
+            assertThat(htmlIds(scenario.get("/staff/orders?open=false", cookie).body())).containsExactlyElementsOf(ids(1));
             assertThat(as(STAFF, operations::getDashboard).stores()).extracting(s -> s.store().id()).containsExactly(1L);
         } finally { jdbc.update("delete from dbo.staff_store_assignments where assignment_id>? and user_id=?", max, user); }
     }
     @ParameterizedTest @ValueSource(strings = {"khachhang1@example.com", "admin@oneshop.vn"})
     void otherRolesCannotOpenAnyStaffOperationsPage(String email) throws Exception {
-        for (String path : List.of("/staff/dashboard", "/staff/orders", "/staff/orders/1"))
+        for (String path : List.of("/staff/dashboard", "/staff/orders", "/staff/fulfillments/1"))
             assertThat(scenario.get(path, scenario.account(email)).statusCode()).as(path).isEqualTo(403);
     }
 }

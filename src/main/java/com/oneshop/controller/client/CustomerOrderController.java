@@ -1,6 +1,5 @@
 package com.oneshop.controller.client;
 
-import com.oneshop.entity.OrderStatus;
 import com.oneshop.service.CustomerOrderService;
 import com.oneshop.service.OrderTransitionPolicy;
 import com.oneshop.service.ReviewService;
@@ -8,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
-import java.util.List;
 
 /** Customer reads and cancellation before preparation. Completion belongs exclusively to assigned Staff. */
 @Controller
@@ -29,9 +27,7 @@ public class CustomerOrderController {
         var detail = orders.getOrder(principal.getName(), orderId);
         var order = detail.order();
         model.addAttribute("orderDetail", detail);
-        // only a COMPLETED Order can be reviewed; the Service re-checks ownership and status
-        model.addAttribute("reviewItems", order.orderStatus() == OrderStatus.COMPLETED
-                ? reviews.getOrderReviewItems(principal.getName(), orderId) : List.of());
+        model.addAttribute("reviewItems", reviews.getOrderReviewItems(principal.getName(), orderId));
         model.addAttribute("canCancel", policy.canCustomerCancel(order.orderStatus(), order.fulfillmentType(),
                 order.paymentMethod(), order.paymentStatus()));
         return "orders/detail";

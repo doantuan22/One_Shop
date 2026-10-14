@@ -39,6 +39,10 @@ final class SeedGuardV3 {
     private record CartState(long id, LocalDateTime createdAt, LocalDateTime updatedAt) {
     }
 
+    /** A seeded ONLINE Order that the payment timeout scan would otherwise cancel (its payment window is long over). */
+    private record ShieldedOrder(long id, LocalDateTime createdAt) {
+    }
+
     private final JdbcTemplate jdbc;
     private long maxOrder;
     private long maxCheckout;
@@ -51,6 +55,7 @@ final class SeedGuardV3 {
     private List<StoreState> stores;
     private List<CartLine> cartLines;
     private List<CartState> carts;
+    private List<ShieldedOrder> shielded = List.of();
 
     SeedGuardV3(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
@@ -85,9 +90,21 @@ final class SeedGuardV3 {
         carts = jdbc.query("select cart_id, created_at, updated_at from dbo.carts",
                 (rs, i) -> new CartState(rs.getLong(1), rs.getTimestamp(2).toLocalDateTime(),
                         rs.getTimestamp(3).toLocalDateTime()));
+        // V3-BE-05: the timeout scan is global. Seeded ONLINE Orders still waiting for payment look expired, so they
+        // are given a fresh created_at for the duration of a test and put back by restore().
+        shielded = jdbc.query("select order_id, created_at from dbo.orders where payment_method = 'ONLINE' "
+                        + "and order_status in ('PENDING_PAYMENT', 'NEEDS_ATTENTION') and order_id <= ?",
+                (rs, i) -> new ShieldedOrder(rs.getLong(1), rs.getTimestamp(2).toLocalDateTime()), maxOrder);
+        for (ShieldedOrder order : shielded) {
+            jdbc.update("update dbo.orders set created_at = ? where order_id = ?", LocalDateTime.now().withNano(0),
+                    order.id());
+        }
     }
 
     void restore() {
+        for (ShieldedOrder order : shielded) {
+            jdbc.update("update dbo.orders set created_at = ? where order_id = ?", order.createdAt(), order.id());
+        }
         jdbc.update("delete from dbo.inventory_movements where movement_id > ?", maxMovement);
         jdbc.update("delete from dbo.order_status_history where history_id > ?", maxHistory);
         jdbc.update("delete from dbo.order_fulfillment_status_history where fulfillment_id > ?", maxFulfillment);
@@ -101,12 +118,9 @@ final class SeedGuardV3 {
         jdbc.update("delete from dbo.store_products where store_product_id > ?", maxStoreProduct);
 
         for (StoreProductState state : storeProducts) {
-            // the legacy StoreProduct.price is never changed by these tests, so it is not touched here
             jdbc.update("update dbo.store_products set quantity = ?, reserved_quantity = ?, status = ?, "
-                            + "updated_at = ? where store_product_id = ? and (quantity <> ? or reserved_quantity <> ? "
-                            + "or status <> ? or updated_at <> ?)",
-                    state.quantity(), state.reserved(), state.status(), state.updatedAt(), state.id(),
-                    state.quantity(), state.reserved(), state.status(), state.updatedAt());
+                            + "price = ?, updated_at = ? where store_product_id = ?",
+                    state.quantity(), state.reserved(), state.status(), state.price(), state.updatedAt(), state.id());
         }
         for (ProductState state : products) {
             jdbc.update("update dbo.products set price = ?, status = ? where product_id = ? "

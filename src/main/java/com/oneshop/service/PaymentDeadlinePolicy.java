@@ -55,6 +55,11 @@ public class PaymentDeadlinePolicy {
         return LocalDateTime.now(clock);
     }
 
+    /** An ONLINE Order created at or before this instant has passed its payment deadline (timeout scan, Admin list). */
+    public LocalDateTime expiredBefore() {
+        return now().minusMinutes(properties.getPendingTimeoutMinutes());
+    }
+
     /** True when a customer may still start or complete the payment of this Order. */
     public boolean isPayableNow(Order order) {
         LocalDateTime deadline = paymentDeadline(order);

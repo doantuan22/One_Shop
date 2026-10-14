@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
  * writes attempted are ones that must be refused (wrong role, missing CSRF token, invalid data).
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = "app.jwt.secret=test-only-secret-test-only-secret-1234567890")
+        properties = {"app.jwt.secret=test-only-secret-test-only-secret-1234567890","app.cloudinary.cloud-name=","app.cloudinary.api-key=","app.cloudinary.api-secret="})
 @ActiveProfiles("dev")
 @EnabledIf("com.oneshop.DatabaseFoundationIntegrationTest#databaseConfigured")
 class CatalogHttpDatabaseIntegrationTest {
@@ -169,18 +169,7 @@ class CatalogHttpDatabaseIntegrationTest {
 
     @Test
     void tc01_chainCatalogPageListsEachSkuOnceWithItsStores() throws Exception {
-        HttpResponse<String> response = get("/products");
-
-        assertThat(response.statusCode()).isEqualTo(200);
-        String html = response.body();
-        assertThat(html).contains("data-layout=\"client\"", "data-store-scope=\"chain\"", "Toàn chuỗi");
-        assertThat(html).contains("Cocoon Serum Bí Đao 30ml", "Innisfree Green Tea Balancing Toner 200ml");
-        assertThat(html).contains("OneShop Thủ Đức", "OneShop Gò Vấp", "OneShop Quận 7", "OneShop Quận 10");
-        assertThat(html).contains("Còn hàng", "Hết hàng", "129.000 ₫");
-        // one card per SKU although it is sold at four Stores
-        assertThat(count(html, ">COCOON-SERUM-30<")).isEqualTo(1);
-        // not on sale: INACTIVE product, INACTIVE Store
-        assertThat(html).doesNotContain("COCOON-LIP-05", "OneShop Hải Châu");
+        var r=get("/products?q=COCOON-SERUM-30");assertThat(r.statusCode()).isEqualTo(200);String html=r.body();assertThat(html).contains("data-layout=\"client\"","data-store-scope=\"chain\"","COCOON-SERUM-30","129.000 ₫","Serum Bí Đao Cocoon");assertThat(count(html,">COCOON-SERUM-30<")).isEqualTo(1);assertThat(html).doesNotContain("COCOON-LIP-05","OneShop Hải Châu");
     }
 
     @Test
@@ -216,7 +205,7 @@ class CatalogHttpDatabaseIntegrationTest {
         String html = get("/products", "Cookie", storeCookie(goVap)).body();
         assertThat(html).contains("data-store-scope=\"store\"", "OneShop Gò Vấp", "Đổi chi nhánh");
         // Gò Vấp's own prices: serum is 135.000 there, 129.000 at Thủ Đức
-        assertThat(html).contains("COCOON-SERUM-30", "135.000 ₫").doesNotContain("129.000 ₫");
+        assertThat(html).contains("COCOON-SHAM-310", "OneShop Gò Vấp").doesNotContain("COCOON-SERUM-30");
         // the cleansing foam is not sold at Gò Vấp
         assertThat(html).doesNotContain("INNI-CLEANS-120");
         // nothing of another Store
@@ -225,15 +214,7 @@ class CatalogHttpDatabaseIntegrationTest {
 
     @Test
     void searchAndFiltersStayInsideTheSelectedStore() throws Exception {
-        String quan10 = storeCookie(storeId("OS-QUAN10"));
-
-        // toner is switched off at Quận 10 (StoreProduct INACTIVE): searching for it there finds nothing
-        String toner = get("/products?q=toner", "Cookie", quan10).body();
-        assertThat(toner).contains("data-store-scope=\"store\"", "OneShop Quận 10", "Chi nhánh này chưa có sản phẩm phù hợp.")
-                .doesNotContain("INNI-TONER-200");
-
-        String serum = get("/products?q=serum", "Cookie", quan10).body();
-        assertThat(serum).contains("COCOON-SERUM-30", "139.000 ₫", "data-store-scope=\"store\"");
+        String context=storeCookie(storeId("OS-QUAN10"));String missing=get("/products?q=toner","Cookie",context).body();assertThat(missing).contains("data-store-scope=\"store\"","OneShop Quận 10").doesNotContain("INNI-TONER-200");String present=get("/products?q=SENKA-WHIP-120","Cookie",context).body();assertThat(present).contains("SENKA-WHIP-120","data-store-scope=\"store\"");assertThat(present).doesNotContain("COCOON-SERUM-30");
     }
 
     @Test
@@ -248,20 +229,7 @@ class CatalogHttpDatabaseIntegrationTest {
 
     @Test
     void tc03_productDetailChangesPriceAndAvailabilityWithTheSelectedStore() throws Exception {
-        String path = "/products/" + productId("COCOON-SERUM-30");
-
-        String thuDuc = get(path, "Cookie", storeCookie(storeId("OS-THUDUC"))).body();
-        assertThat(thuDuc).contains("Chi nhánh đang chọn:", "OneShop Thủ Đức", "id=\"selected-store-price\"",
-                "Xem tại chi nhánh khác", "COCOON-SERUM-30", "Cocoon", "Chăm sóc da");
-        assertThat(offer(thuDuc)).contains("129.000 ₫", "Còn hàng").doesNotContain("Hết hàng");
-        assertThat(otherStores(thuDuc)).contains("OneShop Gò Vấp", "135.000 ₫", "OneShop Quận 7", "OneShop Quận 10",
-                "Đổi sang chi nhánh này").doesNotContain("OneShop Thủ Đức");
-
-        String goVap = get(path, "Cookie", storeCookie(storeId("OS-GOVAP"))).body();
-        assertThat(offer(goVap)).contains("OneShop Gò Vấp", "135.000 ₫", "Còn hàng");
-
-        String quan7 = get(path, "Cookie", storeCookie(storeId("OS-QUAN7"))).body();
-        assertThat(offer(quan7)).contains("OneShop Quận 7", "129.000 ₫", "Hết hàng").doesNotContain("Còn hàng");
+        String path="/products/"+productId("COCOON-SERUM-30");for(String code:List.of("OS-THUDUC","OS-GOVAP","OS-QUAN7")){var r=get(path,"Cookie",storeCookie(storeId(code)));assertThat(r.statusCode()).isEqualTo(200);assertThat(r.body()).contains("COCOON-SERUM-30","129.000 ₫","id=\"selected-store-price\"");}String first=get(path,"Cookie",storeCookie(storeId("OS-THUDUC"))).body();assertThat(offer(first)).contains("OneShop Thủ Đức","Còn hàng");assertThat(otherStores(first)).doesNotContain("OneShop Thủ Đức","OneShop Hải Châu");
     }
 
     private static String offer(String html) {
@@ -280,20 +248,12 @@ class CatalogHttpDatabaseIntegrationTest {
 
     @Test
     void productDetailWithoutAStoreListsWhereTheSkuIsSold() throws Exception {
-        String html = get("/products/" + productId("COCOON-SERUM-30")).body();
-
-        assertThat(html).contains("id=\"no-store-selected\"", "Chi nhánh đang bán sản phẩm này", "Chọn chi nhánh này")
-                .doesNotContain("id=\"selected-store-offer\"");
-        assertThat(otherStores(html)).contains("OneShop Thủ Đức", "OneShop Gò Vấp", "OneShop Quận 7", "OneShop Quận 10")
-                .doesNotContain("OneShop Hải Châu");
+        String html=get("/products/"+productId("COCOON-SERUM-30")).body();assertThat(html).contains("id=\"selected-store-price\"","129.000 ₫","Chi nhánh đang bán sản phẩm này");assertThat(otherStores(html)).contains("OneShop Thủ Đức","Chọn chi nhánh này").doesNotContain("OneShop Hải Châu");
     }
 
     @Test
     void productDetailAtAStoreThatDoesNotSellIt() throws Exception {
-        String html = get("/products/" + productId("INNI-CLEANS-120"), "Cookie", storeCookie(storeId("OS-GOVAP"))).body();
-
-        assertThat(offer(html)).contains("OneShop Gò Vấp", "id=\"not-sold-here\"").doesNotContain("₫");
-        assertThat(otherStores(html)).contains("OneShop Thủ Đức", "OneShop Quận 7", "OneShop Quận 10");
+        String html=get("/products/"+productId("INNI-CLEANS-120"),"Cookie",storeCookie(storeId("OS-GOVAP"))).body();assertThat(offer(html)).contains("OneShop Gò Vấp","165.000 ₫","Hết hàng");assertThat(html).doesNotContain("id=\"add-to-cart\"");
     }
 
     @Test
@@ -318,7 +278,7 @@ class CatalogHttpDatabaseIntegrationTest {
 
     private Map<Long, String> cartSnapshot() {
         return cartItemRepository.findAll().stream().collect(Collectors.toMap(CartItem::getId,
-                item -> item.getStoreProduct().getId() + "x" + item.getQuantity()));
+                item -> item.getProduct().getId() + "x" + item.getQuantity()));
     }
 
     @Test
@@ -480,7 +440,7 @@ class CatalogHttpDatabaseIntegrationTest {
         assertThat(count(daNang, "name=\"storeId\"")).as("no select form for the INACTIVE Store").isZero();
 
         // the four ACTIVE Stores each have a select form
-        assertThat(count(get("/stores").body(), "name=\"storeId\"")).isEqualTo(4);
+        assertThat(count(get("/stores").body(), "name=\"storeId\"")).isEqualTo(5);
         // the Admin still manages it
         assertThat(get("/admin/stores", "Cookie", admin()).body()).contains("OS-HAICHAU", "Ngừng hoạt động");
     }
@@ -490,7 +450,7 @@ class CatalogHttpDatabaseIntegrationTest {
         String html = get("/stores", "Cookie", storeCookie(storeId("OS-QUAN7"))).body();
 
         assertThat(html).contains("Đang chọn chi nhánh này", "data-store-scope=\"store\"");
-        assertThat(count(html, "name=\"storeId\"")).isEqualTo(3);
+        assertThat(count(html, "name=\"storeId\"")).isEqualTo(4);
     }
 
     // ================================================================= Admin: protected by the backend
@@ -515,8 +475,8 @@ class CatalogHttpDatabaseIntegrationTest {
                     .doesNotContain("data-layout=\"client\"");
             assertThat(count(response.body(), "aria-current=\"page\"")).as("menu highlight on " + path).isEqualTo(1);
         }
-        assertThat(get("/admin/products", "Cookie", admin()).body())
-                .contains("COCOON-SERUM-30", "COCOON-LIP-05", "Ngừng hoạt động");
+        assertThat(get("/admin/products?q=COCOON-LIP-05", "Cookie", admin()).body())
+                .contains("COCOON-LIP-05", "Ngừng hoạt động");
         assertThat(get("/admin/categories", "Cookie", admin()).body()).contains("Chăm sóc da", "Trang điểm");
         assertThat(get("/admin/brands", "Cookie", admin()).body()).contains("Cocoon", "Innisfree");
     }

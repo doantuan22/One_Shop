@@ -159,7 +159,7 @@ class HomePageWebIntegrationTest extends AbstractIntegrationTest {
     void wholeChainCardsAreOneLinkWithLowestPriceAndStoreCountAndNoAddToCart() throws Exception {
         String html = get("/").body();
 
-        assertThat(html).contains("data-store-scope=\"chain\"", "Khám phá sản phẩm", "Cocoon Serum Bí Đao 30ml", "Từ ",
+        assertThat(html).contains("data-store-scope=\"chain\"", "Khám phá sản phẩm", "Cocoon Serum Bí Đao 30ml",
                 "129.000 ₫", "Còn hàng ở 2 chi nhánh", "Hết hàng", "stretched-link", "href=\"/products\"");
         assertThat(html).doesNotContain("action=\"/cart/items\"", "Thêm vào giỏ", "Sản phẩm mới", "Xem chi tiết");
         assertThat(count(html, "data-reveal")).isEqualTo(2);

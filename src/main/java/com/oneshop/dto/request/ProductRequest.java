@@ -6,8 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
- * Admin form of a Product. A Product is one sellable SKU shared by the whole chain (BR-01): it has no price and no
- * quantity, those belong to StoreProduct.
+ * Admin form of a V3 Product: one SKU and one online price shared by the chain. Physical and reserved quantities
+ * belong to StoreProduct; Staff inventory operations cannot change Product.price.
  */
 public class ProductRequest {
 

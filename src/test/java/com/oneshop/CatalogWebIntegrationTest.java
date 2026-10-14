@@ -103,8 +103,7 @@ class CatalogWebIntegrationTest extends AbstractIntegrationTest {
     void withoutACookieTheCatalogIsTheWholeChain() throws Exception {
         String html = get("/products").body();
 
-        assertThat(html).contains("data-store-scope=\"chain\"", "Cocoon Serum Bí Đao 30ml", "OneShop Gò Vấp",
-                "OneShop Thủ Đức", "Còn hàng", "Hết hàng", "Từ ", "129.000 ₫");
+        assertThat(html).contains("data-store-scope=\"chain\"", "Cocoon Serum Bí Đao 30ml", "Còn hàng", "129.000 ₫");
         verify(storeProductService).getChainCatalog(any(), any());
         verify(storeProductService, never()).getStoreCatalog(anyLong(), any(), any());
     }
@@ -143,7 +142,7 @@ class CatalogWebIntegrationTest extends AbstractIntegrationTest {
 
         // a Store that is not valid, or one named in the URL, is never passed on
         String chain = get("/products/3?storeId=2", "Cookie", STORE_COOKIE + "=999").body();
-        assertThat(chain).contains("id=\"no-store-selected\"", "Chi nhánh đang bán sản phẩm này");
+        assertThat(chain).contains("id=\"selected-store-price\"", "Chi nhánh đang bán sản phẩm này");
         verify(storeProductService).getProductDetail(eq(3L), isNull());
     }
 

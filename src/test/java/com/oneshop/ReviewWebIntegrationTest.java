@@ -136,29 +136,29 @@ class ReviewWebIntegrationTest extends AbstractIntegrationTest {
 
         // the body tries to name another reviewer: only productId/rating/comment are read
         HttpResponse<String> response = postReview(jwt,
-                "productId=7&rating=5&comment=T%E1%BB%91t&email=victim%40oneshop.test&userId=99");
+                "orderItemId=77&productId=7&rating=5&comment=T%E1%BB%91t&email=victim%40oneshop.test&userId=99");
 
         assertThat(response.statusCode()).isEqualTo(302);
         assertThat(location(response)).isEqualTo("/products/7?reviewed#reviews");
-        verify(reviewService).submit(eq(CUSTOMER), eq(new ReviewRequest(7L, 5, "Tốt")), isNull());
+        verify(reviewService).submit(eq(CUSTOMER), eq(new ReviewRequest(7L, 5, "Tốt", 77L)), isNull());
     }
 
     @Test
     void reviewFromTheOrderPageGoesBackToTheOrder() throws Exception {
         String jwt = cookieOf(CUSTOMER, RoleName.CUSTOMER);
 
-        HttpResponse<String> response = postReview(jwt, "productId=7&orderId=42&rating=4");
+        HttpResponse<String> response = postReview(jwt, "orderItemId=77&productId=7&orderId=42&rating=4");
 
         assertThat(location(response)).isEqualTo("/orders/42?reviewed#reviews");
-        verify(reviewService).submit(eq(CUSTOMER), eq(new ReviewRequest(7L, 4, null)), eq(42L));
+        verify(reviewService).submit(eq(CUSTOMER), eq(new ReviewRequest(7L, 4, null, 77L)), eq(42L));
     }
 
     @Test
     void invalidRatingNeverReachesTheService() throws Exception {
         String jwt = cookieOf(CUSTOMER, RoleName.CUSTOMER);
 
-        for (String body : List.of("productId=7&rating=0", "productId=7&rating=6", "productId=7", "productId=7&rating=abc",
-                "productId=7&rating=5&comment=" + "x".repeat(1001))) {
+        for (String body : List.of("orderItemId=77&productId=7&rating=0", "orderItemId=77&productId=7&rating=6", "orderItemId=77&productId=7", "orderItemId=77&productId=7&rating=abc",
+                "orderItemId=77&productId=7&rating=5&comment=" + "x".repeat(1001))) {
             HttpResponse<String> response = postReview(jwt, body);
             assertThat(response.statusCode()).as(body.substring(0, Math.min(40, body.length()))).isEqualTo(302);
             assertThat(location(response)).contains("/products/7?reviewError=invalid");
@@ -171,7 +171,7 @@ class ReviewWebIntegrationTest extends AbstractIntegrationTest {
         String jwt = cookieOf(CUSTOMER, RoleName.CUSTOMER);
         when(reviewService.submit(eq(CUSTOMER), any(), any())).thenThrow(new BadRequestException("Bạn đã đánh giá sản phẩm này rồi."));
 
-        HttpResponse<String> response = postReview(jwt, "productId=7&rating=5");
+        HttpResponse<String> response = postReview(jwt, "orderItemId=77&productId=7&rating=5");
 
         assertThat(location(response)).isEqualTo("/products/7?reviewError=rejected#reviews");
     }
@@ -203,7 +203,8 @@ class ReviewWebIntegrationTest extends AbstractIntegrationTest {
 
         assertThat(get("/products/7", "Cookie", jwt).body()).doesNotContain("action=\"/reviews\"");
 
-        when(reviewService.canReview(CUSTOMER, 7L)).thenReturn(true);
+        when(reviewService.getProductReviewItems(CUSTOMER, 7L)).thenReturn(List.of(
+                new ReviewableItemResponse(7L, "Cocoon Serum", false, 77L, 42L, 9L, "OneShop Thủ Đức", null)));
         String html = get("/products/7", "Cookie", jwt).body();
         assertThat(html).contains("action=\"/reviews\"", "name=\"productId\"", "name=\"rating\"", "name=\"_csrf\"");
     }
@@ -222,8 +223,8 @@ class ReviewWebIntegrationTest extends AbstractIntegrationTest {
         String jwt = cookieOf(CUSTOMER, RoleName.CUSTOMER);
         when(orders.getOrder(eq(CUSTOMER), eq(42L))).thenReturn(completedOrder(42L));
         when(reviewService.getOrderReviewItems(CUSTOMER, 42L)).thenReturn(List.of(
-                new ReviewableItemResponse(7L, "Cocoon Serum", false),
-                new ReviewableItemResponse(8L, "BBIA Cheek", true)));
+                new ReviewableItemResponse(7L, "Cocoon Serum", false, 77L, 42L, 9L, "OneShop Thủ Đức", null),
+                new ReviewableItemResponse(8L, "BBIA Cheek", true, 78L, 42L, 10L, "OneShop Gò Vấp", null)));
 
         String html = get("/orders/42", "Cookie", jwt).body();
 
@@ -311,9 +312,9 @@ class ReviewWebIntegrationTest extends AbstractIntegrationTest {
         String jwt = cookieOf(ADMIN, RoleName.ADMIN);
 
         HttpResponse<String> ok = postTo(jwt, "/admin/reviews/9/reply", "reply=Xin+loi&page=1");
-        assertThat(ok.statusCode()).isEqualTo(302);
-        assertThat(location(ok)).isEqualTo("/admin/reviews?page=1&replied");
-        verify(reviewService).reply(eq(9L), eq("Xin loi"));
+        // OPEN-06: Admin now moderates only; retain this test case's identity for baseline comparison.
+        assertThat(ok.statusCode()).isEqualTo(403);
+        verify(reviewService, never()).reply(any(), any());
 
         assertThat(post("/admin/reviews/9/reply", FORM, "reply=x", "Cookie", jwt).statusCode()).isEqualTo(403);
     }

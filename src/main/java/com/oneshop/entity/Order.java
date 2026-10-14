@@ -19,8 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * An Order belongs to exactly one Store (BR-07). Status changes must go through OrderService so that the
- * transition is validated and written to {@link OrderStatusHistory}.
+ * A V3 Order may be supplied by several Stores through its Fulfillments. The nullable legacy Store is a read
+ * compatibility field, never a Staff authorization source. Aggregate status is written by the fulfillment
+ * aggregator or authenticated payment/cancellation orchestration, with {@link OrderStatusHistory}.
  */
 @Entity
 @Table(name = "orders")

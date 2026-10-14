@@ -11,12 +11,14 @@
     <td><span th:text="${r.comment}"></span><div class="small" th:text="${#temporals.format(r.createdAt, 'dd/MM/yyyy HH:mm')}"></div>
         <div class="small text-secondary" th:if="${r.orderId != null}"><a th:href="@{/admin/orders/{id}(id=${r.orderId})}" th:text="'Đơn #' + ${r.orderId}"></a> &middot; <span th:text="${r.storeName}"></span></div>
         <div class="small text-secondary" th:if="${r.orderId == null}">Không gắn với đơn nào</div>
-        <form class="mt-2" method="post" th:action="@{/admin/reviews/{id}/reply(id=${r.id})}">
-            <input type="hidden" name="page" th:value="${reviews.number}">
-            <label class="form-label small mb-1" th:for="'reply-' + ${r.id}" th:text="${r.reply != null} ? 'Phản hồi (có thể sửa)' : 'Phản hồi'">Phản hồi</label>
-            <textarea class="form-control form-control-sm mb-1" th:id="'reply-' + ${r.id}" name="reply" rows="2" maxlength="1000" required th:text="${r.reply}"></textarea>
-            <button class="btn btn-sm btn-outline-primary" type="submit" th:text="${r.reply != null} ? 'Cập nhật phản hồi' : 'Gửi phản hồi'">Gửi</button>
-        </form></td>
+        <div class="small text-secondary" th:if="${r.orderItemId != null}" th:text="'Dòng hàng #' + ${r.orderItemId}"></div>
+        <div class="small text-secondary" th:if="${r.storeName == null}">Chưa xác minh nguồn chi nhánh; nhân viên không được phản hồi.</div>
+        <div class="border-start ps-2 mt-2 small" th:if="${r.reply != null}">
+            <strong>Phản hồi đã lưu</strong><p style="white-space: pre-line" th:text="${r.reply}"></p>
+        </div>
+        <details class="small" th:if="${r.legacyReply != null and r.legacyReply != r.reply}">
+            <summary>Phản hồi lịch sử</summary><p style="white-space: pre-line" th:text="${r.legacyReply}"></p>
+        </details></td>
     <td th:text="${r.status}"></td><td><form th:action="@{/admin/reviews/{id}/status(id=${r.id})}" method="post">
         <input type="hidden" name="status" th:value="${r.status.name() == 'ACTIVE'} ? 'HIDDEN' : 'ACTIVE'">
         <button class="btn btn-sm btn-outline-primary" th:text="${r.status.name() == 'ACTIVE'} ? 'Ẩn' : 'Hiện'"></button></form></td>

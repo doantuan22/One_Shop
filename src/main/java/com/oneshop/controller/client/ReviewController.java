@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.security.Principal;
 
 /**
- * A Customer reviews a Product bought in a COMPLETED Order (Roadmap V2 section 5). The reviewer is the authenticated
- * principal; the Service decides whether the Product was really received. The form lives on the Order detail and the
+ * A Customer reviews a received OrderItem. The reviewer is the authenticated
+ * principal; the Service verifies its completed Fulfillment. The form lives on the Order detail and the
  * Product detail pages, so the user goes back to the page they came from. Error codes (not messages) travel in the
  * redirect so the URL cannot be used to show arbitrary text.
  */
