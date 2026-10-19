@@ -8,6 +8,7 @@
 | `02_seed.sql` | Loads the deterministic V3 fixture only when the schema has no data. It never deletes existing rows. |
 | `03_verify.sql` | Read-only validation of schema, seed and integrity. |
 | `migrations/20261014_be06_review_uniqueness.sql` | Controlled, data-preserving upgrade for an existing database that still has the old Review uniqueness key. |
+| `migrations/20261018_be06_review_uniqueness_rollback.sql` | Optional approved downgrade; refuses when per-item Reviews cannot fit the old global key. Never deletes or merges data. |
 
 ## Fresh install
 
@@ -26,6 +27,10 @@ The seed supplies the V3 regression fixture: CUSTOMER/STAFF/ADMIN accounts, acti
 
 ## Existing database upgrade
 
-Do **not** run `01_schema.sql` or `02_seed.sql` against an existing database. Back up and restore-test first. The only retained upgrade script is `migrations/20261014_be06_review_uniqueness.sql`; it checks for duplicates, changes no rows and replaces the obsolete global Review `(user_id, product_id)` uniqueness with the approved filtered keys. Run `03_verify.sql` and application validation after the controlled upgrade.
+Do **not** run `01_schema.sql` or `02_seed.sql` against an existing database. Back up and restore-test first. The upgrade script is `migrations/20261014_be06_review_uniqueness.sql`; it checks for duplicates, changes no rows and replaces the obsolete global Review `(user_id, product_id)` uniqueness with the approved filtered keys. `02_seed.sql` checks all user tables and refuses any existing data, including when `roles` is empty. Run `03_verify.sql` and application validation after the controlled upgrade. Verification includes deterministic fixture assertions; an existing non-fixture database also needs the metadata/data checks in the audit runbook.
+
+As verified on 18/10/2026, local `oneshop` has not yet received DEC-26. Applying it requires separate approval. [Deep audit evidence, database switch, backup and rollback](../docs/v3/final-deep-audit/DEEP_AUDIT_REPORT.md) records the tested copy and exact prerequisite. Both runtime profiles validate columns, and `V3SchemaCompatibilityVerifier` also checks the filtered unique keys before scheduling starts. The payment timeout worker defaults to off; review historical ONLINE orders before opting in.
+
+The rollback script is not a normal V3 upgrade step. Stop the application, obtain separate approval and retain a verified backup. It only reinstates the old global uniqueness if every Review can fit it, otherwise it aborts unchanged. V3 startup stays blocked after a downgrade until the forward migration is reapplied. Backup recovery after new operational writes needs an explicit recovery plan; never overwrite the operational database merely to force a downgrade.
 
 The old split create/index/seed scripts, destructive rebuild helper, large-seed generator and Cloudinary seed tooling were removed after the canonical SQL path passed fresh database verification and full regression.

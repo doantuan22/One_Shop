@@ -54,8 +54,12 @@ class CartServiceRetryTest {
     void setUp() {
         when(transactionManager.getTransaction(any())).thenAnswer(invocation -> new SimpleTransactionStatus());
         when(product.getId()).thenReturn(100L);
+        when(product.getPrice()).thenReturn(new java.math.BigDecimal("100"));
         when(storeProduct.getId()).thenReturn(10L);
         when(storeProduct.getQuantity()).thenReturn(5);
+        when(storeProduct.getAvailableQuantity()).thenReturn(5);
+        when(storeProductRepository.findSellableByProductIds(java.util.List.of(100L)))
+                .thenReturn(java.util.List.of(storeProduct));
         when(storeProduct.getProduct()).thenReturn(product);
         when(storeProductRepository.findSellableById(10L)).thenReturn(Optional.of(storeProduct));
         when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(user));

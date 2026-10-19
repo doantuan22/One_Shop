@@ -1,3 +1,5 @@
+> Historical phase evidence (up to 14/10/2026). Superseded script names and readiness claims describe that run only. Current setup: [database README](../../../database/README.md); current acceptance: [deep audit](../final-deep-audit/DEEP_AUDIT_REPORT.md).
+
 # V3-BE-03 — TEST RESULTS
 
 All results come from runs of 13/10/2026 against the local SQL Server, **database `oneshop_test`** (`DB_NAME=oneshop_test`, taken over the `.env` value by the process environment). The `oneshop` database was not written to. Raw logs and XML reports were kept in the session scratchpad, not in the repository.

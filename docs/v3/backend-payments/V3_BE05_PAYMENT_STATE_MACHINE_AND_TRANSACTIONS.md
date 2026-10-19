@@ -1,3 +1,5 @@
+> Historical phase evidence (up to 14/10/2026). Superseded script names and readiness claims describe that run only. Current setup: [database README](../../../database/README.md); current acceptance: [deep audit](../final-deep-audit/DEEP_AUDIT_REPORT.md).
+
 # V3-BE-05 — PAYMENT STATE MACHINE, LEDGER AND TRANSACTION DESIGN
 
 **Date:** 14/10/2026 · **Scope:** Mock payment gateway, timeout and reconciliation, cancellation and restoration,

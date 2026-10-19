@@ -5,7 +5,7 @@
 </head>
 <body>
 <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
-    <div th:replace="~{fragments/components :: pageHeader('Sản phẩm / SKU', 'Mỗi sản phẩm là một SKU bán được, dùng chung toàn chuỗi. Giá và tồn kho được đặt theo từng chi nhánh.')}"></div>
+<div th:replace="~{fragments/components :: pageHeader('Sản phẩm / SKU', 'Mỗi SKU có một giá bán online dùng chung toàn chuỗi. Tồn kho được quản lý theo từng chi nhánh.')}"></div>
     <a class="btn btn-primary" th:href="@{/admin/products/new}">Thêm sản phẩm</a>
 </div>
 

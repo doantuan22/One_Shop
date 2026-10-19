@@ -1,3 +1,5 @@
+> Historical phase evidence (up to 14/10/2026). Superseded script names and readiness claims describe that run only. Current setup: [database README](../../../database/README.md); current acceptance: [deep audit](../final-deep-audit/DEEP_AUDIT_REPORT.md).
+
 # V3-BE-06 — COMPONENT CHANGE MATRIX
 
 Date: 14/10/2026. This inventory covers BE-06 changes only; the pre-existing uncommitted BE-05 work is retained.

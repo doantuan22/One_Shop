@@ -4,7 +4,7 @@
     <title th:text="${editId == null} ? 'Thêm sản phẩm' : 'Sửa sản phẩm'">Sản phẩm</title>
 </head>
 <body>
-<div th:replace="~{fragments/components :: pageHeader(${editId == null} ? 'Thêm sản phẩm' : 'Sửa sản phẩm', 'Một sản phẩm là một SKU cụ thể (ví dụ từng màu son). Giá và tồn kho đặt ở mục Sản phẩm theo chi nhánh.')}"></div>
+<div th:replace="~{fragments/components :: pageHeader(${editId == null} ? 'Thêm sản phẩm' : 'Sửa sản phẩm', 'Một SKU có một giá bán online dùng chung toàn chuỗi. Tồn kho được quản lý theo chi nhánh.')}"></div>
 
 <div class="alert alert-success" th:if="${param.success}" th:switch="${param.success[0]}">
     <span th:case="'created'">Đã thêm sản phẩm. Bạn có thể tải ảnh lên ngay bên dưới.</span>
@@ -28,6 +28,18 @@
                       th:action="${editId == null} ? @{/admin/products} : @{/admin/products/{id}(id=${editId})}">
                     <div class="alert alert-danger" th:each="message : ${#fields.globalErrors()}" th:text="${message}">Lỗi</div>
                     <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="price">Giá bán online (VNĐ)</label>
+                            <input type="number" class="form-control" th:field="*{price}" th:errorclass="is-invalid" min="0" step="0.01" required>
+                            <div class="invalid-feedback" th:errors="*{price}">Lỗi</div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="originalPrice">Giá gốc (VNĐ, tùy chọn)</label>
+                            <input type="number" class="form-control" th:field="*{originalPrice}" th:errorclass="is-invalid"
+                                   th:classappend="${#fields.hasErrors('originalPriceValid')} ? 'is-invalid'" min="0" step="0.01">
+                            <div class="invalid-feedback" th:errors="*{originalPrice}">Lỗi</div>
+                            <div class="text-danger small" th:errors="*{originalPriceValid}">Lỗi</div>
+                        </div>
                         <div class="col-12 col-md-4">
                             <label class="form-label" for="sku">Mã SKU <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" th:field="*{sku}" th:errorclass="is-invalid" maxlength="50">

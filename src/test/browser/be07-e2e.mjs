@@ -27,7 +27,13 @@ try{
   const customer=await login('khachhang1@example.com');
   await nav(customer,`/products/${config.productId}`);
   await field(customer,'#add-quantity',config.quantity);await submit(customer,'form[action="/cart/items"] button[type="submit"]');
-  await nav(customer,'/cart');await click(customer,'input[name="cartItemIds"]');await submit(customer,'#cart-selection-form button[type="submit"]');
+  await nav(customer,'/cart');
+  await click(customer,'#select-all-items');
+  if(!await evaluate(customer,`document.querySelector('#select-all-items').checked && [...document.querySelectorAll('input[name="cartItemIds"]:not(:disabled)')].every(e=>e.checked)`))throw new Error('Central cart select-all state is inconsistent');
+  await click(customer,'#select-all-items');
+  if(await evaluate(customer,`[...document.querySelectorAll('input[name="cartItemIds"]:not(:disabled)')].some(e=>e.checked)`))throw new Error('Central cart select-all cannot clear the selection');
+  await click(customer,'input[name="cartItemIds"]');
+  await submit(customer,'#cart-selection-form button[type="submit"]');
   await until(()=>has(customer,'#receiverName'),'checkout page');
   if(config.mode==='PICKUP')await nav(customer,await evaluate(customer,`'/checkout?'+[...document.querySelectorAll('input[name="cartItemIds"]')].map(e=>'cartItemIds='+e.value).join('&')+'&fulfillmentType=STORE_PICKUP&paymentMethod=PAY_AT_STORE&pickupStoreId='+${config.storeId}`));
   else if(['ONLINE','FAILED','REFUND','REVIEW'].includes(config.mode)){

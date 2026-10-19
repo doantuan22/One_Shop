@@ -11,7 +11,10 @@ import java.util.Set;
 
 import static com.oneshop.entity.OrderStatus.*;
 
-/** Transition rules: pure checks without persistence, authorization or payment/fulfillment side effects. */
+/** Transition rules: pure checks without persistence, authorization or payment/fulfillment side effects.
+ * Customer cancellation of a CONFIRMED Order (COD/PAY_AT_STORE unpaid, or paid ONLINE before PREPARING)
+ * is a payment-domain transition owned by {@link com.oneshop.service.payment.OrderStatusWriter}
+ * (CONFIRMED -&gt; CANCELLED with stock restore/refund), not a fulfillment-progress edge of this graph. */
 @Component
 public class OrderTransitionPolicy {
     /** Customer-only cancellation: before preparation and before collection; no refund workflow exists. */

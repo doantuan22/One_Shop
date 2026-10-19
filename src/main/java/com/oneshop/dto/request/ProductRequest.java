@@ -27,9 +27,19 @@ public class ProductRequest {
 
     private String description;
 
+    @NotNull(message = "Vui lòng nhập giá bán online")
+    @jakarta.validation.constraints.DecimalMin(value = "0", message = "Giá không được âm")
+    @jakarta.validation.constraints.Digits(integer = 16, fraction = 2, message = "Giá không hợp lệ")
     private java.math.BigDecimal price = java.math.BigDecimal.ZERO;
 
+    @jakarta.validation.constraints.DecimalMin(value = "0", message = "Giá gốc không được âm")
+    @jakarta.validation.constraints.Digits(integer = 16, fraction = 2, message = "Giá gốc không hợp lệ")
     private java.math.BigDecimal originalPrice;
+
+    @jakarta.validation.constraints.AssertTrue(message = "Giá gốc phải lớn hơn hoặc bằng giá bán online")
+    public boolean isOriginalPriceValid() {
+        return originalPrice == null || price == null || originalPrice.compareTo(price) >= 0;
+    }
 
     @NotNull(message = "Vui lòng chọn trạng thái")
     private ProductStatus status = ProductStatus.ACTIVE;

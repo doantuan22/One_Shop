@@ -1,3 +1,5 @@
+> Historical phase evidence (up to 14/10/2026). Superseded script names and readiness claims describe that run only. Current setup: [database README](../../../database/README.md); current acceptance: [deep audit](../final-deep-audit/DEEP_AUDIT_REPORT.md).
+
 # OneShop V3 — Final System Audit
 
 Ngày audit: 14-10-2026 (ICT). Baseline BE-07 đã được chạy lại trước thay đổi: **1.585 PASS, 0 failure, 0 error, 0 skipped**.

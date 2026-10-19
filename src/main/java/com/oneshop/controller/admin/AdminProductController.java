@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Admin: Products. One Product is one sellable SKU of the whole chain (BR-01): no price or quantity here, those are
- * set per Store in {@link AdminStoreProductController}. Images go to Cloudinary. A Product is retired with a status,
+ * Admin: Products. Product holds the chain-wide online price; inventory is managed per Store.
+ * Images go to Cloudinary. A Product is retired with a status,
  * never deleted (BR-17).
  */
 @Controller
@@ -64,6 +64,8 @@ public class AdminProductController {
             form.setCategoryId(product.categoryId());
             form.setBrandId(product.brandId());
             form.setStatus(product.status());
+            form.setPrice(product.price());
+            form.setOriginalPrice(product.originalPrice());
             model.addAttribute("form", form);
         }
         return form(model, id);

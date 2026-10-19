@@ -1,3 +1,5 @@
+> Historical phase evidence (up to 14/10/2026). Superseded script names and readiness claims describe that run only. Current setup: [database README](../../../database/README.md); current acceptance: [deep audit](../final-deep-audit/DEEP_AUDIT_REPORT.md).
+
 # V3-BE-07 — Báo cáo triển khai và nghiệm thu hồi quy
 
 Ngày nghiệm thu: 14-10-2026 (ICT). Phạm vi là OneShop V3 đang có trong repo và SQL Server `oneshop_test`; database vận hành `oneshop` chỉ được đọc để đối chiếu.

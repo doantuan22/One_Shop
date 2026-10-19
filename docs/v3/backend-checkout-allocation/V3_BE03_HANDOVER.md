@@ -1,3 +1,5 @@
+> Historical phase evidence (up to 14/10/2026). Superseded script names and readiness claims describe that run only. Current setup: [database README](../../../database/README.md); current acceptance: [deep audit](../final-deep-audit/DEEP_AUDIT_REPORT.md).
+
 # V3-BE-03 — HANDOVER TO V3-BE-04 AND V3-BE-05
 
 **Phase completed:** V3-BE-03 (status **DONE for its scope**, see `V3_BE03_IMPLEMENTATION_REPORT.md`; OPEN-01/02/03 decided as DEC-23/24/25; ONLINE stays gated until BE-05)  

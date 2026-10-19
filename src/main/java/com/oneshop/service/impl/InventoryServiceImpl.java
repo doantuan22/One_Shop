@@ -51,6 +51,9 @@ public class InventoryServiceImpl implements InventoryService {
         }
         StoreProduct storeProduct = storeProductRepository.findByIdForUpdate(storeProductId)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm tại chi nhánh #" + storeProductId));
+        if (newQuantity < storeProduct.getReservedQuantity()) {
+            throw new BadRequestException("quantity", "Tồn kho không được thấp hơn số lượng đang được giữ.");
+        }
         int before = storeProduct.getQuantity();
         if (before == newQuantity) {
             return;

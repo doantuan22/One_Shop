@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * V3 version of {@link SeedGuard}, for tests that must really commit (concurrent transactions, fault injection): it
+ * V3 fixture guard for tests that must really commit (concurrent transactions, fault injection): it
  * remembers the tables a V3 checkout touches and puts them back afterwards, so the test database is left as found.
  *
  * <p>It removes every checkout session, Order, OrderFulfillment (and its history), OrderItem, Payment, status
@@ -64,10 +64,11 @@ final class SeedGuardV3 {
     /** The only databases these tests may write to. */
     boolean isTestDatabase() {
         String name = jdbc.queryForObject("select db_name()", String.class);
-        return name != null && name.toLowerCase().endsWith("_test");
+        return name != null && name.toLowerCase(java.util.Locale.ROOT).matches("oneshop[a-z0-9_]*_test");
     }
 
     void remember() {
+        requireTestDatabase();
         maxOrder = max("orders", "order_id");
         maxCheckout = max("checkout_sessions", "checkout_id");
         maxMovement = max("inventory_movements", "movement_id");
@@ -102,6 +103,7 @@ final class SeedGuardV3 {
     }
 
     void restore() {
+        requireTestDatabase();
         for (ShieldedOrder order : shielded) {
             jdbc.update("update dbo.orders set created_at = ? where order_id = ?", order.createdAt(), order.id());
         }
@@ -161,6 +163,12 @@ final class SeedGuardV3 {
         for (CartState state : carts) {
             jdbc.update("update dbo.carts set created_at = ?, updated_at = ? where cart_id = ?",
                     state.createdAt(), state.updatedAt(), state.id());
+        }
+    }
+
+    private void requireTestDatabase() {
+        if (!isTestDatabase()) {
+            throw new IllegalStateException("Fixture writes require an isolated oneshop*_test database.");
         }
     }
 

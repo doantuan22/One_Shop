@@ -53,7 +53,6 @@ import com.oneshop.service.PaymentService;
 import com.oneshop.service.StoreAllocationService;
 import com.oneshop.service.allocation.AllocatedLine;
 import com.oneshop.service.allocation.AllocationDemand;
-import com.oneshop.service.allocation.AllocationFailure;
 import com.oneshop.service.allocation.AllocationResult;
 import com.oneshop.service.allocation.DeliveryServiceAreaPolicy;
 import com.oneshop.service.allocation.LockedAllocation;

@@ -16,7 +16,7 @@ public class PaymentProperties {
     /** Interval of the timeout scan (BE-05). */
     private long timeoutScanIntervalMs = 60000;
     /** Runs the {@code @Scheduled} timeout worker. Off in tests (they call the scan directly) and may be off per node. */
-    private boolean timeoutWorkerEnabled = true;
+    private boolean timeoutWorkerEnabled = false;
     /** At most this many Orders are examined per scan; the next scan continues. */
     private int scanBatchSize = 200;
     /**

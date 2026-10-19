@@ -25,7 +25,14 @@ SET QUOTED_IDENTIFIER ON;
 SET XACT_ABORT ON;
 GO
 
-IF (SELECT COUNT(*) FROM dbo.roles) <> 0
+-- Check every table: an empty roles lookup does not prove that the database is empty.
+DECLARE @seedHasData bit = 0;
+DECLARE @seedPreflight nvarchar(max);
+SELECT @seedPreflight = STRING_AGG(CAST(N'IF EXISTS (SELECT 1 FROM '
+    + QUOTENAME(s.name) + N'.' + QUOTENAME(t.name) + N') SET @hasData = 1;' AS nvarchar(max)), NCHAR(10))
+FROM sys.tables t JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE t.is_ms_shipped = 0;
+EXEC sys.sp_executesql @seedPreflight, N'@hasData bit OUTPUT', @hasData = @seedHasData OUTPUT;
+IF @seedHasData = 1
     THROW 51011, 'Seed refuses a non-empty database. Create a new database for a fresh install.', 1;
 
 BEGIN TRY

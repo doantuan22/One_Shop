@@ -32,8 +32,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -140,6 +138,9 @@ public class CartServiceImpl implements CartService {
                 if (storeProduct == null) {
                     throw new BadRequestException("storeProductId", NOT_ON_SALE);
                 }
+                if (!product.getId().equals(storeProduct.getProduct().getId())) {
+                    throw new BadRequestException("storeProductId", "Chi nhánh và sản phẩm được chọn không khớp nhau.");
+                }
             }
         } else if (request.storeProductId() != null) {
             storeProduct = storeProductRepository.findSellableById(request.storeProductId()).orElse(null);
@@ -151,11 +152,11 @@ public class CartServiceImpl implements CartService {
             throw new BadRequestException("Thiếu thông tin sản phẩm.");
         }
 
-        if (product == null && storeProduct != null) {
-            product = storeProduct.getProduct();
-        }
         if (product == null) {
             throw new BadRequestException("Sản phẩm không hợp lệ hoặc đã ngừng bán.");
+        }
+        if (product.getPrice() == null || product.getPrice().signum() <= 0) {
+            throw new BadRequestException("productId", NOT_ON_SALE);
         }
 
         User user = userRepository.findByEmail(customerEmail)
@@ -167,23 +168,13 @@ public class CartServiceImpl implements CartService {
         }
         long resulting = (item == null ? 0L : item.getQuantity()) + quantity;
 
-        int availableStock;
-        if (storeProduct != null) {
-            availableStock = storeProduct.getQuantity() - storeProduct.getReservedQuantity();
-            if (availableStock <= 0) {
-                throw new BadRequestException("quantity", OUT_OF_STOCK);
-            }
-            if (resulting > availableStock) {
-                throw new BadRequestException("quantity", item == null ? NOT_ENOUGH : NOT_ENOUGH_WITH_CART);
-            }
-        } else {
-            availableStock = getChainAvailableStock(product.getId());
-            if (availableStock <= 0) {
-                throw new BadRequestException("quantity", OUT_OF_STOCK);
-            }
-            if (resulting > availableStock) {
-                throw new BadRequestException("quantity", item == null ? NOT_ENOUGH : NOT_ENOUGH_WITH_CART);
-            }
+        // A legacy StoreProduct only identifies the SKU; V3 Cart never chooses its inventory source.
+        long availableStock = getChainAvailableStock(product.getId());
+        if (availableStock <= 0) {
+            throw new BadRequestException("quantity", OUT_OF_STOCK);
+        }
+        if (resulting > availableStock || resulting > Integer.MAX_VALUE) {
+            throw new BadRequestException("quantity", item == null ? NOT_ENOUGH : NOT_ENOUGH_WITH_CART);
         }
 
         if (item == null) {
@@ -207,9 +198,9 @@ public class CartServiceImpl implements CartService {
         cartItemRepository.saveAndFlush(item);
     }
 
-    private int getChainAvailableStock(Long productId) {
+    private long getChainAvailableStock(Long productId) {
         return storeProductRepository.findSellableByProductIds(List.of(productId)).stream()
-                .mapToInt(sp -> Math.max(0, sp.getQuantity() - sp.getReservedQuantity()))
+                .mapToLong(StoreProduct::getAvailableQuantity)
                 .sum();
     }
 
@@ -226,17 +217,12 @@ public class CartServiceImpl implements CartService {
         CartItem item = ownItem(customerEmail, cartItemId);
         Product product = item.getProduct();
 
-        if (productRepository.findVisibleById(product.getId()).isEmpty()) {
+        if (productRepository.findVisibleById(product.getId()).isEmpty()
+                || product.getPrice() == null || product.getPrice().signum() <= 0) {
             throw new BadRequestException("quantity", NOT_ON_SALE + " Bạn có thể xóa sản phẩm khỏi giỏ.");
         }
 
-        StoreProduct storeProduct = item.getStoreProduct();
-        int available;
-        if (storeProduct != null && storeProductRepository.findSellableIdsIn(List.of(storeProduct.getId())).contains(storeProduct.getId())) {
-            available = storeProduct.getQuantity() - storeProduct.getReservedQuantity();
-        } else {
-            available = getChainAvailableStock(product.getId());
-        }
+        long available = getChainAvailableStock(product.getId());
 
         if (available <= 0) {
             throw new BadRequestException("quantity", OUT_OF_STOCK);
@@ -290,11 +276,12 @@ public class CartServiceImpl implements CartService {
             Product product = item.getProduct();
             List<StoreProduct> storeProductsForSku = sellableByProduct.getOrDefault(product.getId(), List.of());
 
-            int chainAvailableStock = storeProductsForSku.stream()
-                    .mapToInt(sp -> Math.max(0, sp.getQuantity() - sp.getReservedQuantity()))
+            long chainAvailableStock = storeProductsForSku.stream()
+                    .mapToLong(StoreProduct::getAvailableQuantity)
                     .sum();
 
             boolean productVisible = product.getStatus() == ProductStatus.ACTIVE
+                    && product.getPrice() != null && product.getPrice().signum() > 0
                     && (product.getCategory() == null || product.getCategory().getStatus() == VisibilityStatus.ACTIVE)
                     && (product.getBrand() == null || product.getBrand().getStatus() == VisibilityStatus.ACTIVE);
 

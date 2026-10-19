@@ -860,13 +860,6 @@
         });
     });
 
-    document.querySelectorAll('[data-confirm]').forEach(form => {
-        form.addEventListener('submit', event => {
-            const message = form.getAttribute('data-confirm');
-            if (message && !confirm(message)) event.preventDefault();
-        });
-    });
-
     const selectAll = document.getElementById('select-all-items');
     if (selectAll) {
         selectAll.addEventListener('change', () => {

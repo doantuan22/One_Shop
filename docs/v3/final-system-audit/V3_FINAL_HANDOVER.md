@@ -1,3 +1,5 @@
+> Historical phase evidence (up to 14/10/2026). Superseded script names and readiness claims describe that run only. Current setup: [database README](../../../database/README.md); current acceptance: [deep audit](../final-deep-audit/DEEP_AUDIT_REPORT.md).
+
 # V3 final handover
 
 OneShop V3 is ready for the next UI/deployment phase with a verified fresh-install database path, controlled existing-database Review migration and a green full regression suite.

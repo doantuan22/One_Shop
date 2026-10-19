@@ -1,3 +1,5 @@
+> Historical phase evidence (up to 14/10/2026). Superseded script names and readiness claims describe that run only. Current setup: [database README](../../../database/README.md); current acceptance: [deep audit](../final-deep-audit/DEEP_AUDIT_REPORT.md).
+
 # ONESHOP V3 — HANDOVER DOCUMENT: PHASE V3-BE-02 TO V3-BE-03
 ## Core Catalog & Central Cart -> Checkout, Order Allocation & Fulfillment
 
@@ -141,9 +143,9 @@ When implementing Phase V3-BE-03, the engineer should implement:
 
 ## 5. Artifact Checklist
 
-- [x] Implementation Report: [`V3_BE02_IMPLEMENTATION_REPORT.md`](file:///d:/One_Shop/docs/v3/backend-catalog-cart/V3_BE02_IMPLEMENTATION_REPORT.md)
-- [x] Component Change Matrix: [`V3_BE02_COMPONENT_CHANGE_MATRIX.md`](file:///d:/One_Shop/docs/v3/backend-catalog-cart/V3_BE02_COMPONENT_CHANGE_MATRIX.md)
-- [x] Test Results & Evidence: [`V3_BE02_TEST_RESULTS.md`](file:///d:/One_Shop/docs/v3/backend-catalog-cart/V3_BE02_TEST_RESULTS.md)
+- [x] Historical implementation report: `V3_BE02_IMPLEMENTATION_REPORT.md` (retired; source file is not retained)
+- [x] Historical component matrix: `V3_BE02_COMPONENT_CHANGE_MATRIX.md` (retired; source file is not retained)
+- [x] Historical test evidence: `V3_BE02_TEST_RESULTS.md` (retired; source file is not retained)
 - [x] Handover Specification: [`V3_BE02_HANDOVER.md`](file:///d:/One_Shop/docs/v3/backend-catalog-cart/V3_BE02_HANDOVER.md)
 - [x] All 15 Integration Tests in `CentralCartIntegrationTest`: **PASS**
 - [x] All 13 Unit Tests in `CartServiceV3Test` & `ProductServiceV3Test`: **PASS**

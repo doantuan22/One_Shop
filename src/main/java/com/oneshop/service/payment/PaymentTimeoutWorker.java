@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * off with {@code oneshop.payment.timeout-worker-enabled=false} (the test profile does, and calls the scan directly).
  */
 @Component
-@ConditionalOnProperty(name = "oneshop.payment.timeout-worker-enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "oneshop.payment.timeout-worker-enabled", havingValue = "true")
 public class PaymentTimeoutWorker {
 
     private static final Logger log = LoggerFactory.getLogger(PaymentTimeoutWorker.class);

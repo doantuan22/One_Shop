@@ -1,5 +1,5 @@
 /* BE-06 / OPEN-05 approved: one Review per OrderItem. Data-preserving, rerunnable migration.
-   Run explicitly against the selected OneShop database AFTER the base 01..05 scripts.
+   Existing databases only: run explicitly after backup/approval. Fresh 01_schema.sql already includes DEC-26.
    Does not relink, update or delete any Review/Reply. No changes outside review uniqueness.
    Reverting to UNIQUE(user_id, product_id) is impossible after per-item duplicates exist without a data decision. */
 SET NOCOUNT ON;

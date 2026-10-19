@@ -21,8 +21,6 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class StaffOperationsService {
     public static final int LOW_STOCK_THRESHOLD = 5;
-    private static final List<OrderStatus> PROCESSING = List.of(OrderStatus.CONFIRMED, OrderStatus.PREPARING,
-            OrderStatus.PACKED, OrderStatus.SHIPPING);
     private static final List<OrderStatus> PICKUP_QUEUE = List.of(OrderStatus.CONFIRMED, OrderStatus.PREPARING,
             OrderStatus.READY_FOR_PICKUP);
     private final StaffStoreScopeService scope;

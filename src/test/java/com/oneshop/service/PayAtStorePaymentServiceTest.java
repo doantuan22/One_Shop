@@ -23,7 +23,7 @@ class PayAtStorePaymentServiceTest {
     private final OrderRepository orders = mock(OrderRepository.class);
     private final OrderService stateMachine = mock(OrderService.class);
     private final InventoryService inventory = mock(InventoryService.class);
-    private final PaymentService service = new PaymentServiceImpl(payments, orders, stateMachine, inventory);
+    private final PaymentService service = new PaymentServiceImpl(payments, orders);
     private Order order;
 
     @BeforeEach

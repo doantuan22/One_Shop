@@ -1,3 +1,5 @@
+> Historical phase evidence (up to 14/10/2026). Superseded script names and readiness claims describe that run only. Current setup: [database README](../../../database/README.md); current acceptance: [deep audit](../final-deep-audit/DEEP_AUDIT_REPORT.md).
+
 # V3-BE-07 — E2E browser và security
 
 Bảy flow chạy trên Google Chrome headless thật, với ba browser context cô lập cho Customer, Staff và Admin. Automation thao tác DOM/form/CSRF thật; không gọi API mutation thay cho UI.

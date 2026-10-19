@@ -416,7 +416,10 @@ public class StaffFulfillmentService {
     /** First day of a date range filter given as text (invalid text means "no bound"). */
     public static LocalDate parseDate(String text) {
         try {
-            return text == null || text.isBlank() ? null : LocalDate.parse(text.strip());
+            if (text == null || text.isBlank()) return null;
+            LocalDate date = LocalDate.parse(text.strip());
+            // Keep both JDBC bounds representable, including to.plusDays(1); invalid text already means no bound.
+            return date.isBefore(MIN_TIME.toLocalDate()) || !date.isBefore(MAX_TIME.toLocalDate()) ? null : date;
         } catch (java.time.format.DateTimeParseException e) {
             return null;
         }

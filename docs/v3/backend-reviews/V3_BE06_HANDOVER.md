@@ -1,3 +1,5 @@
+> Historical phase evidence (up to 14/10/2026). Superseded script names and readiness claims describe that run only. Current setup: [database README](../../../database/README.md); current acceptance: [deep audit](../final-deep-audit/DEEP_AUDIT_REPORT.md).
+
 # V3-BE-06 — HANDOVER TO BE-07 AND OPERATIONS
 
 **BE-06 status: DONE for its scope — 14/10/2026.** New cases 53/53 PASS; existing Review Web cases 15/15 PASS. BE-01..05 V3 acceptance 343/343 PASS. The full suite still has 375 inherited fail/error cases and 42 unchanged skips; 0 regressions, 8 improvements, 0 removed cases. BE-07 has not been implemented.

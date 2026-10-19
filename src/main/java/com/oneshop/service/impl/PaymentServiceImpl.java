@@ -17,8 +17,6 @@ import com.oneshop.exception.ResourceNotFoundException;
 import com.oneshop.repository.OrderFulfillmentRepository;
 import com.oneshop.repository.OrderRepository;
 import com.oneshop.repository.PaymentRepository;
-import com.oneshop.service.InventoryService;
-import com.oneshop.service.OrderService;
 import com.oneshop.service.PaymentDeadlinePolicy;
 import com.oneshop.service.PaymentService;
 import com.oneshop.service.payment.LedgerState;
@@ -40,18 +38,13 @@ import java.util.UUID;
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
-    private final OrderService orderService;
-    private final InventoryService inventoryService;
 
-    public PaymentServiceImpl(PaymentRepository paymentRepository, OrderRepository orderRepository,
-                              OrderService orderService, InventoryService inventoryService) {
+    public PaymentServiceImpl(PaymentRepository paymentRepository, OrderRepository orderRepository) {
         this.paymentRepository = paymentRepository;
         this.orderRepository = orderRepository;
-        this.orderService = orderService;
-        this.inventoryService = inventoryService;
     }
 
-    /** The payment window (created_at + 15 minutes). Setter injection keeps the 4-argument constructor usable. */
+    /** The payment window (created_at + 15 minutes). */
     private PaymentDeadlinePolicy deadlines = new PaymentDeadlinePolicy(new PaymentProperties(), Clock.systemDefaultZone());
 
     @Autowired
@@ -61,7 +54,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private PaymentGateway gateway;
 
-    /** The mock gateway, for the ledger state shown on the payment page (setter keeps the old constructor usable). */
+    /** The mock gateway, for the ledger state shown on the payment page. */
     @Autowired(required = false)
     void setGateway(PaymentGateway gateway) {
         this.gateway = gateway;
@@ -144,7 +137,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private OrderFulfillmentRepository fulfillmentRepository;
 
-    /** Setter injection keeps the 4-argument constructor usable by unit tests. */
+    /** Fulfillment count constrains offline collection to a single-source Order. */
     @Autowired
     void setFulfillmentRepository(OrderFulfillmentRepository fulfillmentRepository) {
         this.fulfillmentRepository = fulfillmentRepository;
@@ -239,43 +232,6 @@ public class PaymentServiceImpl implements PaymentService {
             }
         }
         paymentRepository.flush();
-    }
-
-    private PaymentResponse complete(String customerEmail, Long orderId, Long paymentId, PaymentStatus result) {
-        Order order = ownLockedOrder(customerEmail, orderId);
-        Payment payment = paymentRepository.findByIdAndOrderId(paymentId, orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy lần thanh toán của đơn hàng này."));
-        requireConsistent(payment, order);
-        if (payment.getStatus() == result) {
-            // Repeated success stays idempotent after fulfillment advances; never rewind the Order.
-            // Repeated results return the same record without repeating stock or history writes.
-            boolean matchingOrder = result == PaymentStatus.SUCCESS
-                    ? order.getPaymentStatus() == OrderPaymentStatus.PAID
-                        && order.getOrderStatus() != null
-                        && order.getOrderStatus() != OrderStatus.PENDING_PAYMENT && order.getOrderStatus() != OrderStatus.CANCELLED
-                    : order.getPaymentStatus() == OrderPaymentStatus.FAILED && order.getOrderStatus() == OrderStatus.CANCELLED;
-            if (!matchingOrder) {
-                throw new BadRequestException("Kết quả thanh toán không nhất quán với đơn hàng.");
-            }
-            return response(payment);
-        }
-        if (payment.getStatus() != PaymentStatus.PENDING) {
-            throw new BadRequestException("Lần thanh toán đã kết thúc; không thể đổi kết quả.");
-        }
-        requirePayable(order);
-        payment.setStatus(result);
-        payment.setTransactionCode(transactionCode());
-        payment.setPaidAt(result == PaymentStatus.SUCCESS ? LocalDateTime.now().withNano(0) : null);
-        if (result == PaymentStatus.SUCCESS) {
-            order.setPaymentStatus(OrderPaymentStatus.PAID);
-            orderService.confirmAfterOnlinePayment(order);
-        } else {
-            inventoryService.restoreForCancelledOrder(order);
-            order.setPaymentStatus(OrderPaymentStatus.FAILED);
-            orderService.cancelAfterOnlinePaymentFailure(order);
-        }
-        paymentRepository.flush(); // Check constraints before returning; every change shares this transaction.
-        return response(payment);
     }
 
     private Order ownLockedOrder(String customerEmail, Long orderId) {

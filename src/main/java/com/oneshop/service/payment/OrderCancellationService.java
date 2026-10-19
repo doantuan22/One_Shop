@@ -1,6 +1,5 @@
 package com.oneshop.service.payment;
 
-import com.oneshop.entity.InventoryMovementType;
 import com.oneshop.entity.Order;
 import com.oneshop.entity.OrderFulfillment;
 import com.oneshop.entity.OrderFulfillmentStatus;

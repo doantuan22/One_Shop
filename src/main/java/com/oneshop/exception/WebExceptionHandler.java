@@ -101,11 +101,6 @@ public class WebExceptionHandler {
             return "redirect:/admin/brands?error=image-size";
         }
 
-        String referer = request.getHeader("Referer");
-        if (StringUtils.hasText(referer) && (referer.startsWith("/") || referer.contains("/admin/"))) {
-            return "redirect:" + referer + (referer.contains("?") ? "&" : "?") + "error=image-size";
-        }
-
         return "redirect:/admin/products?error=image-size";
     }
 

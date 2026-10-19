@@ -1,3 +1,5 @@
+> Historical phase evidence (up to 14/10/2026). Superseded script names and readiness claims describe that run only. Current setup: [database README](../../../database/README.md); current acceptance: [deep audit](../final-deep-audit/DEEP_AUDIT_REPORT.md).
+
 # V3-BE-06 — TEST RESULTS
 
 Date: 14/10/2026. SQL Server: `oneshop_test`. Operational `oneshop`: read-only snapshots; no test writes. Hibernate dev schema validation passed. The owner-approved UNIQUE migration was applied only to the test database.

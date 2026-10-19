@@ -6,6 +6,10 @@ import com.oneshop.entity.Payment;
 import com.oneshop.entity.PaymentMethod;
 import com.oneshop.exception.BadRequestException;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
+import org.springframework.core.env.StandardEnvironment;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -19,14 +23,21 @@ import java.util.List;
 public class MockPaymentGateway implements PaymentGateway {
 
     private final PaymentProperties properties;
+    private final Environment environment;
 
     public MockPaymentGateway(PaymentProperties properties) {
+        this(properties, new StandardEnvironment());
+    }
+
+    @Autowired
+    public MockPaymentGateway(PaymentProperties properties, Environment environment) {
         this.properties = properties;
+        this.environment = environment;
     }
 
     @Override
     public boolean enabled() {
-        return properties.isMockGatewayEnabled();
+        return properties.isMockGatewayEnabled() && !environment.acceptsProfiles(Profiles.of("prod"));
     }
 
     @Override

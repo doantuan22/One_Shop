@@ -367,16 +367,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private void apply(Product product, String sku, ProductRequest request) {
+        var price = request.getPrice();
+        var original = request.getOriginalPrice();
+        if (price == null || price.signum() < 0 || price.stripTrailingZeros().scale() > 2
+                || price.compareTo(new java.math.BigDecimal("9999999999999999.99")) > 0) {
+            throw new BadRequestException("price", "Giá bán online không hợp lệ.");
+        }
+        if (original != null && (original.compareTo(price) < 0 || original.stripTrailingZeros().scale() > 2
+                || original.compareTo(new java.math.BigDecimal("9999999999999999.99")) > 0)) {
+            throw new BadRequestException("originalPrice", "Giá gốc phải hợp lệ và không thấp hơn giá bán online.");
+        }
         product.setSku(sku);
         product.setName(request.getName().trim());
         product.setDescription(trimToNull(request.getDescription()));
         product.setStatus(request.getStatus());
-        if (request.getPrice() != null) {
-            product.setPrice(request.getPrice());
-        } else if (product.getPrice() == null) {
-            product.setPrice(java.math.BigDecimal.ZERO);
-        }
-        product.setOriginalPrice(request.getOriginalPrice());
+        product.setPrice(price);
+        product.setOriginalPrice(original);
         product.setCategory(categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new BadRequestException("categoryId", "Danh mục không tồn tại")));
         product.setBrand(brandRepository.findById(request.getBrandId())

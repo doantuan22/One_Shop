@@ -6,7 +6,6 @@ import com.oneshop.exception.ResourceNotFoundException;
 import com.oneshop.repository.OrderRepository;
 import com.oneshop.repository.OrderStatusHistoryRepository;
 import com.oneshop.repository.PaymentRepository;
-import com.oneshop.service.impl.OrderServiceImpl;
 import com.oneshop.service.impl.PaymentServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,8 +24,7 @@ class PaymentServiceTest {
     private final PaymentRepository payments = mock(PaymentRepository.class);
     private final OrderStatusHistoryRepository history = mock(OrderStatusHistoryRepository.class);
     private final InventoryService inventory = mock(InventoryService.class);
-    private final PaymentService service = new PaymentServiceImpl(payments, orders,
-            new OrderServiceImpl(orders, history, new OrderTransitionPolicy()), inventory);
+    private final PaymentService service = new PaymentServiceImpl(payments, orders);
     private Order order;
     private Payment payment;
 

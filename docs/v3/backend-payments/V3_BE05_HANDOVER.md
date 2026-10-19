@@ -1,3 +1,5 @@
+> Historical phase evidence (up to 14/10/2026). Superseded script names and readiness claims describe that run only. Current setup: [database README](../../../database/README.md); current acceptance: [deep audit](../final-deep-audit/DEEP_AUDIT_REPORT.md).
+
 # V3-BE-05 — HANDOVER TO V3-BE-06 / V3-BE-07 AND TO OPERATIONS
 
 **Phase completed:** V3-BE-05 Payments, Timeout and Simulated Refunds — `V3_BE05_IMPLEMENTATION_REPORT.md`.  

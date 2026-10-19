@@ -1,3 +1,5 @@
+> Historical phase evidence (up to 14/10/2026). Superseded script names and readiness claims describe that run only. Current setup: [database README](../../../database/README.md); current acceptance: [deep audit](../final-deep-audit/DEEP_AUDIT_REPORT.md).
+
 # V3-BE-04 — HANDOVER TO V3-BE-05 (AND BE-06 / BE-07)
 
 **Phase completed:** V3-BE-04 Multi-Branch Fulfillment Operations — see `V3_BE04_IMPLEMENTATION_REPORT.md`.  

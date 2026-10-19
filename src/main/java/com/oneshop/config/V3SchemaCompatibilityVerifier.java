@@ -1,0 +1,54 @@
+package com.oneshop.config;
+
+import org.springframework.beans.factory.SmartInitializingSingleton;
+import org.springframework.context.annotation.Profile;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Locale;
+
+/** Hibernate validates columns, but does not validate DEC-26 filtered uniqueness. Read-only startup prerequisite. */
+@Component
+@Profile("!test")
+public class V3SchemaCompatibilityVerifier implements SmartInitializingSingleton {
+    record KeyColumn(String name, boolean unique, boolean disabled, String filter, int ordinal, String column) { }
+    private final JdbcTemplate jdbc;
+
+    public V3SchemaCompatibilityVerifier(JdbcTemplate jdbc) { this.jdbc=jdbc; }
+
+    @Override
+    public void afterSingletonsInstantiated() {
+        List<KeyColumn> keys=jdbc.query("""
+                select i.name,i.is_unique,i.is_disabled,i.filter_definition,ic.key_ordinal,c.name
+                from sys.indexes i join sys.index_columns ic on ic.object_id=i.object_id and ic.index_id=i.index_id
+                join sys.columns c on c.object_id=ic.object_id and c.column_id=ic.column_id
+                where i.object_id=object_id(N'dbo.reviews') and ic.key_ordinal>0
+                order by i.name,ic.key_ordinal
+                """,(rs,n)->new KeyColumn(rs.getString(1),rs.getBoolean(2),rs.getBoolean(3),
+                rs.getString(4),rs.getInt(5),rs.getString(6)));
+        requireCompatible(keys);
+    }
+
+    static void requireCompatible(List<KeyColumn> keys) {
+        if (keys.stream().anyMatch(k->k.name().equals("UQ_reviews_user_product"))
+                || !matches(keys,"UX_reviews_order_item","ORDER_ITEM_IDISNOTNULL",List.of("order_item_id"))
+                || !matches(keys,"UX_reviews_legacy_user_product","ORDER_ITEM_IDISNULL",List.of("user_id","product_id"))) {
+            throw new IllegalStateException("V3 schema prerequisite missing: DEC-26 Review filtered unique indexes. "
+                    + "Stop startup; back up and obtain approval for database/migrations/20261014_be06_review_uniqueness.sql. "
+                    + "No migration was executed automatically.");
+        }
+    }
+
+    private static boolean matches(List<KeyColumn> all,String name,String filter,List<String> columns) {
+        List<KeyColumn> keys=all.stream().filter(k->k.name().equals(name)).toList();
+        if(keys.size()!=columns.size())return false;
+        for(int n=0;n<keys.size();n++) {
+            KeyColumn key=keys.get(n);
+            String predicate=key.filter()==null?"":key.filter().replaceAll("[\\[\\]()\\s]", "").toUpperCase(Locale.ROOT);
+            if(!key.unique()||key.disabled()||!predicate.equals(filter)||key.ordinal()!=n+1
+                    ||!key.column().equals(columns.get(n)))return false;
+        }
+        return true;
+    }
+}

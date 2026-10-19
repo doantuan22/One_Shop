@@ -1,3 +1,5 @@
+> Historical phase evidence (up to 14/10/2026). Superseded script names and readiness claims describe that run only. Current setup: [database README](../../../database/README.md); current acceptance: [deep audit](../final-deep-audit/DEEP_AUDIT_REPORT.md).
+
 # V3-BE-03 — COMPONENT CHANGE MATRIX
 
 Paths are relative to `src/main/java/com/oneshop/` unless a full path is given. Status: **NEW** (created), **MOD** (modified), **LEGACY** (kept for compatibility, not reachable from a V3 flow), **UNCHANGED** (examined, not changed).

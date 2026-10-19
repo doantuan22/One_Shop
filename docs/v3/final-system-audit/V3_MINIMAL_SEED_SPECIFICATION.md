@@ -1,3 +1,5 @@
+> Historical phase evidence (up to 14/10/2026). Superseded script names and readiness claims describe that run only. Current setup: [database README](../../../database/README.md); current acceptance: [deep audit](../final-deep-audit/DEEP_AUDIT_REPORT.md).
+
 # V3 seed specification
 
 `02_seed.sql` is a deterministic regression fixture, not a production catalog import. It contains the smallest linked dataset retained by the current V3 regression contracts: three roles, customer/staff/admin accounts, ACTIVE and INACTIVE assignments/stores, catalog/stock allocation conditions, checkout/payment states, Fulfillment history, inventory movements, Reviews, Replies and moderation data.
