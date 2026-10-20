@@ -5,7 +5,7 @@
 </head>
 <body>
 <div class="os-admin-payment-case" th:with="c=${paymentCase.summary}">
-    <a class="btn btn-outline-secondary mb-3" th:href="@{/admin/payments}">Thanh toán cần xử lý</a>
+    <a class="btn btn-outline-secondary mb-3" th:href="@{/admin/payments}">Danh sách thanh toán</a>
 
     <h1 class="h3" th:text="'Thanh toán đơn #' + ${c.orderId}"></h1>
     <p class="text-secondary" th:text="${c.customerName} + ' · ' + ${c.customerEmail}"></p>
@@ -21,6 +21,15 @@
     </div>
 
     <dl class="row">
+        <dt class="col-sm-4">Phân loại thanh toán</dt>
+        <dd class="col-sm-8" id="case-category"><span th:replace="~{fragments/components :: paymentCategory(${c.category})}"></span>
+            <span class="small text-secondary d-block" th:if="${c.category.name() == 'RECONCILING'}">Kết quả chưa xác định nhưng còn trong hạn thanh toán: chưa cần quản trị viên can thiệp.</span>
+            <span class="small text-secondary d-block" th:if="${c.category.name() == 'ATTENTION'}">Quá hạn, ngoại lệ hoặc hoàn tiền mô phỏng chưa xong: cần quản trị viên đối soát lại.</span></dd>
+        <dt class="col-sm-4" th:if="${#strings.contains(paymentCase.partStatuses.values().toString(), 'FAILED')}">Giao hàng thất bại</dt>
+        <dd class="col-sm-8" th:if="${#strings.contains(paymentCase.partStatuses.values().toString(), 'FAILED')}" id="case-delivery-failure">
+            Đơn có phần giao không thành công. Đây là ngoại lệ giao hàng, không phải lỗi thanh toán:
+            <a th:href="@{/admin/orders/{id}(id=${c.orderId})}">xử lý (giao lại / xác nhận không thể giao) ở chi tiết đơn</a>.
+        </dd>
         <dt class="col-sm-4">Trạng thái đơn</dt>
         <dd class="col-sm-8" id="case-order-status" th:attr="data-status=${c.orderStatus}">
             <span th:replace="~{staff/delivery/fragments :: state(${c.orderStatus})}"></span>
@@ -29,8 +38,8 @@
         <dd class="col-sm-8" id="case-payment-status" th:attr="data-status=${c.paymentStatus}">
             <span th:replace="~{staff/delivery/fragments :: payment(${c.paymentStatus})}"></span>
         </dd>
-        <dt class="col-sm-4">Cổng thanh toán trả lời</dt>
-        <dd class="col-sm-8" id="case-verification" th:text="${c.verification}"></dd>
+        <dt class="col-sm-4">Cổng mô phỏng trả lời</dt>
+        <dd class="col-sm-8" id="case-verification"><span th:replace="~{fragments/components :: gatewayAnswer(${c.verification})}"></span></dd>
         <dt class="col-sm-4">Hạn thanh toán</dt>
         <dd class="col-sm-8" th:text="${c.paymentDeadline != null} ? ${#temporals.format(c.paymentDeadline, 'dd/MM/yyyy HH:mm:ss')} : '—'"></dd>
         <dt class="col-sm-4">Cửa sổ đối soát đến</dt>
@@ -39,20 +48,22 @@
         <dd class="col-sm-8"><span th:replace="~{fragments/components :: price(${c.totalAmount})}"></span></dd>
     </dl>
 
-    <h2 class="h5">Các lần thanh toán</h2>
+    <div th:replace="~{orders/fragments :: refundSection(${refund})}"></div>
+
+    <h2 class="h5">Các lần thanh toán (cổng mô phỏng)</h2>
     <div class="table-responsive">
         <table class="table">
-            <thead><tr><th>#</th><th>Trạng thái</th><th>Sổ cổng</th><th>Mã giao dịch</th><th>Số tiền</th><th>Ghi nhận lúc</th><th>Hoàn tiền mô phỏng</th></tr></thead>
+            <thead><tr><th>#</th><th>Trạng thái</th><th>Sổ cổng</th><th>Mã giao dịch</th><th>Số tiền</th><th>Ghi nhận lúc</th><th>Hoàn tiền (mô phỏng)</th></tr></thead>
             <tbody id="payment-attempts">
             <tr th:each="a : ${paymentCase.attempts}" th:attr="data-payment-id=${a.paymentId},data-ledger=${a.ledgerState}">
                 <td th:text="${a.paymentId}"></td>
-                <td th:text="${a.status}"></td>
+                <td><span th:replace="~{fragments/components :: paymentRecordStatus(${a.status})}"></span></td>
                 <td th:text="${a.ledgerState}"></td>
                 <td class="font-monospace" th:text="${a.reference}"></td>
                 <td><span th:replace="~{fragments/components :: price(${a.amount})}"></span></td>
                 <td th:text="${a.paidAt != null} ? ${#temporals.format(a.paidAt, 'dd/MM/yyyy HH:mm:ss')} : '—'"></td>
                 <td>
-                    <span th:text="${a.refundStatus}"></span>
+                    <span th:replace="~{fragments/components :: refundStatus(${a.refundStatus})}"></span>
                     <span class="small text-secondary" th:if="${a.refundedAt != null}"
                           th:text="' · ' + ${#temporals.format(a.refundedAt, 'dd/MM/yyyy HH:mm')}"></span>
                 </td>
@@ -63,8 +74,8 @@
 
     <h2 class="h5">Các phần giao</h2>
     <ul id="payment-case-parts">
-        <li th:each="p : ${paymentCase.partStatuses}" th:attr="data-part-id=${p.key}"
-            th:text="'Phần giao #' + ${p.key} + ': ' + ${p.value}"></li>
+        <li th:each="p : ${paymentCase.partStatuses}" th:attr="data-part-id=${p.key}">
+            <span th:text="'Phần giao #' + ${p.key} + ': '"></span><span th:replace="~{staff/fulfillments/fragments :: status(${p.value})}"></span></li>
     </ul>
 
     <div class="card card-body mb-3" id="payment-case-actions">

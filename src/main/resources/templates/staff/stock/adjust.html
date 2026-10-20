@@ -116,13 +116,18 @@
             </p>
         </section>
 
-        <form class="card card-body os-form-card" th:action="@{/staff/stock/{id}/adjust(id=${stock.storeProductId})}"
-            th:object="${form}" method="post">
+        <form class="card card-body os-form-card" id="adjust-form" th:action="@{/staff/stock/{id}/adjust(id=${stock.storeProductId})}"
+            th:object="${form}" method="post" th:attr="data-current=${stock.quantity}">
 
             <label for="newQuantity" class="form-label">Số lượng tồn thực tế</label>
             <input id="newQuantity" type="number" class="form-control" th:field="*{newQuantity}" min="0"
                 max="2147483647" required>
             <p class="text-danger small" th:if="${#fields.hasErrors('newQuantity')}" th:errors="*{newQuantity}"></p>
+            <p class="mt-2 mb-0 fw-semibold" id="adjust-preview" aria-live="polite">
+                Tồn hiện tại <span th:text="${stock.quantity}">20</span> &rarr; tồn sau điều chỉnh
+                <span id="adjust-after" th:text="${stock.quantity}">20</span>
+                <span id="adjust-delta" class="badge text-bg-light border ms-1">không đổi</span>
+            </p>
 
             <label for="note" class="form-label mt-3">Lý do điều chỉnh</label>
             <textarea id="note" class="form-control" th:field="*{note}" maxlength="500" required rows="3"></textarea>
@@ -137,6 +142,36 @@
             </button>
         </form>
     </div>
+    <script>
+        (function () {
+            var form = document.getElementById('adjust-form');
+            if (!form) return;
+            var current = parseInt(form.getAttribute('data-current'), 10) || 0;
+            var input = document.getElementById('newQuantity');
+            var after = document.getElementById('adjust-after');
+            var delta = document.getElementById('adjust-delta');
+            function diff() {
+                var n = parseInt(input.value, 10);
+                return isNaN(n) ? null : n - current;
+            }
+            function render() {
+                var d = diff();
+                after.textContent = d === null ? '—' : String(current + d);
+                delta.textContent = d === null || d === 0 ? 'không đổi' : (d > 0 ? '+' + d : String(d));
+                delta.className = 'badge ms-1 ' + (d === null || d === 0 ? 'text-bg-light border' : (d > 0 ? 'text-bg-success' : 'text-bg-danger'));
+            }
+            input.addEventListener('input', render);
+            render();
+            // Show the before/after change and ask once before it is booked (the reason stays mandatory server-side).
+            form.addEventListener('submit', function (event) {
+                var d = diff();
+                if (d !== null && d !== 0 && !window.confirm('Điều chỉnh tồn kho từ ' + current + ' thành ' + (current + d) +
+                        ' (' + (d > 0 ? '+' + d : d) + ')?')) {
+                    event.preventDefault();
+                }
+            });
+        })();
+    </script>
 </body>
 
 </html>

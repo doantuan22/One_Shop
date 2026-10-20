@@ -39,7 +39,7 @@ public class SecurityConfig {
 
     private static final String[] PUBLIC_PATHS = {
             // catalog, Store Finder and the choice of the Store being browsed are open to guests (Roadmap V2 5)
-            "/", "/login", "/register", "/products/**", "/stores/**", "/health", "/error",
+            "/", "/login", "/register", "/products/**", "/stores/**", "/image-credits", "/health", "/error",
             "/css/**", "/js/**", "/images/**", "/vendor/**", "/favicon.ico",
             "/api/auth/**"
     };
@@ -69,6 +69,7 @@ public class SecurityConfig {
         RequestMatcher staffReviewForms = paths.matcher("/staff/reviews/**");
         RequestMatcher customerReviewForms = paths.matcher("/reviews/**");
         RequestMatcher adminReviewForms = paths.matcher("/admin/reviews/**");
+        RequestMatcher adminOrderForms = paths.matcher("/admin/orders/**");
         // Bearer API requests need no CSRF token. Payment and Staff fulfillment forms always require it.
         RequestMatcher bearerRequest = request -> {
             String header = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -77,7 +78,7 @@ public class SecurityConfig {
             return header != null && header.startsWith("Bearer ") && !paymentForms.matches(request)
                     && !deliveryForms.matches(request) && !pickupForms.matches(request) && !staffOrderForms.matches(request)
                     && !staffFulfillmentForms.matches(request) && !adminPaymentForms.matches(request) && !staffStockForms.matches(request) && !staffReviewForms.matches(request)
-                    && !customerReviewForms.matches(request) && !adminReviewForms.matches(request);
+                    && !customerReviewForms.matches(request) && !adminReviewForms.matches(request) && !adminOrderForms.matches(request);
         };
 
         http

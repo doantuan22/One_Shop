@@ -21,9 +21,13 @@ public class StoreProductMapper {
     }
 
     public StoreProductStockResponse toStockView(StoreProduct storeProduct) {
+        // read-only online price of the SKU (Product.price); the Store has no price of its own in V3
+        java.math.BigDecimal price = storeProduct.getProduct().getPrice() != null
+                ? storeProduct.getProduct().getPrice()
+                : storeProduct.getPrice();
         return new StoreProductStockResponse(storeProduct.getId(), storeProduct.getStore().getId(),
                 storeProduct.getStore().getName(), storeProduct.getProduct().getId(),
-                storeProduct.getProduct().getSku(), storeProduct.getProduct().getName(), storeProduct.getPrice(),
+                storeProduct.getProduct().getSku(), storeProduct.getProduct().getName(), price,
                 storeProduct.getQuantity(), storeProduct.getStatus());
     }
 }

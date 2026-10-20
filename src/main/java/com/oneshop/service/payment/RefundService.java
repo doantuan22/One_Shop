@@ -4,9 +4,13 @@ import com.oneshop.entity.Order;
 import com.oneshop.entity.OrderPaymentStatus;
 import com.oneshop.entity.Payment;
 import com.oneshop.entity.PaymentMethod;
+import com.oneshop.entity.PaymentRefund;
+import com.oneshop.entity.PaymentRefundComponent;
 import com.oneshop.entity.PaymentRefundStatus;
 import com.oneshop.entity.PaymentStatus;
+import com.oneshop.exception.BadRequestException;
 import com.oneshop.repository.OrderRepository;
+import com.oneshop.repository.PaymentRefundRepository;
 import com.oneshop.repository.PaymentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,11 +53,14 @@ public class RefundService {
     private final PaymentRepository payments;
     private final OrderRepository orders;
     private final RefundSimulator simulator;
+    private final PaymentRefundRepository ledger;
 
-    public RefundService(PaymentRepository payments, OrderRepository orders, RefundSimulator simulator) {
+    public RefundService(PaymentRepository payments, OrderRepository orders, RefundSimulator simulator,
+                         PaymentRefundRepository ledger) {
         this.payments = payments;
         this.orders = orders;
         this.simulator = simulator;
+        this.ledger = ledger;
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
@@ -69,6 +76,11 @@ public class RefundService {
         for (Payment row : collected) {
             if (row.getRefundStatus() == PaymentRefundStatus.SIMULATED_REFUNDED) {
                 continue;
+            }
+            if (ledger.findByPaymentId(row.getId()).stream().anyMatch(r -> r.getComponent() != PaymentRefundComponent.WHOLE_ORDER
+                    && r.getStatus() != PaymentRefundStatus.SIMULATION_FAILED)) {
+                // some of this money was already given back for a failed delivery: a second, whole refund would pay twice
+                throw new BadRequestException("Khoản thanh toán đã được hoàn một phần; không thể hoàn toàn bộ lần nữa.");
             }
             LocalDateTime now = LocalDateTime.now().withNano(0);
             row.setRefundStatus(PaymentRefundStatus.PENDING_SIMULATION);
@@ -88,6 +100,7 @@ public class RefundService {
                 failed = true;
             }
             payments.saveAndFlush(row);
+            writeLedger(lockedOrder, row);
         }
         if (!failed) {
             lockedOrder.setPaymentStatus(OrderPaymentStatus.REFUNDED);
@@ -97,6 +110,24 @@ public class RefundService {
             return Result.SIMULATION_FAILED;
         }
         return refundedNow ? Result.REFUNDED : Result.ALREADY_REFUNDED;
+    }
+
+    /** Mirrors the whole-Order refund of a Payment in the refund ledger (one row per Payment, updated on a retry). */
+    private void writeLedger(Order order, Payment row) {
+        PaymentRefund entry = ledger.findByPaymentId(row.getId()).stream()
+                .filter(r -> r.getComponent() == PaymentRefundComponent.WHOLE_ORDER).findFirst().orElseGet(() -> {
+                    PaymentRefund created = new PaymentRefund();
+                    created.setPayment(row);
+                    created.setOrder(order);
+                    created.setComponent(PaymentRefundComponent.WHOLE_ORDER);
+                    created.setRequestedAt(row.getRefundRequestedAt());
+                    return created;
+                });
+        entry.setAmount(row.getRefundAmount() == null ? row.getAmount() : row.getRefundAmount());
+        entry.setStatus(row.getRefundStatus());
+        entry.setReason(row.getRefundReason() == null ? "Hoàn tiền mô phỏng" : row.getRefundReason());
+        entry.setRefundedAt(row.getRefundStatus() == PaymentRefundStatus.SIMULATED_REFUNDED ? row.getRefundedAt() : null);
+        ledger.saveAndFlush(entry);
     }
 
     /** Collected ONLINE rows whose refund is not finished (for the Admin list and the retry). */

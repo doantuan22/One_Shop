@@ -13,5 +13,6 @@ public record AdminPaymentCaseResponse(Long orderId, String customerName, String
                                        OrderStatus orderStatus, OrderPaymentStatus paymentStatus,
                                        BigDecimal totalAmount, LocalDateTime createdAt,
                                        LocalDateTime paymentDeadline, LocalDateTime reconciliationDeadline,
-                                       GatewayVerification.Result verification, PaymentRefundStatus refundStatus) {
+                                       GatewayVerification.Result verification, PaymentRefundStatus refundStatus,
+                                       com.oneshop.service.payment.PaymentCaseCategory category) {
 }

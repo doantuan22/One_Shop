@@ -117,8 +117,8 @@ class PaymentDeadlinePolicyTest {
                 assertThat(fee).isEqualByComparingTo("30000"));
         assertThat(fees.feePerOrder(FulfillmentType.STORE_PICKUP)).hasValueSatisfying(fee ->
                 assertThat(fee.signum()).isZero());
-        // ONLINE stays closed until BE-05
-        assertThat(properties.isOnlineEnabled()).isFalse();
+        // ONLINE is open by default now that BE-05 exists (the prod profile closes it: no payment gateway there)
+        assertThat(properties.isOnlineEnabled()).isTrue();
     }
 
     @Test

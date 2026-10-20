@@ -59,11 +59,11 @@ class CheckoutV3SplitAndFeeDatabaseIntegrationTest {
     private static final String BOB = "khachhang2@example.com";
     private static final String HCM_ADDRESS = "12 Lê Lợi, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh";
 
-    private static final String WHIP = "SENKA-WHIP-120";      // sold at every Store
-    private static final String SERUM = "COCOON-SERUM-30";    // Thu Duc only
-    private static final String SHAMPOO = "COCOON-SHAM-310";  // Go Vap only
-    private static final String SUN_MILK = "ANESSA-MILK-60";  // Quan 7 only
-    private static final String TONER = "INNI-TONER-200";     // Thu Duc only
+    private static final String WHIP = "SIMPLE-REFRESH-150";      // sold at every Store
+    private static final String SERUM = "SIMPLE-PURIFY-150";    // Thu Duc only
+    private static final String SHAMPOO = "VASELINE-LIP-ORIG-48";  // Go Vap only
+    private static final String SUN_MILK = "LRP-EFFACLAR-MP-200";  // Quan 7 only
+    private static final String TONER = "CERAVE-HYDRA-236";     // Thu Duc only
 
     private static final List<String> ALL_STORES =
             List.of("OS-THUDUC", "OS-GOVAP", "OS-QUAN7", "OS-QUAN10", "OS-HOANKIEM");

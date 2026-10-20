@@ -87,7 +87,7 @@ The rollback is a controlled downgrade aid, not an ordinary operating procedure.
 
 On 19 October 2026 (ICT), no user SQL session was active on `oneshop` and no application listener was present on ports 8080 or 18080. A new `COPY_ONLY, CHECKSUM` backup was created at `backup/oneshop_pre_dec26_20261019.bak`; `RESTORE VERIFYONLY ... WITH CHECKSUM` passed. The audit captured pre-migration metadata, integrity results and the review checksum, then applied [20261014_be06_review_uniqueness.sql](../../../database/migrations/20261014_be06_review_uniqueness.sql) once against `oneshop`.
 
-Post-migration metadata shows both required filtered indexes enabled and no obsolete constraint. Metadata changed only for this approved uniqueness definition; integrity output and review count/checksum are unchanged. `database/03_verify.sql` passed all 12 checks. The JAR then started with datasource `oneshop`, port 18080 and the timeout worker explicitly disabled; `GET /`, `GET /products` and `GET /stores` each returned HTTP 200. The temporary verification process was stopped and port 18080 was confirmed closed.
+Post-migration metadata shows both required filtered indexes enabled and no obsolete constraint. Metadata changed only for this approved uniqueness definition; integrity output and review count/checksum are unchanged. `../../seed/DATABASE_SETUP.md` passed all 12 checks. The JAR then started with datasource `oneshop`, port 18080 and the timeout worker explicitly disabled; `GET /`, `GET /products` and `GET /stores` each returned HTTP 200. The temporary verification process was stopped and port 18080 was confirmed closed.
 
 ## Final test and handover
 
@@ -122,7 +122,7 @@ All deferred work is complete: fresh database verification, final browser E2E, f
 
 - Original user edits were preserved: recursive SiteMesh decorator routes, `OrderTransitionPolicy` documentation and removal of a missing Bootstrap stylesheet reference.
 - Obsolete default-database live smoke helpers and two temporary root notes were removed only after caller/reference review. No JUnit test was deleted to improve a result.
-- Historical BE reports were retained with a historical-status banner; current operational instructions live in `README.md`, `database/README.md`, and this document.
+- Historical BE reports were retained with a historical-status banner; current operational instructions live in `README.md`, `../../seed/DATABASE_SETUP.md`, and this document.
 - The working diff contains no whitespace error at the latest check.
 
 ## Repository cleanup matrix
@@ -138,7 +138,7 @@ Inventory baseline: 599 tracked files (277 main Java, 92 test Java, 54 templates
 | `database/02_seed.sql` | REFACTOR | Seed now refuses every non-empty user table, preventing partial-seed damage. |
 | `database/migrations/20261014_be06_review_uniqueness.sql` | REFACTOR | Header and prerequisite wording point to current explicit migration workflow; data-preserving logic retained. |
 | `database/migrations/20261018_be06_review_uniqueness_rollback.sql` | KEEP (new) | Controlled, transaction-protected rollback that refuses data loss. |
-| `database/README.md` | REFACTOR | Current seed, upgrade, rollback and `oneshop` gate. |
+| `../../seed/DATABASE_SETUP.md` | REFACTOR | Current seed, upgrade, rollback and `oneshop` gate. |
 | `src/main/java/**` except rows below | KEEP | Retained after caller/dependency review. Compatibility services remain because active routes/tests use them. |
 | `src/main/java/com/oneshop/config/{PaymentProperties,PaymentSchedulingConfig,V3SchemaCompatibilityVerifier}.java` | REFACTOR / KEEP | Explicit scheduler opt-in and read-only DEC-26 startup guard. |
 | `src/main/java/com/oneshop/controller/admin/AdminProductController.java` | REFACTOR | Round-trips price fields. |

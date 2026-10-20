@@ -30,10 +30,10 @@ class WebRoutesIntegrationTest extends AbstractIntegrationTest {
         assertThat(response.headers().firstValue("Content-Type")).hasValueSatisfying(v -> assertThat(v).contains("text/html"));
         String html = response.body();
         // content of the page itself (Thymeleaf template home/index.html)
-        assertThat(html).contains("Mỹ phẩm chính hãng, mua theo từng chi nhánh");
+        assertThat(html).contains("Mỹ phẩm chính hãng, một giá online toàn hệ thống");
         // wrapper added by the SiteMesh decorator (layouts/client.html + fragments)
         assertThat(html).contains("data-layout=\"client\"", "os-topbar", "navbar", "os-footer");
-        assertThat(html).containsPattern("<title[^>]*>\\s*Mỹ phẩm chính hãng, chọn chi nhánh gần bạn \\| OneShop\\s*</title>");
+        assertThat(html).containsPattern("<title[^>]*>\\s*Mỹ phẩm chính hãng, một giá online toàn hệ thống \\| OneShop\\s*</title>");
         // Bootstrap is served locally
         assertThat(html).contains("/vendor/bootstrap/bootstrap.min.css");
         assertThat(count(html, "<title")).isEqualTo(1);

@@ -62,9 +62,9 @@ class CheckoutWebIntegrationTest extends AbstractIntegrationTest {
 
     @BeforeEach
     void selection() {
-        CartItemResponse serum = new CartItemResponse(11L, null, 3L, "COCOON-SERUM-30", "Cocoon Serum Bí Đao 30ml", null,
+        CartItemResponse serum = new CartItemResponse(11L, null, 3L, "SIMPLE-PURIFY-150", "Cocoon Serum Bí Đao 30ml", null,
                 new BigDecimal("129000"), 2, new BigDecimal("258000"), CartItemStatus.AVAILABLE);
-        CartItemResponse shampoo = new CartItemResponse(12L, null, 5L, "COCOON-SHAM-310", "Cocoon Dầu Gội", null,
+        CartItemResponse shampoo = new CartItemResponse(12L, null, 5L, "VASELINE-LIP-ORIG-48", "Cocoon Dầu Gội", null,
                 new BigDecimal("95000"), 1, new BigDecimal("95000"), CartItemStatus.AVAILABLE);
         selection = CartResponse.of(List.of(serum, shampoo), 2, new BigDecimal("353000"));
     }

@@ -1,8 +1,10 @@
 package com.oneshop.controller.admin;
 
 import com.oneshop.service.payment.AdminPaymentService;
+import com.oneshop.service.payment.OrderRefundViewService;
 import com.oneshop.service.payment.PaymentOutcome;
 import com.oneshop.service.payment.RefundService;
+import com.oneshop.service.payment.PaymentCaseCategory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,19 +23,37 @@ public class AdminPaymentController {
 
     private final AdminPaymentService payments;
 
-    public AdminPaymentController(AdminPaymentService payments) {
+    private final OrderRefundViewService refundView;
+
+    public AdminPaymentController(AdminPaymentService payments, OrderRefundViewService refundView) {
         this.payments = payments;
+        this.refundView = refundView;
     }
 
+    /**
+     * The console. {@code view}: attention (default), reconciling, waiting, paid, refunded, failed or all.
+     * {@code q}: an Order id or a customer name / e-mail. Listing is read only.
+     */
     @GetMapping
-    public String list(@RequestParam(defaultValue = "0") int page, Model model) {
-        model.addAttribute("cases", payments.getCases(page));
+    public String list(@RequestParam(required = false) String view, @RequestParam(required = false) String q,
+                       @RequestParam(defaultValue = "0") int page, Model model) {
+        boolean all = "all".equalsIgnoreCase(view == null ? "" : view.trim());
+        PaymentCaseCategory selected = all ? null
+                : view == null ? PaymentCaseCategory.ATTENTION
+                : java.util.Objects.requireNonNullElse(PaymentCaseCategory.fromKey(view), PaymentCaseCategory.ATTENTION);
+        model.addAttribute("cases", payments.getCases(selected, q, page));
+        model.addAttribute("view", all ? "all" : selected.key());
+        model.addAttribute("q", q == null ? "" : q.trim());
+        model.addAttribute("counts", payments.getCaseCounts());
+        model.addAttribute("categories", java.util.Arrays.stream(PaymentCaseCategory.values())
+                .filter(c -> c != PaymentCaseCategory.OTHER).toList());
         return "admin/payments/index";
     }
 
     @GetMapping("/{orderId:\\d+}")
     public String detail(@PathVariable Long orderId, Model model) {
         model.addAttribute("paymentCase", payments.getCase(orderId));
+        model.addAttribute("refund", refundView.forAdmin(orderId));
         return "admin/payments/detail";
     }
 

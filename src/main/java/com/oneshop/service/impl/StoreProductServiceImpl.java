@@ -187,7 +187,7 @@ public class StoreProductServiceImpl implements StoreProductService {
         StoreProduct storeProduct = new StoreProduct();
         storeProduct.setStore(store);
         storeProduct.setProduct(product);
-        storeProduct.setPrice(request.getPrice());
+        // no Store price: the online price is Product.price (the legacy column stays NULL)
         storeProduct.setStatus(request.getStatus());
         // starts empty: the opening quantity is booked below as an InventoryMovement, like every later change
         storeProduct.setQuantity(0);
@@ -210,7 +210,6 @@ public class StoreProductServiceImpl implements StoreProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm tại chi nhánh #" + id));
         inventoryService.adjustStock(id, request.getQuantity(), adminEmail,
                 noteOr(request.getNote(), ADMIN_ADJUST_NOTE));
-        storeProduct.setPrice(request.getPrice());
         storeProduct.setStatus(request.getStatus());
         return storeProductMapper.toStockView(storeProduct);
     }

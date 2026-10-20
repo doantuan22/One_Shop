@@ -7,8 +7,21 @@
 <div class="os-staff-fulfillment-detail" th:with="s=${detail.summary}">
     <a class="btn btn-outline-secondary mb-3" th:href="@{/staff/fulfillments}">Danh sách phần giao hàng</a>
 
-    <h1 class="h3" th:text="'Phần giao #' + ${s.fulfillmentId} + ' · Đơn #' + ${s.orderId}"></h1>
-    <p class="text-secondary" th:text="${s.storeName}"></p>
+    <h1 class="h3 mb-1" th:text="'Phần giao #' + ${s.fulfillmentId} + ' thuộc đơn #' + ${s.orderId}"></h1>
+    <p class="text-secondary" th:text="${s.storeName} + ' · Chỉ gồm hàng của chi nhánh này'"></p>
+
+    <!--/* state stepper along the real path of this Fulfillment type; FAILED/CANCELLED are shown as a badge only */-->
+    <ol class="list-unstyled d-flex flex-wrap gap-2 mb-3 os-stepper" id="fulfillment-stepper" aria-label="Tiến độ phần giao"
+        th:with="path=${s.fulfillmentType.name() == 'STORE_PICKUP'} ? ${ {'CONFIRMED','PREPARING','READY_FOR_PICKUP','COMPLETED'} } : ${ {'CONFIRMED','PREPARING','PACKED','SHIPPING','COMPLETED'} },
+                 labels=${ {'CONFIRMED':'Chờ chuẩn bị','PREPARING':'Đang chuẩn bị','PACKED':'Đã đóng gói','SHIPPING':'Đang giao','READY_FOR_PICKUP':'Sẵn sàng cho khách nhận','COMPLETED':'Hoàn tất'} },
+                 at=${path.indexOf(s.status.name())}"
+        th:if="${at >= 0}">
+        <li th:each="step, row : ${path}" class="badge rounded-pill border px-3 py-2"
+            th:classappend="${row.index < at} ? 'text-bg-success' : (${row.index == at} ? 'text-bg-warning' : 'text-bg-light text-secondary')"
+            th:attr="aria-current=${row.index == at} ? 'step'">
+            <span th:text="${row.count} + '. ' + ${labels[step]}">1. Chờ chuẩn bị</span>
+        </li>
+    </ol>
 
     <div class="alert alert-warning os-blocked" id="fulfillment-blocked" role="alert" th:if="${s.blockedReason != null}"
          th:text="${s.blockedReason}"></div>
@@ -71,8 +84,10 @@
 
     <div class="card card-body mt-3 os-fulfillment-card" id="fulfillment-action">
         <form method="post" th:each="a : ${s.actions}"
+              th:attrappend="data-confirm=${a.failure} ? 'Đánh dấu phần giao này là không thành công? Hệ thống không tự hoàn kho hay hoàn tiền.'"
               th:action="@{/staff/fulfillments/{id}/{path}(id=${s.fulfillmentId},path=${a.path})}"
               th:attr="data-action=${a.path}">
+            <!--/* only the risky action asks to confirm; routine steps stay one click (and scriptable) */-->
             <div th:if="${a.name() == 'SHIP'}" class="mb-2">
                 <label class="form-label" for="trackingCode">Mã vận đơn (nếu có)</label>
                 <input id="trackingCode" name="trackingCode" type="text" class="form-control" maxlength="50"

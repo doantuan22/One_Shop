@@ -202,3 +202,56 @@ body {
         top: 5rem;
     }
 }
+
+
+/* ----- shared accessibility & consistency (client, staff, admin) ----- */
+.os-skip-link {
+    position: absolute;
+    z-index: 2000;
+    top: 0.5rem;
+    left: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    background: #fff;
+    color: #b84224;
+    font-weight: 700;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+:focus-visible {
+    outline: 3px solid rgba(255, 127, 80, 0.65);
+    outline-offset: 2px;
+}
+
+/* dark coral for small text on white: 5.46:1 (WCAG AA) where the light coral (#ff7f50) is only ~2.6:1 */
+.text-coral-strong {
+    color: #b84224;
+}
+
+/* data tables keep at least 14px on desktop (audit: no 11-12px for essential data) */
+.os-table th,
+.os-table td {
+    font-size: 0.875rem;
+}
+
+/* dense admin/staff tables scroll sideways on purpose instead of breaking the page at 390/768px */
+.table-responsive {
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 575.98px) {
+    .btn,
+    .form-control,
+    .form-select {
+        min-height: 44px;
+    }
+
+    .btn-sm {
+        min-height: 38px;
+    }
+}
+
+/* muted helper text with AA contrast (#667085 on white = 5.0:1); the theme's .text-secondary is a pale coral */
+.os-muted-text {
+    color: #667085;
+}

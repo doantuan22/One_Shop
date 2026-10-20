@@ -70,11 +70,11 @@ class CartWebIntegrationTest extends AbstractIntegrationTest {
     }
 
     private static CartResponse threeStoreCart() {
-        CartItemResponse serum = new CartItemResponse(11L, 1L, 3L, "COCOON-SERUM-30", "Cocoon Serum Bí Đao 30ml", null,
+        CartItemResponse serum = new CartItemResponse(11L, 1L, 3L, "SIMPLE-PURIFY-150", "Cocoon Serum Bí Đao 30ml", null,
                 new BigDecimal("129000"), 2, new BigDecimal("258000"), CartItemStatus.AVAILABLE);
-        CartItemResponse sameSerumElsewhere = new CartItemResponse(12L, 2L, 3L, "COCOON-SERUM-30", "Cocoon Serum Bí Đao 30ml",
+        CartItemResponse sameSerumElsewhere = new CartItemResponse(12L, 2L, 3L, "SIMPLE-PURIFY-150", "Cocoon Serum Bí Đao 30ml",
                 null, new BigDecimal("135000"), 1, new BigDecimal("135000"), CartItemStatus.INSUFFICIENT_STOCK);
-        CartItemResponse gone = new CartItemResponse(13L, 8L, 1L, "BBIA-CHEEK-06", "BBIA Downy Cheek #06", null,
+        CartItemResponse gone = new CartItemResponse(13L, 8L, 1L, "MAYB-LIFTER-003", "BBIA Downy Cheek #06", null,
                 new BigDecimal("189000"), 1, new BigDecimal("189000"), CartItemStatus.UNAVAILABLE);
         return new CartResponse(List.of(
                 new CartStoreGroupResponse(2L, "OneShop Gò Vấp", "202 Quang Trung", true, true, true, List.of(sameSerumElsewhere), BigDecimal.ZERO),

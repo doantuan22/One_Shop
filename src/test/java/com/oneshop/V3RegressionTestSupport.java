@@ -201,7 +201,7 @@ public abstract class V3RegressionTestSupport extends ReviewV3TestSupport {
     HttpResponse<String> getAs(String email,String path)throws Exception{return email==null?send("GET",path,""):send("GET",path,"","Cookie",cookie(email));}
     HttpResponse<String> postAs(String email,String path,String body,boolean csrf)throws Exception{
         String c=email==null?"":cookie(email);if(!csrf)return send("POST",path,body,"Cookie",c);
-        var page=send("GET","/","","Cookie",c);var token=Pattern.compile("name=\"_csrf\" value=\"([^\"]+)\"").matcher(page.body());assertThat(token.find()).isTrue();
+        var page=send("GET",email==null?"/login":"/","","Cookie",c);var token=Pattern.compile("name=\"_csrf\" value=\"([^\"]+)\"").matcher(page.body());assertThat(token.find()).isTrue();
         String xsrf=page.headers().allValues("Set-Cookie").stream().filter(x->x.startsWith("XSRF-TOKEN=")).map(x->x.split(";")[0]).findFirst().orElseThrow();
         return send("POST",path,body+"&_csrf="+token.group(1),"Cookie",c+"; "+xsrf);
     }

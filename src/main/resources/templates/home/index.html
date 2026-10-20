@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Mỹ phẩm chính hãng, chọn chi nhánh gần bạn</title>
+    <title>Mỹ phẩm chính hãng, một giá online toàn hệ thống</title>
     <meta name="description"
-          content="OneShop: mỹ phẩm chính hãng theo hệ thống cửa hàng. Chọn chi nhánh, xem giá và tình trạng hàng, nhận tại cửa hàng hoặc giao tận nơi.">
+          content="OneShop: mỹ phẩm chính hãng, một giá online chung cho cả hệ thống. Đặt hàng online, nhận tại cửa hàng hoặc giao tận nơi.">
     <link rel="stylesheet" th:href="@{/css/home.css}">
     <script th:src="@{/js/home-reveal.js}"></script>
 </head>
@@ -28,8 +28,8 @@
         <div class="home-hero__overlay" aria-hidden="true"></div>
         <div class="home-hero__inner container">
             <div class="home-hero__text">
-                <h1 id="hero-title">Mỹ phẩm chính hãng, mua theo từng chi nhánh</h1>
-                <p class="home-hero__sub">Giá và tình trạng hàng theo từng chi nhánh. Nhận tại cửa hàng hoặc giao tận nơi.</p>
+                <h1 id="hero-title">Mỹ phẩm chính hãng, một giá online toàn hệ thống</h1>
+                <p class="home-hero__sub">Đặt hàng một lần, hệ thống tự chọn nơi còn hàng. Nhận tại cửa hàng hoặc giao tận nơi.</p>
             </div>
         </div>
     </section>
@@ -57,12 +57,6 @@
                 <a class="home-chip" th:href="@{/products(brandId=${brand.id})}" th:text="${brand.name}">Cocoon</a>
             </li>
         </ul>
-        <p class="home-search__scope" id="search-scope">
-            Đang tìm trong:
-            <strong th:if="${selectedStore != null}" th:text="${selectedStore.name}">OneShop Thủ Đức</strong>
-            <strong th:unless="${selectedStore != null}">Toàn chuỗi</strong>
-            &middot; <a th:href="@{/stores}">Đổi</a>
-        </p>
     </div>
 
     <!--/* CATEGORIES: layout by the number of categories */-->
@@ -95,10 +89,7 @@
         <div class="home-section__head">
             <div>
                 <h2 id="home-products-title">Khám phá sản phẩm</h2>
-                <p th:if="${selectedStore != null}">
-                    Còn hàng tại <strong th:text="${selectedStore.name}">OneShop Thủ Đức</strong>
-                </p>
-                <p th:unless="${selectedStore != null}">Toàn chuỗi: chọn một chi nhánh để xem giá và đặt mua.</p>
+                <p>Còn hàng trong hệ thống, cùng một giá online ở mọi cửa hàng.</p>
             </div>
             <a class="home-link" th:href="@{/products}">Xem tất cả</a>
         </div>
@@ -133,10 +124,10 @@
              th:unless="${home.stores.isEmpty()}">
         <div class="home-section__head">
             <div>
-                <h2 id="home-stores-title">Chi nhánh</h2>
-                <p>Chọn chi nhánh để xem giá và tình trạng hàng tại đó.</p>
+                <h2 id="home-stores-title">Hệ thống cửa hàng</h2>
+                <p>Tra cứu địa chỉ, giờ mở cửa và dịch vụ của từng cửa hàng.</p>
             </div>
-            <a class="home-link" th:href="@{/stores}">Xem tất cả chi nhánh</a>
+            <a class="home-link" th:href="@{/stores}">Xem tất cả cửa hàng</a>
         </div>
         <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3">
             <div class="col" th:each="store : ${home.stores}">
@@ -149,14 +140,6 @@
                         <li th:if="${store.deliveryEnabled}">Giao tận nơi</li>
                         <li th:if="${store.pickupEnabled}">Nhận tại cửa hàng</li>
                     </ul>
-                    <p class="home-store__current"
-                       th:if="${selectedStore != null and selectedStore.id == store.id}">Đang chọn chi nhánh này</p>
-                    <form th:unless="${selectedStore != null and selectedStore.id == store.id}"
-                          th:action="@{/stores/select}" method="post">
-                        <input type="hidden" name="storeId" th:value="${store.id}">
-                        <input type="hidden" name="returnTo" th:value="@{/}">
-                        <button type="submit" class="btn btn-outline-primary">Chọn chi nhánh</button>
-                    </form>
                 </article>
             </div>
         </div>
@@ -176,11 +159,11 @@
             <div class="home-cta__inner">
                 <h2 id="home-cta-title">Nhận tại cửa hàng hoặc giao tận nơi</h2>
                 <ol class="home-cta__steps">
-                    <li>Chọn chi nhánh</li>
-                    <li>Đặt hàng</li>
+                    <li>Chọn sản phẩm</li>
+                    <li>Chọn cách nhận hàng</li>
                     <li>Nhận hàng</li>
                 </ol>
-                <a class="btn btn-primary" th:href="@{/stores}">Chọn chi nhánh</a>
+                <a class="btn btn-primary" th:href="@{/products}">Mua sắm ngay</a>
             </div>
         </div>
     </section>

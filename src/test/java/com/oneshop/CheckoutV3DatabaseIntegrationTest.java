@@ -69,12 +69,12 @@ class CheckoutV3DatabaseIntegrationTest {
     static final String STAFF_THU_DUC = "staff.thuduc@oneshop.vn";
 
     // SKUs of the seed (looked up by SKU, never by id)
-    static final String SERUM = "COCOON-SERUM-30";      // Thu Duc only (+ Hai Chau, inactive)
-    static final String TONER = "INNI-TONER-200";       // Thu Duc only
-    static final String SHAMPOO = "COCOON-SHAM-310";    // Go Vap only
-    static final String SUN_MILK = "ANESSA-MILK-60";    // Quan 7 only
-    static final String WHIP = "SENKA-WHIP-120";        // every Store, scenario of many sources
-    static final String ANTHELIOS = "LRP-ANTHELIOS-50"; // Thu Duc 0, Go Vap 25
+    static final String SERUM = "SIMPLE-PURIFY-150";      // Thu Duc only (+ Hai Chau, inactive)
+    static final String TONER = "CERAVE-HYDRA-236";       // Thu Duc only
+    static final String SHAMPOO = "VASELINE-LIP-ORIG-48";    // Go Vap only
+    static final String SUN_MILK = "LRP-EFFACLAR-MP-200";    // Quan 7 only
+    static final String WHIP = "SIMPLE-REFRESH-150";        // every Store, scenario of many sources
+    static final String ANTHELIOS = "BIODERMA-SENSIBIO-250"; // Thu Duc 0, Go Vap 25
 
     static final String THU_DUC = "OS-THUDUC";
     static final String GO_VAP = "OS-GOVAP";

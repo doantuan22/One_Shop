@@ -111,9 +111,9 @@ final class Phase9IntegrationScenario {
     }
     Mixed mixed() throws Exception {
         // A checkout has one receiving/payment choice in V3. Create three independent real checkouts for cross-flow isolation.
-        long a=place(List.of(add(1,"COCOON-SERUM-30")),List.of("fulfillmentType=DELIVERY&paymentMethod=COD&receiverName=Fixture&receiverPhone=0912345678&shippingAddress=11+Test+Street+TP+Ho+Chi+Minh"));
-        long b=place(List.of(add(2,"COCOON-SHAM-310")),List.of("fulfillmentType=STORE_PICKUP&paymentMethod=ONLINE&pickupStoreId=2&receiverName=Fixture&receiverPhone=0912345678"));
-        long c=place(List.of(add(4,"SENKA-WHIP-120")),List.of("fulfillmentType=STORE_PICKUP&paymentMethod=PAY_AT_STORE&pickupStoreId=4&receiverName=Fixture&receiverPhone=0912345678"));
+        long a=place(List.of(add(1,"SIMPLE-PURIFY-150")),List.of("fulfillmentType=DELIVERY&paymentMethod=COD&receiverName=Fixture&receiverPhone=0912345678&shippingAddress=11+Test+Street+TP+Ho+Chi+Minh"));
+        long b=place(List.of(add(2,"VASELINE-LIP-ORIG-48")),List.of("fulfillmentType=STORE_PICKUP&paymentMethod=ONLINE&pickupStoreId=2&receiverName=Fixture&receiverPhone=0912345678"));
+        long c=place(List.of(add(4,"SIMPLE-REFRESH-150")),List.of("fulfillmentType=STORE_PICKUP&paymentMethod=PAY_AT_STORE&pickupStoreId=4&receiverName=Fixture&receiverPhone=0912345678"));
         return new Mixed(a,jdbc.queryForObject("select order_id from dbo.orders where checkout_id=?",Long.class,a),jdbc.queryForObject("select order_id from dbo.orders where checkout_id=?",Long.class,b),jdbc.queryForObject("select order_id from dbo.orders where checkout_id=?",Long.class,c));
     }
     @FunctionalInterface interface Action { void run() throws Exception; }
@@ -292,7 +292,7 @@ final class Phase9IntegrationScenario {
     }
     void invalidCombination(String type, String method) throws Exception {
         try (var ignored = cleanup()) {
-            long line = add(1, "COCOON-SERUM-30"); var before = snapshot();
+            long line = add(1, "SIMPLE-PURIFY-150"); var before = snapshot();
             var response = post(account(CUSTOMER), "/checkout", "cartItemIds=" + line + "&" + group(0, 1, type, method));
             check(response.statusCode() == 400 && snapshot().equals(before), "business invalid combination rejected atomically");
             long checkout = place(List.of(line), List.of(group(0, 1, "DELIVERY", "COD")));

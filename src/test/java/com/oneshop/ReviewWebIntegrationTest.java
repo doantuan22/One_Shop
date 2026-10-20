@@ -64,7 +64,7 @@ class ReviewWebIntegrationTest extends AbstractIntegrationTest {
     private CustomerOrderService orders;
 
     private static ProductDetailResponse productDetail() {
-        return new ProductDetailResponse(new ProductResponse(7L, "COCOON-SERUM-30", "Cocoon Serum Bí Đao 30ml",
+        return new ProductDetailResponse(new ProductResponse(7L, "SIMPLE-PURIFY-150", "Cocoon Serum Bí Đao 30ml",
                 "Mô tả", "Chăm sóc da", "Cocoon", null), List.of(), null, List.of());
     }
 
@@ -286,7 +286,7 @@ class ReviewWebIntegrationTest extends AbstractIntegrationTest {
         String jwt = cookieOf(STAFF, RoleName.STAFF);
         when(storeService.getAssignedStores(STAFF)).thenReturn(List.of(thuDuc()));
         when(reviewService.getStaffReviews(0)).thenReturn(new PageImpl<>(List.of(
-                new StaffReviewResponse(9L, "Phạm Thu Hà", 3L, "COCOON-SERUM-30", "Cocoon Serum", 5,
+                new StaffReviewResponse(9L, "Phạm Thu Hà", 3L, "SIMPLE-PURIFY-150", "Cocoon Serum", 5,
                         "Tốt <img src=x>", LocalDateTime.now(), 5L, "OneShop Thủ Đức",
                         "Cảm ơn <script>1</script>", LocalDateTime.now()))));
 

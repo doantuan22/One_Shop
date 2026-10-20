@@ -28,6 +28,19 @@ public class V3SchemaCompatibilityVerifier implements SmartInitializingSingleton
                 """,(rs,n)->new KeyColumn(rs.getString(1),rs.getBoolean(2),rs.getBoolean(3),
                 rs.getString(4),rs.getInt(5),rs.getString(6)));
         requireCompatible(keys);
+        requireRefundLedger();
+    }
+
+    /** OPEN-10.1: the refund ledger and its filtered unique keys (they are what makes a double refund impossible). */
+    private void requireRefundLedger() {
+        Integer present = jdbc.queryForObject("select count(*) from sys.indexes where object_id=object_id(N'dbo.payment_refunds')"
+                + " and name in (N'UX_payment_refunds_goods',N'UX_payment_refunds_shipping',N'UX_payment_refunds_whole')"
+                + " and is_unique=1 and has_filter=1 and is_disabled=0", Integer.class);
+        if (present == null || present != 3) {
+            throw new IllegalStateException("V3 schema prerequisite missing: OPEN-10.1 payment_refunds ledger. "
+                    + "Stop startup; back up and obtain approval for docs/v3/migration-history/20261020_open101_payment_refunds.sql (an existing database only; a fresh install uses database/01_schema.sql). "
+                    + "No migration was executed automatically.");
+        }
     }
 
     static void requireCompatible(List<KeyColumn> keys) {
@@ -35,7 +48,7 @@ public class V3SchemaCompatibilityVerifier implements SmartInitializingSingleton
                 || !matches(keys,"UX_reviews_order_item","ORDER_ITEM_IDISNOTNULL",List.of("order_item_id"))
                 || !matches(keys,"UX_reviews_legacy_user_product","ORDER_ITEM_IDISNULL",List.of("user_id","product_id"))) {
             throw new IllegalStateException("V3 schema prerequisite missing: DEC-26 Review filtered unique indexes. "
-                    + "Stop startup; back up and obtain approval for database/migrations/20261014_be06_review_uniqueness.sql. "
+                    + "Stop startup; back up and obtain approval for docs/v3/migration-history/20261014_be06_review_uniqueness.sql (an existing database only; a fresh install uses database/01_schema.sql). "
                     + "No migration was executed automatically.");
         }
     }

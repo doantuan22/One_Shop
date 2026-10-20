@@ -169,11 +169,17 @@
                 <tbody>
                     <tr th:each="movement : ${movements.content}"
                         th:attr="data-movement-id=${movement.id},data-type=${movement.type}">
-                        <td th:text="${movement.type}"></td>
+                        <td th:switch="${movement.type.name()}">
+                            <span th:case="'ORDER'">Trừ kho do đặt hàng</span>
+                            <span th:case="'CANCEL_ORDER'">Hoàn kho do hủy đơn</span>
+                            <span th:case="'STOCK_ADJUST'">Điều chỉnh tồn kho</span>
+                            <span th:case="*" th:text="${movement.type}"></span>
+                        </td>
                         <td th:text="${movement.quantityBefore}"></td>
                         <td th:text="${movement.quantityAfter}"></td>
-                        <td
-                            th:text="${movement.quantityChange > 0} ? '+' + ${movement.quantityChange} : ${movement.quantityChange}">
+                        <td>
+                            <span class="badge" th:classappend="${movement.quantityChange > 0} ? 'text-bg-success' : (${movement.quantityChange < 0} ? 'text-bg-danger' : 'text-bg-light border')"
+                                  th:text="${movement.quantityChange > 0} ? '+' + ${movement.quantityChange} : ${movement.quantityChange}"></span>
                         </td>
                         <td th:text="${movement.staffName}"></td>
                         <td th:text="${movement.note}"></td>

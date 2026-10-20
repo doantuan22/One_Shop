@@ -59,7 +59,7 @@ class CartHttpDatabaseIntegrationTest extends V3RegressionTestSupport {
 
     @Test
     void userPriceAndStoreSentByTheClientAreIgnored() throws Exception {
-        selected(5,1);assertThat(postAs(ALICE,"/cart/items","productId="+data.productId(SERUM)+"&quantity=1&price=1&userId="+userId(BOB)+"&storeId=99",true).statusCode()).isEqualTo(302);assertThat(carts.getCart(ALICE).items().getFirst().unitPrice()).isEqualByComparingTo("129000");assertThat(carts.getCart(ALICE).items().getFirst().quantity()).isEqualTo(2);
+        selected(5,1);assertThat(postAs(ALICE,"/cart/items","productId="+data.productId(SERUM)+"&quantity=1&price=1&userId="+userId(BOB)+"&storeId=99",true).statusCode()).isEqualTo(302);assertThat(carts.getCart(ALICE).items().getFirst().unitPrice()).isEqualByComparingTo("138000");assertThat(carts.getCart(ALICE).items().getFirst().quantity()).isEqualTo(2);
     }
 
     @Test

@@ -423,7 +423,8 @@
                       </span>
                     </label>
                     <div class="small text-secondary" id="online-disabled" th:if="${!preview.onlineEnabled}">
-                      Thanh toán trực tuyến tạm thời chưa mở.
+                      Thanh toán trực tuyến chưa được mở ở thời điểm này. Bạn vẫn đặt hàng được bằng
+                      <span th:text="${preview.fulfillmentType.name() == 'DELIVERY'} ? 'COD' : 'thanh toán tại cửa hàng'">COD</span>.
                     </div>
                     <div class="small text-secondary" id="online-deadline"
                          th:if="${preview.onlineEnabled and preview.paymentMethod.name() == 'ONLINE'}">
@@ -527,23 +528,6 @@
                 </div>
               </div>
             </section>
-
-            <!-- COD from several Stores: explicit consent, never silent -->
-            <section class="alert alert-warning border-0 shadow-sm rounded-3 mt-4" id="cod-split"
-                     th:if="${preview.splitConsentRequired}">
-              <div class="fw-semibold mb-1">Đơn thanh toán khi nhận hàng cần lấy từ nhiều chi nhánh</div>
-              <p class="small mb-2">
-                Không một chi nhánh nào đủ toàn bộ sản phẩm. Nếu tiếp tục với COD, hệ thống sẽ tạo
-                <strong th:text="${preview.orderCount}">2</strong> đơn hàng độc lập, mỗi đơn do một chi nhánh giao và
-                thu tiền riêng khi nhận hàng. Bạn cũng có thể chuyển sang thanh toán trực tuyến để chỉ có một đơn hàng.
-              </p>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="splitCodConsent" name="splitCodConsent" value="true" />
-                <label class="form-check-label small" for="splitCodConsent">
-                  Tôi đồng ý tách thành <span th:text="${preview.orderCount}">2</span> đơn hàng độc lập.
-                </label>
-              </div>
-            </section>
           </div>
 
           <div class="col-12 col-lg-4">
@@ -578,6 +562,24 @@
                   <span th:replace="~{fragments/components :: price(${preview.grandTotal})}"></span>
                 </div>
               </div>
+
+              <!-- COD from several Stores: explicit consent next to the CTA, never silent -->
+              <section class="alert alert-warning border-0 rounded-3 p-3 mb-3 small" id="cod-split"
+                       th:if="${preview.splitConsentRequired}">
+                <div class="fw-semibold mb-1">Giỏ hàng cần lấy từ nhiều chi nhánh</div>
+                <p class="mb-2">
+                  Với COD, hệ thống sẽ tạo <strong th:text="${preview.orderCount}">2</strong> đơn hàng độc lập,
+                  mỗi đơn do một chi nhánh giao và <strong>thu tiền riêng
+                  <span th:text="${preview.orderCount}">2</span> lần</strong> khi nhận hàng, kèm phí giao hàng cho từng đơn
+                  (chi tiết ở mục Nguồn hàng). Hoặc chuyển sang thanh toán trực tuyến để chỉ có một đơn hàng.
+                </p>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="splitCodConsent" name="splitCodConsent" value="true" />
+                  <label class="form-check-label" for="splitCodConsent">
+                    Tôi đồng ý tách thành <span th:text="${preview.orderCount}">2</span> đơn hàng độc lập.
+                  </label>
+                </div>
+              </section>
 
               <button type="submit" class="btn-confirm-order" id="place-order" th:disabled="${preview.plan == null}">
                 Xác nhận đặt hàng

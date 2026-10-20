@@ -165,7 +165,7 @@ class FulfillmentOperationsDatabaseIntegrationTest {
         assertThat(row.orderId()).isEqualTo(order);
         assertThat(row.itemCount()).isEqualTo(1);
         assertThat(detail(STAFF_THUDUC, thuDuc).items()).hasSize(1);
-        assertThat(detail(STAFF_THUDUC, thuDuc).items().get(0).productName()).contains("Serum");
+        assertThat(detail(STAFF_THUDUC, thuDuc).items().get(0).productName()).contains("Simple Purifying");
     }
 
     @Test

@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Phase V3-BE-01 Read-Only JPA Integrity Test.
- * Validates entity mapping, relationships, and seed data across all 22 tables in OneShop V3 schema.
+ * Validates entity mapping, relationships, and seed data across all 23 tables in OneShop V3 schema.
  * Runs with Hibernate 'ddl-auto=validate' on profile 'dev' against real SQL Server database.
  */
 @SpringBootTest(properties = "app.jwt.secret=test-only-secret-test-only-secret-1234567890")
@@ -76,15 +76,15 @@ class JpaV3ReadIntegrityTest {
     @Test
     @DisplayName("V3 Metamodel and Repositories count must be exactly 22")
     @Transactional(readOnly = true)
-    void all22EntitiesAndRepositoriesExist() {
+    void all23EntitiesAndRepositoriesExist() {
         assertThat(entityManager.getMetamodel().getEntities())
-                .as("All 22 V3 tables must be registered in JPA metamodel")
-                .hasSize(22);
+                .as("All 23 V3 tables must be registered in JPA metamodel")
+                .hasSize(23);
 
         Map<String, JpaRepository> repositories = beanFactory.getBeansOfType(JpaRepository.class);
         assertThat(repositories)
-                .as("All 22 tables must have corresponding Spring Data JPA repositories")
-                .hasSize(22);
+                .as("All 23 tables must have corresponding Spring Data JPA repositories")
+                .hasSize(23);
 
         repositories.forEach((name, repo) -> {
             List<?> all = repo.findAll();

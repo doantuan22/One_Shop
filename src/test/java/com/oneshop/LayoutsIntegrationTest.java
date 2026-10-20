@@ -66,22 +66,21 @@ class LayoutsIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void clientLayoutShowsWholeChainByDefault() throws Exception {
+    void clientLayoutHasNoStoreContextInV3() throws Exception {
         String html = get("/").body();
 
-        assertThat(html).contains("data-layout=\"client\"", "os-topbar", "os-footer");
-        assertThat(html).contains("Chi nhánh đang chọn:", "id=\"store-context\"", "data-store-scope=\"chain\"", "Toàn chuỗi");
-        assertThat(html).doesNotContain("data-layout=\"staff\"", "data-layout=\"admin\"", "os-sidebar");
+        assertThat(html).contains("data-layout=\"client\"", "os-topbar", "os-footer", "id=\"site-topbar\"");
+        assertThat(html).doesNotContain("Chi nhánh đang chọn", "id=\"store-context\"", "data-store-scope", "Toàn chuỗi",
+                "data-layout=\"staff\"", "data-layout=\"admin\"", "os-sidebar");
     }
 
     @Test
-    void clientLayoutShowsSelectedStoreWhenOneIsChosen() throws Exception {
+    void aChosenStoreNoLongerChangesTheClientLayout() throws Exception {
         when(storeService.findSelectableStore(1L)).thenReturn(Optional.of(STORE));
 
         String html = get("/", "Cookie", "ONESHOP_STORE=1").body();
 
-        assertThat(html).contains("data-store-scope=\"store\"", "OneShop Thủ Đức", "Đổi chi nhánh", "Xem toàn chuỗi");
-        assertThat(html).doesNotContain("data-store-scope=\"chain\"");
+        assertThat(html).doesNotContain("data-store-scope", "Đổi chi nhánh", "Xem toàn chuỗi", "Chi nhánh đang chọn");
     }
 
     @Test
@@ -132,12 +131,15 @@ class LayoutsIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void adminOverviewUsesSharedComponentsAndEnablesChainOperations() throws Exception {
+        when(adminOperationsService.getChainSummary())
+                .thenReturn(new com.oneshop.dto.response.AdminChainSummaryResponse(5, 2, 0, 1));
         when(adminOperationsService.getOverview(null)).thenReturn(List.of(
                 new com.oneshop.dto.response.AdminStoreOverviewResponse(STORE, 3, 1, 2, 0, 5, 1, 0, 1)));
         String html = asAdmin("/admin").body();
 
         // card + stat card
-        assertThat(html).contains("card-header", "os-stat__value", "Lọc theo chi nhánh");
+        assertThat(html).contains("card-header", "os-stat__value", "Lọc theo chi nhánh", "Đơn hàng toàn chuỗi",
+                "Phần giao đang xử lý", "Cần Admin xử lý", "Chờ đối soát");
         assertThat(html).contains("id=\"filter-store\"", "name=\"storeId\"",
                 "<option value=\"\">Tất cả chi nhánh</option>");
         assertThat(html).contains("data-overview-store-id=\"1\"", "href=\"/admin/staff-assignments\"",

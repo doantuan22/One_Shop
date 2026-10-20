@@ -4,7 +4,8 @@ Spring Boot monolith bán mỹ phẩm theo mô hình chuỗi cửa hàng: Java 2
 
 V3 dùng một giá online trên `Product`, giỏ hàng theo Product và tồn kho theo `StoreProduct`. ONLINE tạo một Order với nhiều Fulfillment; COD nhiều Store cần consent để tạo các Order độc lập. DELIVERY tính 30.000 VNĐ/Order; STORE_PICKUP miễn phí và cần một Store đủ hàng. Trừ tồn khi đặt hàng, hoàn tồn một lần khi hủy hợp lệ. Review gắn với OrderItem đã nhận; Staff đúng Store nguồn mới được trả lời; Admin chỉ kiểm duyệt.
 
-Trạng thái audit ngày 18/10/2026: baseline **1.558 PASS**, nhưng `oneshop` còn thiếu migration DEC-26. Ứng dụng từ chối khởi động không-test khi schema chưa tương thích. Chưa phê duyệt hoặc chạy migration vào `oneshop`; xem [báo cáo deep audit](docs/v3/final-deep-audit/DEEP_AUDIT_REPORT.md).
+
+Dữ liệu demo gồm **sản phẩm mỹ phẩm thật** (tên, thương hiệu, dung tích, giá tham khảo có URL nguồn và ngày xác minh, ảnh bao bì CC BY-SA 3.0 từ Open Beauty Facts) cùng dữ liệu **mô phỏng** (tồn kho từng chi nhánh, tài khoản, đơn hàng, thanh toán Mock, review demo). Xem [thiết lập database](docs/seed/DATABASE_SETUP.md), [ghi công hình ảnh](docs/seed/IMAGE_CREDITS.md) và trang công khai `/image-credits`. Database `oneshop` hiện hữu cần được reset/seed lại theo quy trình đã phê duyệt riêng; migration lịch sử được lưu trong [docs/v3/migration-history](docs/v3/migration-history/).
 
 ## Cài đặt và chạy local
 
@@ -12,7 +13,7 @@ Cần JDK **21**, SQL Server và Maven hoặc wrapper `mvnw.cmd` trên Windows (
 
 1. Copy `.env.example` thành `.env`, rồi điền `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET` (ít nhất 32 byte UTF-8). `.env` bị Git ignore; không commit credentials.
 2. Database phát triển chính là `oneshop`. Với database đã tồn tại, chỉ dùng upgrade có backup và phê duyệt riêng; không chạy schema/seed để nâng cấp database hiện hữu.
-3. Database mới dùng [bộ SQL chính thức](database/README.md): `01_schema.sql`, `02_seed.sql`, `03_verify.sql`.
+3. Database mới dùng đúng hai script trong `database/`: `01_schema.sql` (tạo database + schema + tự kiểm tra) và `02_seed.sql` (dữ liệu mẫu + tự kiểm tra); xem [thiết lập database](docs/seed/DATABASE_SETUP.md).
 4. Chạy `mvn spring-boot:run` sau khi database tương thích. `dev` và `prod` đều dùng `ddl-auto=validate`; Hibernate không quản lý schema.
 
 ```text
@@ -26,7 +27,7 @@ Chỉ đặt `DB_TRUST_SERVER_CERTIFICATE=true` cho SQL Server local dùng chứ
 Full suite cần SQL Server và fixture V3. Browser E2E cần Node.js có WebSocket và Chrome tại đường dẫn trong `BrowserV3DatabaseIntegrationTest`; thiếu browser làm suite báo lỗi, không skip để che môi trường.
 
 ```powershell
-# Tạo database test mới theo database/README.md, rồi chạy:
+# Tạo database test tạm theo docs/seed/DATABASE_SETUP.md, chạy test, rồi xóa nó theo đúng tên:
 mvn -B '-Doneshop.test.db=oneshop_v3_local_test' test
 mvn -B '-Doneshop.test.db=oneshop_v3_local_test' clean package
 ```
@@ -47,11 +48,11 @@ Không chạy song song hai suite ghi dữ liệu trên cùng database test. Fix
 | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Cần khi upload ảnh |
 | `SPRING_PROFILES_ACTIVE` | dev; Docker dùng prod |
 | `PORT` | 8080 |
-| `ONESHOP_CHECKOUT_ONLINE_ENABLED` | **false**, giữ nguyên chính sách release |
-| `ONESHOP_PAYMENT_TIMEOUT_WORKER_ENABLED` | **false**, chỉ bật sau khi xem xét đơn ONLINE lịch sử |
+| `ONESHOP_CHECKOUT_ONLINE_ENABLED` | **true** (dev); profile `prod` đặt **false** vì không có cổng thanh toán thật |
+| `ONESHOP_PAYMENT_TIMEOUT_WORKER_ENABLED` | **false** (mặc định, chỉ bật chủ động): worker ghi dữ liệu (hủy đơn ONLINE quá 15 phút, hoàn tồn). Khi tắt, đơn ONLINE quá hạn hiện ở Admin → Thanh toán → "Cần xử lý" để Admin đối soát từng đơn |
 | `ONESHOP_PAYMENT_MOCK_GATEWAY_ENABLED` | true ở dev, false ở prod; gateway từ chối mô phỏng khi profile prod active |
 
-Không dùng `JPA_DDL_AUTO` để chạy schema. Mọi enable ONLINE/scheduler và thay đổi production cần quy trình riêng; audit không deploy.
+Không dùng `JPA_DDL_AUTO` để chạy schema. ONLINE dùng cổng thanh toán MÔ PHỎNG phía server (không có cổng thật); production giữ ONLINE đóng. Thay đổi production cần quy trình riêng.
 
 ## Đường dẫn và quyền
 
@@ -69,7 +70,8 @@ SiteMesh dùng ba decorator Client/Staff/Admin; `/decorators/**` không gọi tr
 
 - [Đặc tả nghiệp vụ V3 và quyết định DEC](docs/OneShop_V3_DacTaNghiepVu_MaTranChuyenDoiCSDL.md)
 - [Kế hoạch migration backend V3](docs/v3/backend-audit/BACKEND_V3_MIGRATION_PLAN.md)
-- [Database fresh install / upgrade / rollback](database/README.md)
+- [Database: cài mới, dữ liệu thật/mô phỏng, quy trình test](docs/seed/DATABASE_SETUP.md)
+- [Nguồn và giá sản phẩm thật](docs/seed/products.json), [ghi công hình ảnh](docs/seed/IMAGE_CREDITS.md)
 - [Báo cáo deep audit, database runbook, kết quả test và ma trận cleanup](docs/v3/final-deep-audit/DEEP_AUDIT_REPORT.md)
 
 BE-01 đến BE-07 được giữ trong `docs/v3/backend-*` làm bằng chứng lịch sử; `docs/v3/final-system-audit` là audit ngày 14/10. Đường dẫn SQL cũ trong các báo cáo này không phải runbook hiện hành.

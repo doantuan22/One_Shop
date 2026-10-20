@@ -109,10 +109,25 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
     public void restoreForCancelledOrder(Order order, String note) {
+        restoreLines(order, orderItemRepository.findByOrderId(order.getId()), note);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void restoreForUndeliverableFulfillment(Order order, com.oneshop.entity.OrderFulfillment fulfillment,
+                                                   String note) {
+        if (fulfillment == null || fulfillment.getId() == null || fulfillment.getOrder() == null
+                || !fulfillment.getOrder().getId().equals(order.getId())) {
+            throw new BadRequestException("Phần giao không thuộc đơn hàng cần hoàn tồn.");
+        }
+        restoreLines(order, orderItemRepository.findByFulfillmentIdInOrderByIdAsc(List.of(fulfillment.getId())), note);
+    }
+
+    private void restoreLines(Order order, List<OrderItem> lines, String note) {
         if (!StringUtils.hasText(note) || note.length() > 500) {
             throw new BadRequestException("Ghi chú hoàn tồn cần có nội dung và tối đa 500 ký tự.");
         }
-        List<OrderItem> items = orderItemRepository.findByOrderId(order.getId()).stream()
+        List<OrderItem> items = lines.stream()
                 .sorted(Comparator.comparing((OrderItem item) -> item.getStoreProduct().getId())
                         .thenComparing(OrderItem::getId)).toList();
         if (items.isEmpty()) {

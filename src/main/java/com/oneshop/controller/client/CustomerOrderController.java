@@ -3,6 +3,7 @@ package com.oneshop.controller.client;
 import com.oneshop.service.CustomerOrderService;
 import com.oneshop.service.OrderTransitionPolicy;
 import com.oneshop.service.ReviewService;
+import com.oneshop.service.payment.OrderRefundViewService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +16,10 @@ public class CustomerOrderController {
     private final CustomerOrderService orders;
     private final OrderTransitionPolicy policy;
     private final ReviewService reviews;
-    public CustomerOrderController(CustomerOrderService orders, OrderTransitionPolicy policy, ReviewService reviews) {
-        this.orders = orders; this.policy = policy; this.reviews = reviews;
+    private final OrderRefundViewService refundView;
+    public CustomerOrderController(CustomerOrderService orders, OrderTransitionPolicy policy, ReviewService reviews,
+                                   OrderRefundViewService refundView) {
+        this.orders = orders; this.policy = policy; this.reviews = reviews; this.refundView = refundView;
     }
     @GetMapping
     public String list(Principal principal, Model model) {
@@ -27,6 +30,7 @@ public class CustomerOrderController {
         var detail = orders.getOrder(principal.getName(), orderId);
         var order = detail.order();
         model.addAttribute("orderDetail", detail);
+        model.addAttribute("refund", refundView.forCustomer(principal.getName(), orderId));
         model.addAttribute("reviewItems", reviews.getOrderReviewItems(principal.getName(), orderId));
         model.addAttribute("canCancel", policy.canCustomerCancel(order.orderStatus(), order.fulfillmentType(),
                 order.paymentMethod(), order.paymentStatus()));

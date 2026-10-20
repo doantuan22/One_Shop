@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.security.Principal;
 
 /**
- * Admin: StoreProduct, a SKU put on sale at one Store with that Store's price, quantity and status (BR-02). The Admin
+ * Admin: StoreProduct, a SKU put on sale at one Store with that Store's quantity and status; the online price is Product.price and read-only here. The Admin
  * sees the exact quantity. A (Store, Product) pair exists once; it is taken off sale with status INACTIVE.
  */
 @Controller
@@ -68,7 +68,6 @@ public class AdminStoreProductController {
         StoreProductRequest form = new StoreProductRequest();
         form.setStoreId(current.storeId());
         form.setProductId(current.productId());
-        form.setPrice(current.price());
         form.setQuantity(current.quantity());
         form.setStatus(current.status());
         model.addAttribute("form", form);
@@ -96,7 +95,7 @@ public class AdminStoreProductController {
         // Store and Product of an existing StoreProduct are fixed, whatever the form posts
         form.setStoreId(current.storeId());
         form.setProductId(current.productId());
-        if (!bindingResult.hasFieldErrors("price") && !bindingResult.hasFieldErrors("quantity")
+        if (!bindingResult.hasFieldErrors("quantity")
                 && !bindingResult.hasFieldErrors("status") && !bindingResult.hasFieldErrors("note")) {
             try {
                 storeProductService.updateStoreProduct(id, form, principal.getName());

@@ -1,27 +1,62 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Tổng quan toàn chuỗi</title></head><body>
-<div th:replace="~{fragments/components :: pageHeader('Tổng quan toàn chuỗi', 'Tổng quan đơn hàng, tồn kho và nhân viên theo từng chi nhánh.')}"></div>
+<div th:replace="~{fragments/components :: pageHeader('Tổng quan toàn chuỗi', 'Số liệu toàn chuỗi ở trên, mỗi chi nhánh một dòng ở dưới. Một đơn hàng được tính một lần; phần giao là phần hàng do từng chi nhánh xử lý.')}"></div>
+
+<!--/* chain-wide KPIs: Orders and Fulfillments are different things and are labelled as such */-->
+<section class="row g-3 mb-4" id="chain-summary" th:if="${chain != null}" aria-label="Số liệu toàn chuỗi">
+    <div class="col-6 col-lg"><div th:replace="~{fragments/components :: statCard('Đơn hàng toàn chuỗi', ${chain.totalOrders}, 'Mỗi đơn tính một lần')}"></div></div>
+    <div class="col-6 col-lg"><div th:replace="~{fragments/components :: statCard('Phần giao đang xử lý', ${chain.openFulfillments}, 'Nhân viên đang xử lý bình thường')}"></div></div>
+    <div class="col-6 col-lg" id="kpi-attention"><div th:replace="~{fragments/components :: statCard('Cần Admin xử lý', ${chain.ordersNeedingAttention}, 'Đơn ngoại lệ, thanh toán quá hạn, hoàn tiền mô phỏng chưa xong')}"></div></div>
+    <div class="col-6 col-lg" id="kpi-reconciling"><div th:replace="~{fragments/components :: statCard('Chờ đối soát', ${chain.reconcilingOrders}, 'Kết quả chưa xác định, còn trong hạn')}"></div></div>
+    <div class="col-6 col-lg"><div th:replace="~{fragments/components :: statCard('SKU hết hàng tại chi nhánh', ${#aggregates.sum(overview.![outOfStockRows])}, 'Số dòng SKU–chi nhánh có tồn bằng 0')}"></div></div>
+    <div class="col-12 small">
+        <a th:href="@{/admin/orders(attention=true)}">Xem đơn cần Admin xử lý (gồm giao hàng thất bại)</a> &middot;
+        <a th:href="@{/admin/payments(view='attention')}">Xem thanh toán cần xử lý</a> &middot;
+        <a th:href="@{/admin/payments(view='reconciling')}">Xem thanh toán chờ đối soát</a>
+    </div>
+</section>
+
 <section class="card mb-4"><div class="card-header">Lọc theo chi nhánh</div><div class="card-body">
     <form th:replace="~{admin/fragments :: storeFilter('/admin')}"></form></div></section>
-<p class="small text-secondary">Đơn cần xử lý: CONFIRMED, PREPARING, PACKED, SHIPPING, READY_FOR_PICKUP. Tồn sắp hết: SKU ACTIVE có 1–5 sản phẩm; hết hàng: 0. Nhân viên có quyền: tài khoản STAFF, phân công và chi nhánh đều ACTIVE.</p>
-<section class="card mb-4" th:each="row : ${overview}" th:attr="data-overview-store-id=${row.store.id}">
-    <div class="card-header"><strong th:text="${row.store.name}"></strong> <span th:replace="~{fragments/components :: statusBadge(${row.store.status})}"></span></div>
-    <div class="card-body"><div class="row g-3">
-        <div class="col-6 col-lg-3"><div th:replace="~{fragments/components :: statCard('Tổng đơn', ${row.totalOrders}, 'Mọi trạng thái')}"></div></div>
-        <div class="col-6 col-lg-3"><div th:replace="~{fragments/components :: statCard('Cần xử lý', ${row.processingOrders}, null)}"></div></div>
-        <div class="col-6 col-lg-3"><div th:replace="~{fragments/components :: statCard('Hoàn tất', ${row.completedOrders}, null)}"></div></div>
-        <div class="col-6 col-lg-3"><div th:replace="~{fragments/components :: statCard('Đã hủy', ${row.cancelledOrders}, null)}"></div></div>
-    </div><dl class="row mt-3 mb-0">
-        <dt class="col-sm-6">SKU được gắn (mọi trạng thái)</dt><dd class="col-sm-6" data-metric="stock-rows" th:text="${row.stockRows}"></dd>
-        <dt class="col-sm-6">SKU sắp hết</dt><dd class="col-sm-6" data-metric="low-stock" th:text="${row.lowStockRows}"></dd>
-        <dt class="col-sm-6">SKU hết hàng</dt><dd class="col-sm-6" data-metric="out-of-stock" th:text="${row.outOfStockRows}"></dd>
-        <dt class="col-sm-6">Nhân viên có quyền</dt><dd class="col-sm-6" data-metric="assigned-staff" th:text="${row.assignedStaff}"></dd>
-    </dl><div class="d-flex flex-wrap gap-2 mt-3">
-        <a class="btn btn-outline-primary" th:href="@{/admin/orders(storeId=${row.store.id})}">Đơn hàng</a>
-        <a class="btn btn-outline-primary" th:href="@{/admin/inventory(storeId=${row.store.id})}">Tồn kho</a>
-        <a class="btn btn-outline-primary" th:href="@{/admin/staff-assignments(storeId=${row.store.id})}">Phân công</a>
-        <a class="btn btn-outline-secondary" th:href="@{/admin/stores/{id}/edit(id=${row.store.id})}">Sửa chi nhánh</a>
-    </div></div>
+
+<section class="card mb-3" id="store-overview">
+    <div class="card-header fw-semibold">Chi nhánh</div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle os-table mb-0">
+            <thead><tr>
+                <th scope="col">Chi nhánh</th><th scope="col">Trạng thái</th>
+                <th scope="col" class="text-end">Số đơn</th><th scope="col" class="text-end">Cần Admin xử lý</th>
+                <th scope="col" class="text-end">Hoàn tất</th><th scope="col" class="text-end">Đã hủy</th>
+                <th scope="col" class="text-end">SKU sắp hết</th><th scope="col" class="text-end">SKU hết hàng</th>
+                <th scope="col" class="text-end">Nhân viên</th><th scope="col" class="text-end">Thao tác</th>
+            </tr></thead>
+            <tbody>
+            <tr th:each="row : ${overview}" th:attr="data-overview-store-id=${row.store.id}">
+                <th scope="row" class="fw-semibold" th:text="${row.store.name}"></th>
+                <td><span th:replace="~{fragments/components :: statusBadge(${row.store.status})}"></span></td>
+                <td class="text-end" th:text="${row.totalOrders}"></td>
+                <td class="text-end" th:text="${row.attentionOrders}"></td>
+                <td class="text-end" th:text="${row.completedOrders}"></td>
+                <td class="text-end" th:text="${row.cancelledOrders}"></td>
+                <td class="text-end" data-metric="low-stock" th:text="${row.lowStockRows}"></td>
+                <td class="text-end" data-metric="out-of-stock" th:text="${row.outOfStockRows}"></td>
+                <td class="text-end" data-metric="assigned-staff" th:text="${row.assignedStaff}"></td>
+                <td class="text-end">
+                    <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/orders(storeId=${row.store.id})}">Đơn hàng</a>
+                    <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/inventory(storeId=${row.store.id})}">Tồn kho</a>
+                    <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/staff-assignments(storeId=${row.store.id})}">Phân công</a>
+                    <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/stores/{id}/edit(id=${row.store.id})}">Sửa</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(overview)}"><td colspan="10" class="text-center text-secondary py-4">Chưa có chi nhánh.</td></tr>
+            </tbody>
+        </table>
+    </div>
 </section>
-<div th:if="${#lists.isEmpty(overview)}" class="alert alert-info">Chưa có chi nhánh.</div>
+<p class="small text-secondary">
+    &ldquo;Cần Admin xử lý&rdquo;: đơn đang ngoại lệ (có phần giao không thành công hoặc thanh toán chưa xác định sau cửa sổ đối soát), đơn ONLINE quá hạn thanh toán mà chưa được quyết định,
+    và đơn đã thu tiền mà hoàn tiền mô phỏng chưa xong. Đơn Nhân viên đang xử lý bình thường (đã xác nhận, đang chuẩn bị, đang giao&hellip;) không tính vào đây.
+    Mỗi đơn chỉ đếm một lần ở số liệu toàn chuỗi; ở bảng chi nhánh, một đơn có phần giao tại nhiều chi nhánh xuất hiện ở từng chi nhánh đó.
+    SKU sắp hết: đang bán, tồn 1–5; hết hàng: tồn 0. Nhân viên có quyền: tài khoản, phân công và chi nhánh đều đang hoạt động.
+</p>
 </body></html>

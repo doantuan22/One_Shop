@@ -47,7 +47,7 @@ class CatalogWebIntegrationTest extends AbstractIntegrationTest {
 
     private static final StoreResponse GO_VAP = new StoreResponse(2L, "OS-GOVAP", "OneShop Gò Vấp", "202 Quang Trung",
             "TP. Hồ Chí Minh", "Gò Vấp", "02811110002", "08:00 - 22:00", true, true, ActiveStatus.ACTIVE);
-    private static final ProductResponse SERUM = new ProductResponse(3L, "COCOON-SERUM-30", "Cocoon Serum Bí Đao 30ml",
+    private static final ProductResponse SERUM = new ProductResponse(3L, "SIMPLE-PURIFY-150", "Cocoon Serum Bí Đao 30ml",
             "Mô tả", "Chăm sóc da", "Cocoon", null);
     private static final StoreAvailabilityResponse AT_GO_VAP =
             new StoreAvailabilityResponse(2L, 2L, "OneShop Gò Vấp", new BigDecimal("135000.00"), true);
@@ -100,50 +100,48 @@ class CatalogWebIntegrationTest extends AbstractIntegrationTest {
     // ---------------------------------------------------------------- catalog context
 
     @Test
-    void withoutACookieTheCatalogIsTheWholeChain() throws Exception {
+    void theCatalogIsAlwaysTheSharedWholeChainCatalog() throws Exception {
         String html = get("/products").body();
 
-        assertThat(html).contains("data-store-scope=\"chain\"", "Cocoon Serum Bí Đao 30ml", "Còn hàng", "129.000 ₫");
+        assertThat(html).contains("Cocoon Serum Bí Đao 30ml", "Còn hàng toàn hệ thống", "129.000 ₫", "id=\"catalog-count\"");
+        assertThat(html).doesNotContain("data-store-scope", "Chi nhánh đang chọn");
         verify(storeProductService).getChainCatalog(any(), any());
         verify(storeProductService, never()).getStoreCatalog(anyLong(), any(), any());
     }
 
     @Test
-    void aValidCookiePutsTheCatalogInThatStore() throws Exception {
+    void aStaleStoreCookieNoLongerScopesTheCatalog() throws Exception {
         String html = get("/products?q=serum", "Cookie", STORE_COOKIE + "=2").body();
 
-        assertThat(html).contains("data-store-scope=\"store\"", "OneShop Gò Vấp", "135.000 ₫", "Còn hàng")
-                .doesNotContain("OneShop Thủ Đức", "129.000 ₫");
-        verify(storeProductService).getStoreCatalog(eq(2L), any(), any());
-        verify(storeProductService, never()).getChainCatalog(any(), any());
+        assertThat(html).contains("129.000 ₫").doesNotContain("135.000 ₫", "data-store-scope");
+        verify(storeProductService).getChainCatalog(any(), any());
+        verify(storeProductService, never()).getStoreCatalog(anyLong(), any(), any());
     }
 
     @Test
-    void anUnknownOrMalformedCookieIsDroppedAndTheCatalogIsTheWholeChain() throws Exception {
+    void anUnknownOrMalformedCookieIsStillDropped() throws Exception {
         for (String value : List.of("999", "abc", "-1")) {
             HttpResponse<String> response = get("/products", "Cookie", STORE_COOKIE + "=" + value);
 
-            assertThat(response.body()).as(value).contains("data-store-scope=\"chain\"");
             assertThat(storeCookieHeader(response)).as(value).startsWith(STORE_COOKIE + "=;").contains("Max-Age=0");
         }
         verify(storeProductService, never()).getStoreCatalog(anyLong(), any(), any());
     }
 
     @Test
-    void productDetailReceivesTheValidatedStoreOnly() throws Exception {
-        when(storeProductService.getProductDetail(3L, 2L))
-                .thenReturn(new ProductDetailResponse(SERUM, List.of(), AT_GO_VAP, List.of(AT_THU_DUC)));
+    void productDetailIsStoreIndependentAndOnlyLooksStoresUp() throws Exception {
         when(storeProductService.getProductDetail(eq(3L), isNull()))
                 .thenReturn(new ProductDetailResponse(SERUM, List.of(), null, List.of(AT_GO_VAP, AT_THU_DUC)));
 
-        String selected = get("/products/3", "Cookie", STORE_COOKIE + "=2").body();
-        assertThat(selected).contains("id=\"selected-store-price\"", "135.000 ₫", "Xem tại chi nhánh khác",
-                "OneShop Thủ Đức", "Đổi sang chi nhánh này");
+        // a Store cookie or a Store in the URL is never passed on
+        String html = get("/products/3?storeId=2", "Cookie", STORE_COOKIE + "=2").body();
 
-        // a Store that is not valid, or one named in the URL, is never passed on
-        String chain = get("/products/3?storeId=2", "Cookie", STORE_COOKIE + "=999").body();
-        assertThat(chain).contains("id=\"selected-store-price\"", "Chi nhánh đang bán sản phẩm này");
+        assertThat(html).contains("id=\"product-price\"", "Kiểm tra tại cửa hàng", "OneShop Gò Vấp", "OneShop Thủ Đức",
+                "Còn hàng toàn hệ thống");
+        assertThat(html).doesNotContain("Chọn chi nhánh này", "Đổi sang chi nhánh này", "action=\"/stores/select\"",
+                "Chi nhánh đang xem", "name=\"storeProductId\"");
         verify(storeProductService).getProductDetail(eq(3L), isNull());
+        verify(storeProductService, never()).getProductDetail(eq(3L), eq(2L));
     }
 
     @Test

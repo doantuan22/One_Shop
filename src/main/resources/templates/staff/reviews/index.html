@@ -12,10 +12,12 @@
         <div class="d-flex flex-wrap justify-content-between gap-2">
             <div>
                 <a class="fw-semibold" th:href="@{/staff/reviews/{id}(id=${r.id})}" th:text="${r.productName}">Sản phẩm</a>
+                <span class="badge ms-1" th:classappend="${r.reply != null} ? 'text-bg-success' : 'text-bg-warning'"
+                      th:text="${r.reply != null} ? 'Đã phản hồi' : 'Cần phản hồi'">Cần phản hồi</span>
                 <div class="small text-secondary"><span th:text="${r.sku}">SKU</span> &middot; <span th:text="${r.storeName}">Chi nhánh</span></div>
             </div>
             <div class="text-end">
-                <div th:text="${r.rating} + ' / 5 sao'">5 / 5 sao</div>
+                <div class="fw-semibold" th:text="${r.rating} + ' / 5 sao'" th:attr="aria-label=${r.rating} + ' trên 5 sao'">5 / 5 sao</div>
                 <span class="small" th:text="'Đơn #' + ${r.orderId}">Đơn</span>
                 <a class="small d-block" th:if="${r.fulfillmentId != null}" th:href="@{/staff/fulfillments/{id}(id=${r.fulfillmentId})}"
                    th:text="'Phần giao #' + ${r.fulfillmentId}">Phần giao</a>
@@ -26,7 +28,10 @@
             <span th:text="${r.customerName}">Khách</span> &middot;
             <span th:text="${#temporals.format(r.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</span>
         </div>
-        <form class="mt-3" method="post" th:action="@{/staff/reviews/{id}/reply(id=${r.id})}">
+        <details class="mt-3 os-review-reply-box">
+            <summary class="btn btn-sm" th:classappend="${r.reply != null} ? 'btn-outline-secondary' : 'btn-primary'"
+                     th:text="${r.reply != null} ? 'Xem / sửa phản hồi' : 'Trả lời đánh giá'">Trả lời</summary>
+        <form class="mt-2" method="post" th:action="@{/staff/reviews/{id}/reply(id=${r.id})}">
             <input type="hidden" name="page" th:value="${reviews.number}">
             <label class="form-label small" th:for="'reply-' + ${r.id}"
                    th:text="${r.reply != null} ? 'Phản hồi hiện tại (có thể sửa)' : 'Phản hồi cho khách'">Phản hồi</label>
@@ -36,6 +41,7 @@
                  th:text="'Cập nhật lần cuối: ' + ${#temporals.format(r.repliedAt, 'dd/MM/yyyy HH:mm')}">Cập nhật</div>
             <button type="submit" class="btn btn-primary btn-sm" th:text="${r.reply != null} ? 'Cập nhật phản hồi' : 'Gửi phản hồi'">Gửi</button>
         </form>
+        </details>
     </div>
 </div>
 <nav aria-label="Phân trang đánh giá" class="d-flex align-items-center gap-3" th:if="${reviews.totalPages > 1}">

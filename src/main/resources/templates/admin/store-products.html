@@ -6,7 +6,7 @@
 <body th:with="listPath=${inventoryView == true ? '/admin/inventory' : '/admin/store-products'}">
 <h1 class="h3" th:if="${inventoryView == true}">Tồn kho toàn chuỗi</h1>
 <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
-    <div th:replace="~{fragments/components :: pageHeader('Sản phẩm theo chi nhánh', 'Mỗi dòng là một SKU đang gắn với một chi nhánh, có giá, tồn kho và trạng thái bán riêng của chi nhánh đó.')}"></div>
+    <div th:replace="~{fragments/components :: pageHeader('Sản phẩm theo chi nhánh', 'Mỗi dòng là một SKU tại một chi nhánh, với tồn kho và trạng thái bán riêng. Giá online là giá chung của sản phẩm, không chỉnh theo chi nhánh.')}"></div>
     <a class="btn btn-primary" th:href="@{/admin/store-products/new(storeId=${storeId})}">Gắn sản phẩm vào chi nhánh</a>
 </div>
 
@@ -56,7 +56,7 @@
         <th scope="col">Chi nhánh</th>
         <th scope="col">SKU</th>
         <th scope="col">Sản phẩm</th>
-        <th scope="col" class="text-end">Giá bán</th>
+        <th scope="col" class="text-end">Giá online chung (chỉ đọc)</th>
         <th scope="col" class="text-end">Tồn kho</th>
         <th scope="col">Trạng thái</th>
         <th scope="col" class="text-end">Thao tác</th>

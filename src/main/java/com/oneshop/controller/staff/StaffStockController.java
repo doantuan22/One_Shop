@@ -2,6 +2,7 @@ package com.oneshop.controller.staff;
 
 import com.oneshop.dto.request.StockAdjustRequest;
 import com.oneshop.service.StaffInventoryService;
+import com.oneshop.service.StaffOperationsService;
 import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.dao.DataAccessException;
@@ -26,6 +27,7 @@ public class StaffStockController {
     private String list(int page, boolean historySelection, Model model) {
         model.addAttribute("stock", inventory.getStock(page));
         model.addAttribute("historySelection", historySelection);
+        model.addAttribute("lowStockThreshold", StaffOperationsService.LOW_STOCK_THRESHOLD);
         model.addAttribute("listPath", historySelection ? "/staff/inventory-history" : "/staff/stock");
         return "staff/stock/index";
     }

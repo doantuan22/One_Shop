@@ -120,7 +120,7 @@
                     <tr>
                         <th>Chi nhánh</th>
                         <th>SKU / Sản phẩm</th>
-                        <th>Giá</th>
+                        <th>Giá online chung</th>
                         <th>Trạng thái</th>
                         <th>Tồn thực tế</th>
                         <th>Thao tác</th>
@@ -137,7 +137,11 @@
                         <td>
                             <span th:replace="~{fragments/components :: price(${item.price})}"></span>
                         </td>
-                        <td th:text="${item.status.name() == 'ACTIVE'} ? 'Đang kinh doanh' : 'Ngừng kinh doanh'"></td>
+                        <td>
+                            <span th:text="${item.status.name() == 'ACTIVE'} ? 'Đang kinh doanh' : 'Ngừng kinh doanh'"></span>
+                            <span class="badge text-bg-danger ms-1" th:if="${item.quantity == 0}">Hết hàng</span>
+                            <span class="badge text-bg-warning ms-1" th:if="${item.quantity > 0 and item.quantity <= lowStockThreshold}">Sắp hết</span>
+                        </td>
                         <td class="fw-bold" data-field="exact-quantity" th:text="${item.quantity}"></td>
                         <td>
                             <a class="btn btn-outline-primary btn-sm" th:unless="${historySelection}"

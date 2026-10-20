@@ -38,9 +38,9 @@ final class FulfillmentFixtures {
     static final String STAFF_QUAN10 = "staff.quan10@oneshop.vn";
     static final String ADDRESS = "12 Đường Thử Nghiệm, Phường 1, Quận 1";
 
-    static final String SERUM = "COCOON-SERUM-30";
-    static final String SHAMPOO = "COCOON-SHAM-310";
-    static final String CHEEK = "BBIA-CHEEK-06";
+    static final String SERUM = "SIMPLE-PURIFY-150";
+    static final String SHAMPOO = "VASELINE-LIP-ORIG-48";
+    static final String CHEEK = "MAYB-LIFTER-003";
 
     final JdbcTemplate jdbc;
     private final CartService cartService;

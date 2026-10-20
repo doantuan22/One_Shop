@@ -61,6 +61,30 @@ public class OrderStatusWriter {
         histories.save(history);
     }
 
+    /**
+     * OPEN-10: an Administrator has resolved the last FAILED Fulfillment, so the Order leaves NEEDS_ATTENTION for the
+     * status its Fulfillments now derive (never an arbitrary one: the target comes from the aggregation rule, and
+     * only these edges exist).
+     */
+    private static final Set<OrderStatus> RESOLVED_TARGETS = Set.of(OrderStatus.CONFIRMED, OrderStatus.PROCESSING,
+            OrderStatus.SHIPPING, OrderStatus.PARTIALLY_COMPLETED, OrderStatus.COMPLETED, OrderStatus.CANCELLED);
+
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void writeResolved(Order lockedOrder, OrderStatus target, User actor, String note) {
+        if (lockedOrder.getOrderStatus() != OrderStatus.NEEDS_ATTENTION || !RESOLVED_TARGETS.contains(target)) {
+            throw new BadRequestException("Chuyển trạng thái đơn hàng không hợp lệ: " + lockedOrder.getOrderStatus() + " → " + target + ".");
+        }
+        OrderStatusHistory history = new OrderStatusHistory();
+        history.setOrder(lockedOrder);
+        history.setOldStatus(lockedOrder.getOrderStatus());
+        history.setNewStatus(target);
+        history.setChangedBy(actor);
+        history.setNote(abbreviate(note));
+        lockedOrder.setOrderStatus(target);
+        orders.saveAndFlush(lockedOrder);
+        histories.save(history);
+    }
+
     /** An audit row for an action that changed no status (for example an Admin re-check that found nothing new). */
     @Transactional(propagation = Propagation.MANDATORY)
     public void audit(Order lockedOrder, User actor, String note) {
@@ -74,7 +98,7 @@ public class OrderStatusWriter {
     }
 
     /** {@code note} is 500 characters in the schema; evidence beyond that is abbreviated, never an error. */
-    static String abbreviate(String note) {
+    public static String abbreviate(String note) {
         if (note == null) {
             return null;
         }

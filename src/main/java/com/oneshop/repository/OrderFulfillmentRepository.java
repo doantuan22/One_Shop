@@ -36,6 +36,9 @@ public interface OrderFulfillmentRepository extends JpaRepository<OrderFulfillme
 
     long countByStoreIdAndStatusIn(Long storeId, Collection<OrderFulfillmentStatus> statuses);
 
+    /** Chain-wide count for the Admin overview. */
+    long countByStatusIn(Collection<OrderFulfillmentStatus> statuses);
+
     // ---- V3-BE-04: Fulfillment-centric Staff operations. Store ids always come from the Staff assignments. ----
 
     /** Scalar scope lookup (no entity is loaded, so nothing stale can enter the persistence context). */

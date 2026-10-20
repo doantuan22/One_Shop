@@ -263,6 +263,8 @@
         }
 
         .other-stores-header {
+            cursor: pointer;
+            list-style: none;
             background-color: #fffaf8;
             border-bottom: 1px solid #f6ded7;
             padding: 1rem 1.25rem;
@@ -286,6 +288,9 @@
         .other-store-row:hover {
             background-color: #fffdfc;
         }
+
+        .other-stores-card > summary::-webkit-details-marker { display: none; }
+        .other-stores-card > summary:focus-visible { outline: 3px solid rgba(255, 127, 80, 0.5); outline-offset: -3px; }
 
         .btn-switch-store {
             border-radius: 10px;
@@ -366,6 +371,7 @@
                     </svg>
                 </div>
             </div>
+            <p class="small text-secondary mb-3" id="image-credit-line" th:if="${!detail.images.isEmpty()}">Ảnh: Open Beauty Facts, CC BY-SA 3.0 · <a th:href="@{/image-credits}">Ghi công hình ảnh</a></p>
 
             <div class="d-flex flex-wrap gap-2" th:if="${detail.images.size() > 1}">
                 <img th:each="image, iterStat : ${detail.images}"
@@ -390,36 +396,25 @@
             </div>
 
             <section class="store-offer-box" id="selected-store-offer">
-                <div class="selected-store-label" th:if="${selectedStore != null}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-coral">
-                        <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/>
-                        <circle cx="12" cy="10" r="2.5"/>
-                    </svg>
-                    <span>Chi nhánh đang xem: <strong th:text="${selectedStore.name}">OneShop Thủ Đức</strong></span>
-                </div>
-
-                <div class="price-tag-hero" id="selected-store-price">
-                    <span th:replace="~{fragments/components :: price(${product.price != null ? product.price : (detail.atSelectedStore != null ? detail.atSelectedStore.price : 0)})}"></span>
+                <div class="price-tag-hero" id="product-price">
+                    <span th:replace="~{fragments/components :: price(${product.price != null ? product.price : 0})}"></span>
                     <span class="text-decoration-line-through text-muted fs-5 ms-3 fw-normal"
                           th:if="${product.originalPrice != null and product.originalPrice > product.price}"
                           th:text="${#numbers.formatDecimal(product.originalPrice, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></span>
                 </div>
 
+                <p class="small os-muted-text mb-2">Một giá online chung cho toàn hệ thống.</p>
+
                 <div class="stock-status-pill">
-                    <span class="text-secondary small me-1">Tình trạng:</span>
-                    <th:block th:if="${selectedStore != null and detail.atSelectedStore != null}">
-                        <span th:replace="~{fragments/components :: availability(${detail.atSelectedStore.inStock})}"></span>
-                    </th:block>
-                    <th:block th:unless="${selectedStore != null and detail.atSelectedStore != null}">
-                        <span th:replace="~{fragments/components :: availability(${detail.inStock()})}"></span>
-                    </th:block>
+                    <span class="os-muted-text small me-1">Tình trạng:</span>
+                    <span class="badge text-bg-success" th:if="${detail.inStock()}">Còn hàng toàn hệ thống</span>
+                    <span class="badge text-bg-secondary" th:unless="${detail.inStock()}">Hết hàng</span>
                 </div>
 
                 <div id="add-to-cart" th:if="${detail.inStock()}">
                     <form method="post" th:action="@{/cart/items}" class="d-flex flex-wrap align-items-end gap-3"
                           sec:authorize="hasRole('CUSTOMER')">
                         <input type="hidden" name="productId" th:value="${product.id}">
-                        <input type="hidden" th:if="${detail.atSelectedStore != null}" name="storeProductId" th:value="${detail.atSelectedStore.storeProductId}">
                         <div>
                             <label class="form-label small fw-semibold text-secondary mb-1" for="add-quantity">Số lượng</label>
                             <div class="os-qty-stepper">
@@ -455,6 +450,10 @@
                         </svg>
                         Đăng nhập để thêm vào giỏ
                     </a>
+                    <p class="small os-muted-text mt-3 mb-0">
+                        Bạn không cần chọn cửa hàng: hệ thống tự chọn nơi còn hàng khi đặt, hoặc bạn chọn
+                        &ldquo;Nhận tại cửa hàng&rdquo; ở bước thanh toán.
+                    </p>
                 </div>
 
                 <button type="button" class="btn btn-secondary px-4 py-2 rounded-3 fw-bold" disabled th:unless="${detail.inStock()}">
@@ -462,44 +461,33 @@
                 </button>
             </section>
 
-            <section class="other-stores-card" id="other-stores">
-                <div class="other-stores-header">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-coral">
+            <!--/* Optional lookup only: which Stores have it in stock. No price, no quantity, no Store "selection". */-->
+            <details class="other-stores-card" id="other-stores">
+                <summary class="other-stores-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-coral" aria-hidden="true">
                         <path d="M3 21h18"/>
                         <path d="M5 21V7l8-4v18"/>
                         <path d="M19 21V11l-6-4"/>
                     </svg>
-                    <span th:text="${selectedStore != null} ? 'Xem tại chi nhánh khác' : 'Chi nhánh đang bán sản phẩm này'">Xem tại chi nhánh khác</span>
-                </div>
+                    <span>Kiểm tra tại cửa hàng</span>
+                </summary>
 
-                <div class="p-3 text-secondary" th:if="${detail.otherStores.isEmpty()}"
-                     th:text="${detail.atSelectedStore != null} ? 'Chưa có chi nhánh nào khác đang bán sản phẩm này.' : 'Hiện chưa có chi nhánh nào đang bán sản phẩm này.'">
-                    Chưa có chi nhánh nào khác.
+                <div class="p-3 text-secondary" th:if="${detail.otherStores.isEmpty()}">
+                    Hiện chưa có cửa hàng nào đang bán sản phẩm này.
                 </div>
 
                 <div class="other-stores-list" th:unless="${detail.otherStores.isEmpty()}">
                     <div class="other-store-row d-flex flex-wrap justify-content-between align-items-center gap-2"
                          th:each="store : ${detail.otherStores}">
-                        <div>
-                            <div class="fw-bold text-dark mb-1" th:text="${store.storeName}">OneShop Gò Vấp</div>
-                            <div class="d-flex align-items-center gap-2 small">
-                                <span class="fw-semibold text-coral" th:replace="~{fragments/components :: price(${store.price})}"></span>
-                                <span class="text-muted">&middot;</span>
-                                <span th:replace="~{fragments/components :: availability(${store.inStock})}"></span>
-                            </div>
-                        </div>
-
-                        <form th:action="@{/stores/select}" method="post">
-                            <input type="hidden" name="storeId" th:value="${store.storeId}">
-                            <input type="hidden" name="returnTo" th:value="@{/products/{id}(id=${product.id})}">
-                            <button type="submit" class="btn btn-switch-store"
-                                    th:text="${selectedStore != null} ? 'Đổi sang chi nhánh này' : 'Chọn chi nhánh này'">
-                                Đổi sang chi nhánh này
-                            </button>
-                        </form>
+                        <div class="fw-bold text-dark" th:text="${store.storeName}">OneShop Gò Vấp</div>
+                        <span th:replace="~{fragments/components :: availability(${store.inStock})}"></span>
+                    </div>
+                    <div class="p-3 small text-secondary border-top">
+                        Tình trạng chỉ để tham khảo; giá luôn là giá online chung. Xem địa chỉ và giờ mở cửa tại
+                        <a th:href="@{/stores}">Hệ thống cửa hàng</a>.
                     </div>
                 </div>
-            </section>
+            </details>
 
             <section class="description-card" th:if="${product.description}">
                 <h2>Mô tả sản phẩm</h2>

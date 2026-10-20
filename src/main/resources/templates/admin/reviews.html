@@ -1,28 +1,41 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Đánh giá</title></head><body>
-<div th:replace="~{fragments/components :: pageHeader('Đánh giá', 'Xem nội dung đánh giá và bật / ẩn theo trạng thái hiện có.')}"></div>
+<div th:replace="~{fragments/components :: pageHeader('Đánh giá', 'Rà soát đánh giá của khách và ẩn / hiện khi cần. Quản trị viên không sửa nội dung đánh giá; chỉ nhân viên đúng chi nhánh cấp hàng mới phản hồi.')}"></div>
 <div class="alert alert-success" th:if="${param.success}">Đã cập nhật đánh giá.</div>
 <div class="alert alert-success" th:if="${param.replied}">Đã lưu phản hồi.</div>
 <div class="alert alert-danger" th:if="${param.replyError}">Phản hồi phải có từ 1 đến 1000 ký tự.</div>
-<div class="table-responsive"><table class="table table-hover"><thead><tr><th>Khách hàng</th><th>SKU / Sản phẩm</th><th>Điểm</th><th>Nội dung</th><th>Trạng thái</th><th></th></tr></thead>
+<div class="table-responsive"><table class="table table-hover align-middle os-table">
+<thead><tr><th scope="col">Khách hàng</th><th scope="col">SKU / Sản phẩm</th><th scope="col">Điểm</th><th scope="col">Chi nhánh cấp hàng</th><th scope="col">Trạng thái</th><th scope="col">Ngày</th><th scope="col" class="text-end">Thao tác</th></tr></thead>
 <tbody><tr th:each="r : ${reviews.content}" th:attr="data-review-id=${r.id}">
-    <td><span th:text="${r.customerName}"></span><div class="small" th:text="${r.customerEmail}"></div></td>
-    <td><span th:text="${r.sku}"></span><div th:text="${r.productName}"></div></td><td th:text="${r.rating} + ' / 5'"></td>
-    <td><span th:text="${r.comment}"></span><div class="small" th:text="${#temporals.format(r.createdAt, 'dd/MM/yyyy HH:mm')}"></div>
-        <div class="small text-secondary" th:if="${r.orderId != null}"><a th:href="@{/admin/orders/{id}(id=${r.orderId})}" th:text="'Đơn #' + ${r.orderId}"></a> &middot; <span th:text="${r.storeName}"></span></div>
-        <div class="small text-secondary" th:if="${r.orderId == null}">Không gắn với đơn nào</div>
-        <div class="small text-secondary" th:if="${r.orderItemId != null}" th:text="'Dòng hàng #' + ${r.orderItemId}"></div>
+    <td><span th:text="${r.customerName}"></span><div class="small text-secondary" th:text="${r.customerEmail}"></div></td>
+    <td>
+        <span class="fw-semibold" th:text="${r.sku}"></span><div th:text="${r.productName}"></div>
+        <details class="small mt-1" th:if="${r.comment != null or r.reply != null or (r.legacyReply != null and r.legacyReply != r.reply)}">
+            <summary>Xem nội dung &amp; phản hồi</summary>
+            <p class="mb-1 mt-1" style="white-space: pre-line" th:if="${r.comment}" th:text="${r.comment}"></p>
+            <div class="border-start ps-2 mt-2" th:if="${r.reply != null}">
+                <strong>Phản hồi đã lưu</strong><p class="mb-0" style="white-space: pre-line" th:text="${r.reply}"></p>
+            </div>
+            <div class="mt-2" th:if="${r.legacyReply != null and r.legacyReply != r.reply}">
+                <strong>Phản hồi lịch sử</strong><p class="mb-0" style="white-space: pre-line" th:text="${r.legacyReply}"></p>
+            </div>
+        </details>
+    </td>
+    <td class="text-nowrap" th:text="${r.rating} + ' / 5'" th:attr="aria-label=${r.rating} + ' trên 5 sao'"></td>
+    <td>
+        <div th:if="${r.storeName != null}" th:text="${r.storeName}"></div>
         <div class="small text-secondary" th:if="${r.storeName == null}">Chưa xác minh nguồn chi nhánh; nhân viên không được phản hồi.</div>
-        <div class="border-start ps-2 mt-2 small" th:if="${r.reply != null}">
-            <strong>Phản hồi đã lưu</strong><p style="white-space: pre-line" th:text="${r.reply}"></p>
-        </div>
-        <details class="small" th:if="${r.legacyReply != null and r.legacyReply != r.reply}">
-            <summary>Phản hồi lịch sử</summary><p style="white-space: pre-line" th:text="${r.legacyReply}"></p>
-        </details></td>
-    <td th:text="${r.status}"></td><td><form th:action="@{/admin/reviews/{id}/status(id=${r.id})}" method="post">
+        <div class="small text-secondary" th:if="${r.orderId != null}"><a th:href="@{/admin/orders/{id}(id=${r.orderId})}" th:text="'Đơn #' + ${r.orderId}"></a>
+            <span th:if="${r.orderItemId != null}" th:text="'· dòng hàng #' + ${r.orderItemId}"></span></div>
+        <div class="small text-secondary" th:if="${r.orderId == null}">Không gắn với đơn nào</div>
+    </td>
+    <td><span class="badge" th:classappend="${r.status.name() == 'ACTIVE'} ? 'text-bg-success' : 'text-bg-secondary'"
+              th:text="${r.status.name() == 'ACTIVE'} ? 'Đang hiển thị' : 'Đã ẩn'"></span></td>
+    <td class="text-nowrap small" th:text="${#temporals.format(r.createdAt, 'dd/MM/yyyy')}"></td>
+    <td class="text-end"><form th:action="@{/admin/reviews/{id}/status(id=${r.id})}" method="post">
         <input type="hidden" name="status" th:value="${r.status.name() == 'ACTIVE'} ? 'HIDDEN' : 'ACTIVE'">
         <button class="btn btn-sm btn-outline-primary" th:text="${r.status.name() == 'ACTIVE'} ? 'Ẩn' : 'Hiện'"></button></form></td>
-</tr><tr th:if="${reviews.empty}"><td colspan="6">Chưa có đánh giá.</td></tr></tbody></table></div>
+</tr><tr th:if="${reviews.empty}"><td colspan="7" class="text-center text-secondary py-4">Chưa có đánh giá.</td></tr></tbody></table></div>
 <p>Tổng số: <strong th:text="${reviews.totalElements}"></strong></p>
 <nav th:replace="~{admin/fragments :: pagination(${reviews}, '/admin/reviews', 'storeId', ${null})}"></nav>
 </body></html>

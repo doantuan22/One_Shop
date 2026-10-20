@@ -115,6 +115,10 @@ abstract class AbstractIntegrationTest {
     @MockitoBean
     protected com.oneshop.service.AdminOperationsService adminOperationsService;
 
+    /** Read model of the refund ledger (OPEN-10.1): database tests cover it, web tests stay independent of SQL. */
+    @MockitoBean
+    protected com.oneshop.service.payment.OrderRefundViewService orderRefundViewService;
+
     @BeforeEach
     void staffReadModelsByDefault() {
         when(staffOperationsService.getDashboard()).thenAnswer(invocation -> new StaffDashboardResponse(

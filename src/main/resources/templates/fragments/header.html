@@ -1,87 +1,32 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <body>
-<header th:fragment="header" class="os-topbar-coral">
+<!--/*
+    Slim brand strip above the navbar. V3: the shop is one shared catalog with one online price per SKU, so the
+    header never asks for a Store ("Chi nhánh đang chọn" was V2). Stores are only a lookup: /stores.
+*/-->
+<header th:fragment="header" class="os-topbar-coral" id="site-topbar">
     <style>
         .os-topbar-coral {
             background: linear-gradient(90deg, #ff7f50 0%, #f06437 100%);
             color: #ffffff;
-            font-size: 0.84rem;
-            padding: 0.5rem 0;
-            box-shadow: 0 2px 8px rgba(240, 100, 55, 0.18);
+            font-size: 0.875rem;
+            padding: 0.45rem 0;
             position: relative;
             z-index: 1020;
         }
 
-        .store-scope-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background-color: rgba(255, 255, 255, 0.18);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 3px 12px;
-            border-radius: 999px;
-            color: #ffffff;
-            backdrop-filter: blur(4px);
-        }
-
-        .store-scope-indicator {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background-color: #ffffff;
-            box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
-            display: inline-block;
-        }
-
-        .store-scope-indicator.chain {
-            background-color: rgba(255, 255, 255, 0.6);
-            box-shadow: none;
-        }
-
-        .store-scope-name {
-            color: #ffffff;
-            font-weight: 750;
-        }
-
-        .store-action-link {
+        .os-topbar-coral a {
             color: #ffffff;
             font-weight: 600;
-            text-decoration: none;
-            background-color: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            padding: 3px 10px;
-            border-radius: 6px;
-            transition: all 0.15s ease;
-        }
-
-        .store-action-link:hover {
-            color: #ffffff;
-            background-color: rgba(255, 255, 255, 0.28);
-            border-color: rgba(255, 255, 255, 0.45);
-        }
-
-        .btn-clear-store {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 0.825rem;
-            font-weight: 500;
             text-decoration: underline;
             text-underline-offset: 3px;
-            background: transparent;
-            border: none;
-            padding: 2px 6px;
-            transition: color 0.15s ease;
         }
 
-        .btn-clear-store:hover {
+        .os-topbar-coral a:hover,
+        .os-topbar-coral a:focus-visible {
             color: #ffffff;
-        }
-
-        .topbar-right-info {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            color: rgba(255, 255, 255, 0.95);
+            text-decoration-thickness: 2px;
         }
 
         .topbar-info-item {
@@ -89,33 +34,11 @@
             align-items: center;
             gap: 6px;
         }
-
-        .topbar-info-item strong {
-            color: #ffffff;
-        }
-
-        .topbar-divider {
-            color: rgba(255, 255, 255, 0.45);
-        }
     </style>
 
-    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
-        <div class="os-store-context d-flex flex-wrap align-items-center gap-2" id="store-context"
-             th:attr="data-store-scope=${selectedStore != null} ? 'store' : 'chain'">
-            <div class="store-scope-pill">
-                <span class="store-scope-indicator" th:classappend="${selectedStore == null} ? 'chain'"></span>
-                <span>Chi nhánh đang chọn:</span>
-                <span class="store-scope-name" th:if="${selectedStore != null}" th:text="${selectedStore.name}">OneShop Thủ Đức</span>
-                <span class="store-scope-name" th:unless="${selectedStore != null}">Toàn chuỗi</span>
-            </div>
-
-            <a class="store-action-link" th:href="@{/stores}"
-               th:text="${selectedStore != null} ? 'Đổi chi nhánh' : 'Chọn chi nhánh'">Chọn chi nhánh</a>
-
-            <form th:if="${selectedStore != null}" th:action="@{/stores/clear}" method="post" class="d-inline">
-                <button type="submit" class="btn-clear-store">Xem toàn chuỗi</button>
-            </form>
-        </div>
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-1 gap-md-3">
+        <span class="topbar-info-item">Mỹ phẩm chính hãng &middot; một giá online chung cho toàn hệ thống</span>
+        <a th:href="@{/stores}">Tra cứu cửa hàng &amp; nhận tại cửa hàng</a>
     </div>
 </header>
 </body>

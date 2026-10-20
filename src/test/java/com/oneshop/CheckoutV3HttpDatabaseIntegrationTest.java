@@ -167,7 +167,7 @@ class CheckoutV3HttpDatabaseIntegrationTest {
     @Test
     @DisplayName("The page shows an ONE-Order plan from two Stores; confirming creates one Order and shows its parts")
     void onlineMultiStoreThroughTheBrowser() throws Exception {
-        List<Long> lines = cart(ALICE, "COCOON-SERUM-30", 1, "COCOON-SHAM-310", 1);
+        List<Long> lines = cart(ALICE, "SIMPLE-PURIFY-150", 1, "VASELINE-LIP-ORIG-48", 1);
 
         String page = getAs(ALICE, "/checkout?" + ids(lines) + "&fulfillmentType=DELIVERY&paymentMethod=ONLINE"
                 + "&shippingAddress=" + enc("12 Đường Thử Nghiệm")).body();
@@ -228,7 +228,7 @@ class CheckoutV3HttpDatabaseIntegrationTest {
     @Test
     @DisplayName("COD from two Stores asks for consent through the browser; with it two independent Orders are created")
     void codSplitThroughTheBrowser() throws Exception {
-        List<Long> lines = cart(ALICE, "COCOON-SERUM-30", 1, "COCOON-SHAM-310", 1);
+        List<Long> lines = cart(ALICE, "SIMPLE-PURIFY-150", 1, "VASELINE-LIP-ORIG-48", 1);
         String common = ids(lines) + "&fulfillmentType=DELIVERY&paymentMethod=COD&receiverName=" + enc("Phạm Thu Hà")
                 + "&receiverPhone=0911111111&shippingAddress=" + enc("12 Đường Thử Nghiệm");
 
@@ -256,12 +256,12 @@ class CheckoutV3HttpDatabaseIntegrationTest {
     @Test
     @DisplayName("Pickup through the browser: only Stores holding the whole cart are offered")
     void pickupThroughTheBrowser() throws Exception {
-        List<Long> lines = cart(ALICE, "COCOON-SERUM-30", 1, "COCOON-SHAM-310", 1);
+        List<Long> lines = cart(ALICE, "SIMPLE-PURIFY-150", 1, "VASELINE-LIP-ORIG-48", 1);
         // no single Store holds both SKUs
         String none = getAs(ALICE, "/checkout?" + ids(lines) + "&fulfillmentType=STORE_PICKUP").body();
         assertThat(none).contains("Chưa có chi nhánh nào đủ toàn bộ sản phẩm");
 
-        List<Long> single = cart(ALICE, "COCOON-SERUM-30", 1, "INNI-TONER-200", 1);
+        List<Long> single = cart(ALICE, "SIMPLE-PURIFY-150", 1, "CERAVE-HYDRA-236", 1);
         Long thuDuc = storeRepository.findByCode("OS-THUDUC").orElseThrow().getId();
         String page = getAs(ALICE, "/checkout?" + ids(single) + "&fulfillmentType=STORE_PICKUP&pickupStoreId=" + thuDuc).body();
         assertThat(page).contains("id=\"pickup-stores\"", "OneShop Thủ Đức");

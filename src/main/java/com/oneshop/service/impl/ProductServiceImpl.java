@@ -373,6 +373,9 @@ public class ProductServiceImpl implements ProductService {
                 || price.compareTo(new java.math.BigDecimal("9999999999999999.99")) > 0) {
             throw new BadRequestException("price", "Giá bán online không hợp lệ.");
         }
+        if (request.getStatus() == com.oneshop.entity.ProductStatus.ACTIVE && price.signum() == 0) {
+            throw new BadRequestException("price", "Giá bán online phải lớn hơn 0 khi sản phẩm đang bán.");
+        }
         if (original != null && (original.compareTo(price) < 0 || original.stripTrailingZeros().scale() > 2
                 || original.compareTo(new java.math.BigDecimal("9999999999999999.99")) > 0)) {
             throw new BadRequestException("originalPrice", "Giá gốc phải hợp lệ và không thấp hơn giá bán online.");

@@ -42,11 +42,45 @@
       th:classappend="${name == 'ACTIVE'} ? 'text-bg-success' : (${name == 'HIDDEN'} ? 'text-bg-warning' : 'text-bg-secondary')"
       th:text="${name == 'ACTIVE'} ? 'Đang hoạt động' : (${name == 'HIDDEN'} ? 'Đang ẩn' : 'Ngừng hoạt động')">Trạng thái</span>
 
+<!--/* Fulfillment type of an Order / Fulfillment (DELIVERY, STORE_PICKUP) in plain Vietnamese. */-->
+<span th:fragment="fulfillmentType(type)" th:text="${type.name() == 'STORE_PICKUP'} ? 'Nhận tại cửa hàng' : 'Giao tận nơi'">Giao tận nơi</span>
+
+<!--/* Status of one payment record (payments.status): a different layer from the Order status. */-->
+<span th:fragment="paymentRecordStatus(status)" th:switch="${status.name()}">
+    <span th:case="'PENDING'">Đang chờ thanh toán</span>
+    <span th:case="'SUCCESS'">Đã ghi nhận</span>
+    <span th:case="'FAILED'">Thất bại</span>
+    <span th:case="*" th:text="${status}">Trạng thái</span>
+</span>
+
+<!--/* Simulated refund state of a payment (payments.refund_status). Always labelled "mô phỏng": no real bank refund. */-->
+<span th:fragment="refundStatus(status)" th:switch="${status.name()}">
+    <span th:case="'NONE'">Chưa hoàn</span>
+    <span th:case="'PENDING_SIMULATION'">Đang hoàn tiền (mô phỏng)</span>
+    <span th:case="'SIMULATED_REFUNDED'">Đã hoàn tiền (mô phỏng)</span>
+    <span th:case="'SIMULATION_FAILED'">Hoàn tiền thất bại (mô phỏng)</span>
+    <span th:case="*" th:text="${status}">Trạng thái</span>
+</span>
+
+<!--/* What the simulated gateway answered when asked about a payment. */-->
+<span th:fragment="gatewayAnswer(result)" th:if="${result != null}" th:switch="${result.name()}">
+    <span th:case="'SUCCESS'">Đã thu</span>
+    <span th:case="'FAILED'">Từ chối</span>
+    <span th:case="'NOT_PAID'">Chưa thanh toán</span>
+    <span th:case="'UNKNOWN'">Chưa xác định</span>
+    <span th:case="*" th:text="${result}">Kết quả</span>
+</span>
+
+<!--/* Where an ONLINE payment stands for the Admin (PaymentCaseCategory): one classification for list, detail and dashboard. */-->
+<span th:fragment="paymentCategory(category)" class="badge os-payment-category" th:attr="data-category=${category.name()}"
+      th:classappend="${category.name() == 'ATTENTION'} ? 'text-bg-danger' : (${category.name() == 'RECONCILING'} ? 'text-bg-warning' : (${category.name() == 'WAITING'} ? 'text-bg-light border' : (${category.name() == 'PAID'} ? 'text-bg-success' : 'text-bg-secondary')))"
+      th:text="${category.label()}">Cần xử lý</span>
+
 <!--/* Card with a header title; `content` is a fragment expression for the body. */-->
 <!--/*
     Product card of the Client (ProductCardResponse). The whole card is one link to the detail page (stretched link on
-    the title). With a selected Store and in stock it also has the add to cart form (same POST /cart/items as the
-    detail page); for the whole chain it shows "Từ X" and the number of Stores that have it in stock. Never an exact
+    the title). V3: one online price per SKU and a chain-wide "in stock" flag; when in stock it has the add to cart
+    form (POST /cart/items with productId, like the detail page). It never depends on a Store and never shows an exact
     quantity (BR-15). The styles (.pcard) are in static/css/home.css.
 */-->
 <article th:fragment="productCard(card)" class="pcard">
@@ -65,19 +99,17 @@
                     th:replace="~{fragments/components :: price(${card.price})}"></span>
         </div>
         <div class="pcard__stock">
-            <span class="badge text-bg-success" th:if="${card.inStock and card.storeProductId != null}">Còn hàng</span>
-            <span class="badge text-bg-success" th:if="${card.inStock and card.storeProductId == null}"
-                  th:text="'Còn hàng ở ' + ${card.inStockStoreCount} + ' chi nhánh'">Còn hàng ở 2 chi nhánh</span>
+            <span class="badge text-bg-success" th:if="${card.inStock}">Còn hàng toàn hệ thống</span>
             <span class="badge text-bg-secondary" th:unless="${card.inStock}">Hết hàng</span>
         </div>
-        <div class="pcard__actions" th:if="${card.storeProductId != null and card.inStock}">
+        <div class="pcard__actions" th:if="${card.inStock}">
             <form th:action="@{/cart/items}" method="post" sec:authorize="hasRole('CUSTOMER')">
-                <input type="hidden" name="storeProductId" th:value="${card.storeProductId}">
+                <input type="hidden" name="productId" th:value="${card.productId}">
                 <input type="hidden" name="quantity" value="1">
                 <button type="submit" class="btn btn-primary btn-sm">Thêm vào giỏ</button>
             </form>
             <a class="btn btn-outline-primary btn-sm" th:href="@{/login}"
-               sec:authorize="!isAuthenticated()">Đăng nhập để thêm vào giỏ</a>
+               sec:authorize="!isAuthenticated()">Đăng nhập để mua</a>
         </div>
     </div>
 </article>

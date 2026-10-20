@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * The DEFAULT application configuration (no checkout property set) after the owner's decisions OPEN-01/02/03:
- * DELIVERY is open (national coverage, 30.000 VND per Order), pickup is free, and ONLINE stays CLOSED until BE-05.
+ * DELIVERY is open (national coverage, 30.000 VND per Order), pickup is free, and ONLINE is OPEN (BE-05 exists; the prod profile closes it).
  * The {@code UNDECIDED} constants remain a fail-closed switch, verified here by flipping the bean and restoring it.
  */
 @SpringBootTest(properties = "app.jwt.secret=test-only-secret-test-only-secret-1234567890")
@@ -90,7 +90,7 @@ class CheckoutV3PolicyGateDatabaseIntegrationTest {
     @Test
     @DisplayName("Default: DELIVERY + COD is open, the fee is 30.000 and the preview says so")
     void deliveryIsOpenByDefault() {
-        List<Long> ids = cart("COCOON-SERUM-30", 1);
+        List<Long> ids = cart("SIMPLE-PURIFY-150", 1);
 
         CheckoutPreviewResponse preview = checkoutService.preview(ALICE, ids, FulfillmentType.DELIVERY, PaymentMethod.COD,
                 null, ADDRESS);
@@ -108,20 +108,30 @@ class CheckoutV3PolicyGateDatabaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Default: ONLINE is refused until BE-05 (timeout/reconciliation/refund) exists")
-    void onlineIsClosedByDefault() {
-        List<Long> ids = cart("COCOON-SERUM-30", 1);
+    @DisplayName("Default: ONLINE is open (BE-05 exists); switching it off is still a fail-closed gate")
+    void onlineIsOpenByDefaultAndTheSwitchStillClosesIt() {
+        List<Long> ids = cart("SIMPLE-PURIFY-150", 1);
+        Long thuDuc = storeRepository.findByCode("OS-THUDUC").orElseThrow().getId();
         long ordersBefore = jdbc.queryForObject("select count(*) from dbo.orders", Long.class);
 
-        assertThat(checkoutProperties.isOnlineEnabled()).isFalse();
-        assertThatThrownBy(() -> checkoutService.placeOrder(ALICE, request(ids, FulfillmentType.DELIVERY, PaymentMethod.ONLINE, null)))
-                .isInstanceOfSatisfying(CheckoutConflictException.class, ex ->
-                        assertThat(ex.getCode()).isEqualTo(CheckoutConflictException.CODE_ONLINE_CHECKOUT_DISABLED));
-        Long thuDuc = storeRepository.findByCode("OS-THUDUC").orElseThrow().getId();
-        assertThatThrownBy(() -> checkoutService.placeOrder(ALICE,
-                request(ids, FulfillmentType.STORE_PICKUP, PaymentMethod.ONLINE, thuDuc)))
-                .isInstanceOfSatisfying(CheckoutConflictException.class, ex ->
-                        assertThat(ex.getCode()).isEqualTo(CheckoutConflictException.CODE_ONLINE_CHECKOUT_DISABLED));
+        assertThat(checkoutProperties.isOnlineEnabled()).isTrue();
+        assertThat(checkoutService.preview(ALICE, ids, FulfillmentType.DELIVERY, PaymentMethod.ONLINE, null, null)
+                .onlineEnabled()).isTrue();
+        boolean was = checkoutProperties.isOnlineEnabled();
+        try {
+            checkoutProperties.setOnlineEnabled(false);
+            assertThat(checkoutService.preview(ALICE, ids, FulfillmentType.DELIVERY, PaymentMethod.ONLINE, null, null)
+                    .onlineEnabled()).isFalse();
+            assertThatThrownBy(() -> checkoutService.placeOrder(ALICE, request(ids, FulfillmentType.DELIVERY, PaymentMethod.ONLINE, null)))
+                    .isInstanceOfSatisfying(CheckoutConflictException.class, ex ->
+                            assertThat(ex.getCode()).isEqualTo(CheckoutConflictException.CODE_ONLINE_CHECKOUT_DISABLED));
+            assertThatThrownBy(() -> checkoutService.placeOrder(ALICE,
+                    request(ids, FulfillmentType.STORE_PICKUP, PaymentMethod.ONLINE, thuDuc)))
+                    .isInstanceOfSatisfying(CheckoutConflictException.class, ex ->
+                            assertThat(ex.getCode()).isEqualTo(CheckoutConflictException.CODE_ONLINE_CHECKOUT_DISABLED));
+        } finally {
+            checkoutProperties.setOnlineEnabled(was);
+        }
 
         assertThat(jdbc.queryForObject("select count(*) from dbo.orders", Long.class)).isEqualTo(ordersBefore);
     }
@@ -129,7 +139,7 @@ class CheckoutV3PolicyGateDatabaseIntegrationTest {
     @Test
     @DisplayName("Default: STORE_PICKUP + PAY_AT_STORE works and is free")
     void pickupPayAtStoreIsFree() {
-        List<Long> ids = cart("COCOON-SERUM-30", 2);
+        List<Long> ids = cart("SIMPLE-PURIFY-150", 2);
         Long thuDuc = storeRepository.findByCode("OS-THUDUC").orElseThrow().getId();
 
         CheckoutResultResponse result = checkoutService.placeOrder(ALICE,
@@ -144,7 +154,7 @@ class CheckoutV3PolicyGateDatabaseIntegrationTest {
     @Test
     @DisplayName("The UNDECIDED constants are a fail-closed switch: DELIVERY is refused, pickup is not affected")
     void killSwitchClosesDelivery() {
-        List<Long> ids = cart("COCOON-SERUM-30", 1);
+        List<Long> ids = cart("SIMPLE-PURIFY-150", 1);
         CheckoutProperties.DeliveryServiceAreaPolicy area = checkoutProperties.getDeliveryServiceAreaPolicy();
         CheckoutProperties.ShippingFeePolicy feePolicy = checkoutProperties.getShippingFeePolicy();
         long ordersBefore = jdbc.queryForObject("select count(*) from dbo.orders", Long.class);

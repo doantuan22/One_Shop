@@ -17,7 +17,7 @@ import java.util.List;
  * @param fulfillmentType     the way to receive the order that this preview was computed for
  * @param paymentMethod       the payment method this preview was computed for
  * @param pickupStoreId       the pickup Store this preview was computed for, or {@code null}
- * @param onlineEnabled       false while ONLINE checkout is closed (BE-05 not complete)
+ * @param onlineEnabled       false while ONLINE checkout is closed (switch off, or production without a payment gateway)
  * @param deliveryAvailable   false while the delivery service-area or shipping-fee policy is not approved
  * @param deliveryBlockedReason why DELIVERY is closed, or {@code null}
  * @param pickupStores        Stores where the whole cart can be collected

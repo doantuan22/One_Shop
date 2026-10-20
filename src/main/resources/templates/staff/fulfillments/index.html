@@ -21,7 +21,8 @@
             <label class="form-label small" for="f-status">Trạng thái</label>
             <select class="form-select" id="f-status" name="status">
                 <option value="">Đang xử lý</option>
-                <option th:each="st : ${statuses}" th:value="${st}" th:text="${st}"
+                <option th:each="st : ${statuses}" th:value="${st}"
+                        th:text="${ {'CONFIRMED':'Chờ chuẩn bị','PREPARING':'Đang chuẩn bị','PACKED':'Đã đóng gói','SHIPPING':'Đang giao hàng','READY_FOR_PICKUP':'Sẵn sàng cho khách nhận','COMPLETED':'Hoàn tất','CANCELLED':'Đã hủy','FAILED':'Không thành công'}[st.name()] ?: st }"
                         th:selected="${filter.status != null and filter.status == st}"></option>
             </select>
         </div>

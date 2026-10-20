@@ -15,7 +15,10 @@ public class PaymentProperties {
     private int reconciliationWindowMinutes = 15;
     /** Interval of the timeout scan (BE-05). */
     private long timeoutScanIntervalMs = 60000;
-    /** Runs the {@code @Scheduled} timeout worker. Off in tests (they call the scan directly) and may be off per node. */
+    /**
+     * Runs the {@code @Scheduled} timeout worker. OFF by default (explicit opt-in): the worker writes data, so an
+     * environment whose data must be preserved is never changed merely by starting the application.
+     */
     private boolean timeoutWorkerEnabled = false;
     /** At most this many Orders are examined per scan; the next scan continues. */
     private int scanBatchSize = 200;

@@ -85,10 +85,10 @@ class CatalogDatabaseIntegrationTest {
     private static final String ADMIN = "admin@oneshop.vn";
 
     // seed data
-    private static final String SERUM = "COCOON-SERUM-30";      // sold at 4 ACTIVE Stores, out of stock at Quận 7
-    private static final String TONER = "INNI-TONER-200";       // StoreProduct INACTIVE at Quận 10
-    private static final String FOAM = "INNI-CLEANS-120";       // not sold at Gò Vấp
-    private static final String RETIRED = "COCOON-LIP-05";      // Product INACTIVE
+    private static final String SERUM = "SIMPLE-PURIFY-150";      // sold at 4 ACTIVE Stores, out of stock at Quận 7
+    private static final String TONER = "CERAVE-HYDRA-236";       // StoreProduct INACTIVE at Quận 10
+    private static final String FOAM = "SIMPLE-MICELLAR-150";       // not sold at Gò Vấp
+    private static final String RETIRED = "VASELINE-LIP-ROSY-7";      // Product INACTIVE
     private static final String THU_DUC = "OS-THUDUC";
     private static final String GO_VAP = "OS-GOVAP";
     private static final String QUAN_7 = "OS-QUAN7";
@@ -163,7 +163,7 @@ class CatalogDatabaseIntegrationTest {
 
     @Test
     void chainCatalogSearchesByNameAndSkuAndFiltersByCategoryAndBrand() {
-        assertThat(skus(new ProductSearchCriteria("bí đao",null,null))).containsExactly(SERUM);assertThat(skus(new ProductSearchCriteria("inni-toner",null,null))).containsExactly(TONER);assertThat(skus(new ProductSearchCriteria(" CHEEK ",null,null))).containsExactlyInAnyOrder("BBIA-CHEEK-06","BBIA-CHEEK-08");for(String text:List.of("không-có-sản-phẩm-này","%","_"))assertThat(skus(new ProductSearchCriteria(text,null,null))).isEmpty();var product=productRepository.findBySku(SERUM).orElseThrow();assertThat(skus(new ProductSearchCriteria(null,null,product.getBrand().getId()))).containsExactlyInAnyOrderElementsOf(jdbc.queryForList("select sku from dbo.products where status='ACTIVE' and brand_id=?",String.class,product.getBrand().getId()));assertThat(skus(new ProductSearchCriteria("serum",product.getCategory().getId(),product.getBrand().getId()))).containsExactly(SERUM);
+        assertThat(skus(new ProductSearchCriteria("purifying gel wash",null,null))).containsExactly(SERUM);assertThat(skus(new ProductSearchCriteria("cerave-hydra",null,null))).containsExactly(TONER);assertThat(skus(new ProductSearchCriteria(" MATTE INK ",null,null))).containsExactlyInAnyOrder("MAYB-MATTEINK-15","MAYB-MATTEINK-20","MAYB-MATTEINK-65");for(String text:List.of("không-có-sản-phẩm-này","%","_"))assertThat(skus(new ProductSearchCriteria(text,null,null))).isEmpty();var product=productRepository.findBySku(SERUM).orElseThrow();assertThat(skus(new ProductSearchCriteria(null,null,product.getBrand().getId()))).containsExactlyInAnyOrderElementsOf(jdbc.queryForList("select sku from dbo.products where status='ACTIVE' and brand_id=?",String.class,product.getBrand().getId()));assertThat(skus(new ProductSearchCriteria("purifying gel wash",product.getCategory().getId(),product.getBrand().getId()))).containsExactly(SERUM);
     }
 
     private List<String> skus(ProductSearchCriteria criteria) {
@@ -252,7 +252,7 @@ class CatalogDatabaseIntegrationTest {
 
     @Test
     void productDetailWithoutSelectedStoreListsEveryStoreSellingTheSku() {
-        var detail=storeProductService.getProductDetail(productId(SERUM),null);assertThat(detail.atSelectedStore()).isNull();assertThat(detail.otherStores()).extracting(StoreAvailabilityResponse::storeId).containsExactlyInAnyOrderElementsOf(jdbc.queryForList("select sp.store_id from dbo.store_products sp join dbo.stores s on s.store_id=sp.store_id where sp.product_id=? and sp.status='ACTIVE' and s.status='ACTIVE'",Long.class,productId(SERUM)));assertThat(detail.product().brandName()).isEqualTo("Cocoon");
+        var detail=storeProductService.getProductDetail(productId(SERUM),null);assertThat(detail.atSelectedStore()).isNull();assertThat(detail.otherStores()).extracting(StoreAvailabilityResponse::storeId).containsExactlyInAnyOrderElementsOf(jdbc.queryForList("select sp.store_id from dbo.store_products sp join dbo.stores s on s.store_id=sp.store_id where sp.product_id=? and sp.status='ACTIVE' and s.status='ACTIVE'",Long.class,productId(SERUM)));assertThat(detail.product().brandName()).isEqualTo("Simple");
     }
 
     @Test
@@ -281,7 +281,7 @@ class CatalogDatabaseIntegrationTest {
     @Test
     void hiddenCategoryOrBrandHidesItsProductsFromClients() {
         CategoryResponse hair = productService.getAllCategories().stream()
-                .filter(c -> c.name().equals("Chăm sóc tóc")).findFirst().orElseThrow();
+                .filter(c -> c.name().equals("Trang điểm")).findFirst().orElseThrow();
         CategoryRequest request = new CategoryRequest();
         request.setName(hair.name());
         request.setDescription(hair.description());
@@ -290,11 +290,11 @@ class CatalogDatabaseIntegrationTest {
         productService.updateCategory(hair.id(), request);
         entityManager.flush();
 
-        assertThat(skus(ProductSearchCriteria.none())).doesNotContain("COCOON-SHAM-310");
-        assertThat(productService.getActiveCategories()).extracting(CategoryResponse::name).doesNotContain("Chăm sóc tóc");
+        assertThat(skus(ProductSearchCriteria.none())).doesNotContain("VASELINE-LIP-ORIG-48");
+        assertThat(productService.getActiveCategories()).extracting(CategoryResponse::name).doesNotContain("Trang điểm");
         // still there for the Admin: nothing was deleted
-        assertThat(productService.getAllCategories()).extracting(CategoryResponse::name).contains("Chăm sóc tóc");
-        assertThat(productRepository.findBySku("COCOON-SHAM-310")).isPresent();
+        assertThat(productService.getAllCategories()).extracting(CategoryResponse::name).contains("Trang điểm");
+        assertThat(productRepository.findBySku("VASELINE-LIP-ORIG-48")).isPresent();
     }
 
     // ================================================================= BR-15: no exact quantity for Clients
@@ -416,13 +416,13 @@ class CatalogDatabaseIntegrationTest {
         assertThatThrownBy(() -> productService.createProduct(productRequest(SERUM, "Trùng SKU")))
                 .isInstanceOf(BadRequestException.class)
                 .extracting(ex -> ((BadRequestException) ex).getField()).isEqualTo("sku");
-        assertThatThrownBy(() -> productService.createProduct(productRequest(" cocoon-serum-30 ", "Trùng SKU khác kiểu chữ")))
+        assertThatThrownBy(() -> productService.createProduct(productRequest(" simple-purify-150 ", "Trùng SKU khác kiểu chữ")))
                 .isInstanceOf(BadRequestException.class);
         // changing another product's SKU to an existing one is refused too
         assertThatThrownBy(() -> productService.updateProduct(productId(TONER), productRequest(SERUM, "Đổi SKU")))
                 .isInstanceOf(BadRequestException.class);
         // keeping its own SKU is fine
-        productService.updateProduct(productId(SERUM), productRequest(SERUM, "Cocoon Serum Bí Đao 30ml"));
+        productService.updateProduct(productId(SERUM), productRequest(SERUM, "Simple Purifying Gel Wash 150ml"));
 
         assertThat(productRepository.count()).isEqualTo(before);
     }
@@ -436,11 +436,30 @@ class CatalogDatabaseIntegrationTest {
                 .extracting(ex -> ((BadRequestException) ex).getField()).isEqualTo("categoryId");
     }
 
+    @Test
+    void anActiveProductWithPriceZeroIsRefusedByTheServiceToo() {
+        long before = productRepository.count();
+        ProductRequest free = productRequest("P0-ZERO-001", "Giá không đồng");
+        free.setPrice(BigDecimal.ZERO);
+        assertThatThrownBy(() -> productService.createProduct(free)).isInstanceOf(BadRequestException.class)
+                .extracting(ex -> ((BadRequestException) ex).getField()).isEqualTo("price");
+        // editing an existing sellable product down to 0 is refused as well
+        ProductRequest zeroed = productRequest(SERUM, "Simple Purifying Gel Wash 150ml");
+        zeroed.setPrice(BigDecimal.ZERO);
+        assertThatThrownBy(() -> productService.updateProduct(productId(SERUM), zeroed)).isInstanceOf(BadRequestException.class);
+        // a product that is not on sale may still be saved without a price
+        free.setStatus(com.oneshop.entity.ProductStatus.INACTIVE);
+        productService.createProduct(free);
+        entityManager.flush();
+        assertThat(productRepository.count()).isEqualTo(before + 1);
+    }
+
     private ProductRequest productRequest(String sku, String name) {
         ProductRequest request = new ProductRequest();
         request.setSku(sku);
         request.setName(name);
         request.setDescription("Dùng cho kiểm thử Phase 6");
+        request.setPrice(new BigDecimal("100000")); // an ACTIVE product needs a real price (0 is refused)
         request.setCategoryId(productService.getAllCategories().get(0).id());
         request.setBrandId(productService.getAllBrands().get(0).id());
         return request;
@@ -491,7 +510,7 @@ class CatalogDatabaseIntegrationTest {
 
         assertThat(created.quantity()).isEqualTo(5);
         StoreAvailabilityResponse offer = storeProductService.getProductDetail(foam, goVap).atSelectedStore();
-        assertThat(offer.price()).isEqualByComparingTo("165000");
+        assertThat(offer.price()).isEqualByComparingTo("138000");
         assertThat(offer.inStock()).isTrue();
         // the opening quantity is an audited stock movement
         InventoryMovement opening = lastMovement(created.storeProductId());
@@ -506,7 +525,7 @@ class CatalogDatabaseIntegrationTest {
         entityManager.flush();
         entityManager.clear();
         offer = storeProductService.getProductDetail(foam, goVap).atSelectedStore();
-        assertThat(offer.price()).isEqualByComparingTo("165000");
+        assertThat(offer.price()).isEqualByComparingTo("138000");
         assertThat(offer.inStock()).isFalse();
         assertThat(lastMovement(created.storeProductId()).getQuantityChange()).isEqualTo(-5);
 
@@ -520,8 +539,8 @@ class CatalogDatabaseIntegrationTest {
     }
 
     @Test
-    void updatingOnlyThePriceWritesNoStockMovement() {
-        var stock=storeProductService.searchStoreProducts(storeId(THU_DUC),productId(SERUM),FIRST_PAGE).getContent().getFirst();long n=movementRepository.count();var canonical=productRepository.findById(productId(SERUM)).orElseThrow().getPrice();storeProductService.updateStoreProduct(stock.storeProductId(),storeProductRequest(null,null,"119000",stock.quantity(),ActiveStatus.ACTIVE),ADMIN);entityManager.flush();entityManager.clear();assertThat(movementRepository.count()).isEqualTo(n);assertThat(storeProductService.getProductDetail(productId(SERUM),storeId(THU_DUC)).atSelectedStore().price()).isEqualByComparingTo(canonical);assertThat(storeProductRepository.findById(stock.storeProductId()).orElseThrow().getPrice()).isEqualByComparingTo("119000");
+    void aPostedStorePriceIsIgnoredAndWritesNoStockMovement() {
+        var stock=storeProductService.searchStoreProducts(storeId(THU_DUC),productId(SERUM),FIRST_PAGE).getContent().getFirst();long n=movementRepository.count();var canonical=productRepository.findById(productId(SERUM)).orElseThrow().getPrice();var legacyBefore=storeProductRepository.findById(stock.storeProductId()).orElseThrow().getPrice();storeProductService.updateStoreProduct(stock.storeProductId(),storeProductRequest(null,null,"119000",stock.quantity(),ActiveStatus.ACTIVE),ADMIN);entityManager.flush();entityManager.clear();assertThat(movementRepository.count()).isEqualTo(n);assertThat(storeProductService.getProductDetail(productId(SERUM),storeId(THU_DUC)).atSelectedStore().price()).isEqualByComparingTo(canonical);assertThat(storeProductRepository.findById(stock.storeProductId()).orElseThrow().getPrice()).as("a Store has no price of its own: the posted 119000 is never stored").isEqualTo(legacyBefore);assertThat(storeProductService.getStoreProduct(stock.storeProductId()).price()).as("read-only view shows Product.price").isEqualByComparingTo(canonical);
     }
 
     @Test
@@ -640,7 +659,7 @@ class CatalogDatabaseIntegrationTest {
 
     @Test
     void tc17_brandLogoIsStoredAsUrlAndPublicIdAndTheOldFileIsRemoved() {
-        Brand cocoon = brandRepository.findAll().stream().filter(b -> b.getName().equals("Cocoon")).findFirst().orElseThrow();
+        Brand cocoon = brandRepository.findAll().stream().filter(b -> b.getName().equals("CeraVe")).findFirst().orElseThrow();
         MockMultipartFile file = new MockMultipartFile("file", "logo.png", "image/png", new byte[]{1, 2});
         when(cloudinaryService.uploadImage(any(), eq("brands"))).thenReturn(
                 new ImageUploadResult("https://res.cloudinary.com/demo/brands/cocoon-1.png", "oneshop/brands/cocoon-1"),

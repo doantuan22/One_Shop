@@ -18,6 +18,7 @@ import com.oneshop.exception.PaymentConflictException;
 import com.oneshop.exception.ResourceNotFoundException;
 import com.oneshop.repository.OrderFulfillmentRepository;
 import com.oneshop.repository.OrderRepository;
+import com.oneshop.repository.PaymentRefundRepository;
 import com.oneshop.repository.PaymentRepository;
 import com.oneshop.repository.UserRepository;
 import com.oneshop.service.OrderViewService;
@@ -65,6 +66,8 @@ public class AdminPaymentService {
     private final PaymentGateway gateway;
     private final PaymentReconciliationService reconciliation;
     private final RefundService refunds;
+    private final PartialRefundService partialRefunds;
+    private final PaymentRefundRepository refundLedger;
     private final OrderStatusWriter writer;
     private final PaymentDeadlinePolicy deadlines;
     private final OrderViewService views;
@@ -72,7 +75,10 @@ public class AdminPaymentService {
     public AdminPaymentService(OrderRepository orders, PaymentRepository payments,
                                OrderFulfillmentRepository fulfillments, UserRepository users, PaymentGateway gateway,
                                PaymentReconciliationService reconciliation, RefundService refunds,
-                               OrderStatusWriter writer, PaymentDeadlinePolicy deadlines, OrderViewService views) {
+                               OrderStatusWriter writer, PaymentDeadlinePolicy deadlines, OrderViewService views,
+                               PartialRefundService partialRefunds, PaymentRefundRepository refundLedger) {
+        this.partialRefunds = partialRefunds;
+        this.refundLedger = refundLedger;
         this.orders = orders;
         this.payments = payments;
         this.fulfillments = fulfillments;
@@ -87,10 +93,70 @@ public class AdminPaymentService {
 
     // ------------------------------------------------------------------ reads
 
+    /** The cases that need an Administrator (the default view of the console). */
     @Transactional(readOnly = true)
     public Page<AdminPaymentCaseResponse> getCases(int page) {
-        return orders.findPaymentCasesForAdmin(deadlines.expiredBefore(),
+        return getCases(PaymentCaseCategory.ATTENTION, null, page);
+    }
+
+    /**
+     * One filter of the console. {@code view == null} lists every ONLINE Order. {@code search} (optional) matches an
+     * Order id exactly or a customer name / e-mail. Nothing is written: listing never changes a payment state.
+     */
+    @Transactional(readOnly = true)
+    public Page<AdminPaymentCaseResponse> getCases(PaymentCaseCategory view, String search, int page) {
+        String q = search == null ? "" : search.trim();
+        if (q.length() > 100) {
+            q = q.substring(0, 100);
+        }
+        String like = "%" + q.toLowerCase(java.util.Locale.ROOT).replace("!", "!!").replace("%", "!%")
+                .replace("_", "!_") + "%";
+        return orders.searchPaymentCases(view == null ? "all" : view.key(), q, like, deadlines.expiredBefore(),
                 PageRequest.of(Math.max(0, page), PAGE_SIZE)).map(this::summary);
+    }
+
+    /** Size of every filter, for the tabs of the console (same rules as the list and as the Dashboard). */
+    @Transactional(readOnly = true)
+    public Map<String, Long> getCaseCounts() {
+        var cutoff = deadlines.expiredBefore();
+        Map<String, Long> counts = new LinkedHashMap<>();
+        counts.put("all", orders.countPaymentCases("all", cutoff));
+        for (PaymentCaseCategory category : PaymentCaseCategory.values()) {
+            if (category != PaymentCaseCategory.OTHER) {
+                counts.put(category.key(), orders.countPaymentCases(category.key(), cutoff));
+            }
+        }
+        return counts;
+    }
+
+    /** Java twin of the SQL filters in {@code OrderRepository}; a database test keeps the two equal. */
+    PaymentCaseCategory classify(Order order, List<Payment> rows) {
+        var cutoff = deadlines.expiredBefore();
+        boolean pending = order.getOrderStatus() == OrderStatus.PENDING_PAYMENT;
+        boolean refundOpen = rows.stream().anyMatch(p -> p.getStatus() == PaymentStatus.SUCCESS
+                && (p.getRefundStatus() == PaymentRefundStatus.SIMULATION_FAILED
+                || p.getRefundStatus() == PaymentRefundStatus.PENDING_SIMULATION));
+        boolean overdue = pending && !order.getCreatedAt().isAfter(cutoff);
+        refundOpen = refundOpen || ledgerOpen(order.getId());
+        if (order.getOrderStatus() == OrderStatus.NEEDS_ATTENTION || overdue || refundOpen) {
+            return PaymentCaseCategory.ATTENTION;
+        }
+        if (pending) {
+            boolean inDoubt = rows.stream().anyMatch(p -> p.getStatus() == PaymentStatus.PENDING
+                    && MockLedger.inDoubt(p.getTransactionCode()));
+            return inDoubt ? PaymentCaseCategory.RECONCILING : PaymentCaseCategory.WAITING;
+        }
+        if (order.getPaymentStatus() == OrderPaymentStatus.PAID) {
+            return PaymentCaseCategory.PAID;
+        }
+        if (order.getPaymentStatus() == OrderPaymentStatus.REFUNDED) {
+            return PaymentCaseCategory.REFUNDED;
+        }
+        if (order.getOrderStatus() == OrderStatus.CANCELLED && (order.getPaymentStatus() == OrderPaymentStatus.UNPAID
+                || order.getPaymentStatus() == OrderPaymentStatus.FAILED)) {
+            return PaymentCaseCategory.FAILED;
+        }
+        return PaymentCaseCategory.OTHER;
     }
 
     @Transactional(readOnly = true)
@@ -114,9 +180,13 @@ public class AdminPaymentService {
                 && p.getMethod() == PaymentMethod.ONLINE
                 && (p.getRefundStatus() == PaymentRefundStatus.SIMULATION_FAILED
                 || p.getRefundStatus() == PaymentRefundStatus.PENDING_SIMULATION));
+        // a failed PART refund (OPEN-10.1) can be retried whatever the Order status is: the Order is not cancelled
+        boolean partRefundOpen = !refundLedger.findByOrderIdAndStatus(orderId, PaymentRefundStatus.SIMULATION_FAILED).isEmpty()
+                && refundLedger.findByOrderIdAndStatus(orderId, PaymentRefundStatus.SIMULATION_FAILED).stream()
+                .anyMatch(r -> r.getComponent() != com.oneshop.entity.PaymentRefundComponent.WHOLE_ORDER);
         return new AdminPaymentCaseDetailResponse(summary(order), views.detail(order, false, null), attempts, parts,
                 open, gateway.enabled() && inDoubt && status != OrderStatus.CANCELLED,
-                refundOpen && status == OrderStatus.CANCELLED, gateway.enabled());
+                (refundOpen && status == OrderStatus.CANCELLED) || partRefundOpen, gateway.enabled());
     }
 
     // ------------------------------------------------------------------ actions (all under the Order lock)
@@ -165,6 +235,15 @@ public class AdminPaymentService {
     public RefundService.Result retryRefund(Long orderId) {
         User admin = currentAdmin();
         Order order = lockOnline(orderId);
+        boolean partFailed = refundLedger.findByOrderIdAndStatus(orderId, PaymentRefundStatus.SIMULATION_FAILED).stream()
+                .anyMatch(r -> r.getComponent() != com.oneshop.entity.PaymentRefundComponent.WHOLE_ORDER);
+        if (partFailed) {
+            // OPEN-10.1: retry only the ledger rows that failed; finished rows are never refunded again
+            PartialRefundService.Status status = partialRefunds.retryFailed(order);
+            writer.audit(order, admin, "[ADMIN_REFUND_RETRY] hoàn một phần, kết quả=" + status);
+            return status == PartialRefundService.Status.SIMULATION_FAILED ? RefundService.Result.SIMULATION_FAILED
+                    : RefundService.Result.REFUNDED;
+        }
         if (order.getOrderStatus() != OrderStatus.CANCELLED) {
             // money is only given back for an Order that cannot continue; an active Order is never refunded
             throw new PaymentConflictException(PaymentConflictException.NOT_A_PAYMENT_CASE,
@@ -180,6 +259,12 @@ public class AdminPaymentService {
     }
 
     // ------------------------------------------------------------------ helpers
+
+    /** A refund of this Order is failed or unfinished in the ledger (whole or part). */
+    private boolean ledgerOpen(Long orderId) {
+        return !refundLedger.findByOrderIdAndStatus(orderId, PaymentRefundStatus.SIMULATION_FAILED).isEmpty()
+                || !refundLedger.findByOrderIdAndStatus(orderId, PaymentRefundStatus.PENDING_SIMULATION).isEmpty();
+    }
 
     private void auditWhenUnchanged(Order order, User admin, String tag, PaymentOutcome outcome) {
         switch (outcome) {
@@ -227,6 +312,6 @@ public class AdminPaymentService {
         return new AdminPaymentCaseResponse(order.getId(), order.getUser().getFullName(), order.getUser().getEmail(),
                 order.getOrderStatus(), paymentStatus, order.getTotalAmount(), order.getCreatedAt(),
                 deadlines.paymentDeadline(order), deadlines.reconciliationDeadline(order), verification.result(),
-                refund);
+                refund, classify(order, rows));
     }
 }

@@ -44,6 +44,7 @@
         <th scope="col">Tên</th>
         <th scope="col">Danh mục</th>
         <th scope="col">Thương hiệu</th>
+        <th scope="col" class="text-end">Giá online chung</th>
         <th scope="col">Trạng thái</th>
         <th scope="col" class="text-end">Thao tác</th>
     </tr>
@@ -54,6 +55,7 @@
         <td class="fw-semibold" th:text="${product.name}">Tên sản phẩm</td>
         <td th:text="${product.categoryName}">Chăm sóc da</td>
         <td th:text="${product.brandName}">Cocoon</td>
+        <td class="text-end text-nowrap"><span th:if="${product.price != null}" th:replace="~{fragments/components :: price(${product.price})}"></span></td>
         <td><span th:replace="~{fragments/components :: statusBadge(${product.status})}"></span></td>
         <td class="text-end text-nowrap">
             <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/store-products(productId=${product.id})}">Chi nhánh bán</a>
@@ -61,7 +63,7 @@
         </td>
     </tr>
     <tr th:if="${products.isEmpty()}">
-        <td colspan="6" class="text-center text-secondary py-4">Không có sản phẩm nào.</td>
+        <td colspan="7" class="text-center text-secondary py-4">Không có sản phẩm nào.</td>
     </tr>
     </tbody>
 </th:block>

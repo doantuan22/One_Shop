@@ -625,7 +625,8 @@
                          th:each="item : ${cart.items}"
                          th:attr="data-cart-item-id=${item.cartItemId},
                                   data-product-id=${item.productId},
-                                  data-status=${item.status}">
+                                  data-status=${item.status},
+                                  data-subtotal=${item.subtotal}">
                         <div class="d-flex flex-wrap align-items-start gap-3">
                             <div class="pt-2">
                                 <input type="checkbox"
@@ -761,15 +762,20 @@
                     <span class="fw-semibold text-dark" th:text="${cart.itemCount}">3</span>
                 </div>
 
+                <div class="summary-row" aria-live="polite">
+                    <span>Đã chọn để đặt hàng</span>
+                    <span class="fw-semibold text-dark"><span id="selected-count">0</span> sản phẩm &middot; <span id="selected-total">0 ₫</span></span>
+                </div>
+
                 <div class="pt-3 mb-3 border-top">
-                    <div class="small text-secondary mb-1">Tạm tính</div>
+                    <div class="small text-secondary mb-1">Tạm tính cả giỏ hàng</div>
                     <div class="summary-total-price" id="cart-total">
                         <span th:replace="~{fragments/components :: price(${cart.total})}"></span>
                     </div>
                 </div>
 
                 <form method="get" th:action="@{/checkout}" id="cart-selection-form">
-                    <button type="submit" class="btn-checkout-submit"
+                    <button type="submit" class="btn-checkout-submit" id="checkout-submit"
                             th:disabled="${!cart.hasSelectableItems()}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17"
                              viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -782,6 +788,9 @@
                     </button>
                 </form>
 
+                <p class="small text-secondary mt-2 mb-0" id="checkout-hint" th:if="${cart.hasSelectableItems()}">
+                    Chọn ít nhất một sản phẩm ở danh sách bên trái để đặt hàng.
+                </p>
                 <p class="cart-summary-note mt-3 mb-0">
                     Chọn sản phẩm để thanh toán. Hệ thống sẽ tự động phân bổ chi nhánh xử lý đơn hàng.
                 </p>
@@ -867,6 +876,27 @@
             itemCheckboxes.forEach(cb => { cb.checked = selectAll.checked; });
         });
     }
+
+    // Selected count / total and the checkout button follow the ticked lines (the server re-checks everything).
+    const submitButton = document.getElementById('checkout-submit');
+    const hint = document.getElementById('checkout-hint');
+    const hadSelectable = submitButton && !submitButton.disabled;
+    function refreshSelection() {
+        let count = 0, total = 0;
+        document.querySelectorAll('.os-cart-item-toggle:checked').forEach(cb => {
+            const row = cb.closest('.os-cart-item');
+            count += 1;
+            total += parseFloat(row && row.getAttribute('data-subtotal')) || 0;
+        });
+        const countEl = document.getElementById('selected-count');
+        const totalEl = document.getElementById('selected-total');
+        if (countEl) countEl.textContent = String(count);
+        if (totalEl) totalEl.textContent = Math.round(total).toLocaleString('vi-VN') + ' ₫';
+        if (submitButton && hadSelectable) submitButton.disabled = count === 0;
+        if (hint) hint.hidden = count > 0;
+    }
+    document.querySelectorAll('.os-cart-item-toggle, #select-all-items').forEach(el => el.addEventListener('change', refreshSelection));
+    refreshSelection();
 
     document.querySelectorAll('.os-cart-item-toggle').forEach(itemToggle => {
         itemToggle.addEventListener('change', () => {

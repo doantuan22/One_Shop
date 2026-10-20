@@ -1,6 +1,6 @@
 # BÁO CÁO TỔNG KẾT: CLOUDINARY CLEANUP, DATABASE MIGRATION & SEED DATA ONESHOP V3
 
-> Historical phase evidence (13/10/2026). Retired script names and readiness claims describe that run only. Current setup: [database README](../database/README.md); current acceptance: [deep audit](v3/final-deep-audit/DEEP_AUDIT_REPORT.md).
+> Historical phase evidence (13/10/2026). Retired script names and readiness claims describe that run only. Current setup: [database README](seed/DATABASE_SETUP.md); current acceptance: [deep audit](v3/final-deep-audit/DEEP_AUDIT_REPORT.md).
 
 > **Dự án:** Hệ thống Thương mại Điện tử Chuỗi Bán Lẻ OneShop  
 > **Giai đoạn:** Chuẩn bị Chuyển đổi Kiến trúc sang OneShop V3 (Centralized Commerce – Distributed Fulfillment)  
@@ -19,7 +19,7 @@ Giai đoạn chuẩn bị chuyển đổi từ **OneShop Roadmap V2 sang OneShop
 2. **Dọn dẹp có kiểm soát trên Cloudinary (Phase 1):** Xóa triệt để đúng **198 ảnh sản phẩm cũ** thuộc dự án OneShop (`oneshop/seed/products/*`). Kiểm tra và xác nhận **100% tài nguyên cần giữ** (22 logo thương hiệu và 8 ảnh danh mục) hoàn toàn nguyên vẹn trên Cloudinary CDN (HTTP 200).
 3. **Chuẩn hóa Database Schema V3 (Phase 2):** Nâng cấp kiến trúc SQL Server từ 19 bảng lên **22 bảng chuẩn hóa**, bổ sung 3 bảng mới trọng tâm (`order_fulfillments`, `order_fulfillment_status_history`, `review_replies`), thống nhất giá bán online toàn chuỗi tại `products.price`, giỏ hàng tập trung tại `cart_items.product_id`, và chi tiết kiện hàng tại `order_items.fulfillment_id`.
 4. **Thiết kế & Nạp Bộ Seed Data V3 (Phase 3):** Xây dựng bộ seed data tự chứa (self-contained), có tính tiền định (deterministic) và có thể chạy lặp lại (idempotent), mô phỏng đầy đủ **8 kịch bản tồn kho (A–H)** và **8 kịch bản đơn hàng thực tế** (Online 1 store, Online đa store 2-3 chi nhánh, Store Pickup, COD, Hủy hoàn tiền mô phỏng, Chờ thanh toán).
-5. **Kiểm chứng Toàn vẹn (Phase 4):** Bộ script lịch sử `05_verify.sql` đã được thay thế; xem [03_verify.sql hiện hành](../database/03_verify.sql). Kết quả lịch sử mô tả 12/12 nhóm kiểm tra nghiêm ngặt trên cả hai cơ sở dữ liệu `oneshop` và `oneshop_test`.
+5. **Kiểm chứng Toàn vẹn (Phase 4):** Bộ script lịch sử `05_verify.sql` đã được thay thế; xem [03_verify.sql hiện hành](seed/DATABASE_SETUP.md). Kết quả lịch sử mô tả 12/12 nhóm kiểm tra nghiêm ngặt trên cả hai cơ sở dữ liệu `oneshop` và `oneshop_test`.
 
 ### 1.2. Thống kê định lượng Trước & Sau Chuyển đổi
 
@@ -276,7 +276,7 @@ TỔNG CỘNG: 22 BẢNG                304 DÒNG    100% NHẤT QUÁN & TOÀN V
 
 ## 5. Kết quả Kiểm chứng (Validation Results)
 
-### 5.1. Kết quả Chạy Bộ Kiểm tra lịch sử `05_verify.sql` (xem [03_verify.sql hiện hành](../database/03_verify.sql))
+### 5.1. Kết quả Chạy Bộ Kiểm tra lịch sử `05_verify.sql` (xem [03_verify.sql hiện hành](seed/DATABASE_SETUP.md))
 Bộ kiểm chứng bao gồm 12 block assertion độc lập, thực thi tự động qua `sqlcmd`:
 
 ```
@@ -310,7 +310,7 @@ Bộ kiểm chứng bao gồm 12 block assertion độc lập, thực thi tự �
 ```
 
 ### 5.2. Kết quả Rebuild Tự động qua PowerShell
-Kịch bản lịch sử `rebuild_dev_db.ps1` đã bị thay thế và không còn là hướng dẫn vận hành; quy trình hiện hành nằm trong [database README](../database/README.md).
+Kịch bản lịch sử `rebuild_dev_db.ps1` đã bị thay thế và không còn là hướng dẫn vận hành; quy trình hiện hành nằm trong [database README](seed/DATABASE_SETUP.md).
 - Database `oneshop`: Rebuild thành công 100%, tự động backup, verify checksum, nạp schema V3, nạp seed V3 và pass verification.
 - Database `oneshop_test`: Rebuild thành công 100% tương tự.
 

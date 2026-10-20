@@ -82,7 +82,7 @@ abstract class ReviewV3TestSupport {
         }
         for (var u : users) jdbc.update("update dbo.users set status=? where user_id=?", u.get("status"), u.get("user_id"));
         guard.restore();
-        assertThat(snapshot()).as("exact fixture cleanup: all 22 tables' row counts and content checksums")
+        assertThat(snapshot()).as("exact fixture cleanup: all 23 tables' row counts and content checksums")
                 .isEqualTo(before);
     }
 

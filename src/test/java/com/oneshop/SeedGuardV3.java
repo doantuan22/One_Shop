@@ -110,6 +110,7 @@ final class SeedGuardV3 {
         jdbc.update("delete from dbo.inventory_movements where movement_id > ?", maxMovement);
         jdbc.update("delete from dbo.order_status_history where history_id > ?", maxHistory);
         jdbc.update("delete from dbo.order_fulfillment_status_history where fulfillment_id > ?", maxFulfillment);
+        jdbc.update("delete from dbo.payment_refunds where order_id > ?", maxOrder);
         jdbc.update("delete from dbo.payments where order_id > ?", maxOrder);
         jdbc.update("delete from dbo.order_items where order_id > ?", maxOrder);
         jdbc.update("delete from dbo.order_fulfillments where fulfillment_id > ?", maxFulfillment);

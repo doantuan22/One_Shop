@@ -24,6 +24,7 @@ public class AdminDashboardController {
 
     @GetMapping
     public String dashboard(@RequestParam(required = false) Long storeId, Model model) {
+        model.addAttribute("chain", operations.getChainSummary());
         model.addAttribute("overview", operations.getOverview(storeId));
         model.addAttribute("stores", stores.getAllStores());
         model.addAttribute("storeId", storeId);

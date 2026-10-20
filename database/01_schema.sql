@@ -404,6 +404,45 @@ CREATE TABLE dbo.payments (
 GO
 
 /* ============================================================================
+   18b. payment_refunds  - Lich su hoan tien MO PHONG theo Order / Fulfillment (OPEN-10.1)
+   Ledger of simulated refunds. payments.refund_* keeps the whole-Order refund summary; this table is the history
+   (goods of one Fulfillment, the shipping fee, or a whole-Order refund) with who, why, how much and when.
+   ========================================================================== */
+CREATE TABLE dbo.payment_refunds (
+    refund_id            BIGINT IDENTITY(1,1) NOT NULL,
+    payment_id           BIGINT               NOT NULL,
+    order_id             BIGINT               NOT NULL,
+    fulfillment_id       BIGINT               NULL,
+    component            NVARCHAR(20)         NOT NULL,
+    amount               DECIMAL(18,2)        NOT NULL,
+    status               NVARCHAR(30)         NOT NULL,
+    reason               NVARCHAR(500)        NOT NULL,
+    requested_by_user_id BIGINT               NULL,
+    requested_at         DATETIME2(0)         NOT NULL CONSTRAINT DF_payment_refunds_requested_at DEFAULT SYSDATETIME(),
+    refunded_at          DATETIME2(0)         NULL,
+    CONSTRAINT PK_payment_refunds PRIMARY KEY (refund_id),
+    CONSTRAINT FK_payment_refunds_payment     FOREIGN KEY (payment_id)           REFERENCES dbo.payments (payment_id),
+    CONSTRAINT FK_payment_refunds_order       FOREIGN KEY (order_id)             REFERENCES dbo.orders (order_id),
+    CONSTRAINT FK_payment_refunds_fulfillment FOREIGN KEY (fulfillment_id)       REFERENCES dbo.order_fulfillments (fulfillment_id),
+    CONSTRAINT FK_payment_refunds_user        FOREIGN KEY (requested_by_user_id) REFERENCES dbo.users (user_id),
+    CONSTRAINT CK_payment_refunds_component CHECK (component IN (N'GOODS', N'SHIPPING', N'WHOLE_ORDER')),
+    CONSTRAINT CK_payment_refunds_status CHECK (status IN (N'PENDING_SIMULATION', N'SIMULATED_REFUNDED', N'SIMULATION_FAILED')),
+    CONSTRAINT CK_payment_refunds_amount CHECK (amount > 0),
+    CONSTRAINT CK_payment_refunds_target CHECK (
+        (component = N'GOODS' AND fulfillment_id IS NOT NULL) OR (component <> N'GOODS' AND fulfillment_id IS NULL)),
+    CONSTRAINT CK_payment_refunds_refunded_at CHECK (status <> N'SIMULATED_REFUNDED' OR refunded_at IS NOT NULL)
+);
+GO
+/* One goods refund per Fulfillment, one shipping refund per Order, one whole-Order refund per Payment: a repeated or
+   concurrent request can never refund the same thing twice, whatever the application does. */
+CREATE UNIQUE INDEX UX_payment_refunds_goods    ON dbo.payment_refunds (fulfillment_id) WHERE component = N'GOODS';
+CREATE UNIQUE INDEX UX_payment_refunds_shipping ON dbo.payment_refunds (order_id)       WHERE component = N'SHIPPING';
+CREATE UNIQUE INDEX UX_payment_refunds_whole    ON dbo.payment_refunds (payment_id)     WHERE component = N'WHOLE_ORDER';
+CREATE INDEX IX_payment_refunds_order ON dbo.payment_refunds (order_id, requested_at);
+CREATE INDEX IX_payment_refunds_payment ON dbo.payment_refunds (payment_id);
+GO
+
+/* ============================================================================
    19. inventory_movements  - Audit bien dong ton kho theo StoreProduct
    ========================================================================== */
 CREATE TABLE dbo.inventory_movements (
@@ -528,5 +567,50 @@ CREATE INDEX IX_reviews_order_item ON dbo.reviews (order_item_id) WHERE order_it
 CREATE INDEX IX_cart_items_product ON dbo.cart_items (product_id);
 GO
 
-PRINT 'OneShop V3 fresh-install schema created: 22 tables with DEC-26 Review uniqueness.';
+/* Structural verification (read only). Any violation THROWs, so a broken install is never silent. */
+DECLARE @tables INT = (SELECT COUNT(*) FROM sys.tables WHERE is_ms_shipped = 0);
+IF @tables <> 23 THROW 50001, 'Expected exactly 23 tables.', 1;
+DECLARE @expected TABLE (name SYSNAME PRIMARY KEY);
+INSERT INTO @expected VALUES
+ (N'roles'),(N'users'),(N'customer_addresses'),(N'stores'),(N'staff_store_assignments'),
+ (N'categories'),(N'brands'),(N'products'),(N'product_images'),(N'store_products'),
+ (N'carts'),(N'cart_items'),(N'checkout_sessions'),(N'orders'),(N'order_fulfillments'),
+ (N'order_fulfillment_status_history'),(N'order_items'),(N'payments'),(N'inventory_movements'),
+ (N'order_status_history'),(N'reviews'),(N'review_replies'),(N'payment_refunds');
+IF EXISTS (SELECT 1 FROM @expected e WHERE NOT EXISTS (SELECT 1 FROM sys.tables t WHERE t.name = e.name))
+   OR EXISTS (SELECT 1 FROM sys.tables t WHERE t.is_ms_shipped = 0 AND NOT EXISTS (SELECT 1 FROM @expected e WHERE e.name = t.name))
+    THROW 50011, 'Table set differs from the OneShop V3 specification list.', 1;
+IF EXISTS (SELECT 1 FROM sys.tables t WHERE NOT EXISTS (SELECT 1 FROM sys.key_constraints k WHERE k.parent_object_id = t.object_id AND k.type = 'PK'))
+    THROW 50012, 'A table has no primary key.', 1;
+DECLARE @required TABLE (name SYSNAME PRIMARY KEY);
+INSERT INTO @required VALUES
+ (N'UQ_users_email'),(N'UQ_products_sku'),(N'UQ_store_products_store_product'),(N'UQ_cart_items_cart_product'),
+ (N'UQ_order_fulfillments_order_store'),(N'UQ_review_replies_review'),
+ (N'CK_products_price'),(N'CK_store_products_quantity'),(N'CK_cart_items_quantity'),
+ (N'CK_order_items_quantity'),(N'CK_order_items_subtotal'),(N'CK_inventory_movements_math'),
+ (N'CK_reviews_rating'),(N'UX_users_user_name'),
+ (N'IX_store_products_store_status_qty'),(N'IX_store_products_product_status'),
+ (N'IX_order_fulfillments_store_status'),(N'IX_order_fulfillments_order_status'),
+ (N'IX_order_items_fulfillment'),(N'IX_order_items_store_product'),
+ (N'IX_orders_user_created'),(N'IX_inventory_movements_sp_created'),
+ (N'IX_order_status_history_order_changed'),(N'IX_ofsh_fulfillment_changed');
+IF EXISTS (SELECT 1 FROM @required r WHERE NOT EXISTS (SELECT 1 FROM sys.objects o WHERE o.name = r.name)
+                                         AND NOT EXISTS (SELECT 1 FROM sys.indexes i WHERE i.name = r.name))
+    THROW 50013, 'A required UNIQUE/CHECK/INDEX object is missing.', 1;
+IF (SELECT COUNT(*) FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.reviews') AND name IN (N'UX_reviews_order_item', N'UX_reviews_legacy_user_product')
+     AND is_unique = 1 AND has_filter = 1 AND is_disabled = 0) <> 2
+    THROW 50019, 'DEC-26 Review filtered unique indexes are missing.', 1;
+IF (SELECT COUNT(*) FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.payment_refunds') AND name IN (N'UX_payment_refunds_goods', N'UX_payment_refunds_shipping', N'UX_payment_refunds_whole')
+     AND is_unique = 1 AND has_filter = 1 AND is_disabled = 0) <> 3
+    THROW 50023, 'OPEN-10.1 payment_refunds filtered unique indexes are missing.', 1;
+IF EXISTS (SELECT 1 FROM sys.key_constraints WHERE name = N'UQ_reviews_user_product' AND parent_object_id = OBJECT_ID(N'dbo.reviews'))
+    THROW 50022, 'The obsolete UQ_reviews_user_product constraint must not exist.', 1;
+IF COL_LENGTH('dbo.products', 'price') IS NULL OR COL_LENGTH('dbo.cart_items', 'product_id') IS NULL OR COL_LENGTH('dbo.order_items', 'fulfillment_id') IS NULL
+   OR COL_LENGTH('dbo.reviews', 'order_item_id') IS NULL OR COL_LENGTH('dbo.payments', 'refund_status') IS NULL
+    THROW 50014, 'A V3 column is missing.', 1;
+IF EXISTS (SELECT 1 FROM sys.check_constraints WHERE is_not_trusted = 1) OR EXISTS (SELECT 1 FROM sys.foreign_keys WHERE is_not_trusted = 1)
+    THROW 50090, 'Untrusted constraint found.', 1;
+GO
+
+PRINT 'OneShop V3 fresh-install schema created and verified: 23 tables with DEC-26 Review uniqueness and the OPEN-10.1 refund ledger.';
 GO

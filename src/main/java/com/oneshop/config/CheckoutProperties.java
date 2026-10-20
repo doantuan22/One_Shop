@@ -12,8 +12,9 @@ import java.math.BigDecimal;
  * {@code 30.000 VND}, once per Order. The {@code UNDECIDED} constants stay only as a fail-closed switch: setting one
  * of them closes DELIVERY checkout.
  *
- * <p>{@code online-enabled} stays {@code false} until BE-05 (timeout, reconciliation, cancel/restore, refund
- * simulation) exists; otherwise an unpaid ONLINE Order would hold stock for ever.
+ * <p>{@code online-enabled}: ONLINE checkout (one Order, one Payment, N Fulfillments). BE-05 (timeout, reconciliation,
+ * cancel/restore, refund simulation) now exists, so it is {@code true} by default; the {@code prod} profile sets it to
+ * {@code false} because the mock gateway never runs there and an ONLINE Order could not be paid.
  */
 @ConfigurationProperties(prefix = "oneshop.checkout")
 public class CheckoutProperties {
@@ -38,7 +39,7 @@ public class CheckoutProperties {
     private ShippingFeePolicy shippingFeePolicy = ShippingFeePolicy.FIXED_PER_ORDER;
     /** The approved fee: 30.000 VND per DELIVERY Order. Pickup is always free. */
     private BigDecimal shippingFeePerOrder = new BigDecimal("30000");
-    private boolean onlineEnabled = false;
+    private boolean onlineEnabled = true;
 
     public DeliveryServiceAreaPolicy getDeliveryServiceAreaPolicy() {
         return deliveryServiceAreaPolicy;

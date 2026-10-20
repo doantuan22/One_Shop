@@ -186,15 +186,15 @@ class CheckoutV3ConcurrencyDatabaseIntegrationTest {
     @Test
     @DisplayName("BE03-22 two customers racing for the last unit of one Store: exactly one Order, stock 0 not -1")
     void be03_22_lastUnitOneStore() throws Exception {
-        long cheek = sp("BBIA-CHEEK-06", "OS-THUDUC");
+        long cheek = sp("MAYB-LIFTER-003", "OS-THUDUC");
         long thuDuc = storeId("OS-THUDUC");
 
         for (int round = 1; round <= 3; round++) {
             setStock(cheek, 1);
             emptyCart(ALICE);
             emptyCart(BOB);
-            long alicesLine = add(ALICE, "BBIA-CHEEK-06", 1);
-            long bobsLine = add(BOB, "BBIA-CHEEK-06", 1);
+            long alicesLine = add(ALICE, "MAYB-LIFTER-003", 1);
+            long bobsLine = add(BOB, "MAYB-LIFTER-003", 1);
             Map<String, Long> before = guard.counts();
 
             List<Object> outcomes = race(List.of(
@@ -235,14 +235,14 @@ class CheckoutV3ConcurrencyDatabaseIntegrationTest {
     @Test
     @DisplayName("BE03-22b two multi-Store ONLINE checkouts racing for the last unit in two Stores: one Order wins")
     void be03_22b_lastUnitAcrossTwoStores() throws Exception {
-        long serum = sp("COCOON-SERUM-30", "OS-THUDUC");
-        long shampoo = sp("COCOON-SHAM-310", "OS-GOVAP");
+        long serum = sp("SIMPLE-PURIFY-150", "OS-THUDUC");
+        long shampoo = sp("VASELINE-LIP-ORIG-48", "OS-GOVAP");
         setStock(serum, 1);
         setStock(shampoo, 1);
         emptyCart(ALICE);
         emptyCart(BOB);
-        List<Long> alices = List.of(add(ALICE, "COCOON-SERUM-30", 1), add(ALICE, "COCOON-SHAM-310", 1));
-        List<Long> bobs = List.of(add(BOB, "COCOON-SHAM-310", 1), add(BOB, "COCOON-SERUM-30", 1));
+        List<Long> alices = List.of(add(ALICE, "SIMPLE-PURIFY-150", 1), add(ALICE, "VASELINE-LIP-ORIG-48", 1));
+        List<Long> bobs = List.of(add(BOB, "VASELINE-LIP-ORIG-48", 1), add(BOB, "SIMPLE-PURIFY-150", 1));
         Map<String, Long> before = guard.counts();
 
         List<Object> outcomes = race(List.of(
@@ -265,7 +265,7 @@ class CheckoutV3ConcurrencyDatabaseIntegrationTest {
     private void whipStock(Map<String, Integer> byStore) {
         for (String code : List.of("OS-THUDUC", "OS-GOVAP", "OS-QUAN7", "OS-QUAN10", "OS-HOANKIEM")) {
             jdbc.update("update dbo.store_products set quantity = ?, reserved_quantity = 0 where store_product_id = ?",
-                    byStore.getOrDefault(code, 0), sp("SENKA-WHIP-120", code));
+                    byStore.getOrDefault(code, 0), sp("SIMPLE-REFRESH-150", code));
         }
     }
 
@@ -275,8 +275,8 @@ class CheckoutV3ConcurrencyDatabaseIntegrationTest {
         whipStock(Map.of("OS-THUDUC", 3, "OS-GOVAP", 2));
         emptyCart(ALICE);
         emptyCart(BOB);
-        List<Long> alices = List.of(add(ALICE, "SENKA-WHIP-120", 5));
-        List<Long> bobs = List.of(add(BOB, "SENKA-WHIP-120", 5));
+        List<Long> alices = List.of(add(ALICE, "SIMPLE-REFRESH-150", 5));
+        List<Long> bobs = List.of(add(BOB, "SIMPLE-REFRESH-150", 5));
         Map<String, Long> before = guard.counts();
         // each customer confirms the plan previewed for them (the fingerprint is bound to the customer)
         String alicesSignature = previewSignature(ALICE, alices);
@@ -288,8 +288,8 @@ class CheckoutV3ConcurrencyDatabaseIntegrationTest {
 
         assertThat(outcomes.stream().filter(CheckoutResultResponse.class::isInstance)).as(outcomes.toString()).hasSize(1);
         assertThat(outcomes.stream().filter(BadRequestException.class::isInstance)).hasSize(1);
-        assertThat(stock(sp("SENKA-WHIP-120", "OS-THUDUC"))).isZero();
-        assertThat(stock(sp("SENKA-WHIP-120", "OS-GOVAP"))).isZero();
+        assertThat(stock(sp("SIMPLE-REFRESH-150", "OS-THUDUC"))).isZero();
+        assertThat(stock(sp("SIMPLE-REFRESH-150", "OS-GOVAP"))).isZero();
         Map<String, Long> after = guard.counts();
         assertThat(after.get("orders") - before.get("orders")).isEqualTo(2);      // one consented COD split = 2 Orders
         assertThat(after.get("order_fulfillments") - before.get("order_fulfillments")).isEqualTo(2);
@@ -314,9 +314,9 @@ class CheckoutV3ConcurrencyDatabaseIntegrationTest {
     @Test
     @DisplayName("BE03-F10b a Store, a StoreProduct or a reservation changes after the cart: refused, nothing created")
     void f10b_sourcesChangeAfterTheCart() {
-        long thuDuc = sp("COCOON-SERUM-30", "OS-THUDUC");
+        long thuDuc = sp("SIMPLE-PURIFY-150", "OS-THUDUC");
         emptyCart(ALICE);
-        List<Long> lines = List.of(add(ALICE, "COCOON-SERUM-30", 2));
+        List<Long> lines = List.of(add(ALICE, "SIMPLE-PURIFY-150", 2));
         Map<String, Long> before = guard.counts();
 
         // 1. the Store becomes INACTIVE
@@ -347,12 +347,12 @@ class CheckoutV3ConcurrencyDatabaseIntegrationTest {
     @Test
     @DisplayName("BE03-F11 COD split: if the second independent Order fails, the first is rolled back too")
     void f11_codSplitRollsBackAllOrders() {
-        long serum = sp("COCOON-SERUM-30", "OS-THUDUC");
-        long shampoo = sp("COCOON-SHAM-310", "OS-GOVAP");
+        long serum = sp("SIMPLE-PURIFY-150", "OS-THUDUC");
+        long shampoo = sp("VASELINE-LIP-ORIG-48", "OS-GOVAP");
         int serumBefore = stock(serum);
         int shampooBefore = stock(shampoo);
         emptyCart(ALICE);
-        List<Long> lines = List.of(add(ALICE, "COCOON-SERUM-30", 1), add(ALICE, "COCOON-SHAM-310", 1));
+        List<Long> lines = List.of(add(ALICE, "SIMPLE-PURIFY-150", 1), add(ALICE, "VASELINE-LIP-ORIG-48", 1));
         Map<String, Long> before = guard.counts();
         String signature = previewSignature(ALICE, lines);
 
@@ -374,10 +374,10 @@ class CheckoutV3ConcurrencyDatabaseIntegrationTest {
     @Test
     @DisplayName("BE03-21b the same customer submitting the same lines at once: one Order, one deduction")
     void be03_21b_doubleSubmitOfOneCart() throws Exception {
-        long serum = sp("COCOON-SERUM-30", "OS-THUDUC");
+        long serum = sp("SIMPLE-PURIFY-150", "OS-THUDUC");
         int before = stock(serum);
         emptyCart(ALICE);
-        List<Long> lines = List.of(add(ALICE, "COCOON-SERUM-30", 2));
+        List<Long> lines = List.of(add(ALICE, "SIMPLE-PURIFY-150", 2));
         Map<String, Long> counts = guard.counts();
 
         List<Object> outcomes = race(List.of(
@@ -397,12 +397,12 @@ class CheckoutV3ConcurrencyDatabaseIntegrationTest {
     @Test
     @DisplayName("BE03-13 a failure after the first Store was deducted rolls everything back")
     void be03_13_failureInTheMiddleRollsBackAllStores() {
-        long serum = sp("COCOON-SERUM-30", "OS-THUDUC");
-        long shampoo = sp("COCOON-SHAM-310", "OS-GOVAP");
+        long serum = sp("SIMPLE-PURIFY-150", "OS-THUDUC");
+        long shampoo = sp("VASELINE-LIP-ORIG-48", "OS-GOVAP");
         int serumBefore = stock(serum);
         int shampooBefore = stock(shampoo);
         emptyCart(ALICE);
-        List<Long> lines = List.of(add(ALICE, "COCOON-SERUM-30", 1), add(ALICE, "COCOON-SHAM-310", 1));
+        List<Long> lines = List.of(add(ALICE, "SIMPLE-PURIFY-150", 1), add(ALICE, "VASELINE-LIP-ORIG-48", 1));
         Map<String, Long> before = guard.counts();
 
         // first Store deducts for real, the second one fails
@@ -421,10 +421,10 @@ class CheckoutV3ConcurrencyDatabaseIntegrationTest {
     @Test
     @DisplayName("BE03-30 a failing payment initialization rolls back Order, Fulfillments, stock and cart")
     void be03_30_paymentInitializationFailureRollsBack() {
-        long serum = sp("COCOON-SERUM-30", "OS-THUDUC");
+        long serum = sp("SIMPLE-PURIFY-150", "OS-THUDUC");
         int serumBefore = stock(serum);
         emptyCart(ALICE);
-        List<Long> lines = List.of(add(ALICE, "COCOON-SERUM-30", 2));
+        List<Long> lines = List.of(add(ALICE, "SIMPLE-PURIFY-150", 2));
         Map<String, Long> before = guard.counts();
 
         // initializeOnlineAttempt is MANDATORY-transactional: stub the spy behind the transaction proxy, otherwise
@@ -446,8 +446,8 @@ class CheckoutV3ConcurrencyDatabaseIntegrationTest {
     @Test
     @DisplayName("Customers buying the same SKUs in opposite order both succeed, without deadlock")
     void oppositeOrderDoesNotDeadlock() throws Exception {
-        long serum = sp("COCOON-SERUM-30", "OS-THUDUC");
-        long toner = sp("INNI-TONER-200", "OS-THUDUC");
+        long serum = sp("SIMPLE-PURIFY-150", "OS-THUDUC");
+        long toner = sp("CERAVE-HYDRA-236", "OS-THUDUC");
         int serumBefore = stock(serum);
         int tonerBefore = stock(toner);
         long thuDuc = storeId("OS-THUDUC");
@@ -455,8 +455,8 @@ class CheckoutV3ConcurrencyDatabaseIntegrationTest {
         for (int round = 1; round <= 3; round++) {
             emptyCart(ALICE);
             emptyCart(BOB);
-            List<Long> alices = List.of(add(ALICE, "COCOON-SERUM-30", 1), add(ALICE, "INNI-TONER-200", 1));
-            List<Long> bobs = List.of(add(BOB, "INNI-TONER-200", 1), add(BOB, "COCOON-SERUM-30", 1));
+            List<Long> alices = List.of(add(ALICE, "SIMPLE-PURIFY-150", 1), add(ALICE, "CERAVE-HYDRA-236", 1));
+            List<Long> bobs = List.of(add(BOB, "CERAVE-HYDRA-236", 1), add(BOB, "SIMPLE-PURIFY-150", 1));
 
             List<Object> outcomes = race(List.of(
                     () -> checkoutService.placeOrder(ALICE, pickup(alices, thuDuc)),

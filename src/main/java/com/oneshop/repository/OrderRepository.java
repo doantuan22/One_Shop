@@ -100,14 +100,64 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Long> findPaymentCandidateIds(@Param("cutoff") java.time.LocalDateTime cutoff,
                                        @Param("afterId") long afterId, Pageable pageable);
 
-    /** Admin list: ONLINE Orders whose payment needs a person (or is being reconciled). */
-    @EntityGraph(attributePaths = {"user"})
-    @Query("select o from Order o where o.paymentMethod = com.oneshop.entity.PaymentMethod.ONLINE and ("
-            + "o.orderStatus = com.oneshop.entity.OrderStatus.NEEDS_ATTENTION or (o.orderStatus = "
-            + "com.oneshop.entity.OrderStatus.PENDING_PAYMENT and o.createdAt <= :cutoff) or exists ("
-            + "select 1 from Payment p where p.order = o and p.status = com.oneshop.entity.PaymentStatus.SUCCESS"
+    // ---- Payment case classification (Admin list, case detail, Dashboard). Mirrors PaymentCaseCategory. ----
+
+    String ONLINE = "o.paymentMethod = com.oneshop.entity.PaymentMethod.ONLINE";
+    String PENDING = "o.orderStatus = com.oneshop.entity.OrderStatus.PENDING_PAYMENT";
+    /** A collected payment whose simulated refund failed or never finished. */
+    String REFUND_OPEN = "(exists (select 1 from Payment p where p.order = o and p.status = com.oneshop.entity.PaymentStatus.SUCCESS"
             + " and p.refundStatus in (com.oneshop.entity.PaymentRefundStatus.SIMULATION_FAILED,"
-            + " com.oneshop.entity.PaymentRefundStatus.PENDING_SIMULATION))) order by o.createdAt desc, o.id desc")
-    org.springframework.data.domain.Page<Order> findPaymentCasesForAdmin(@Param("cutoff") java.time.LocalDateTime cutoff,
-                                                                         Pageable pageable);
+            + " com.oneshop.entity.PaymentRefundStatus.PENDING_SIMULATION))"
+            + " or exists (select 1 from PaymentRefund r where r.order = o and r.status in ("
+            + "com.oneshop.entity.PaymentRefundStatus.SIMULATION_FAILED, com.oneshop.entity.PaymentRefundStatus.PENDING_SIMULATION)))";
+    /** An attempt the gateway answered UNKNOWN to (MockLedger marks it with the ~UNKNOWN suffix while still PENDING). */
+    String IN_DOUBT = "exists (select 1 from Payment p where p.order = o and p.status = com.oneshop.entity.PaymentStatus.PENDING"
+            + " and p.transactionCode like '%~UNKNOWN')";
+    /** Needs an Administrator: NEEDS_ATTENTION (any method), or ONLINE overdue while still pending, or an open refund. */
+    String ATTENTION = "(o.orderStatus = com.oneshop.entity.OrderStatus.NEEDS_ATTENTION or (" + ONLINE + " and (("
+            + PENDING + " and o.createdAt <= :cutoff) or " + REFUND_OPEN + ")))";
+    String RECONCILING = "(" + ONLINE + " and " + PENDING + " and o.createdAt > :cutoff and " + IN_DOUBT + ")";
+    String WAITING = "(" + ONLINE + " and " + PENDING + " and o.createdAt > :cutoff and not " + IN_DOUBT + ")";
+    String VIEW_FILTER = "(:view = 'all'"
+            + " or (:view = 'attention' and " + ATTENTION + ")"
+            + " or (:view = 'reconciling' and " + RECONCILING + ")"
+            + " or (:view = 'waiting' and " + WAITING + ")"
+            + " or (:view = 'paid' and o.paymentStatus = com.oneshop.entity.OrderPaymentStatus.PAID and not " + ATTENTION + ")"
+            + " or (:view = 'refunded' and o.paymentStatus = com.oneshop.entity.OrderPaymentStatus.REFUNDED and not " + ATTENTION + ")"
+            + " or (:view = 'failed' and o.orderStatus = com.oneshop.entity.OrderStatus.CANCELLED and o.paymentStatus in ("
+            + "com.oneshop.entity.OrderPaymentStatus.UNPAID, com.oneshop.entity.OrderPaymentStatus.FAILED) and not " + ATTENTION + "))";
+
+    /**
+     * Admin payment list: ONLINE Orders of one {@code view} (attention, reconciling, waiting, paid, refunded, failed or
+     * all), optionally searched by Order id or customer name / e-mail ({@code like} is a lower-case pattern using
+     * {@code !} as escape character, {@code q} the raw id text; both empty for no search). Read only.
+     */
+    @EntityGraph(attributePaths = {"user"})
+    @Query("select o from Order o where " + ONLINE + " and " + VIEW_FILTER + " and (:q = '' or cast(o.id as string) = :q"
+            + " or lower(o.user.email) like :like escape '!' or lower(o.user.fullName) like :like escape '!')"
+            + " order by o.createdAt desc, o.id desc")
+    Page<Order> searchPaymentCases(@Param("view") String view, @Param("q") String q, @Param("like") String like,
+                                   @Param("cutoff") java.time.LocalDateTime cutoff, Pageable pageable);
+
+    @Query("select count(o) from Order o where " + ONLINE + " and " + VIEW_FILTER)
+    long countPaymentCases(@Param("view") String view, @Param("cutoff") java.time.LocalDateTime cutoff);
+
+    /** Admin order list restricted to the Orders that need an Administrator (same rule as the Dashboard number). */
+    @EntityGraph(attributePaths = {"store", "user"})
+    @Query("select o from Order o where " + ATTENTION + " and (:storeId is null or" + STORE_SOURCE + ")"
+            + " order by o.createdAt desc, o.id desc")
+    Page<Order> searchAdminAttention(@Param("storeId") Long storeId, @Param("cutoff") java.time.LocalDateTime cutoff,
+                                     Pageable pageable);
+
+    /** Dashboard: Orders (each once) that need an Administrator, chain-wide. */
+    @Query("select count(o) from Order o where " + ATTENTION)
+    long countAttention(@Param("cutoff") java.time.LocalDateTime cutoff);
+
+    /** Dashboard: ONLINE Orders waiting for the gateway evidence, chain-wide. */
+    @Query("select count(o) from Order o where " + RECONCILING)
+    long countReconciling(@Param("cutoff") java.time.LocalDateTime cutoff);
+
+    /** Dashboard per Store: Orders that need an Administrator and have a part at this Store (each Order once per Store). */
+    @Query("select count(o) from Order o where" + STORE_SOURCE + " and " + ATTENTION)
+    long countAttentionByStoreId(@Param("storeId") Long storeId, @Param("cutoff") java.time.LocalDateTime cutoff);
 }

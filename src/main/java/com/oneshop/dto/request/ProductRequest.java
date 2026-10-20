@@ -41,6 +41,12 @@ public class ProductRequest {
         return originalPrice == null || price == null || originalPrice.compareTo(price) >= 0;
     }
 
+    /** An ACTIVE product is sold, so it needs a real price; a "0 ₫" product would be listed but can never be bought. */
+    @jakarta.validation.constraints.AssertTrue(message = "Giá bán online phải lớn hơn 0 khi sản phẩm đang bán")
+    public boolean isActivePriceValid() {
+        return status != ProductStatus.ACTIVE || price == null || price.signum() > 0;
+    }
+
     @NotNull(message = "Vui lòng chọn trạng thái")
     private ProductStatus status = ProductStatus.ACTIVE;
 

@@ -1,8 +1,6 @@
 package com.oneshop.dto.request;
 
 import com.oneshop.entity.ActiveStatus;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -10,7 +8,8 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 
 /**
- * Admin form of a StoreProduct: a SKU sold at one Store with its own price, quantity and status (BR-02).
+ * Admin form of a StoreProduct: a SKU held at one Store with its own quantity and status. The online price is one
+ * value per SKU, owned by {@code Product}; a {@code price} posted here is ignored and never stored (V3).
  * {@code storeId} and {@code productId} are only used when creating; an existing StoreProduct never changes them.
  */
 public class StoreProductRequest {
@@ -21,9 +20,7 @@ public class StoreProductRequest {
     @NotNull(message = "Vui lòng chọn sản phẩm")
     private Long productId;
 
-    @NotNull(message = "Vui lòng nhập giá")
-    @DecimalMin(value = "0", message = "Giá không được âm")
-    @Digits(integer = 16, fraction = 2, message = "Giá không hợp lệ")
+    /** Ignored: kept only so that a legacy/forged post still binds. The price lives on Product. */
     private BigDecimal price;
 
     @NotNull(message = "Vui lòng nhập tồn kho")

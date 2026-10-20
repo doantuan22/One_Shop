@@ -303,9 +303,9 @@
             <span class="os-eyebrow-dot"></span>
             HỆ THỐNG PHÂN PHỐI · TOÀN QUỐC
         </div>
-        <div th:replace="~{fragments/components :: pageHeader('Hệ thống cửa hàng', 'Chọn một chi nhánh để xem sản phẩm, giá và tình trạng hàng tại chi nhánh đó.')}">
+        <div th:replace="~{fragments/components :: pageHeader('Hệ thống cửa hàng', 'Tra cứu địa chỉ, giờ mở cửa và dịch vụ của từng cửa hàng. Bạn không cần chọn cửa hàng để mua online: chỉ chọn khi muốn nhận tại cửa hàng ở bước thanh toán.')}">
             <h1>Hệ thống cửa hàng</h1>
-            <p>Chọn một chi nhánh để xem sản phẩm, giá và tình trạng hàng tại chi nhánh đó.</p>
+            <p>Tra cứu địa chỉ, giờ mở cửa và dịch vụ của từng cửa hàng.</p>
         </div>
     </div>
 
@@ -315,7 +315,7 @@
             <line x1="12" y1="8" x2="12" y2="12"></line>
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
         </svg>
-        <div>Chi nhánh này không tồn tại hoặc đang tạm ngừng hoạt động. Vui lòng chọn chi nhánh khác.</div>
+        <div>Chi nhánh này không tồn tại hoặc đang tạm ngừng hoạt động. Vui lòng xem cửa hàng khác.</div>
     </div>
 
     <form method="get" th:action="@{/stores}" class="filter-panel" id="store-filter">
@@ -355,15 +355,7 @@
     <div class="row g-4" th:unless="${stores.isEmpty()}">
         <div class="col-12 col-md-6 col-xl-4" th:each="store : ${stores}">
             <article class="modern-store-card os-store-card"
-                     th:with="active=${store.status.name() == 'ACTIVE'}"
-                     th:classappend="${selectedStore != null and selectedStore.id == store.id} ? 'selected-active-store' : ''">
-
-                <div class="current-selection-badge" th:if="${selectedStore != null and selectedStore.id == store.id}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                    Đang mua sắm tại đây
-                </div>
+                     th:with="active=${store.status.name() == 'ACTIVE'}">
 
                 <div class="store-card-header">
                     <h2 class="store-card-title" th:text="${store.name}">OneShop Thủ Đức</h2>
@@ -430,31 +422,12 @@
                     </span>
                 </div>
 
-                <div class="mt-auto pt-2">
-                    <div class="btn-already-selected"
-                         th:if="${selectedStore != null and selectedStore.id == store.id}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                        <span>Đang chọn chi nhánh này</span>
-                    </div>
-
-                    <form th:action="@{/stores/select}" method="post"
-                          th:if="${active and (selectedStore == null or selectedStore.id != store.id)}">
-                        <input type="hidden" name="storeId" th:value="${store.id}">
-                        <button type="submit" class="btn btn-select-store">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 16 16 12 12 8"></polyline>
-                                <line x1="8" y1="12" x2="16" y2="12"></line>
-                            </svg>
-                            <span>Chọn chi nhánh này</span>
-                        </button>
-                    </form>
-
-                    <div class="text-secondary small text-center py-2" th:unless="${active}">
-                        Chi nhánh tạm ngừng, chưa thể chọn để mua hàng.
-                    </div>
+                <div class="mt-auto pt-2 small text-secondary" th:if="${active}">
+                    <span th:if="${store.pickupEnabled}">Chọn &ldquo;Nhận tại cửa hàng&rdquo; khi thanh toán nếu cửa hàng này đủ hàng cho giỏ của bạn.</span>
+                    <span th:unless="${store.pickupEnabled}">Cửa hàng này hiện không nhận đơn tại cửa hàng.</span>
+                </div>
+                <div class="text-secondary small py-2" th:unless="${active}">
+                    Cửa hàng đang tạm ngừng hoạt động.
                 </div>
             </article>
         </div>

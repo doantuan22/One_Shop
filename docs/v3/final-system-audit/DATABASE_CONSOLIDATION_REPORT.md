@@ -1,4 +1,4 @@
-> Historical phase evidence (up to 14/10/2026). Superseded script names and readiness claims describe that run only. Current setup: [database README](../../../database/README.md); current acceptance: [deep audit](../final-deep-audit/DEEP_AUDIT_REPORT.md).
+> Historical phase evidence (up to 14/10/2026). Superseded script names and readiness claims describe that run only. Current setup: [database README](../../seed/DATABASE_SETUP.md); current acceptance: [deep audit](../final-deep-audit/DEEP_AUDIT_REPORT.md).
 
 # Database consolidation
 
@@ -8,7 +8,7 @@
 | --- | --- |
 | `database/01_schema.sql` | Fresh database, 22 tables, PK/FK/CHECK/index và DEC-26 Review filtered uniqueness. Refuses an existing database. |
 | `database/02_seed.sql` | Deterministic linked V3 regression fixture. Refuses a non-empty schema and does not delete data. |
-| `database/03_verify.sql` | Read-only 12-group verification. |
+| `../../seed/DATABASE_SETUP.md` | Read-only 12-group verification. |
 | `database/migrations/20261014_be06_review_uniqueness.sql` | Only retained existing-database upgrade; transactional and rerunnable. |
 
 Fresh validation used `oneshop_v3_audit_test` and `oneshop_v3_audit_cleanup_test`. Both were new databases; schema, seed and verify completed successfully. Hibernate `ddl-auto=validate` and `DatabaseFoundationIntegrationTest` passed on the first audit database.

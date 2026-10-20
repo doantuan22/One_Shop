@@ -18,12 +18,15 @@
 </span>
 
 <div th:fragment="table(rows)" class="table-responsive">
-    <table class="table os-table align-middle">
+    <table class="table table-hover os-table align-middle">
         <thead>
         <tr>
-            <th>Phần giao</th><th>Đơn</th><th>Chi nhánh</th><th>Khách hàng</th><th>Hình thức</th>
-            <th>Thanh toán</th><th>Trạng thái phần giao</th><th>Trạng thái đơn</th>
-            <th class="text-end">Sản phẩm</th><th>Phân công lúc</th><th>Thao tác tiếp theo</th>
+            <th scope="col">Phần giao</th><th scope="col">Đơn</th><th scope="col" class="d-none d-lg-table-cell">Chi nhánh</th>
+            <th scope="col">Khách hàng</th><th scope="col">Hình thức</th>
+            <th scope="col" class="d-none d-xl-table-cell">Thanh toán</th><th scope="col">Trạng thái phần giao</th>
+            <th scope="col" class="d-none d-xl-table-cell">Trạng thái đơn</th>
+            <th scope="col" class="text-end d-none d-lg-table-cell">Sản phẩm</th>
+            <th scope="col" class="d-none d-xl-table-cell">Phân công lúc</th><th scope="col">Việc tiếp theo</th>
         </tr>
         </thead>
         <tbody id="fulfillments-body">
@@ -31,26 +34,26 @@
             th:attr="data-fulfillment-id=${row.fulfillmentId},data-order-id=${row.orderId},data-store-id=${row.storeId}">
             <td><a th:href="@{/staff/fulfillments/{id}(id=${row.fulfillmentId})}" th:text="'#' + ${row.fulfillmentId}"></a></td>
             <td th:text="'#' + ${row.orderId}"></td>
-            <td th:text="${row.storeName}"></td>
+            <td class="d-none d-lg-table-cell" th:text="${row.storeName}"></td>
             <td th:text="${row.customerName}"></td>
-            <td th:text="${row.fulfillmentType.name() == 'STORE_PICKUP'} ? 'Nhận tại cửa hàng' : 'Giao tận nơi'"></td>
-            <td>
+            <td><span th:replace="~{fragments/components :: fulfillmentType(${row.fulfillmentType})}"></span></td>
+            <td class="d-none d-xl-table-cell">
                 <span th:replace="~{staff/delivery/fragments :: method(${row.paymentMethod})}"></span><br>
                 <span class="small text-secondary"><span th:replace="~{staff/delivery/fragments :: payment(${row.paymentStatus})}"></span></span>
             </td>
             <td><span th:replace="~{staff/fulfillments/fragments :: status(${row.status})}"></span></td>
-            <td><span th:replace="~{staff/delivery/fragments :: state(${row.orderStatus})}"></span></td>
-            <td class="text-end" th:text="${row.totalQuantity} + ' (' + ${row.itemCount} + ' dòng)'"></td>
-            <td th:text="${#temporals.format(row.assignedAt, 'dd/MM/yyyy HH:mm')}"></td>
+            <td class="d-none d-xl-table-cell"><span th:replace="~{staff/delivery/fragments :: state(${row.orderStatus})}"></span></td>
+            <td class="text-end d-none d-lg-table-cell" th:text="${row.totalQuantity} + ' (' + ${row.itemCount} + ' dòng)'"></td>
+            <td class="d-none d-xl-table-cell" th:text="${#temporals.format(row.assignedAt, 'dd/MM/yyyy HH:mm')}"></td>
             <td>
                 <span th:if="${row.blockedReason != null}" class="small text-warning-emphasis os-blocked"
                       th:text="${row.blockedReason}"></span>
-                <span th:if="${row.blockedReason == null and row.nextAction != null}" class="small"
-                      th:text="${row.nextAction.label}"></span>
+                <a th:if="${row.blockedReason == null and row.nextAction != null}" class="btn btn-primary btn-sm"
+                   th:href="@{/staff/fulfillments/{id}(id=${row.fulfillmentId})}" th:text="${row.nextAction.label}"></a>
                 <span th:if="${row.blockedReason == null and row.nextAction == null}" class="small text-secondary">—</span>
             </td>
         </tr>
-        <tr th:if="${rows.isEmpty()}"><td colspan="11" class="text-center text-secondary">Chưa có phần giao hàng nào.</td></tr>
+        <tr th:if="${rows.isEmpty()}"><td colspan="11" class="text-center text-secondary py-4">Chưa có phần giao hàng nào.</td></tr>
         </tbody>
     </table>
 </div>
