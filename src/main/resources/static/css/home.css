@@ -1,11 +1,17 @@
 :root {
-    --os-coral: #ff6f61;
-    --os-coral-dark: #e95b50;
+    --os-brand-coral: #ff7f50;
+    --os-coral: #b84224;
+    --os-coral-dark: #922f1c;
     --os-coral-light: #fff0ed;
     --os-text: #292d32;
     --os-muted: #707780;
     --os-border: #f0e6e3;
     --os-surface: #ffffff;
+    --bs-primary: #b84224;
+    --bs-primary-rgb: 184, 66, 36;
+    --bs-primary-hover: #922f1c;
+    --bs-link-color: #b84224;
+    --bs-link-hover-color: #922f1c;
 }
 
 /* ---------------------------------------------------------------------------------------------
@@ -368,8 +374,25 @@ body:has(.home-hero) {
 }
 
 .home-tile:focus-visible {
-    outline: 3px solid var(--os-coral-dark);
+    outline: 3px solid #1f2937;
     outline-offset: 3px;
+    box-shadow: 0 0 0 5px #ffffff;
+}
+
+.pcard:focus-within {
+    outline: 3px solid #1f2937;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px #ffffff;
+}
+
+.home-hero__submit {
+    background: #b84224;
+    border-color: #b84224;
+}
+
+.home-hero__submit:hover {
+    background: #922f1c;
+    border-color: #922f1c;
 }
 
 /* a category without a photo: neutral tile with the name */
@@ -536,8 +559,15 @@ body:has(.home-hero) {
 }
 
 .pcard__stock .badge {
-    font-size: 0.75rem; /* 12px */
+    font-size: 0.875rem;
     font-weight: 700;
+}
+
+/* High-contrast keyboard focus shared by the stand-alone client pages and the home page. */
+:focus-visible {
+    outline: 3px solid #1f2937;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px #ffffff;
 }
 
 /* above the stretched link of the title, so the button stays clickable */
@@ -748,7 +778,7 @@ body:has(.home-hero) {
     justify-content: center;
     border-radius: 50%;
     background: var(--os-primary);
-    color: var(--os-text);
+    color: #ffffff;
     font-size: 0.85rem;
     content: counter(step);
 }

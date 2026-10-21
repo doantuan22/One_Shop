@@ -46,7 +46,8 @@ class HomePageWebIntegrationTest extends AbstractIntegrationTest {
     private static final StoreResponse THU_DUC = new StoreResponse(1L, "OS-THUDUC", "OneShop Thủ Đức", "101 Võ Văn Ngân",
             "TP. Hồ Chí Minh", "Thủ Đức", "02811110001", "08:00 - 22:00", true, true, ActiveStatus.ACTIVE);
     private static final ProductResponse SERUM = new ProductResponse(3L, "SIMPLE-PURIFY-150", "Cocoon Serum Bí Đao 30ml",
-            "Mô tả", "Chăm sóc da", "Cocoon", "https://res.cloudinary.com/demo/serum.jpg");
+            "Mô tả", "Chăm sóc da", "Cocoon", "https://res.cloudinary.com/demo/serum.jpg",
+            new BigDecimal("138000.00"), new BigDecimal("159000.00"));
     private static final ProductResponse TONER = new ProductResponse(4L, "CERAVE-HYDRA-236", "Innisfree Toner", "Mô tả",
             "Chăm sóc da", "Innisfree", null);
     private static final StoreAvailabilityResponse SERUM_GO_VAP =

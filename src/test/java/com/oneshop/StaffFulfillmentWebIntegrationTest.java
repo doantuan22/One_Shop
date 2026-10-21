@@ -117,6 +117,16 @@ class StaffFulfillmentWebIntegrationTest extends AbstractIntegrationTest {
                 "Cookie", cookie + "; " + tokenCookie);
     }
 
+    /**
+     * Returns the page's visible main content. Leak checks must not scan header attributes such as the random CSRF
+     * token, whose Base64 value can incidentally contain marker substrings.
+     */
+    private static String userVisibleContent(String html) {
+        Matcher main = Pattern.compile("(?s)<main\\b[^>]*>(.*?)</main>").matcher(html);
+        assertThat(main.find()).as("page has a main content area").isTrue();
+        return main.group(1);
+    }
+
     // ================================================================== tests
 
     @Test
@@ -336,7 +346,8 @@ class StaffFulfillmentWebIntegrationTest extends AbstractIntegrationTest {
             doThrow(failure).when(staffFulfillmentService).perform(10L, FulfillmentAction.SHIP, null);
             page = postAs(staff, ROOT + "/10/ship", "");
             assertThat(page.statusCode()).isEqualTo(409);
-            assertThat(page.body()).contains("đang được xử lý").doesNotContain("SECRET", "PRIVATE", "ABCD2345", "SQL");
+            assertThat(page.body()).contains("đang được xử lý");
+            assertThat(userVisibleContent(page.body())).doesNotContain("SECRET", "PRIVATE", "ABCD2345", "SQL");
         }
     }
 

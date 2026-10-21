@@ -129,22 +129,22 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            background: linear-gradient(135deg, #ff7f50, #e95b50);
+            background: linear-gradient(135deg, #b84224, #922f1c);
             border: none;
-            box-shadow: 0 8px 20px rgba(233, 91, 80, 0.25);
+            box-shadow: 0 8px 20px rgba(146, 47, 28, 0.22);
             transition: background 0.2s ease, box-shadow 0.2s ease;
             transform: none !important;
         }
 
         .btn-auth-submit:hover {
             transform: none !important;
-            box-shadow: 0 10px 24px rgba(233, 91, 80, 0.32);
-            background: linear-gradient(135deg, #e86738, #d84a3f);
+            box-shadow: 0 10px 24px rgba(146, 47, 28, 0.3);
+            background: linear-gradient(135deg, #922f1c, #762514);
             color: #ffffff;
         }
 
         .auth-footer-link {
-            color: var(--bs-primary, #ff7f50);
+            color: #b84224;
             font-weight: 700;
             text-decoration: none;
             transition: color 0.2s ease;
@@ -166,6 +166,12 @@
         .was-validated .form-control:invalid ~ .invalid-feedback,
         .form-control.is-invalid ~ .invalid-feedback {
             display: block !important;
+        }
+
+        :focus-visible {
+            outline: 3px solid #1f2937;
+            outline-offset: 2px;
+            box-shadow: 0 0 0 5px #ffffff;
         }
     </style>
 </head>

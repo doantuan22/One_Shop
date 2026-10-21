@@ -172,6 +172,8 @@
 
       .selection-tile .form-check-input:focus {
         box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.15);
+        outline: 3px solid #1f2937;
+        outline-offset: 2px;
       }
 
       .selection-tile-content {
@@ -201,7 +203,8 @@
       .form-control-custom:focus {
         border-color: var(--bs-primary, #ff7f50);
         box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.15);
-        outline: none;
+        outline: 3px solid #1f2937;
+        outline-offset: 2px;
       }
 
       .field-label {
@@ -282,9 +285,33 @@
       }
 
       .btn-confirm-order:hover {
-        background-color: #e86738;
-        border-color: #e86738;
+        background-color: #922f1c;
+        border-color: #922f1c;
         color: #ffffff;
+      }
+
+      .btn-confirm-order:disabled,
+      .btn-confirm-order[aria-disabled="true"] {
+        background-color: #e5e7eb;
+        border-color: #e5e7eb;
+        color: #475569;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+
+      @media (max-width: 575.98px) {
+        .checkout-container {
+          padding: 1.25rem 0.75rem 3rem;
+        }
+
+        .order-item-row {
+          align-items: flex-start;
+          gap: 0.75rem;
+        }
+
+        .order-item-name {
+          overflow-wrap: anywhere;
+        }
       }
 
       .btn-back-cart {
@@ -419,7 +446,7 @@
                              th:checked="${preview.paymentMethod.name() == 'ONLINE'}"
                              th:disabled="${!preview.onlineEnabled}" />
                       <span class="selection-tile-content">
-                        <span class="selection-tile-label">Thanh toán trực tuyến</span>
+                        <span class="selection-tile-label">Thanh toán trực tuyến (mô phỏng, không thu tiền thật)</span>
                       </span>
                     </label>
                     <div class="small text-secondary" id="online-disabled" th:if="${!preview.onlineEnabled}">
@@ -471,7 +498,7 @@
                 </div>
 
                 <div class="mt-3">
-                  <button type="submit" formmethod="get" th:formaction="@{/checkout}" class="btn btn-outline-secondary btn-sm"
+                  <button type="button" class="btn btn-outline-secondary btn-sm"
                           id="refresh-plan">Cập nhật nguồn hàng</button>
                 </div>
               </div>
@@ -574,20 +601,29 @@
                   (chi tiết ở mục Nguồn hàng). Hoặc chuyển sang thanh toán trực tuyến để chỉ có một đơn hàng.
                 </p>
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="splitCodConsent" name="splitCodConsent" value="true" />
+                  <input class="form-check-input" type="checkbox" id="splitCodConsent" name="splitCodConsent" value="true"
+                         aria-describedby="splitCodConsentHelp" />
                   <label class="form-check-label" for="splitCodConsent">
                     Tôi đồng ý tách thành <span th:text="${preview.orderCount}">2</span> đơn hàng độc lập.
                   </label>
+                  <div class="form-text text-dark" id="splitCodConsentHelp">
+                    Chỉ đặt hàng khi bạn đã xác nhận cách chia và mức tiền COD của từng đơn.
+                  </div>
                 </div>
               </section>
 
-              <button type="submit" class="btn-confirm-order" id="place-order" th:disabled="${preview.plan == null}">
-                Xác nhận đặt hàng
+              <button type="submit" class="btn-confirm-order" id="place-order"
+                      th:disabled="${preview.plan == null or preview.splitConsentRequired}"
+                      aria-describedby="checkout-submit-help">
+                <span th:text="${preview.splitConsentRequired} ? 'Đồng ý tách và đặt hàng' : 'Xác nhận đặt hàng'">Xác nhận đặt hàng</span>
               </button>
 
-              <p class="small text-dark mt-3 mb-0" style="line-height: 1.45; font-size: 0.8rem">
+              <p class="small os-muted-text mt-3 mb-0" id="checkout-submit-help" style="line-height: 1.5; font-size: 0.875rem">
                 Giá, tồn kho và nguồn hàng được kiểm tra lại ngay khi tạo đơn. Sản phẩm được trừ khỏi kho của chi
                 nhánh cấp hàng ngay khi đơn được tạo.
+              </p>
+              <p class="small os-muted-text mt-2 mb-0" id="checkout-submitting" role="status" aria-live="polite" hidden>
+                Đang kiểm tra tồn kho và xác nhận đơn hàng… Vui lòng chờ.
               </p>
 
               <div class="text-center mt-3 pt-3 border-top">
@@ -603,25 +639,68 @@
       (function () {
         var form = document.getElementById("checkout-form");
         if (!form) return;
+        var submit = document.getElementById("place-order");
+        var consent = document.getElementById("splitCodConsent");
+        var submitFeedback = document.getElementById("checkout-submitting");
+        var checkoutPlan = form.querySelector('input[name="planSignature"]');
+        var isValidPlan = Boolean(checkoutPlan && checkoutPlan.value);
+
+        // COD across several Stores is a customer decision; the backend independently validates consent.
+        function syncSubmitAvailability() {
+          if (!submit) return;
+          submit.disabled = !isValidPlan || Boolean(consent && !consent.checked);
+        }
+        if (consent) consent.addEventListener("change", syncSubmitAvailability);
+        syncSubmitAvailability();
+
+        function refreshPreview() {
+          var params = new URLSearchParams();
+          form.querySelectorAll('input[name="cartItemIds"]').forEach(function (i) { params.append("cartItemIds", i.value); });
+          var type = form.querySelector('input[name="fulfillmentType"]:checked');
+          var pay = form.querySelector('input[name="paymentMethod"]:checked');
+          var store = form.querySelector('input[name="pickupStoreId"]:checked');
+          var addr = form.querySelector('input[name="shippingAddress"]');
+          if (type) params.set("fulfillmentType", type.value);
+          if (pay) params.set("paymentMethod", pay.value);
+          if (store) params.set("pickupStoreId", store.value);
+          if (addr && addr.value) params.set("shippingAddress", addr.value);
+          ["receiverName", "receiverPhone"].forEach(function (name) {
+            var field = form.querySelector('input[name="' + name + '"]');
+            if (field) params.set(name, field.value);
+          });
+          window.location.href = form.getAttribute("data-refresh-url") + "?" + params.toString();
+        }
+
         // A different choice changes the allocation: reload the preview with it (GET, nothing is created).
         form.querySelectorAll("input.os-refresh").forEach(function (input) {
           input.addEventListener("change", function () {
-            var params = new URLSearchParams();
-            form.querySelectorAll('input[name="cartItemIds"]').forEach(function (i) { params.append("cartItemIds", i.value); });
-            var type = form.querySelector('input[name="fulfillmentType"]:checked');
-            var pay = form.querySelector('input[name="paymentMethod"]:checked');
-            var store = form.querySelector('input[name="pickupStoreId"]:checked');
-            var addr = form.querySelector('input[name="shippingAddress"]');
-            if (type) params.set("fulfillmentType", type.value);
-            if (pay && input.name !== "fulfillmentType") params.set("paymentMethod", pay.value);
-            if (store && input.name !== "fulfillmentType") params.set("pickupStoreId", store.value);
-            if (addr && addr.value) params.set("shippingAddress", addr.value);
-            ["receiverName", "receiverPhone"].forEach(function (name) {
-              var field = form.querySelector('input[name="' + name + '"]');
-              if (field) params.set(name, field.value);
-            });
-            window.location.href = form.getAttribute("data-refresh-url") + "?" + params.toString();
+            refreshPreview();
           });
+        });
+
+        var refreshButton = document.getElementById("refresh-plan");
+        if (refreshButton) refreshButton.addEventListener("click", refreshPreview);
+
+        // The order action is the first submit button; Enter must place the reviewed order, never refresh it as GET.
+        form.addEventListener("submit", function (event) {
+          if (event.submitter && event.submitter.id === "refresh-plan") {
+            event.preventDefault();
+            refreshPreview();
+            return;
+          }
+          if (!form.reportValidity()) {
+            event.preventDefault();
+            return;
+          }
+          if (submit && submit.disabled) {
+            event.preventDefault();
+            return;
+          }
+          if (submit) {
+            submit.disabled = true;
+            submit.setAttribute("aria-busy", "true");
+          }
+          if (submitFeedback) submitFeedback.hidden = false;
         });
       })();
     </script>

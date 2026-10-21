@@ -11,6 +11,8 @@
         <form method="post" th:object="${form}" id="store-product-form" novalidate
               th:action="${current == null} ? @{/admin/store-products} : @{/admin/store-products/{id}(id=${current.storeProductId})}">
             <div class="alert alert-danger" th:each="message : ${#fields.globalErrors()}" th:text="${message}">Lỗi</div>
+            <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('price')}"
+                 th:errors="*{price}">Giá online là giá chung của sản phẩm; không thể sửa giá riêng theo chi nhánh.</div>
             <div class="row g-3">
                 <!--/* New: choose the Store and the Product. Existing: both are fixed. */-->
                 <th:block th:if="${current == null}">

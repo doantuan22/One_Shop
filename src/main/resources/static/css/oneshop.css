@@ -1,9 +1,16 @@
 :root {
-    --os-coral: #ff6f61;
-    --os-coral-dark: #e95b50;
+    --os-brand-coral: #ff7f50;
+    --os-coral: #b84224;
+    --os-coral-dark: #922f1c;
     --os-coral-light: #fff0ed;
     --os-text: #292d32;
     --os-muted: #707780;
+    --bs-primary: #b84224;
+    --bs-primary-rgb: 184, 66, 36;
+    --bs-primary-hover: #922f1c;
+    --bs-primary-active: #762514;
+    --bs-link-color: #b84224;
+    --bs-link-hover-color: #922f1c;
 }
 
 body {
@@ -19,11 +26,22 @@ body {
     --bs-btn-active-border-color: var(--os-coral-dark);
 }
 
+.btn-primary,
+.pagination .page-item.active .page-link {
+    --bs-btn-bg: #b84224;
+    --bs-btn-border-color: #b84224;
+    --bs-btn-color: #fff;
+    --bs-btn-hover-bg: #922f1c;
+    --bs-btn-hover-border-color: #922f1c;
+    --bs-btn-active-bg: #762514;
+    --bs-btn-active-border-color: #762514;
+}
+
 .btn-outline-primary {
-    --bs-btn-color: var(--os-coral-dark);
-    --bs-btn-border-color: var(--os-coral);
-    --bs-btn-hover-bg: var(--os-coral);
-    --bs-btn-hover-border-color: var(--os-coral);
+    --bs-btn-color: #922f1c;
+    --bs-btn-border-color: #b84224;
+    --bs-btn-hover-bg: #b84224;
+    --bs-btn-hover-border-color: #b84224;
     --bs-btn-hover-color: #fff;
 }
 
@@ -84,7 +102,7 @@ body {
     gap: 5px;
     font-size: 1.25rem;
     font-weight: 800;
-    color: #FF7F50;
+    color: #b84224;
 }
 
 .os-app--staff .os-staff-brand-role {

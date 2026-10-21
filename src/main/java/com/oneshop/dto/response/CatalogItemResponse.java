@@ -12,12 +12,9 @@ import java.util.List;
 public record CatalogItemResponse(ProductResponse product, StoreAvailabilityResponse atSelectedStore,
                                   List<StoreAvailabilityResponse> stores) {
 
-    /** Unified online price of the SKU in V3, or lowest price if legacy. */
+    /** Single online price of the SKU in V3. Never substitute a StoreProduct's legacy price. */
     public BigDecimal lowestPrice() {
-        if (product != null && product.price() != null) {
-            return product.price();
-        }
-        return stores.stream().map(StoreAvailabilityResponse::price).min(BigDecimal::compareTo).orElse(null);
+        return product == null ? null : product.price();
     }
 
     public boolean samePriceEverywhere() {

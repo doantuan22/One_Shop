@@ -3,6 +3,7 @@ package com.oneshop;
 import com.oneshop.config.CloudinaryProperties;
 import com.oneshop.entity.CartItem;
 import com.oneshop.repository.CartItemRepository;
+import com.oneshop.repository.InventoryMovementRepository;
 import com.oneshop.repository.ProductImageRepository;
 import com.oneshop.repository.ProductRepository;
 import com.oneshop.repository.StoreProductRepository;
@@ -66,6 +67,9 @@ class CatalogHttpDatabaseIntegrationTest {
 
     @Autowired
     private CartItemRepository cartItemRepository;
+
+    @Autowired
+    private InventoryMovementRepository inventoryMovementRepository;
 
     @Autowired
     private CloudinaryProperties cloudinaryProperties;
@@ -591,7 +595,7 @@ class CatalogHttpDatabaseIntegrationTest {
 
         HttpResponse<String> response = post("/admin/store-products", FORM,
                 "storeId=" + storeId("OS-THUDUC") + "&productId=" + productId("SIMPLE-PURIFY-150")
-                        + "&price=1000&quantity=1&status=ACTIVE&_csrf=" + csrf.field(),
+                        + "&quantity=1&status=ACTIVE&_csrf=" + csrf.field(),
                 "Cookie", admin() + "; " + csrf.cookie());
 
         assertThat(response.statusCode()).isEqualTo(200);
@@ -600,18 +604,42 @@ class CatalogHttpDatabaseIntegrationTest {
     }
 
     @Test
-    void storeProductFormRejectsNegativeQuantityAndIgnoresAnyPostedPrice() throws Exception {
+    void storeProductFormRejectsNegativeQuantity() throws Exception {
         Long thuDuc = storeId("OS-THUDUC");
         Long id = storeProductRepository.findByStoreIdAndProductId(thuDuc, productId("SIMPLE-PURIFY-150")).orElseThrow().getId();
         Csrf csrf = csrf("/admin/store-products/" + id + "/edit", admin());
 
         HttpResponse<String> response = post("/admin/store-products/" + id, FORM,
-                "price=-1&quantity=-5&status=ACTIVE&_csrf=" + csrf.field(), "Cookie", admin() + "; " + csrf.cookie());
+                "quantity=-5&status=ACTIVE&_csrf=" + csrf.field(), "Cookie", admin() + "; " + csrf.cookie());
 
         assertThat(response.statusCode()).isEqualTo(200);
-        assertThat(response.body()).contains("Tồn kho không được âm").doesNotContain("Giá không được âm");
+        assertThat(response.body()).contains("Tồn kho không được âm");
         assertThat(storeProductRepository.findById(id).orElseThrow().getPrice()).isEqualByComparingTo("138000");
         assertThat(storeProductRepository.findById(id).orElseThrow().getQuantity()).isEqualTo(40);
+    }
+
+    @Test
+    void storeProductFormRejectsAForgedStoreSpecificPriceBeforeCallingTheUpdateService() throws Exception {
+        Long thuDuc = storeId("OS-THUDUC");
+        Long id = storeProductRepository.findByStoreIdAndProductId(thuDuc, productId("SIMPLE-PURIFY-150")).orElseThrow().getId();
+        var before = storeProductRepository.findById(id).orElseThrow();
+        Long productId = before.getProduct().getId();
+        var onlinePrice = productRepository.findById(productId).orElseThrow().getPrice();
+        var legacyStorePrice = before.getPrice();
+        long movementsBefore = inventoryMovementRepository.count();
+        Csrf csrf = csrf("/admin/store-products/" + id + "/edit", admin());
+
+        HttpResponse<String> response = post("/admin/store-products/" + id, FORM,
+                "price=119000&quantity=" + before.getQuantity() + "&status=ACTIVE&_csrf=" + csrf.field(),
+                "Cookie", admin() + "; " + csrf.cookie());
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.body()).contains("Giá online là giá chung của sản phẩm; không thể sửa giá riêng theo chi nhánh.");
+        assertThat(storeProductRepository.findById(id).orElseThrow().getQuantity()).isEqualTo(before.getQuantity());
+        assertThat(storeProductRepository.findById(id).orElseThrow().getPrice()).isEqualByComparingTo(legacyStorePrice);
+        assertThat(productRepository.findById(productId).orElseThrow().getPrice())
+                .isEqualByComparingTo(onlinePrice);
+        assertThat(inventoryMovementRepository.count()).isEqualTo(movementsBefore);
     }
 
     @Test

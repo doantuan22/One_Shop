@@ -368,7 +368,7 @@ class Phase11AdminDatabaseIntegrationTest {
         assertThat(post("/admin/products/" + p, "sku=" + product.get("sku") + "&name=Phase11+Hidden+Product&categoryId=" + product.get("category_id")
                 + "&brandId=" + product.get("brand_id") + "&description=Phase11&status=HIDDEN").statusCode()).isEqualTo(302);
         var stock = jdbc.queryForMap("select * from dbo.store_products where store_product_id=?", sp);
-        assertThat(post("/admin/store-products/" + sp, "storeId=2&productId=999&price=" + stock.get("price") + "&quantity=" + stock.get("quantity")
+        assertThat(post("/admin/store-products/" + sp, "storeId=2&productId=999&quantity=" + stock.get("quantity")
                 + "&status=INACTIVE&note=Phase11").statusCode()).isEqualTo(302);
         assertThat(post("/admin/stores/1", storeForm(1, "INACTIVE")).statusCode()).isEqualTo(302);
         assertThat(scalar("select count(*) from dbo.products where product_id=? and status='HIDDEN'", p)).isEqualTo(1);

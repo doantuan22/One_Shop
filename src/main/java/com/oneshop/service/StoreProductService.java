@@ -69,6 +69,6 @@ public interface StoreProductService {
      */
     StoreProductStockResponse createStoreProduct(StoreProductRequest request, String adminEmail);
 
-    /** Changes price, status and quantity. Store and Product of an existing StoreProduct never change. */
+    /** Changes Store-specific status and quantity. The Store and Product never change; online price is Product.price. */
     StoreProductStockResponse updateStoreProduct(Long id, StoreProductRequest request, String adminEmail);
 }

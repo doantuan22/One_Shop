@@ -15,8 +15,8 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 
 /**
- * One sellable SKU, shared by the whole chain (BR-01). It has no price or quantity of its own:
- * those live in {@link StoreProduct}.
+ * One sellable SKU, shared by the whole chain (V3). {@link #price} is its one online selling price across all Stores.
+ * Physical quantity and Store-specific selling status live in {@link StoreProduct}.
  */
 @Entity
 @Table(name = "products")

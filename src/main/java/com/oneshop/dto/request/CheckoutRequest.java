@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * Selected cart items plus the per Store group choices. There is deliberately no unit price or total here:
- * CheckoutService recomputes both from StoreProduct.price (BR-09).
+ * CheckoutService recomputes both from the shared {@code Product.price} and current Store inventory (V3).
  */
 public record CheckoutRequest(
         @NotEmpty(message = "Vui lòng chọn ít nhất một sản phẩm") List<@NotNull Long> cartItemIds,

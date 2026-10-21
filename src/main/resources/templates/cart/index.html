@@ -9,9 +9,9 @@
     <link rel="stylesheet" th:href="@{/css/home.css}">
     <style>
         :root {
-            --cart-primary: #FF7F50;
-            --cart-primary-hover: #E86738;
-            --cart-primary-active: #D9572B;
+            --cart-primary: #b84224;
+            --cart-primary-hover: #922f1c;
+            --cart-primary-active: #762514;
             --cart-primary-light: #FFF3ED;
             --cart-primary-border: #FFD2BF;
             --cart-bg: #F8FAFC;
@@ -99,6 +99,8 @@
         .cart-checkbox:focus {
             border-color: var(--cart-primary);
             box-shadow: 0 0 0 .2rem rgba(255, 127, 80, .18);
+            outline: 3px solid #1f2937;
+            outline-offset: 2px;
         }
 
         .cart-store-name {

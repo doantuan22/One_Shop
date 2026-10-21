@@ -3,13 +3,15 @@ package com.oneshop.dto.request;
 import com.oneshop.entity.ActiveStatus;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 
 /**
  * Admin form of a StoreProduct: a SKU held at one Store with its own quantity and status. The online price is one
- * value per SKU, owned by {@code Product}; a {@code price} posted here is ignored and never stored (V3).
+ * value per SKU, owned by {@code Product}. The legacy {@code price} property is retained only for older internal
+ * callers/forms; services deliberately never read or persist it (V3).
  * {@code storeId} and {@code productId} are only used when creating; an existing StoreProduct never changes them.
  */
 public class StoreProductRequest {
@@ -20,7 +22,11 @@ public class StoreProductRequest {
     @NotNull(message = "Vui lòng chọn sản phẩm")
     private Long productId;
 
-    /** Ignored: kept only so that a legacy/forged post still binds. The price lives on Product. */
+    /**
+     * Legacy compatibility for internal callers only. MVC forms must not submit a Store-specific price: the only
+     * online price is Product.price.
+     */
+    @Null(message = "Giá online là giá chung của sản phẩm; không thể sửa giá riêng theo chi nhánh.")
     private BigDecimal price;
 
     @NotNull(message = "Vui lòng nhập tồn kho")

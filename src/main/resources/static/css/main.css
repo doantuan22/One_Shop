@@ -1,10 +1,12 @@
 :root {
-    --os-primary: #ff7f50;
-    --os-primary-dark: #ff7f50;
+    /* Coral remains the OneShop brand accent; use a deeper coral for readable UI foregrounds. */
+    --os-brand-coral: #ff7f50;
+    --os-primary: #b84224;
+    --os-primary-dark: #922f1c;
     --os-bg: #fff8fa;
 
     --bs-primary: var(--os-primary);
-    --bs-primary-rgb: 255, 127, 80;
+    --bs-primary-rgb: 184, 66, 36;
     --bs-link-color: var(--os-primary);
     --bs-link-hover-color: var(--os-primary-dark);
 }
@@ -219,13 +221,20 @@ body {
 }
 
 :focus-visible {
-    outline: 3px solid rgba(255, 127, 80, 0.65);
+    /* Opaque, high-contrast focus indicator on both pale and dark OneShop surfaces. */
+    outline: 3px solid #1f2937;
     outline-offset: 2px;
+    box-shadow: 0 0 0 5px #ffffff;
 }
 
 /* dark coral for small text on white: 5.46:1 (WCAG AA) where the light coral (#ff7f50) is only ~2.6:1 */
 .text-coral-strong {
     color: #b84224;
+}
+
+/* Small coral text and links meet AA on white; do not use the lighter brand-only coral as text. */
+.text-coral {
+    color: #b84224 !important;
 }
 
 /* data tables keep at least 14px on desktop (audit: no 11-12px for essential data) */

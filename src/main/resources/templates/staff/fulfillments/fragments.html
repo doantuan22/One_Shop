@@ -14,37 +14,38 @@
     <span th:case="'COMPLETED'">Hoàn tất</span>
     <span th:case="'CANCELLED'">Đã hủy</span>
     <span th:case="'FAILED'">Không thành công</span>
-    <span th:case="*" th:text="${n}"></span>
+    <span th:case="*">Trạng thái chưa xác định</span>
 </span>
 
 <div th:fragment="table(rows)" class="table-responsive">
-    <table class="table table-hover os-table align-middle">
+    <table class="table table-hover os-table align-middle" aria-label="Phần giao hàng thuộc các chi nhánh được phân công">
         <thead>
         <tr>
-            <th scope="col">Phần giao</th><th scope="col">Đơn</th><th scope="col" class="d-none d-lg-table-cell">Chi nhánh</th>
+            <th scope="col">Phần giao</th><th scope="col">Đơn</th><th scope="col" class="os-fulfillment-extra-column">Chi nhánh</th>
             <th scope="col">Khách hàng</th><th scope="col">Hình thức</th>
-            <th scope="col" class="d-none d-xl-table-cell">Thanh toán</th><th scope="col">Trạng thái phần giao</th>
-            <th scope="col" class="d-none d-xl-table-cell">Trạng thái đơn</th>
-            <th scope="col" class="text-end d-none d-lg-table-cell">Sản phẩm</th>
-            <th scope="col" class="d-none d-xl-table-cell">Phân công lúc</th><th scope="col">Việc tiếp theo</th>
+            <th scope="col" class="os-fulfillment-extra-column">Thanh toán</th><th scope="col">Trạng thái phần giao</th>
+            <th scope="col" class="os-fulfillment-extra-column">Trạng thái đơn</th>
+            <th scope="col" class="text-end os-fulfillment-extra-column">Sản phẩm</th>
+            <th scope="col" class="os-fulfillment-extra-column">Phân công lúc</th><th scope="col">Việc tiếp theo</th>
         </tr>
         </thead>
         <tbody id="fulfillments-body">
         <tr th:each="row : ${rows}"
+            th:classappend="${row.blockedReason == null and row.nextAction != null} ? 'os-fulfillment-row--action-needed'"
             th:attr="data-fulfillment-id=${row.fulfillmentId},data-order-id=${row.orderId},data-store-id=${row.storeId}">
             <td><a th:href="@{/staff/fulfillments/{id}(id=${row.fulfillmentId})}" th:text="'#' + ${row.fulfillmentId}"></a></td>
             <td th:text="'#' + ${row.orderId}"></td>
-            <td class="d-none d-lg-table-cell" th:text="${row.storeName}"></td>
+            <td class="os-fulfillment-extra-column" th:text="${row.storeName}"></td>
             <td th:text="${row.customerName}"></td>
             <td><span th:replace="~{fragments/components :: fulfillmentType(${row.fulfillmentType})}"></span></td>
-            <td class="d-none d-xl-table-cell">
+            <td class="os-fulfillment-extra-column">
                 <span th:replace="~{staff/delivery/fragments :: method(${row.paymentMethod})}"></span><br>
                 <span class="small text-secondary"><span th:replace="~{staff/delivery/fragments :: payment(${row.paymentStatus})}"></span></span>
             </td>
             <td><span th:replace="~{staff/fulfillments/fragments :: status(${row.status})}"></span></td>
-            <td class="d-none d-xl-table-cell"><span th:replace="~{staff/delivery/fragments :: state(${row.orderStatus})}"></span></td>
-            <td class="text-end d-none d-lg-table-cell" th:text="${row.totalQuantity} + ' (' + ${row.itemCount} + ' dòng)'"></td>
-            <td class="d-none d-xl-table-cell" th:text="${#temporals.format(row.assignedAt, 'dd/MM/yyyy HH:mm')}"></td>
+            <td class="os-fulfillment-extra-column"><span th:replace="~{staff/delivery/fragments :: state(${row.orderStatus})}"></span></td>
+            <td class="text-end os-fulfillment-extra-column" th:text="${row.totalQuantity} + ' (' + ${row.itemCount} + ' dòng)'"></td>
+            <td class="os-fulfillment-extra-column" th:text="${#temporals.format(row.assignedAt, 'dd/MM/yyyy HH:mm')}"></td>
             <td>
                 <span th:if="${row.blockedReason != null}" class="small text-warning-emphasis os-blocked"
                       th:text="${row.blockedReason}"></span>
@@ -53,9 +54,52 @@
                 <span th:if="${row.blockedReason == null and row.nextAction == null}" class="small text-secondary">—</span>
             </td>
         </tr>
-        <tr th:if="${rows.isEmpty()}"><td colspan="11" class="text-center text-secondary py-4">Chưa có phần giao hàng nào.</td></tr>
+        <tr th:if="${rows.isEmpty()}"><td colspan="11" class="text-center text-secondary py-4">
+            <strong>Chưa có phần giao hàng cần hiển thị.</strong>
+            <div class="mt-1">Thử xóa bộ lọc hoặc đợi chi nhánh được phân công có đơn cần xử lý.</div>
+        </td></tr>
         </tbody>
     </table>
 </div>
+<style>
+    .os-fulfillment-row--action-needed > td {
+        background-color: #fffaf1;
+    }
+
+    .os-fulfillment-row--action-needed > td:first-child {
+        box-shadow: inset 3px 0 #9a5b00;
+    }
+
+    .os-staff-fulfillments .table-responsive {
+        border: 1px solid #d6dde5;
+        border-radius: 0.5rem;
+        background: #fff;
+    }
+
+    /* At ordinary desktop widths preserve the action column by moving context into Detail. */
+    .os-staff-fulfillments .os-fulfillment-extra-column {
+        display: none;
+    }
+
+    @media (min-width: 1800px) {
+        .os-staff-fulfillments .os-fulfillment-extra-column {
+            display: table-cell;
+        }
+    }
+
+    @media (max-width: 1199.98px) {
+        .os-staff-fulfillments .table-responsive::after {
+            content: "Vuốt ngang bảng để xem mọi cột; nút xử lý luôn hiển thị.";
+            display: block;
+            position: sticky;
+            left: 0;
+            width: max-content;
+            padding: 0.45rem 0.75rem;
+            color: #475569;
+            background: #f8fafc;
+            font-size: 0.8125rem;
+        }
+    }
+</style>
 </body>
 </html>

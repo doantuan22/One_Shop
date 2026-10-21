@@ -8,10 +8,11 @@
      1. COLOR PALETTE (TONE MÀU CORAL #FF7F50)
      ========================================================== */
   /* Primary: Cam San Hô Chủ Đạo */
-  --bs-primary: #FF7F50;
-  --bs-primary-rgb: 255, 127, 80;
-  --bs-primary-hover: #e86738;
-  --bs-primary-active: #cc5427;
+  /* Coral brand remains in surfaces/accent details; this darker companion carries readable text. */
+  --bs-primary: #b84224;
+  --bs-primary-rgb: 184, 66, 36;
+  --bs-primary-hover: #922f1c;
+  --bs-primary-active: #762514;
 
   /* Secondary: Cam đào / Peach nhẹ nhàng */
   --bs-secondary: #ffab91;
@@ -81,7 +82,7 @@
 }
 
 .btn-outline-primary:hover,
-.btn-outline-primary:focus {
+.btn-outline-primary:focus-visible {
   color: #ffffff !important;
   background-color: var(--bs-primary) !important;
   border-color: var(--bs-primary) !important;
@@ -89,7 +90,7 @@
 }
 
 .btn-secondary {
-  color: #ffffff !important;
+  color: #292d32 !important;
   background-color: var(--bs-secondary) !important;
   border-color: var(--bs-secondary) !important;
 }
@@ -126,9 +127,10 @@
 
 .form-control:focus,
 .form-select:focus {
-  border-color: var(--bs-primary) !important;
-  box-shadow: 0 0 0 0.25rem rgba(255, 127, 80, 0.22) !important;
-  outline: none;
+  border-color: var(--bs-primary-hover) !important;
+  box-shadow: 0 0 0 0.25rem rgba(184, 66, 36, 0.18) !important;
+  outline: 3px solid #1f2937;
+  outline-offset: 2px;
 }
 
 .form-check-input:checked {
@@ -156,6 +158,23 @@
 .badge-primary {
   background-color: var(--bs-primary) !important;
   color: #ffffff !important;
+}
+
+:focus-visible {
+  outline: 3px solid #1f2937;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 .alert-coral {

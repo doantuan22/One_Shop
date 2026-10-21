@@ -48,7 +48,7 @@ class CatalogWebIntegrationTest extends AbstractIntegrationTest {
     private static final StoreResponse GO_VAP = new StoreResponse(2L, "OS-GOVAP", "OneShop Gò Vấp", "202 Quang Trung",
             "TP. Hồ Chí Minh", "Gò Vấp", "02811110002", "08:00 - 22:00", true, true, ActiveStatus.ACTIVE);
     private static final ProductResponse SERUM = new ProductResponse(3L, "SIMPLE-PURIFY-150", "Cocoon Serum Bí Đao 30ml",
-            "Mô tả", "Chăm sóc da", "Cocoon", null);
+            "Mô tả", "Chăm sóc da", "Cocoon", null, new BigDecimal("138000.00"), new BigDecimal("159000.00"));
     private static final StoreAvailabilityResponse AT_GO_VAP =
             new StoreAvailabilityResponse(2L, 2L, "OneShop Gò Vấp", new BigDecimal("135000.00"), true);
     private static final StoreAvailabilityResponse AT_THU_DUC =
@@ -103,7 +103,7 @@ class CatalogWebIntegrationTest extends AbstractIntegrationTest {
     void theCatalogIsAlwaysTheSharedWholeChainCatalog() throws Exception {
         String html = get("/products").body();
 
-        assertThat(html).contains("Cocoon Serum Bí Đao 30ml", "Còn hàng toàn hệ thống", "129.000 ₫", "id=\"catalog-count\"");
+        assertThat(html).contains("Cocoon Serum Bí Đao 30ml", "Còn hàng toàn hệ thống", "138.000 ₫", "id=\"catalog-count\"");
         assertThat(html).doesNotContain("data-store-scope", "Chi nhánh đang chọn");
         verify(storeProductService).getChainCatalog(any(), any());
         verify(storeProductService, never()).getStoreCatalog(anyLong(), any(), any());
@@ -113,7 +113,7 @@ class CatalogWebIntegrationTest extends AbstractIntegrationTest {
     void aStaleStoreCookieNoLongerScopesTheCatalog() throws Exception {
         String html = get("/products?q=serum", "Cookie", STORE_COOKIE + "=2").body();
 
-        assertThat(html).contains("129.000 ₫").doesNotContain("135.000 ₫", "data-store-scope");
+        assertThat(html).contains("138.000 ₫").doesNotContain("135.000 ₫", "data-store-scope");
         verify(storeProductService).getChainCatalog(any(), any());
         verify(storeProductService, never()).getStoreCatalog(anyLong(), any(), any());
     }

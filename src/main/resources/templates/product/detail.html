@@ -67,6 +67,7 @@
         }
 
         .thumb-item {
+            display: block;
             width: 76px;
             height: 76px;
             border-radius: 14px;
@@ -82,6 +83,28 @@
         .thumb-item.active-thumb {
             border-color: var(--bs-primary, #ff7f50);
             transform: translateY(-2px);
+        }
+
+        .thumb-button:focus-visible {
+            outline: 3px solid #1f2937;
+            outline-offset: 3px;
+            box-shadow: 0 0 0 5px #ffffff;
+        }
+
+        .thumb-button {
+            width: 80px;
+            height: 80px;
+            padding: 2px;
+            border: 2px solid transparent;
+            border-radius: 14px;
+            background: #fff;
+            cursor: pointer;
+            flex: 0 0 auto;
+        }
+
+        .thumb-button:hover,
+        .thumb-button.active-thumb {
+            border-color: var(--bs-primary, #b84224);
         }
 
         .product-meta-eyebrow {
@@ -155,7 +178,7 @@
         }
 
         .price-tag-hero {
-            color: var(--bs-primary, #ff7f50);
+            color: #922f1c;
             font-size: 2.2rem;
             font-weight: 850;
             letter-spacing: -0.03em;
@@ -235,22 +258,22 @@
             border-radius: 12px;
             font-weight: 700;
             font-size: 1rem;
-            background: linear-gradient(135deg, #ff7f50, #e95b50);
+            background: linear-gradient(135deg, #b84224, #922f1c);
             border: none;
             color: #ffffff;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            box-shadow: 0 8px 20px rgba(233, 91, 80, 0.22);
+            box-shadow: 0 8px 20px rgba(146, 47, 28, 0.22);
             transition: background 0.2s ease, box-shadow 0.2s ease;
             transform: none !important;
         }
 
         .btn-add-cart:hover {
-            background: linear-gradient(135deg, #e86738, #d84a3f);
+            background: linear-gradient(135deg, #922f1c, #762514);
             color: #ffffff;
-            box-shadow: 0 10px 24px rgba(233, 91, 80, 0.32);
+            box-shadow: 0 10px 24px rgba(146, 47, 28, 0.28);
         }
 
         .other-stores-card {
@@ -290,7 +313,7 @@
         }
 
         .other-stores-card > summary::-webkit-details-marker { display: none; }
-        .other-stores-card > summary:focus-visible { outline: 3px solid rgba(255, 127, 80, 0.5); outline-offset: -3px; }
+        .other-stores-card > summary:focus-visible { outline: 3px solid #1f2937; outline-offset: -3px; box-shadow: 0 0 0 5px #fff; }
 
         .btn-switch-store {
             border-radius: 10px;
@@ -308,6 +331,13 @@
             border-color: var(--bs-primary, #ff7f50);
             color: #ffffff;
             box-shadow: 0 4px 12px rgba(255, 127, 80, 0.25);
+        }
+
+        .btn-qty-step:focus-visible,
+        .qty-stepper-input:focus-visible {
+            outline: 3px solid #1f2937;
+            outline-offset: 3px;
+            box-shadow: 0 0 0 5px #ffffff;
         }
 
         .description-card {
@@ -374,13 +404,15 @@
             <p class="small text-secondary mb-3" id="image-credit-line" th:if="${!detail.images.isEmpty()}">Ảnh: Open Beauty Facts, CC BY-SA 3.0 · <a th:href="@{/image-credits}">Ghi công hình ảnh</a></p>
 
             <div class="d-flex flex-wrap gap-2" th:if="${detail.images.size() > 1}">
-                <img th:each="image, iterStat : ${detail.images}"
-                     th:src="${image.imageUrl}"
-                     th:alt="${product.name}"
-                     th:classappend="${iterStat.index == 0} ? 'active-thumb' : ''"
-                     class="thumb-item shadow-sm"
-                     loading="lazy"
-                     onclick="switchMainImage(this)">
+                <button th:each="image, iterStat : ${detail.images}"
+                        type="button"
+                        th:aria-label="'Xem ảnh ' + ${iterStat.index + 1} + ' của ' + ${product.name}"
+                        th:attr="aria-pressed=${iterStat.index == 0}"
+                        th:classappend="${iterStat.index == 0} ? 'active-thumb' : ''"
+                        class="thumb-button shadow-sm"
+                        onclick="switchMainImage(this)">
+                    <img th:src="${image.imageUrl}" th:alt="" class="thumb-item" loading="lazy">
+                </button>
             </div>
         </div>
 
@@ -456,7 +488,7 @@
                     </p>
                 </div>
 
-                <button type="button" class="btn btn-secondary px-4 py-2 rounded-3 fw-bold" disabled th:unless="${detail.inStock()}">
+                    <button type="button" class="btn btn-secondary px-4 py-2 rounded-3 fw-bold" disabled th:unless="${detail.inStock()}">
                     Tạm hết hàng
                 </button>
             </section>
@@ -566,10 +598,15 @@
 
     function switchMainImage(thumbElement) {
         const mainImg = document.getElementById('product-main-image');
-        if (mainImg && thumbElement) {
-            mainImg.src = thumbElement.src;
-            document.querySelectorAll('.thumb-item').forEach(el => el.classList.remove('active-thumb'));
+        const thumb = thumbElement && thumbElement.querySelector('img');
+        if (mainImg && thumb) {
+            mainImg.src = thumb.src;
+            document.querySelectorAll('.thumb-button').forEach(el => {
+                el.classList.remove('active-thumb');
+                el.setAttribute('aria-pressed', 'false');
+            });
             thumbElement.classList.add('active-thumb');
+            thumbElement.setAttribute('aria-pressed', 'true');
         }
     }
 </script>

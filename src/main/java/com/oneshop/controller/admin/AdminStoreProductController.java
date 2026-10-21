@@ -95,8 +95,15 @@ public class AdminStoreProductController {
         // Store and Product of an existing StoreProduct are fixed, whatever the form posts
         form.setStoreId(current.storeId());
         form.setProductId(current.productId());
+        // The legacy property is retained for trusted service callers only. Reject a forged MVC price rather than
+        // silently redirecting as though an unsupported per-Store price had been accepted.
+        if (bindingResult.hasFieldErrors("price")) {
+            bindingResult.reject("storeProduct.price.notAllowed",
+                    bindingResult.getFieldError("price").getDefaultMessage());
+        }
         if (!bindingResult.hasFieldErrors("quantity")
-                && !bindingResult.hasFieldErrors("status") && !bindingResult.hasFieldErrors("note")) {
+                && !bindingResult.hasFieldErrors("status") && !bindingResult.hasFieldErrors("note")
+                && !bindingResult.hasFieldErrors("price")) {
             try {
                 storeProductService.updateStoreProduct(id, form, principal.getName());
                 return "redirect:/admin/store-products?success=updated&storeId=" + current.storeId();

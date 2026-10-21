@@ -20,8 +20,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * A Product sold at one Store. Single source of truth for price, quantity and status of that SKU at that
- * Store (BR-02). Stock changes must go through InventoryService so that an InventoryMovement is written.
+ * A Product offered at one Store. This StoreProduct owns only the Store-specific quantity and selling status;
+ * online price is shared for the chain on {@link Product}. The nullable {@link #price} column is legacy compatibility
+ * only and must never be used to price a new online order. Stock changes go through InventoryService so that an
+ * InventoryMovement is written.
  */
 @Entity
 @Table(name = "store_products",
@@ -43,6 +45,7 @@ public class StoreProduct {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    /** V2 legacy schema column. Leave untouched for compatibility; V3 business logic must not read or write it. */
     @Column(precision = 18, scale = 2)
     private BigDecimal price;
 

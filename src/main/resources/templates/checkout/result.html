@@ -222,9 +222,15 @@
         }
 
         .btn-order-online:hover {
-            background-color: #e86738;
-            border-color: #e86738;
+            background-color: #922f1c;
+            border-color: #922f1c;
             color: #ffffff;
+        }
+
+        :focus-visible {
+            outline: 3px solid #1f2937;
+            outline-offset: 2px;
+            box-shadow: 0 0 0 5px #ffffff;
         }
 
         .order-card-footer {
@@ -447,7 +453,7 @@
                 </a>
                 <a th:if="${order.paymentMethod.name() == 'ONLINE'}" class="btn btn-order-action btn-order-online"
                    th:href="@{/orders/{id}/payments(id=${order.orderId})}">
-                    Tiến hành thanh toán trực tuyến
+                    Tiến hành thanh toán trực tuyến (mô phỏng, không thu tiền thật)
                 </a>
             </div>
         </div>

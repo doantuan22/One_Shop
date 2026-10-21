@@ -30,7 +30,7 @@
 
 <!--/* Money in VND, for example 129.000 ₫. */-->
 <span th:fragment="price(value)" class="os-price"
-      th:text="${#numbers.formatDecimal(value, 1, 'POINT', 0, 'COMMA')} + ' ₫'">129.000 ₫</span>
+      th:text="${value == null ? 'Chưa có giá' : (#numbers.formatDecimal(value, 1, 'POINT', 0, 'COMMA') + ' ₫')}">129.000 ₫</span>
 
 <!--/* What a Client may know about stock: in stock or out of stock, never a quantity (BR-15). */-->
 <span th:fragment="availability(inStock)" class="badge"
@@ -43,14 +43,14 @@
       th:text="${name == 'ACTIVE'} ? 'Đang hoạt động' : (${name == 'HIDDEN'} ? 'Đang ẩn' : 'Ngừng hoạt động')">Trạng thái</span>
 
 <!--/* Fulfillment type of an Order / Fulfillment (DELIVERY, STORE_PICKUP) in plain Vietnamese. */-->
-<span th:fragment="fulfillmentType(type)" th:text="${type.name() == 'STORE_PICKUP'} ? 'Nhận tại cửa hàng' : 'Giao tận nơi'">Giao tận nơi</span>
+<span th:fragment="fulfillmentType(type)" th:text="${type != null and type.name() == 'STORE_PICKUP'} ? 'Nhận tại cửa hàng' : (${type != null and type.name() == 'DELIVERY'} ? 'Giao tận nơi' : 'Chưa xác định')">Giao tận nơi</span>
 
 <!--/* Status of one payment record (payments.status): a different layer from the Order status. */-->
 <span th:fragment="paymentRecordStatus(status)" th:switch="${status.name()}">
     <span th:case="'PENDING'">Đang chờ thanh toán</span>
     <span th:case="'SUCCESS'">Đã ghi nhận</span>
     <span th:case="'FAILED'">Thất bại</span>
-    <span th:case="*" th:text="${status}">Trạng thái</span>
+    <span th:case="*">Trạng thái chưa xác định</span>
 </span>
 
 <!--/* Simulated refund state of a payment (payments.refund_status). Always labelled "mô phỏng": no real bank refund. */-->
@@ -59,7 +59,7 @@
     <span th:case="'PENDING_SIMULATION'">Đang hoàn tiền (mô phỏng)</span>
     <span th:case="'SIMULATED_REFUNDED'">Đã hoàn tiền (mô phỏng)</span>
     <span th:case="'SIMULATION_FAILED'">Hoàn tiền thất bại (mô phỏng)</span>
-    <span th:case="*" th:text="${status}">Trạng thái</span>
+    <span th:case="*">Hoàn tiền chưa xác định (mô phỏng)</span>
 </span>
 
 <!--/* What the simulated gateway answered when asked about a payment. */-->
@@ -68,7 +68,7 @@
     <span th:case="'FAILED'">Từ chối</span>
     <span th:case="'NOT_PAID'">Chưa thanh toán</span>
     <span th:case="'UNKNOWN'">Chưa xác định</span>
-    <span th:case="*" th:text="${result}">Kết quả</span>
+    <span th:case="*">Kết quả chưa xác định</span>
 </span>
 
 <!--/* Where an ONLINE payment stands for the Admin (PaymentCaseCategory): one classification for list, detail and dashboard. */-->

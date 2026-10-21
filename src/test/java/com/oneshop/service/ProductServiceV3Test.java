@@ -218,6 +218,44 @@ class ProductServiceV3Test {
     }
 
     @Test
+    @DisplayName("A legacy StoreProduct price cannot override or supply the chain-wide online price")
+    void catalogNeverFallsBackToLegacyStorePrice() {
+        ProductResponse productWithoutPrice = new ProductResponse(1L, "SKU-01", "Serum", "Desc", "Cat", "Brand",
+                "img.jpg", null, null);
+        StoreAvailabilityResponse legacyStorePrice = new StoreAvailabilityResponse(10L, 1L, "Chi nhánh 1",
+                new BigDecimal("1"), true);
+        CatalogItemResponse item = new CatalogItemResponse(productWithoutPrice, null, List.of(legacyStorePrice));
+
+        assertThat(item.lowestPrice()).isNull();
+        assertThat(ProductCardResponse.from(item).price()).isNull();
+        assertThat(ProductCardResponse.from(item).inStock()).isTrue();
+    }
+
+    @Test
+    @DisplayName("availability and admin stock views use Product.price instead of a legacy StoreProduct price")
+    void storeProductMapperUsesOnlyProductPrice() {
+        com.oneshop.entity.Store store = new com.oneshop.entity.Store();
+        store.setName("OneShop Thủ Đức");
+        Product product = new Product();
+        product.setSku("SKU-01");
+        product.setName("Serum");
+        product.setPrice(new BigDecimal("129000"));
+        com.oneshop.entity.StoreProduct storeProduct = new com.oneshop.entity.StoreProduct();
+        storeProduct.setStore(store);
+        storeProduct.setProduct(product);
+        storeProduct.setPrice(new BigDecimal("1"));
+        storeProduct.setQuantity(3);
+
+        var mapper = new com.oneshop.mapper.StoreProductMapper();
+
+        assertThat(mapper.toAvailability(storeProduct).price()).isEqualByComparingTo("129000");
+        assertThat(mapper.toStockView(storeProduct).price()).isEqualByComparingTo("129000");
+        product.setPrice(null);
+        assertThat(mapper.toAvailability(storeProduct).price()).isNull();
+        assertThat(mapper.toStockView(storeProduct).price()).isNull();
+    }
+
+    @Test
     @DisplayName("ProductDetailResponse computes inStock across whole chain")
     void productDetailResponse_computesInStockAcrossStores() {
         ProductResponse product = new ProductResponse(1L, "SKU-01", "Serum", "Desc", "Cat", "Brand",

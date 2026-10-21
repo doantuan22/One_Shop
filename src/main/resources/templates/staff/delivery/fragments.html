@@ -9,7 +9,7 @@
     <span th:case="'CANCELLED'">Đã hủy</span>
     <span th:case="'PROCESSING'">Đang xử lý</span><span th:case="'PARTIALLY_COMPLETED'">Hoàn tất một phần</span>
     <span th:case="'NEEDS_ATTENTION'">Cần xử lý ngoại lệ</span><span th:case="'FAILED'">Không thành công</span>
-    <span th:case="*" th:text="${status}"></span>
+    <span th:case="*">Trạng thái chưa xác định</span>
 </span>
 <span th:fragment="payment(status)" th:switch="${status.name()}">
     <span th:case="'UNPAID'">Chưa thanh toán</span><span th:case="'PAID'">Đã thanh toán</span>
@@ -18,7 +18,7 @@
 <span th:fragment="method(method)" th:switch="${method.name()}">
     <span th:case="'ONLINE'">Trực tuyến</span><span th:case="'COD'">COD · Thu khi giao thành công</span>
     <span th:case="'PAY_AT_STORE'">Thanh toán tại cửa hàng</span>
-    <span th:case="*" th:text="${method}"></span>
+    <span th:case="*">Phương thức chưa xác định</span>
 </span>
 <div th:fragment="action(order)">
     <form th:if="${order.nextAction != null}" method="post"
