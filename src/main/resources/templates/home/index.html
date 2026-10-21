@@ -93,7 +93,7 @@
             </div>
             <a class="home-link" th:href="@{/products}">Xem tất cả</a>
         </div>
-        <div class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-3" id="home-product-grid">
+        <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 g-lg-4" id="home-product-grid">
             <div class="col" th:each="card : ${home.products}" data-reveal>
                 <div th:replace="~{fragments/components :: productCard(${card})}"></div>
             </div>
