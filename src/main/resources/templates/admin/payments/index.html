@@ -7,20 +7,22 @@
 <div class="os-admin-payments">
     <div th:replace="~{fragments/components :: pageHeader('Thanh toán trực tuyến', 'Đơn ONLINE theo trạng thái thanh toán. “Cần xử lý” là nhóm quản trị viên phải can thiệp; “Chờ đối soát” là kết quả chưa xác định còn trong hạn, hệ thống đang đợi bằng chứng. Cổng thanh toán là mô phỏng, không thu tiền thật.')}"></div>
 
-    <ul class="nav nav-pills gap-1 mb-3 flex-wrap" id="payment-views" aria-label="Lọc theo trạng thái thanh toán">
-        <li class="nav-item" th:each="c : ${categories}">
-            <a class="nav-link py-1 px-3" th:classappend="${view == c.key()} ? 'active'" th:attr="aria-current=${view == c.key()} ? 'page'"
-               th:href="@{/admin/payments(view=${c.key()}, q=${q})}">
-                <span th:text="${c.label()}">Cần xử lý</span>
-                <span class="badge text-bg-light border ms-1" th:text="${counts[c.key()]}" th:attr="data-count=${c.key()}">0</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link py-1 px-3" th:classappend="${view == 'all'} ? 'active'" th:attr="aria-current=${view == 'all'} ? 'page'"
-               th:href="@{/admin/payments(view='all', q=${q})}">Tất cả
-                <span class="badge text-bg-light border ms-1" th:text="${counts['all']}" data-count="all">0</span></a>
-        </li>
-    </ul>
+    <div class="os-pills-scroll-container mb-3" style="overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px;">
+        <ul class="nav nav-pills gap-1 flex-nowrap" id="payment-views" aria-label="Lọc theo trạng thái thanh toán">
+            <li class="nav-item flex-shrink-0" th:each="c : ${categories}">
+                <a class="nav-link py-1 px-3 text-nowrap" th:classappend="${view == c.key()} ? 'active'" th:attr="aria-current=${view == c.key()} ? 'page'"
+                   th:href="@{/admin/payments(view=${c.key()}, q=${q})}">
+                    <span th:text="${c.label()}">Cần xử lý</span>
+                    <span class="badge text-bg-light border ms-1" th:text="${counts[c.key()]}" th:attr="data-count=${c.key()}">0</span>
+                </a>
+            </li>
+            <li class="nav-item flex-shrink-0">
+                <a class="nav-link py-1 px-3 text-nowrap" th:classappend="${view == 'all'} ? 'active'" th:attr="aria-current=${view == 'all'} ? 'page'"
+                   th:href="@{/admin/payments(view='all', q=${q})}">Tất cả
+                    <span class="badge text-bg-light border ms-1" th:text="${counts['all']}" data-count="all">0</span></a>
+            </li>
+        </ul>
+    </div>
 
     <form class="row g-2 mb-3" method="get" th:action="@{/admin/payments}" role="search" id="payment-search">
         <input type="hidden" name="view" th:value="${view}">

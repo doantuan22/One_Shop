@@ -42,8 +42,10 @@
         </td>
         <td><span th:replace="~{fragments/components :: statusBadge(${store.status})}"></span></td>
         <td class="text-end text-nowrap">
-            <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/store-products(storeId=${store.id})}">Sản phẩm</a>
-            <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/stores/{id}/edit(id=${store.id})}">Sửa</a>
+            <div class="table-actions">
+                <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/store-products(storeId=${store.id})}">Sản phẩm</a>
+                <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/stores/{id}/edit(id=${store.id})}">Sửa</a>
+            </div>
         </td>
     </tr>
     <tr th:if="${stores.isEmpty()}">

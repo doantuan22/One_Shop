@@ -51,7 +51,9 @@
         .gallery-main-img {
             width: 100%;
             aspect-ratio: 1 / 1;
-            object-fit: cover;
+            object-fit: contain;
+            background-color: #fffaf8;
+            padding: 16px;
             display: block;
             transition: opacity 0.25s ease;
         }
@@ -104,7 +106,7 @@
 
         .thumb-button:hover,
         .thumb-button.active-thumb {
-            border-color: var(--bs-primary, #b84224);
+            border-color: var(--bs-primary, #ff7f50);
         }
 
         .product-meta-eyebrow {
@@ -178,7 +180,7 @@
         }
 
         .price-tag-hero {
-            color: #922f1c;
+            color: var(--bs-primary, #ff7f50);
             font-size: 2.2rem;
             font-weight: 850;
             letter-spacing: -0.03em;
@@ -258,22 +260,22 @@
             border-radius: 12px;
             font-weight: 700;
             font-size: 1rem;
-            background: linear-gradient(135deg, #b84224, #922f1c);
+            background: linear-gradient(135deg, #ff7f50, #e86738);
             border: none;
             color: #ffffff;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            box-shadow: 0 8px 20px rgba(146, 47, 28, 0.22);
+            box-shadow: 0 6px 18px rgba(255, 127, 80, 0.25);
             transition: background 0.2s ease, box-shadow 0.2s ease;
             transform: none !important;
         }
 
         .btn-add-cart:hover {
-            background: linear-gradient(135deg, #922f1c, #762514);
+            background: linear-gradient(135deg, #e86738, #d65426);
             color: #ffffff;
-            box-shadow: 0 10px 24px rgba(146, 47, 28, 0.28);
+            box-shadow: 0 8px 22px rgba(255, 127, 80, 0.35);
         }
 
         .other-stores-card {

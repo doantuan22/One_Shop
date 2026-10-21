@@ -8,7 +8,7 @@
 <header th:fragment="header" class="os-topbar-coral" id="site-topbar">
     <style>
         .os-topbar-coral {
-            background: linear-gradient(90deg, #b84224 0%, #922f1c 100%);
+            background: linear-gradient(90deg, #ff7f50 0%, #e86738 100%);
             color: #ffffff;
             font-size: 0.875rem;
             padding: 0.45rem 0;
@@ -33,6 +33,18 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+        }
+
+        @media (max-width: 575.98px) {
+            .os-topbar-coral {
+                font-size: 0.775rem;
+                padding: 0.35rem 0;
+            }
+            .os-topbar-coral .container {
+                justify-content: center !important;
+                text-align: center;
+                gap: 0.25rem !important;
+            }
         }
     </style>
 

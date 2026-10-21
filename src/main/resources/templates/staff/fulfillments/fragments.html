@@ -26,7 +26,7 @@
             <th scope="col" class="os-fulfillment-extra-column">Thanh toán</th><th scope="col">Trạng thái phần giao</th>
             <th scope="col" class="os-fulfillment-extra-column">Trạng thái đơn</th>
             <th scope="col" class="text-end os-fulfillment-extra-column">Sản phẩm</th>
-            <th scope="col" class="os-fulfillment-extra-column">Phân công lúc</th><th scope="col">Việc tiếp theo</th>
+            <th scope="col" class="os-fulfillment-extra-column">Phân công lúc</th><th scope="col" class="text-nowrap" style="min-width: 170px;">Việc tiếp theo</th>
         </tr>
         </thead>
         <tbody id="fulfillments-body">
@@ -46,10 +46,10 @@
             <td class="os-fulfillment-extra-column"><span th:replace="~{staff/delivery/fragments :: state(${row.orderStatus})}"></span></td>
             <td class="text-end os-fulfillment-extra-column" th:text="${row.totalQuantity} + ' (' + ${row.itemCount} + ' dòng)'"></td>
             <td class="os-fulfillment-extra-column" th:text="${#temporals.format(row.assignedAt, 'dd/MM/yyyy HH:mm')}"></td>
-            <td>
+            <td class="text-nowrap">
                 <span th:if="${row.blockedReason != null}" class="small text-warning-emphasis os-blocked"
                       th:text="${row.blockedReason}"></span>
-                <a th:if="${row.blockedReason == null and row.nextAction != null}" class="btn btn-primary btn-sm"
+                <a th:if="${row.blockedReason == null and row.nextAction != null}" class="btn btn-primary btn-sm text-nowrap"
                    th:href="@{/staff/fulfillments/{id}(id=${row.fulfillmentId})}" th:text="${row.nextAction.label}"></a>
                 <span th:if="${row.blockedReason == null and row.nextAction == null}" class="small text-secondary">—</span>
             </td>

@@ -4,159 +4,355 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sản phẩm - OneShop</title>
+    <title>Sản phẩm Mỹ phẩm Chính hãng - OneShop</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" th:href="@{/css/bootstrap-coral.css}">
     <link rel="stylesheet" th:href="@{/css/home.css}">
     <style>
+        /* ==========================================================
+           LUXURY BEAUTY CATALOG STYLES
+           ========================================================== */
+        .catalog-page-wrapper {
+            background-color: #faf7f5;
+            min-height: 100vh;
+            padding-bottom: 5rem;
+        }
+
         .catalog-container {
-            max-width: 1320px;
+            width: 100%;
             margin: 0 auto;
-            padding: 2rem 1rem 4rem;
+            padding: 0.5rem 0 3rem;
         }
 
-        .catalog-hero {
-            background: linear-gradient(135deg, #fff5f2 0%, #fffbf9 60%, #ffede6 100%);
-            border: 1px solid rgba(255, 111, 97, 0.2);
-            border-radius: 20px;
-            padding: 1.5rem 1.75rem;
-            margin-bottom: 1.75rem;
+        /* ------------------ 1. HERO BANNER SECTION ------------------ */
+        .catalog-hero-luxury {
             position: relative;
+            border-radius: 26px;
             overflow: hidden;
+            margin-bottom: 0;
+            border: 1px solid rgba(255, 127, 80, 0.18);
+            box-shadow: 0 12px 36px rgba(50, 25, 15, 0.05);
+            background-color: #ffffff;
+            background-image:
+                linear-gradient(90deg,
+                    rgba(255, 255, 255, 0.97) 0%,
+                    rgba(255, 255, 255, 0.93) 42%,
+                    rgba(255, 255, 255, 0.68) 70%,
+                    rgba(255, 255, 255, 0.25) 100%),
+                url('/images/site/catalog-hero.webp');
+            background-repeat: no-repeat;
+            background-position: right center;
+            background-size: cover;
+            padding: 3.25rem 2.75rem 4rem;
         }
 
-        .catalog-hero::before {
-            content: "";
-            position: absolute;
-            top: -40px;
-            right: -40px;
-            width: 140px;
-            height: 140px;
-            background: radial-gradient(circle, rgba(255, 127, 80, 0.15), transparent 70%);
+        .catalog-hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 720px;
+        }
+
+        .catalog-eyebrow-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid #ffd5c7;
+            box-shadow: 0 2px 8px rgba(255, 127, 80, 0.12);
+            border-radius: 999px;
+            padding: 0.35rem 0.95rem;
+            font-size: 0.8rem;
+            font-weight: 750;
+            letter-spacing: 0.06em;
+            color: #bf360c;
+            text-transform: uppercase;
+            margin-bottom: 0.85rem;
+            backdrop-filter: blur(6px);
+        }
+
+        .catalog-eyebrow-chip .chip-dot {
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
-            pointer-events: none;
+            background-color: #ff7f50;
+            box-shadow: 0 0 0 3px rgba(255, 127, 80, 0.25);
         }
 
-        .catalog-title {
-            font-size: clamp(1.5rem, 3vw, 1.85rem);
-            font-weight: 800;
-            color: var(--os-text, #292d32);
+        .catalog-hero-title {
+            font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+            font-weight: 850;
+            color: #1e293b;
             letter-spacing: -0.03em;
-            margin-bottom: 0.35rem;
+            line-height: 1.25;
+            margin-bottom: 0.75rem;
+            word-break: keep-all;
         }
 
-        .catalog-context-pill {
+        .catalog-hero-desc {
+            font-size: 1.025rem;
+            line-height: 1.6;
+            color: #475569;
+            margin-bottom: 1.5rem;
+            max-width: 620px;
+        }
+
+        .catalog-usp-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.85rem;
+        }
+
+        .catalog-usp-item {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(255, 111, 97, 0.25);
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(226, 232, 240, 0.9);
             border-radius: 999px;
-            padding: 0.4rem 1rem;
-            font-size: 0.9rem;
-            color: #555e6d;
+            padding: 0.35rem 0.85rem;
+            font-size: 0.825rem;
+            font-weight: 600;
+            color: #334155;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
         }
 
-        .catalog-context-pill strong {
-            color: var(--bs-primary, #ff7f50);
+        .catalog-usp-item svg {
+            color: #ff7f50;
+            flex-shrink: 0;
         }
 
-        .catalog-context-pill a {
-            color: var(--bs-primary, #ff7f50);
-            font-weight: 700;
-            text-decoration: underline;
-            text-underline-offset: 3px;
-        }
-
-        .filter-panel {
+        /* ------------------ 2. FLOATING FILTER CARD ------------------ */
+        .catalog-filter-card {
+            position: relative;
+            z-index: 10;
             background: #ffffff;
-            border: 1px solid #f0e6e3;
-            border-radius: 18px;
-            box-shadow: 0 4px 20px rgba(48, 36, 32, 0.04);
-            padding: 1.25rem 1.5rem;
+            border: 1px solid #ede3df;
+            border-radius: 22px;
+            box-shadow: 0 10px 32px rgba(45, 25, 15, 0.06);
+            padding: 1.5rem 1.75rem;
+            margin-top: -2rem;
             margin-bottom: 2rem;
         }
 
+        .filter-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 1rem;
+            margin-bottom: 1.15rem;
+            border-bottom: 1px solid #f5ede9;
+        }
+
+        .filter-header-left {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .filter-header-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            background-color: #fff5f2;
+            color: #ff7f50;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .filter-card-title {
+            font-size: 1rem;
+            font-weight: 750;
+            color: #1e293b;
+            letter-spacing: -0.01em;
+            margin: 0;
+        }
+
+        .filter-count-badge {
+            font-size: 0.875rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .filter-count-badge strong {
+            color: #ff7f50;
+            font-weight: 800;
+        }
+
         .filter-label {
-            font-size: 0.825rem;
+            font-size: 0.8rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.04em;
-            color: #707780;
-            margin-bottom: 0.4rem;
+            color: #64748b;
+            margin-bottom: 0.45rem;
+            display: block;
         }
 
-        .filter-input, .filter-select {
-            border: 1px solid #ebdcd7;
+        .filter-input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .filter-input-icon {
+            position: absolute;
+            left: 14px;
+            color: #94a3b8;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .filter-input-styled {
+            height: 46px;
+            border: 1px solid #e2e8f0;
             border-radius: 12px;
-            background-color: #fffaf9;
-            padding: 0.65rem 0.9rem;
+            background-color: #fcfbfa;
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
             font-size: 0.925rem;
-            color: #2c3038;
+            color: #1e293b;
             transition: all 0.2s ease;
+            width: 100%;
         }
 
-        .filter-input:focus, .filter-select:focus {
+        .filter-select-styled {
+            height: 46px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background-color: #fcfbfa;
+            padding: 0.5rem 1rem;
+            font-size: 0.925rem;
+            color: #1e293b;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .filter-input-styled:focus,
+        .filter-select-styled:focus {
             background-color: #ffffff;
-            border-color: var(--bs-primary, #ff7f50) !important;
+            border-color: #ff7f50 !important;
             box-shadow: 0 0 0 0.25rem rgba(255, 127, 80, 0.18) !important;
             outline: none;
         }
 
-        .btn-filter-submit {
-            height: 44px;
+        .btn-filter-submit-modern {
+            height: 46px;
             border-radius: 12px;
-            font-weight: 700;
-            background: var(--bs-primary, #ff7f50);
+            font-weight: 750;
+            font-size: 0.95rem;
+            background: linear-gradient(135deg, #ff7f50 0%, #e86738 100%);
             border: none;
             color: #ffffff;
-            box-shadow: 0 4px 14px rgba(255, 127, 80, 0.25);
+            box-shadow: 0 4px 14px rgba(255, 127, 80, 0.28);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            transition: background 0.2s ease, box-shadow 0.2s ease;
+            gap: 7px;
+            transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+            width: 100%;
         }
 
-        .btn-filter-submit:hover {
-            background: var(--bs-primary-hover, #e86738);
+        .btn-filter-submit-modern:hover {
+            background: linear-gradient(135deg, #e86738 0%, #d65426 100%);
+            box-shadow: 0 6px 18px rgba(255, 127, 80, 0.38);
             color: #ffffff;
-            box-shadow: 0 6px 18px rgba(255, 127, 80, 0.35);
+            transform: translateY(-1px);
         }
 
+        /* Active filter tags */
+        .active-filters-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem;
+            padding-top: 1rem;
+            margin-top: 1rem;
+            border-top: 1px dashed #f0e6e3;
+        }
+
+        .active-filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background-color: #fffaf8;
+            border: 1px solid #ffd5c7;
+            border-radius: 999px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: #bf360c;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+
+        .active-filter-chip:hover {
+            background-color: #ffede6;
+            color: #992807;
+            border-color: #ffab91;
+        }
+
+        .btn-clear-all-filters {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            transition: color 0.15s ease;
+            margin-left: 0.25rem;
+        }
+
+        .btn-clear-all-filters:hover {
+            color: #dc2626;
+        }
+
+        /* ------------------ 3. PRODUCT CARDS ------------------ */
         .modern-product-card {
             background: #ffffff;
-            border: 1px solid #f0e6e3;
-            border-radius: 20px;
+            border: 1px solid #f0e6e2;
+            border-radius: 18px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             height: 100%;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 3px 12px rgba(45, 25, 15, 0.03);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                        box-shadow 0.25s ease,
+                        border-color 0.25s ease;
+            position: relative;
         }
 
         .modern-product-card:hover {
-            border-color: rgba(255, 111, 97, 0.45);
-            box-shadow: 0 12px 30px rgba(255, 127, 80, 0.12);
+            border-color: rgba(255, 127, 80, 0.45);
+            box-shadow: 0 12px 28px rgba(255, 127, 80, 0.14);
+            transform: translateY(-4px);
         }
 
         .product-media {
             position: relative;
-            aspect-ratio: 1 / 1;
             width: 100%;
-            background-color: #fff6f3;
+            height: 205px;
+            background: radial-gradient(circle at center, #ffffff 45%, #fff9f6 100%);
+            border-bottom: 1px solid #f6ede9;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
         }
 
         .product-media img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s ease;
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .modern-product-card:hover .product-media img {
-            transform: scale(1.05);
+            transform: scale(1.06);
         }
 
         .product-placeholder-box {
@@ -170,45 +366,48 @@
         }
 
         .card-body-custom {
-            padding: 1.25rem;
+            padding: 1.15rem 1rem;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
         }
 
-        .product-category-eyebrow {
-            font-size: 0.775rem;
-            font-weight: 700;
+        .product-brand-tag {
+            font-size: 0.75rem;
+            font-weight: 750;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: #8c939e;
-            margin-bottom: 0.4rem;
+            color: #94a3b8;
+            margin-bottom: 0.35rem;
         }
 
         .product-title-link {
-            font-size: 1.025rem;
+            font-size: 0.95rem;
             font-weight: 750;
             line-height: 1.4;
-            color: #292d32;
+            color: #1e293b;
             text-decoration: none;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            margin-bottom: 0.35rem;
+            min-height: 2.8em;
+            margin-bottom: 0.45rem;
             transition: color 0.2s ease;
         }
 
         .product-title-link:hover {
-            color: var(--bs-primary, #ff7f50);
+            color: #ff7f50;
         }
 
         .product-sku-tag {
-            display: inline-block;
-            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.725rem;
             font-weight: 600;
-            background-color: #f7f8fa;
-            color: #7b8290;
+            background-color: #f8fafc;
+            border: 1px solid #f1f5f9;
+            color: #64748b;
             border-radius: 6px;
             padding: 2px 7px;
             margin-bottom: 0.85rem;
@@ -217,166 +416,344 @@
 
         .product-price-highlight {
             font-size: 1.25rem;
-            font-weight: 800;
-            color: var(--bs-primary, #ff7f50);
+            font-weight: 850;
+            color: #ff7f50;
             letter-spacing: -0.02em;
             margin-bottom: 0.35rem;
         }
 
         .product-price-highlight span {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 600;
-            color: #707780;
+            color: #64748b;
         }
 
-        .store-availability-box {
-            background-color: #fffaf8;
-            border: 1px solid #f6ded7;
-            border-radius: 12px;
-            padding: 0.65rem 0.85rem;
-            margin-top: 0.5rem;
+        .stock-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 999px;
         }
 
-        .store-availability-box ul {
-            max-height: 110px;
-            overflow-y: auto;
-            margin: 0;
-            padding: 0;
+        .stock-badge-in {
+            background-color: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
         }
 
-        .store-availability-box li {
-            padding: 0.25rem 0;
-            font-size: 0.825rem;
-            border-bottom: 1px dashed #f2e2dc;
+        .stock-badge-in::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #10b981;
         }
 
-        .store-availability-box li:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
+        .stock-badge-out {
+            background-color: #f8fafc;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
         }
 
+        .btn-card-action {
+            height: 40px;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .btn-add-cart-card {
+            background: linear-gradient(135deg, #ff7f50 0%, #e86738 100%);
+            border: none;
+            color: #ffffff;
+            box-shadow: 0 3px 10px rgba(255, 127, 80, 0.22);
+        }
+
+        .btn-add-cart-card:hover {
+            background: linear-gradient(135deg, #e86738 0%, #d65426 100%);
+            box-shadow: 0 5px 14px rgba(255, 127, 80, 0.32);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .btn-login-card {
+            background-color: #ffffff;
+            border: 1px solid #ffd5c7;
+            color: #ff7f50;
+        }
+
+        .btn-login-card:hover {
+            background-color: #fff5f2;
+            border-color: #ff7f50;
+            color: #e86738;
+        }
+
+        /* ------------------ 4. PAGINATION ------------------ */
         .pagination .page-item .page-link {
             border-radius: 10px;
             margin: 0 4px;
-            color: var(--bs-primary, #ff7f50);
+            color: #ff7f50;
             border-color: #f0ded8;
             font-weight: 600;
-            padding: 0.55rem 1rem;
+            padding: 0.55rem 1.15rem;
             transition: all 0.2s ease;
         }
 
         .pagination .page-item.active .page-link {
-            background-color: var(--bs-primary, #ff7f50) !important;
-            border-color: var(--bs-primary, #ff7f50) !important;
+            background-color: #ff7f50 !important;
+            border-color: #ff7f50 !important;
             color: #ffffff !important;
             box-shadow: 0 4px 12px rgba(255, 127, 80, 0.25);
         }
 
         .pagination .page-item.disabled .page-link {
-            color: #adb5bd;
-            background-color: #f8f9fa;
-            border-color: #e9ecef;
+            color: #94a3b8;
+            background-color: #f8fafc;
+            border-color: #e2e8f0;
+        }
+
+        /* ------------------ RESPONSIVE BREAKPOINTS ------------------ */
+        @media (max-width: 991.98px) {
+            .catalog-hero-luxury {
+                padding: 2.25rem 1.75rem 3rem;
+                background-image:
+                    linear-gradient(90deg,
+                        rgba(255, 255, 255, 0.98) 0%,
+                        rgba(255, 255, 255, 0.92) 55%,
+                        rgba(255, 255, 255, 0.55) 100%),
+                    url('/images/site/catalog-hero.webp');
+            }
+
+            .catalog-filter-card {
+                padding: 1.25rem 1.25rem;
+                margin-top: -1.5rem;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .catalog-container {
+                padding: 0.5rem 0.5rem 2.5rem;
+            }
+
+            .catalog-hero-luxury {
+                border-radius: 18px;
+                padding: 1.6rem 1.15rem 2.25rem;
+                background-position: 70% center;
+                background-image:
+                    linear-gradient(180deg,
+                        rgba(255, 255, 255, 0.94) 0%,
+                        rgba(255, 255, 255, 0.82) 40%,
+                        rgba(255, 255, 255, 0.96) 100%),
+                    url('/images/site/catalog-hero.webp');
+            }
+
+            .catalog-hero-title {
+                font-size: 1.55rem;
+                line-height: 1.22;
+            }
+
+            .catalog-filter-card {
+                border-radius: 18px;
+                padding: 1rem;
+                margin-top: -1.25rem;
+            }
+
+            .filter-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+
+            .product-media {
+                height: 175px;
+                padding: 10px;
+            }
+
+            .card-body-custom {
+                padding: 0.85rem 0.75rem;
+            }
+
+            .product-title-link {
+                font-size: 0.875rem;
+                min-height: 2.6em;
+            }
+
+            .product-price-highlight {
+                font-size: 1.1rem;
+            }
+
+            .product-sku-tag {
+                font-size: 0.65rem;
+                padding: 1px 5px;
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                margin-bottom: 0.45rem;
+            }
+
+            .btn-card-action {
+                height: 36px;
+                font-size: 0.8rem;
+                padding: 0 4px;
+            }
         }
     </style>
 </head>
-<body class="os-home">
+<body class="catalog-page-wrapper">
 <div class="catalog-container">
-    <div class="catalog-hero d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-        <div>
-            <div class="os-eyebrow mb-2">
-                <span class="os-eyebrow-dot"></span>
-                DANH MỤC SẢN PHẨM
+    <!-- 1. HERO BANNER WITH LUXURY BEAUTY BACKGROUND & DEPTH -->
+    <div class="catalog-hero-luxury">
+        <div class="catalog-hero-content">
+            <div class="catalog-eyebrow-chip">
+                <span class="chip-dot"></span>
+                <span>BỘ SƯU TẬP CHÍNH HÃNG</span>
             </div>
-            <h1 class="catalog-title">Mỹ Phẩm & Chăm Sóc</h1>
-            <div id="catalog-context" class="catalog-context-pill">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle cx="12" cy="12" r="10"/>
-                    <line x1="2" y1="12" x2="22" y2="12"/>
-                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                </svg>
-                <span>Một giá online chung cho toàn hệ thống · Hệ thống tự chọn cửa hàng còn hàng khi đặt</span>
+            <h1 class="catalog-hero-title">Mỹ Phẩm &amp; Chăm Sóc Sắc Đẹp</h1>
+            <p class="catalog-hero-desc">
+                Khám phá các dòng dược mỹ phẩm, dưỡng da chuyên sâu và trang điểm cao cấp. Một giá online chung toàn hệ thống, tự động điều phối nguồn hàng gần bạn nhất.
+            </p>
+            <div class="catalog-usp-row">
+                <div class="catalog-usp-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+                    </svg>
+                    <span>100% Chính hãng</span>
+                </div>
+                <div class="catalog-usp-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="2" y1="12" x2="22" y2="12"/>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                    <span>Một giá online toàn chuỗi</span>
+                </div>
+                <div class="catalog-usp-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="1" y="3" width="15" height="13"></rect>
+                        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                        <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                        <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                    </svg>
+                    <span>Giao tận nơi hoặc nhận tại cửa hàng</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <form method="get" th:action="@{/products}" class="filter-panel" id="catalog-filter">
-        <div class="row g-3 align-items-end">
-            <div class="col-12 col-md-4">
-                <label class="filter-label" for="q">Tìm kiếm</label>
-                <input type="search" class="form-control filter-input" id="q" name="q"
-                       th:value="${criteria.keyword}" placeholder="Tên sản phẩm hoặc mã SKU..." maxlength="100">
+    <!-- 2. FLOATING FILTER CARD -->
+    <form method="get" th:action="@{/products}" class="catalog-filter-card" id="catalog-filter">
+        <div class="filter-card-header">
+            <div class="filter-header-left">
+                <span class="filter-header-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                    </svg>
+                </span>
+                <h2 class="filter-card-title">Bộ lọc tìm kiếm sản phẩm</h2>
             </div>
-            <div class="col-6 col-md-3">
+            <div class="filter-count-badge" id="catalog-count">
+                Tìm thấy <strong th:text="${catalog.totalElements}">12</strong> sản phẩm phù hợp
+            </div>
+        </div>
+
+        <div class="row g-3 align-items-end">
+            <!-- Search Keyword -->
+            <div class="col-12 col-lg-4">
+                <label class="filter-label" for="q">Từ khóa tìm kiếm</label>
+                <div class="filter-input-group">
+                    <svg class="filter-input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="search" class="filter-input-styled" id="q" name="q"
+                           th:value="${criteria.keyword}" placeholder="Tên sản phẩm hoặc mã SKU..." maxlength="100">
+                </div>
+            </div>
+
+            <!-- Category -->
+            <div class="col-6 col-sm-6 col-lg-3">
                 <label class="filter-label" for="categoryId">Danh mục</label>
-                <select class="form-select filter-select" id="categoryId" name="categoryId">
+                <select class="form-select filter-select-styled" id="categoryId" name="categoryId">
                     <option value="">Tất cả danh mục</option>
                     <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
                             th:selected="${category.id == criteria.categoryId}">Chăm sóc da</option>
                 </select>
             </div>
-            <div class="col-6 col-md-3">
+
+            <!-- Brand -->
+            <div class="col-6 col-sm-6 col-lg-3">
                 <label class="filter-label" for="brandId">Thương hiệu</label>
-                <select class="form-select filter-select" id="brandId" name="brandId">
+                <select class="form-select filter-select-styled" id="brandId" name="brandId">
                     <option value="">Tất cả thương hiệu</option>
                     <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"
                             th:selected="${brand.id == criteria.brandId}">Cocoon</option>
                 </select>
             </div>
-            <div class="col-12 col-md-2 d-grid">
-                <button type="submit" class="btn btn-primary btn-filter-submit w-100">
+
+            <!-- Submit Button -->
+            <div class="col-12 col-sm-12 col-lg-2">
+                <button type="submit" class="btn btn-filter-submit-modern">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8"/>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                     </svg>
-                    Lọc kết quả
+                    <span>Lọc kết quả</span>
                 </button>
             </div>
         </div>
+
+        <!-- Active Filter Chips -->
+        <th:block th:if="${criteria.keyword != null and !#strings.isEmpty(criteria.keyword) or criteria.categoryId != null or criteria.brandId != null}">
+            <div class="active-filters-wrapper" id="active-filters" aria-label="Bộ lọc đang áp dụng">
+                <span class="small text-secondary fw-semibold">Đang lọc theo:</span>
+                <a th:if="${criteria.keyword != null and !#strings.isEmpty(criteria.keyword)}"
+                   class="active-filter-chip"
+                   th:href="@{/products(categoryId=${criteria.categoryId}, brandId=${criteria.brandId})}"
+                   th:attr="aria-label='Bỏ lọc từ khóa ' + ${criteria.keyword}">
+                    <span>Từ khóa: <strong th:text="${criteria.keyword}">serum</strong></span>
+                    <span aria-hidden="true">&times;</span>
+                </a>
+                <a th:if="${criteria.categoryId != null}"
+                   class="active-filter-chip"
+                   th:href="@{/products(q=${criteria.keyword}, brandId=${criteria.brandId})}">
+                    <span>Danh mục: <strong th:each="category : ${categories}" th:if="${category.id == criteria.categoryId}" th:text="${category.name}">Chăm sóc da</strong></span>
+                    <span aria-hidden="true">&times;</span>
+                </a>
+                <a th:if="${criteria.brandId != null}"
+                   class="active-filter-chip"
+                   th:href="@{/products(q=${criteria.keyword}, categoryId=${criteria.categoryId})}">
+                    <span>Thương hiệu: <strong th:each="brand : ${brands}" th:if="${brand.id == criteria.brandId}" th:text="${brand.name}">Cocoon</strong></span>
+                    <span aria-hidden="true">&times;</span>
+                </a>
+                <a class="btn-clear-all-filters" th:href="@{/products}">Xóa tất cả</a>
+            </div>
+        </th:block>
     </form>
 
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3" id="catalog-results-bar">
-        <span class="text-secondary small" id="catalog-count">
-            <strong class="text-dark" th:text="${catalog.totalElements}">12</strong> sản phẩm
-        </span>
-        <th:block th:if="${criteria.keyword != null and !#strings.isEmpty(criteria.keyword) or criteria.categoryId != null or criteria.brandId != null}">
-            <ul class="list-unstyled d-flex flex-wrap gap-2 mb-0" id="active-filters" aria-label="Bộ lọc đang áp dụng">
-                <li th:if="${criteria.keyword != null and !#strings.isEmpty(criteria.keyword)}">
-                    <a class="badge rounded-pill text-bg-light border text-decoration-none fw-semibold py-2 px-3"
-                       th:href="@{/products(categoryId=${criteria.categoryId}, brandId=${criteria.brandId})}"
-                       th:attr="aria-label='Bỏ lọc từ khóa ' + ${criteria.keyword}">
-                        Từ khóa: <span th:text="${criteria.keyword}">serum</span> &times;
-                    </a>
-                </li>
-                <li th:if="${criteria.categoryId != null}">
-                    <a class="badge rounded-pill text-bg-light border text-decoration-none fw-semibold py-2 px-3"
-                       th:href="@{/products(q=${criteria.keyword}, brandId=${criteria.brandId})}">
-                        Danh mục:
-                        <span th:each="category : ${categories}" th:if="${category.id == criteria.categoryId}" th:text="${category.name}">Chăm sóc da</span> &times;
-                    </a>
-                </li>
-                <li th:if="${criteria.brandId != null}">
-                    <a class="badge rounded-pill text-bg-light border text-decoration-none fw-semibold py-2 px-3"
-                       th:href="@{/products(q=${criteria.keyword}, categoryId=${criteria.categoryId})}">
-                        Thương hiệu:
-                        <span th:each="brand : ${brands}" th:if="${brand.id == criteria.brandId}" th:text="${brand.name}">Cocoon</span> &times;
-                    </a>
-                </li>
-                <li><a class="small align-self-center" th:href="@{/products}">Xóa tất cả</a></li>
-            </ul>
-        </th:block>
-    </div>
-
+    <!-- Empty State -->
     <div th:if="${catalog.isEmpty()}">
-        <div th:replace="~{fragments/components :: emptyState('Không tìm thấy sản phẩm phù hợp. Thử bỏ bớt bộ lọc hoặc đổi từ khóa.')}"></div>
+        <div th:replace="~{fragments/components :: emptyState('Không tìm thấy sản phẩm phù hợp. Thử chọn danh mục khác hoặc xóa bộ lọc tìm kiếm.')}"></div>
     </div>
 
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3 g-lg-4" th:unless="${catalog.isEmpty()}">
+    <!-- 3. PRODUCT CARDS GRID -->
+    <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-2 g-sm-3 g-lg-4" th:unless="${catalog.isEmpty()}">
         <div class="col" th:each="item : ${catalog.content}">
             <article class="modern-product-card" th:with="product=${item.product}">
+                <!-- Product Thumbnail Link -->
                 <a th:href="@{/products/{id}(id=${product.id})}" class="product-media text-decoration-none">
                     <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" th:alt="${product.name}" loading="lazy">
                     <div class="product-placeholder-box" th:unless="${product.imageUrl}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
                             <circle cx="9" cy="9" r="2"/>
                             <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
@@ -384,8 +761,9 @@
                     </div>
                 </a>
 
+                <!-- Card Content -->
                 <div class="card-body-custom">
-                    <div class="product-category-eyebrow" th:text="${product.brandName} + ' · ' + ${product.categoryName}">Cocoon · Chăm sóc da</div>
+                    <div class="product-brand-tag" th:text="${product.brandName}">Cocoon</div>
                     
                     <h2 class="h6 mb-1">
                         <a th:href="@{/products/{id}(id=${product.id})}" class="product-title-link" th:text="${product.name}">Tên sản phẩm</a>
@@ -402,17 +780,26 @@
                                   th:if="${product.originalPrice != null and product.originalPrice > product.price}"
                                   th:text="${#numbers.formatDecimal(product.originalPrice, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></span>
                         </div>
-                        <div class="pt-1" th:with="available=${#lists.size(item.stores.?[inStock]) > 0}">
-                            <span class="badge text-bg-success" th:if="${available}">Còn hàng toàn hệ thống</span>
-                            <span class="badge text-bg-secondary" th:unless="${available}">Hết hàng</span>
+                        
+                        <div class="pt-1 mb-2" th:with="available=${#lists.size(item.stores.?[inStock]) > 0}">
+                            <span class="stock-badge-pill stock-badge-in" th:if="${available}">Còn hàng</span>
+                            <span class="stock-badge-pill stock-badge-out" th:unless="${available}">Hết hàng</span>
                         </div>
-                        <div class="pt-2" th:if="${#lists.size(item.stores.?[inStock]) > 0}">
+
+                        <div th:if="${#lists.size(item.stores.?[inStock]) > 0}">
                             <form th:action="@{/cart/items}" method="post" sec:authorize="hasRole('CUSTOMER')">
                                 <input type="hidden" name="productId" th:value="${product.id}">
                                 <input type="hidden" name="quantity" value="1">
-                                <button type="submit" class="btn btn-primary btn-sm w-100 py-2 fw-bold">Thêm vào giỏ</button>
+                                <button type="submit" class="btn btn-card-action btn-add-cart-card">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="9" cy="21" r="1"/>
+                                        <circle cx="20" cy="21" r="1"/>
+                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                    </svg>
+                                    <span>Thêm vào giỏ</span>
+                                </button>
                             </form>
-                            <a class="btn btn-outline-primary btn-sm w-100 py-2 fw-bold" th:href="@{/login}"
+                            <a class="btn btn-card-action btn-login-card" th:href="@{/login}"
                                sec:authorize="!isAuthenticated()">Đăng nhập để mua</a>
                         </div>
                     </div>
@@ -421,6 +808,7 @@
         </div>
     </div>
 
+    <!-- 4. PAGINATION -->
     <nav class="mt-5" th:if="${catalog.totalPages > 1}" aria-label="Phân trang">
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${catalog.first} ? 'disabled'">
@@ -440,4 +828,4 @@
     </nav>
 </div>
 </body>
-</html>
+</html>

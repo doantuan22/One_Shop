@@ -58,8 +58,10 @@
         <td class="text-end text-nowrap"><span th:if="${product.price != null}" th:replace="~{fragments/components :: price(${product.price})}"></span></td>
         <td><span th:replace="~{fragments/components :: statusBadge(${product.status})}"></span></td>
         <td class="text-end text-nowrap">
-            <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/store-products(productId=${product.id})}">Chi nhánh bán</a>
-            <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/products/{id}/edit(id=${product.id})}">Sửa</a>
+            <div class="table-actions">
+                <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/store-products(productId=${product.id})}">Chi nhánh bán</a>
+                <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/products/{id}/edit(id=${product.id})}">Sửa</a>
+            </div>
         </td>
     </tr>
     <tr th:if="${products.isEmpty()}">

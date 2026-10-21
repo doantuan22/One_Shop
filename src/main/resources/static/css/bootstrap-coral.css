@@ -5,21 +5,30 @@
 
 :root {
   /* ==========================================================
-     1. COLOR PALETTE (TONE MÀU CORAL #FF7F50)
+     1. COLOR PALETTE (TONE MÀU CORAL #FF7F50 - LOGO GỐC)
      ========================================================== */
-  /* Primary: Cam San Hô Chủ Đạo */
-  /* Coral brand remains in surfaces/accent details; this darker companion carries readable text. */
-  --bs-primary: #b84224;
-  --bs-primary-rgb: 184, 66, 36;
-  --bs-primary-hover: #922f1c;
-  --bs-primary-active: #762514;
+  /* Brand Tokens chuẩn hóa */
+  --brand-primary: #ff7f50;
+  --brand-primary-rgb: 255, 127, 80;
+  --brand-primary-hover: #e86738;
+  --brand-primary-active: #d65426;
+  --brand-primary-light: #fff5f2;
+  --brand-primary-border: #ffd5c7;
+  --brand-primary-contrast: #ffffff;
+  --brand-primary-text: #bf360c;
+
+  /* Primary: Cam San Hô Chủ Đạo theo logo One.png */
+  --bs-primary: #ff7f50;
+  --bs-primary-rgb: 255, 127, 80;
+  --bs-primary-hover: #e86738;
+  --bs-primary-active: #d65426;
 
   /* Secondary: Cam đào / Peach nhẹ nhàng */
   --bs-secondary: #ffab91;
   --bs-secondary-rgb: 255, 171, 145;
   --bs-secondary-hover: #f99577;
 
-  /* Deep Tone: Cam đất đậm / Nâu cam dùng cho tiêu đề & text nhấn */
+  /* Deep Tone: Cam đất đậm dùng cho tiêu đề & text nhấn */
   --bs-dark-coral: #bf360c;
   --bs-dark-coral-rgb: 191, 54, 12;
 
@@ -128,7 +137,7 @@
 .form-control:focus,
 .form-select:focus {
   border-color: var(--bs-primary-hover) !important;
-  box-shadow: 0 0 0 0.25rem rgba(184, 66, 36, 0.18) !important;
+  box-shadow: 0 0 0 0.25rem rgba(255, 127, 80, 0.22) !important;
   outline: 3px solid #1f2937;
   outline-offset: 2px;
 }

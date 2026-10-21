@@ -28,7 +28,7 @@
                 <th scope="col" class="text-end">Số đơn</th><th scope="col" class="text-end">Cần Admin xử lý</th>
                 <th scope="col" class="text-end">Hoàn tất</th><th scope="col" class="text-end">Đã hủy</th>
                 <th scope="col" class="text-end">SKU sắp hết</th><th scope="col" class="text-end">SKU hết hàng</th>
-                <th scope="col" class="text-end">Nhân viên</th><th scope="col" class="text-end">Thao tác</th>
+                <th scope="col" class="text-end">Nhân viên</th><th scope="col" class="text-end text-nowrap">Thao tác</th>
             </tr></thead>
             <tbody>
             <tr th:each="row : ${overview}" th:attr="data-overview-store-id=${row.store.id}">
@@ -42,10 +42,12 @@
                 <td class="text-end" data-metric="out-of-stock" th:text="${row.outOfStockRows}"></td>
                 <td class="text-end" data-metric="assigned-staff" th:text="${row.assignedStaff}"></td>
                 <td class="text-end">
-                    <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/orders(storeId=${row.store.id})}">Đơn hàng</a>
-                    <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/inventory(storeId=${row.store.id})}">Tồn kho</a>
-                    <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/staff-assignments(storeId=${row.store.id})}">Phân công</a>
-                    <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/stores/{id}/edit(id=${row.store.id})}">Sửa</a>
+                    <div class="table-actions">
+                        <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/orders(storeId=${row.store.id})}">Đơn hàng</a>
+                        <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/inventory(storeId=${row.store.id})}">Tồn kho</a>
+                        <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/staff-assignments(storeId=${row.store.id})}">Phân công</a>
+                        <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/stores/{id}/edit(id=${row.store.id})}">Sửa</a>
+                    </div>
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(overview)}"><td colspan="10" class="text-center text-secondary py-4">Chưa có chi nhánh.</td></tr>

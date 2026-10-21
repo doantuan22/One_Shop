@@ -1,16 +1,25 @@
 :root {
+    --brand-primary: #ff7f50;
+    --brand-primary-rgb: 255, 127, 80;
+    --brand-primary-hover: #e86738;
+    --brand-primary-active: #d65426;
+    --brand-primary-light: #fff5f2;
+    --brand-primary-border: #ffd5c7;
+    --brand-primary-contrast: #ffffff;
+    --brand-primary-text: #bf360c;
+
     --os-brand-coral: #ff7f50;
-    --os-coral: #b84224;
-    --os-coral-dark: #922f1c;
+    --os-coral: #ff7f50;
+    --os-coral-dark: #e86738;
     --os-coral-light: #fff0ed;
     --os-text: #292d32;
     --os-muted: #707780;
-    --bs-primary: #b84224;
-    --bs-primary-rgb: 184, 66, 36;
-    --bs-primary-hover: #922f1c;
-    --bs-primary-active: #762514;
-    --bs-link-color: #b84224;
-    --bs-link-hover-color: #922f1c;
+    --bs-primary: #ff7f50;
+    --bs-primary-rgb: 255, 127, 80;
+    --bs-primary-hover: #e86738;
+    --bs-primary-active: #d65426;
+    --bs-link-color: #d65426;
+    --bs-link-hover-color: #bf360c;
 }
 
 body {
@@ -22,26 +31,26 @@ body {
     --bs-btn-border-color: var(--os-coral);
     --bs-btn-hover-bg: var(--os-coral-dark);
     --bs-btn-hover-border-color: var(--os-coral-dark);
-    --bs-btn-active-bg: var(--os-coral-dark);
-    --bs-btn-active-border-color: var(--os-coral-dark);
+    --bs-btn-active-bg: #d65426;
+    --bs-btn-active-border-color: #d65426;
 }
 
 .btn-primary,
 .pagination .page-item.active .page-link {
-    --bs-btn-bg: #b84224;
-    --bs-btn-border-color: #b84224;
+    --bs-btn-bg: #ff7f50;
+    --bs-btn-border-color: #ff7f50;
     --bs-btn-color: #fff;
-    --bs-btn-hover-bg: #922f1c;
-    --bs-btn-hover-border-color: #922f1c;
-    --bs-btn-active-bg: #762514;
-    --bs-btn-active-border-color: #762514;
+    --bs-btn-hover-bg: #e86738;
+    --bs-btn-hover-border-color: #e86738;
+    --bs-btn-active-bg: #d65426;
+    --bs-btn-active-border-color: #d65426;
 }
 
 .btn-outline-primary {
-    --bs-btn-color: #922f1c;
-    --bs-btn-border-color: #b84224;
-    --bs-btn-hover-bg: #b84224;
-    --bs-btn-hover-border-color: #b84224;
+    --bs-btn-color: #e86738;
+    --bs-btn-border-color: #ff7f50;
+    --bs-btn-hover-bg: #ff7f50;
+    --bs-btn-hover-border-color: #ff7f50;
     --bs-btn-hover-color: #fff;
 }
 
@@ -102,7 +111,7 @@ body {
     gap: 5px;
     font-size: 1.25rem;
     font-weight: 800;
-    color: #b84224;
+    color: #ff7f50;
 }
 
 .os-app--staff .os-staff-brand-role {

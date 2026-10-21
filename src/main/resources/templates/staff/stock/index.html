@@ -123,7 +123,7 @@
                         <th>Giá online chung</th>
                         <th>Trạng thái</th>
                         <th>Tồn thực tế</th>
-                        <th>Thao tác</th>
+                        <th class="text-nowrap" style="min-width: 200px;">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -144,10 +144,12 @@
                         </td>
                         <td class="fw-bold" data-field="exact-quantity" th:text="${item.quantity}"></td>
                         <td>
-                            <a class="btn btn-outline-primary btn-sm" th:unless="${historySelection}"
-                                th:href="@{/staff/stock/{id}/adjust(id=${item.storeProductId})}">Điều chỉnh tồn</a>
-                            <a class="btn btn-outline-secondary btn-sm"
-                                th:href="@{/staff/inventory-history/{id}(id=${item.storeProductId})}">Lịch sử</a>
+                            <div class="table-actions">
+                                <a class="btn btn-outline-primary btn-sm" th:unless="${historySelection}"
+                                    th:href="@{/staff/stock/{id}/adjust(id=${item.storeProductId})}">Điều chỉnh tồn</a>
+                                <a class="btn btn-outline-secondary btn-sm"
+                                    th:href="@{/staff/inventory-history/{id}(id=${item.storeProductId})}">Lịch sử</a>
+                            </div>
                         </td>
                     </tr>
                     <tr th:if="${stock.isEmpty()}">

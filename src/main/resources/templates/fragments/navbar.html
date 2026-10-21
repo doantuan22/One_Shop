@@ -1,341 +1,571 @@
-<!doctype html>
-<html
-  lang="vi"
-  xmlns:th="http://www.thymeleaf.org"
-  xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6"
->
-  <body>
-    <nav
-      th:fragment="navbar"
-      class="navbar navbar-expand-lg bg-white sticky-top os-navbar-custom"
-    >
-      <style>
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+<body>
+<nav th:fragment="navbar" class="navbar bg-white sticky-top os-navbar-custom" aria-label="Điều hướng chính">
+    <style>
         .os-navbar-custom {
-          border-bottom: 1px solid #e2e8f0;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
-          padding: 0.65rem 0;
-          background-color: #ffffff;
+            border-bottom: 1px solid #f0e6e3;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            padding: 0.5rem 0;
+            background-color: #ffffff;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
         }
 
+        /* ------------------ LOGO ------------------ */
         .navbar-brand-custom {
-          display: inline-flex;
-          align-items: center;
-          text-decoration: none;
-          padding: 0;
-          height: 52px;
-          overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            padding: 0;
+            height: 48px;
+            overflow: hidden;
+            flex-shrink: 0;
         }
 
         .navbar-logo-img {
-          height: 90px;
-          width: auto;
-          object-fit: contain;
-          display: block;
-          transform: translateY(4px) scale(1.32);
-          transform-origin: center;
-          transition: transform 0.2s ease;
+            height: 76px;
+            width: auto;
+            object-fit: contain;
+            display: block;
+            transform: translateY(2px) scale(1.22);
+            transform-origin: left center;
+            transition: transform 0.2s ease;
         }
 
         .navbar-brand-custom:hover .navbar-logo-img {
-          transform: scale(1.42);
+            transform: translateY(2px) scale(1.28);
+        }
+
+        /* ------------------ NAVIGATION LINKS ------------------ */
+        .os-nav-menu {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin: 0;
+            padding: 0;
+            list-style: none;
         }
 
         .os-nav-link {
-          font-size: 0.925rem;
-          font-weight: 600;
-          color: #475569 !important;
-          padding: 0.5rem 0.85rem !important;
-          border-radius: 8px;
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          transition:
-            color 0.15s ease,
-            background-color 0.15s ease;
+            font-size: 0.925rem;
+            font-weight: 600;
+            color: #475569 !important;
+            padding: 0.5rem 0.95rem !important;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: color 0.15s ease, background-color 0.15s ease;
+            white-space: nowrap;
+            height: 38px;
         }
 
         .os-nav-link:hover,
         .os-nav-link.active {
-          color: #b84224 !important;
-          background-color: #fffaf8;
+            color: #ff7f50 !important;
+            background-color: #fffaf8;
+        }
+
+        /* ------------------ RIGHT ACTION GROUP ------------------ */
+        .os-nav-actions-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.65rem;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .os-btn-cart {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            height: 38px;
+            padding: 0 0.9rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #334155 !important;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .os-btn-cart:hover {
+            color: #ff7f50 !important;
+            border-color: #ffd5c7;
+            background-color: #fffaf8;
+        }
+
+        .os-btn-orders {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            height: 38px;
+            padding: 0 0.85rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #475569 !important;
+            background-color: transparent;
+            border: 1px solid transparent;
+            border-radius: 9px;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .os-btn-orders:hover {
+            color: #ff7f50 !important;
+            background-color: #fffaf8;
+            border-color: #ffd5c7;
         }
 
         .btn-nav-login {
-          font-size: 0.9rem;
-          font-weight: 600;
-          color: #334155;
-          text-decoration: none;
-          padding: 0.45rem 0.9rem;
-          border-radius: 9px;
-          transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 38px;
+            padding: 0 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #334155;
+            text-decoration: none;
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            background-color: #ffffff;
+            transition: all 0.15s ease;
+            white-space: nowrap;
         }
 
         .btn-nav-login:hover {
-          color: #b84224;
-          background-color: #f8fafc;
+            color: #ff7f50;
+            border-color: #ffd5c7;
+            background-color: #fffaf8;
         }
 
         .btn-nav-register {
-          font-size: 0.9rem;
-          font-weight: 700;
-          color: #ffffff !important;
-          background: linear-gradient(135deg, #b84224, #922f1c);
-          border: none;
-          padding: 0.45rem 1.15rem;
-          border-radius: 9px;
-          box-shadow: 0 4px 12px rgba(146, 47, 28, 0.2);
-          text-decoration: none;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          transition:
-            background 0.2s ease,
-            box-shadow 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 38px;
+            padding: 0 1.15rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #ff7f50 0%, #e86738 100%);
+            border: 1px solid transparent;
+            border-radius: 9px;
+            box-shadow: 0 2px 8px rgba(255, 127, 80, 0.25);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
         .btn-nav-register:hover {
-          background: linear-gradient(135deg, #922f1c, #762514);
-          box-shadow: 0 6px 16px rgba(146, 47, 28, 0.28);
+            background: linear-gradient(135deg, #e86738 0%, #d65426 100%);
+            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.35);
+            color: #ffffff !important;
         }
 
         .user-profile-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 7px;
-          background-color: #f8fafc;
-          border: 1px solid #e2e8f0;
-          padding: 0.35rem 0.85rem;
-          border-radius: 999px;
-          font-size: 0.875rem;
-          font-weight: 600;
-          color: #1e293b;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            height: 38px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 0 0.85rem;
+            border-radius: 9px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #1e293b;
+            white-space: nowrap;
+        }
+
+        .user-profile-badge .text-coral {
+            color: #ff7f50 !important;
         }
 
         .btn-nav-logout {
-          font-size: 0.825rem;
-          font-weight: 600;
-          color: #64748b;
-          background: transparent;
-          border: 1px solid #cbd5e1;
-          padding: 0.35rem 0.75rem;
-          border-radius: 8px;
-          transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 38px;
+            font-size: 0.825rem;
+            font-weight: 600;
+            color: #64748b;
+            background: transparent;
+            border: 1px solid #cbd5e1;
+            padding: 0 0.75rem;
+            border-radius: 9px;
+            transition: all 0.15s ease;
+            white-space: nowrap;
         }
 
         .btn-nav-logout:hover {
-          color: #dc2626;
-          border-color: #fca5a5;
-          background-color: #fef2f2;
+            color: #dc2626;
+            border-color: #fca5a5;
+            background-color: #fef2f2;
         }
 
         .nav-role-badge {
-          font-size: 0.775rem;
-          font-weight: 700;
-          padding: 0.3rem 0.7rem;
-          border-radius: 8px;
-          text-decoration: none;
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            height: 38px;
+            font-size: 0.775rem;
+            font-weight: 700;
+            padding: 0 0.75rem;
+            border-radius: 9px;
+            text-decoration: none;
+            white-space: nowrap;
         }
 
         .nav-role-staff {
-          background-color: #eff6ff;
-          color: #1d4ed8 !important;
-          border: 1px solid #bfdbfe;
+            background-color: #eff6ff;
+            color: #1d4ed8 !important;
+            border: 1px solid #bfdbfe;
         }
 
         .nav-role-staff:hover {
-          background-color: #dbeafe;
+            background-color: #dbeafe;
         }
 
         .nav-role-admin {
-          background-color: #fdf2f8;
-          color: #be185d !important;
-          border: 1px solid #fbcfe8;
+            background-color: #fdf2f8;
+            color: #be185d !important;
+            border: 1px solid #fbcfe8;
         }
 
         .nav-role-admin:hover {
-          background-color: #fce7f3;
+            background-color: #fce7f3;
+        }
+
+        /* ------------------ MOBILE CONTROLS ------------------ */
+        .os-mobile-cart-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 9px;
+            color: #334155;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+
+        .os-mobile-cart-btn:hover {
+            color: #ff7f50;
+            background-color: #fffaf8;
+            border-color: #ffd5c7;
         }
 
         .navbar-toggler-custom {
-          border: 1px solid #e2e8f0;
-          border-radius: 8px;
-          padding: 0.35rem 0.65rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            background-color: #ffffff;
         }
 
         .navbar-toggler-custom:focus {
-          box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.18);
+            box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.22);
         }
-      </style>
 
-      <div class="container">
-        <a class="navbar-brand navbar-brand-custom" th:href="@{/}">
-          <img
-            th:src="@{/images/One.png}"
-            alt="OneShop Logo"
-            class="navbar-logo-img"
-          />
-        </a>
+        /* ------------------ LAYOUT GRID / RESPONSIVE ------------------ */
+        @media (min-width: 992px) {
+            .os-navbar-container {
+                display: grid !important;
+                grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) !important;
+                align-items: center !important;
+                column-gap: 1.25rem;
+                width: 100%;
+            }
 
-        <button
-          class="navbar-toggler navbar-toggler-custom"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#mainNav"
-          aria-controls="mainNav"
-          aria-expanded="false"
-          aria-label="Mở menu điều hướng"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
+            .os-nav-col-left {
+                display: flex !important;
+                align-items: center;
+                justify-content: flex-start;
+            }
 
-        <div class="collapse navbar-collapse" id="mainNav">
-          <ul class="navbar-nav me-auto ps-lg-3 gap-lg-1">
-            <li class="nav-item">
-              <a class="nav-link os-nav-link" th:href="@{/}">Trang chủ</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link os-nav-link" th:href="@{/products}"
-                >Sản phẩm</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link os-nav-link" th:href="@{/stores}"
-                >Hệ thống cửa hàng</a
-              >
-            </li>
-            <li
-              class="nav-item"
-              sec:authorize="!isAuthenticated() or hasRole('CUSTOMER')"
-            >
-              <a class="nav-link os-nav-link" th:href="@{/cart}">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <circle cx="9" cy="21" r="1" />
-                  <circle cx="20" cy="21" r="1" />
-                  <path
-                    d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
-                  />
-                </svg>
-                <span>Giỏ hàng</span>
-              </a>
-            </li>
-          </ul>
+            .os-nav-col-center {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                white-space: nowrap;
+            }
 
-          <ul class="navbar-nav align-items-lg-center gap-2 mt-3 mt-lg-0">
-            <li class="nav-item" sec:authorize="hasRole('CUSTOMER')">
-              <a class="nav-link os-nav-link" th:href="@{/orders}">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="15"
-                  height="15"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path
-                    d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"
-                  />
-                  <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
-                </svg>
-                <span>Đơn hàng của tôi</span>
-              </a>
-            </li>
+            .os-nav-col-right {
+                display: flex !important;
+                align-items: center;
+                justify-content: flex-end;
+                white-space: nowrap;
+            }
 
-            <li class="nav-item" sec:authorize="hasRole('STAFF')">
-              <a class="nav-role-badge nav-role-staff" th:href="@{/staff}">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-                <span>Khu vực nhân viên</span>
-              </a>
-            </li>
+            /* Hide mobile-only elements on desktop */
+            .os-nav-mobile-controls,
+            .os-nav-mobile-drawer {
+                display: none !important;
+            }
+        }
 
-            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-              <a class="nav-role-badge nav-role-admin" th:href="@{/admin}">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path
-                    d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
-                  />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-                <span>Quản trị</span>
-              </a>
-            </li>
+        /* Tối ưu riêng cho dải màn hình 992px - 1199.98px (như tablet ngang 1024px) */
+        @media (min-width: 992px) and (max-width: 1199.98px) {
+            .os-navbar-container {
+                column-gap: 0.75rem !important;
+                padding-left: 1.25rem !important;
+                padding-right: 1.25rem !important;
+                max-width: 100% !important;
+            }
 
-            <li class="nav-item" sec:authorize="!isAuthenticated()">
-              <a class="btn-nav-login" th:href="@{/login}">Đăng nhập</a>
-            </li>
-            <li class="nav-item" sec:authorize="!isAuthenticated()">
-              <a class="btn-nav-register" th:href="@{/register}">Đăng ký</a>
-            </li>
+            .os-nav-link {
+                padding: 0.45rem 0.65rem !important;
+                font-size: 0.85rem !important;
+            }
 
-            <li class="nav-item" sec:authorize="isAuthenticated()">
-              <div class="user-profile-badge">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="15"
-                  height="15"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="text-coral"
-                >
-                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-                <span sec:authentication="name">user</span>
-              </div>
-            </li>
+            .os-nav-actions-group {
+                gap: 0.45rem !important;
+            }
 
-            <li class="nav-item" sec:authorize="isAuthenticated()">
-              <form th:action="@{/logout}" method="post" class="d-inline m-0">
-                <button type="submit" class="btn-nav-logout">Đăng xuất</button>
-              </form>
-            </li>
-          </ul>
+            .os-btn-cart,
+            .os-btn-orders,
+            .btn-nav-login,
+            .btn-nav-register,
+            .user-profile-badge,
+            .btn-nav-logout,
+            .nav-role-badge {
+                height: 36px !important;
+                padding: 0 0.75rem !important;
+                font-size: 0.8125rem !important;
+            }
+
+            .navbar-logo-img {
+                height: 68px !important;
+            }
+        }
+
+        @media (max-width: 991.98px) {
+            .os-navbar-container {
+                display: flex !important;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+
+            .os-nav-col-left {
+                display: flex;
+                align-items: center;
+            }
+
+            /* Hide desktop center and right columns on mobile */
+            .os-nav-col-center,
+            .os-nav-col-right {
+                display: none !important;
+            }
+
+            .os-nav-mobile-controls {
+                display: flex !important;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .os-nav-mobile-drawer {
+                flex-basis: 100%;
+                width: 100%;
+            }
+
+            .os-mobile-drawer-body {
+                padding: 1rem 0 0.5rem;
+                border-top: 1px solid #f1f5f9;
+                margin-top: 0.75rem;
+            }
+
+            .os-mobile-drawer-body .os-nav-link {
+                height: 42px;
+                padding: 0 0.75rem !important;
+                width: 100%;
+            }
+
+            .navbar-logo-img {
+                height: 64px;
+                transform: translateY(1px) scale(1.18);
+            }
+
+            .navbar-brand-custom {
+                height: 42px;
+            }
+        }
+    </style>
+
+    <div class="container os-navbar-container">
+        <!-- 1. CỘT TRÁI: Logo thương hiệu OneShop -->
+        <div class="os-nav-col-left">
+            <a class="navbar-brand navbar-brand-custom" th:href="@{/}">
+                <img th:src="@{/images/One.png}" alt="OneShop Logo" class="navbar-logo-img">
+            </a>
         </div>
-      </div>
-    </nav>
+
+        <!-- 2. CỘT GIỮA: Navigation căn chính giữa tuyệt đối trên Desktop -->
+        <div class="os-nav-col-center">
+            <ul class="os-nav-menu">
+                <li><a class="os-nav-link" th:href="@{/}">Trang chủ</a></li>
+                <li><a class="os-nav-link" th:href="@{/products}">Sản phẩm</a></li>
+                <li><a class="os-nav-link" th:href="@{/stores}">Hệ thống cửa hàng</a></li>
+            </ul>
+        </div>
+
+        <!-- 3. CỘT PHẢI: Nhóm nút hành động căn phải trên Desktop -->
+        <div class="os-nav-col-right">
+            <div class="os-nav-actions-group">
+                <!-- Giỏ hàng (Khách vãng lai & Khách hàng) -->
+                <a class="os-btn-cart" th:href="@{/cart}" sec:authorize="!isAuthenticated() or hasRole('CUSTOMER')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span>Giỏ hàng</span>
+                </a>
+
+                <!-- Đơn hàng của tôi (Khách hàng) -->
+                <a class="os-btn-orders" th:href="@{/orders}" sec:authorize="hasRole('CUSTOMER')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                    </svg>
+                    <span>Đơn hàng</span>
+                </a>
+
+                <!-- Nhân viên -->
+                <a class="nav-role-badge nav-role-staff" th:href="@{/staff}" sec:authorize="hasRole('STAFF')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <span>Nhân viên</span>
+                </a>
+
+                <!-- Quản trị -->
+                <a class="nav-role-badge nav-role-admin" th:href="@{/admin}" sec:authorize="hasRole('ADMIN')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <span>Quản trị</span>
+                </a>
+
+                <!-- Chưa đăng nhập: Đăng nhập & Đăng ký -->
+                <a class="btn-nav-login" th:href="@{/login}" sec:authorize="!isAuthenticated()">Đăng nhập</a>
+                <a class="btn-nav-register" th:href="@{/register}" sec:authorize="!isAuthenticated()">Đăng ký</a>
+
+                <!-- Đã đăng nhập: User Badge & Đăng xuất -->
+                <div class="user-profile-badge" sec:authorize="isAuthenticated()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-coral">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span sec:authentication="name">user</span>
+                </div>
+                <form th:action="@{/logout}" method="post" class="d-inline m-0" sec:authorize="isAuthenticated()">
+                    <button type="submit" class="btn-nav-logout">Đăng xuất</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 4. NÚT ĐIỀU KHIỂN MOBILE (Hiện trên Tablet/Mobile < 992px) -->
+        <div class="os-nav-mobile-controls">
+            <!-- Nút Giỏ hàng nhanh trên mobile -->
+            <a class="os-mobile-cart-btn" th:href="@{/cart}" sec:authorize="!isAuthenticated() or hasRole('CUSTOMER')" aria-label="Giỏ hàng">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+            </a>
+
+            <!-- Hamburger Button mở menu drawer -->
+            <button class="navbar-toggler navbar-toggler-custom" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Mở menu điều hướng">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+
+        <!-- 5. MENU THU GỌN MOBILE (Hiện khi bấm Hamburger trên Mobile < 992px) -->
+        <div class="collapse navbar-collapse os-nav-mobile-drawer" id="mainNav">
+            <div class="os-mobile-drawer-body">
+                <ul class="navbar-nav gap-1 mb-3">
+                    <li class="nav-item">
+                        <a class="nav-link os-nav-link" th:href="@{/}">Trang chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link os-nav-link" th:href="@{/products}">Sản phẩm</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link os-nav-link" th:href="@{/stores}">Hệ thống cửa hàng</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex flex-column gap-2 pt-3 border-top">
+                    <!-- Giỏ hàng đầy đủ -->
+                    <a class="os-btn-cart justify-content-center" th:href="@{/cart}" sec:authorize="!isAuthenticated() or hasRole('CUSTOMER')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        <span>Giỏ hàng</span>
+                    </a>
+
+                    <!-- Đơn hàng -->
+                    <a class="os-btn-orders justify-content-center border" th:href="@{/orders}" sec:authorize="hasRole('CUSTOMER')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                        </svg>
+                        <span>Đơn hàng của tôi</span>
+                    </a>
+
+                    <!-- Role Badges -->
+                    <a class="nav-role-badge nav-role-staff justify-content-center" th:href="@{/staff}" sec:authorize="hasRole('STAFF')">
+                        <span>Khu vực nhân viên</span>
+                    </a>
+                    <a class="nav-role-badge nav-role-admin justify-content-center" th:href="@{/admin}" sec:authorize="hasRole('ADMIN')">
+                        <span>Quản trị</span>
+                    </a>
+
+                    <!-- Auth buttons -->
+                    <a class="btn-nav-login justify-content-center" th:href="@{/login}" sec:authorize="!isAuthenticated()">Đăng nhập</a>
+                    <a class="btn-nav-register justify-content-center" th:href="@{/register}" sec:authorize="!isAuthenticated()">Đăng ký</a>
+
+                    <!-- Logged in state -->
+                    <div class="user-profile-badge justify-content-center" sec:authorize="isAuthenticated()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-coral">
+                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span sec:authentication="name">user</span>
+                    </div>
+                    <form th:action="@{/logout}" method="post" class="w-100 m-0" sec:authorize="isAuthenticated()">
+                        <button type="submit" class="btn-nav-logout w-100 justify-content-center">Đăng xuất</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
   </body>
 </html>

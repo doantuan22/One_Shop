@@ -15,12 +15,12 @@
     <p class="small text-secondary mt-2 mb-0">Chuyển chi nhánh: bỏ phân công cũ rồi gán chi nhánh mới. Gán lại cùng nhân viên và chi nhánh sử dụng lại bản ghi hiện có.</p>
 </form>
 <form th:replace="~{admin/fragments :: storeFilter('/admin/staff-assignments')}"></form>
-<div class="table-responsive"><table class="table table-hover"><thead><tr><th>Nhân viên</th><th>Chi nhánh</th><th>Ngày phân công</th><th>Trạng thái</th><th></th></tr></thead>
+<div class="table-responsive"><table class="table table-hover align-middle"><thead><tr><th>Nhân viên</th><th>Chi nhánh</th><th>Ngày phân công</th><th>Trạng thái</th><th class="text-end text-nowrap">Thao tác</th></tr></thead>
 <tbody><tr th:each="a : ${assignments.content}" th:attr="data-assignment-id=${a.id}">
     <td><span th:text="${a.staff.fullName}"></span><div class="small text-secondary" th:text="${a.staff.email} + ' · ' + ${a.staff.role} + ' · ' + ${a.staff.status}"></div></td>
     <td><span th:text="${a.store.name}"></span><div class="small" th:text="${a.store.status}"></div></td>
     <td th:text="${#temporals.format(a.assignedAt, 'dd/MM/yyyy HH:mm')}"></td>
-    <td th:text="${a.status}"></td><td><form th:action="@{/admin/staff-assignments/{id}/status(id=${a.id})}" method="post">
+    <td th:text="${a.status}"></td><td class="text-end text-nowrap"><form th:action="@{/admin/staff-assignments/{id}/status(id=${a.id})}" method="post" class="d-inline">
         <input type="hidden" name="status" th:value="${a.status.name() == 'ACTIVE'} ? 'INACTIVE' : 'ACTIVE'">
         <button class="btn btn-sm btn-outline-primary" th:text="${a.status.name() == 'ACTIVE'} ? 'Bỏ phân công' : 'Bật lại'"></button></form></td>
 </tr><tr th:if="${assignments.empty}"><td colspan="5">Chưa có phân công.</td></tr></tbody></table></div>

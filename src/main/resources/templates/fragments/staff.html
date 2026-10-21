@@ -10,10 +10,10 @@
     <header th:fragment="topbar" class="navbar navbar-light os-appbar os-staff-coral-header sticky-top px-3"
         th:with="stores=${assignedStores}">
         <style>
-            /* OneShop Staff Coral: chỉ áp dụng cho layout Staff, không đổi nội dung hoặc logic. */
+            /* OneShop Staff Coral: đồng bộ tone màu nhận diện thương hiệu logo #FF7F50 */
             .os-app--staff {
-                --os-staff-coral: #b84224;
-                --os-staff-coral-hover: #922f1c;
+                --os-staff-coral: #ff7f50;
+                --os-staff-coral-hover: #e86738;
             }
 
             .os-app--staff .os-staff-coral-header {
@@ -36,7 +36,7 @@
                 z-index: -1;
                 inset: 0 0 auto;
                 height: 40px;
-                background: linear-gradient(100deg, #b84224, #922f1c);
+                background: linear-gradient(100deg, #ff7f50, #e86738);
             }
 
             .os-app--staff .os-staff-coral-header>.os-staff-brand-row {
@@ -46,7 +46,7 @@
             }
 
             .os-app--staff .os-staff-coral-header .navbar-brand {
-                color: #b84224 !important;
+                color: #ff7f50 !important;
                 font-weight: 800 !important;
                 letter-spacing: -.03em;
                 font-size: 1.35rem;
@@ -125,14 +125,14 @@
             }
 
             .os-app--staff .os-sidebar .os-nav-link:hover:not(.active) {
-                color: #922f1c;
+                color: #e86738;
                 background: #fff5f2;
             }
 
             .os-app--staff .os-sidebar .nav-pills .os-nav-link.active {
-                background: #b84224 !important;
+                background: #ff7f50 !important;
                 color: #fff !important;
-                box-shadow: 0 4px 12px rgba(146, 47, 28, .18);
+                box-shadow: 0 4px 12px rgba(255, 127, 80, .25);
             }
 
             @media (max-width: 767.98px) {

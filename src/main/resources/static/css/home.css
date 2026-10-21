@@ -1,17 +1,26 @@
 :root {
+    --brand-primary: #ff7f50;
+    --brand-primary-rgb: 255, 127, 80;
+    --brand-primary-hover: #e86738;
+    --brand-primary-active: #d65426;
+    --brand-primary-light: #fff5f2;
+    --brand-primary-border: #ffd5c7;
+    --brand-primary-contrast: #ffffff;
+    --brand-primary-text: #bf360c;
+
     --os-brand-coral: #ff7f50;
-    --os-coral: #b84224;
-    --os-coral-dark: #922f1c;
+    --os-coral: #ff7f50;
+    --os-coral-dark: #e86738;
     --os-coral-light: #fff0ed;
     --os-text: #292d32;
     --os-muted: #707780;
     --os-border: #f0e6e3;
     --os-surface: #ffffff;
-    --bs-primary: #b84224;
-    --bs-primary-rgb: 184, 66, 36;
-    --bs-primary-hover: #922f1c;
-    --bs-link-color: #b84224;
-    --bs-link-hover-color: #922f1c;
+    --bs-primary: #ff7f50;
+    --bs-primary-rgb: 255, 127, 80;
+    --bs-primary-hover: #e86738;
+    --bs-link-color: #d65426;
+    --bs-link-hover-color: #bf360c;
 }
 
 /* ---------------------------------------------------------------------------------------------
@@ -386,13 +395,13 @@ body:has(.home-hero) {
 }
 
 .home-hero__submit {
-    background: #b84224;
-    border-color: #b84224;
+    background: #ff7f50;
+    border-color: #ff7f50;
 }
 
 .home-hero__submit:hover {
-    background: #922f1c;
-    border-color: #922f1c;
+    background: #e86738;
+    border-color: #e86738;
 }
 
 /* a category without a photo: neutral tile with the name */
@@ -482,17 +491,29 @@ body:has(.home-hero) {
 }
 
 .pcard__media {
-    aspect-ratio: 1 / 1;
     width: 100%;
+    height: 200px;
+    max-height: 200px;
     overflow: hidden;
-    background: var(--os-coral-light);
+    background: #fffaf8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
 }
 
 .pcard__media img {
     display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.pcard:hover .pcard__media img {
+    transform: scale(1.05);
 }
 
 .pcard__ph {
