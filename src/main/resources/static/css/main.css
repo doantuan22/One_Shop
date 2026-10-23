@@ -7,7 +7,7 @@
     --brand-primary-light: #fff5f2;
     --brand-primary-border: #ffd5c7;
     --brand-primary-contrast: #ffffff;
-    --brand-primary-text: #bf360c;
+    --brand-primary-text: #d65426;
 
     --os-brand-coral: #ff7f50;
     --os-primary: #ff7f50;
@@ -18,7 +18,7 @@
     --bs-primary: #ff7f50;
     --bs-primary-rgb: 255, 127, 80;
     --bs-link-color: #d65426;
-    --bs-link-hover-color: #bf360c;
+    --bs-link-hover-color: #e86738;
 }
 
 body {
@@ -253,7 +253,7 @@ body {
     padding: 0.5rem 1rem;
     border-radius: 8px;
     background: #fff;
-    color: #b84224;
+    color: #d65426;
     font-weight: 700;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
 }
@@ -267,12 +267,12 @@ body {
 
 /* dark coral for small text on white: 5.46:1 (WCAG AA) where the light coral (#ff7f50) is only ~2.6:1 */
 .text-coral-strong {
-    color: #b84224;
+    color: #d65426;
 }
 
 /* Small coral text and links meet AA on white; do not use the lighter brand-only coral as text. */
 .text-coral {
-    color: #b84224 !important;
+    color: #d65426 !important;
 }
 
 /* data tables keep at least 14px on desktop (audit: no 11-12px for essential data) */

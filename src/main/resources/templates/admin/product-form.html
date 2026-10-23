@@ -116,7 +116,7 @@
                         <div class="card h-100">
                             <img th:src="${image.imageUrl}" alt="Ảnh sản phẩm" class="card-img-top os-product-img" loading="lazy">
                             <div class="card-body p-2">
-                                <span class="badge text-bg-primary mb-2" th:if="${image.primary}">Ảnh đại diện</span>
+                                <span class="badge os-soft os-soft-coral mb-2" th:if="${image.primary}">Ảnh đại diện</span>
                                 <div class="d-flex flex-wrap gap-1">
                                     <form method="post" th:unless="${image.primary}"
                                           th:action="@{/admin/products/{id}/images/{imageId}/primary(id=${editId}, imageId=${image.id})}">

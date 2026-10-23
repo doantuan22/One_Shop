@@ -5,12 +5,12 @@
 </head>
 <body>
 <div class="os-staff-fulfillments">
-    <div th:replace="~{fragments/components :: pageHeader(${fixedType == null ? 'Đơn cần xử lý của chi nhánh' : (fixedType.name() == 'STORE_PICKUP' ? 'Đơn cần xử lý · nhận tại cửa hàng' : 'Đơn cần xử lý · giao tận nơi')}, 'Mỗi dòng là phần hàng chi nhánh của bạn phải chuẩn bị. Đơn nhiều chi nhánh được tách thành từng phần, mỗi chi nhánh chỉ thấy và xử lý phần của mình.')}"></div>
+    <div th:replace="~{fragments/components :: pageHeader(${fixedType == null ? (basePath == '/staff/orders' ? 'Đơn hàng của chi nhánh' : 'Đơn cần xử lý của chi nhánh') : (fixedType.name() == 'STORE_PICKUP' ? 'Đơn cần xử lý · nhận tại cửa hàng' : 'Đơn cần xử lý · giao tận nơi')}, (${fixedType == null and basePath == '/staff/orders'} ? 'Các phần giao thuộc chi nhánh được phân công. Mở một dòng để xem chi tiết đơn và xử lý bước tiếp theo.' : 'Mỗi dòng là phần hàng chi nhánh của bạn phải chuẩn bị. Đơn nhiều chi nhánh được tách thành từng phần, mỗi chi nhánh chỉ thấy và xử lý phần của mình.'))}"></div>
 
     <form method="get" th:action="@{${basePath}}" id="fulfillment-filter" class="os-filter card mb-4"
           th:classappend="${fixedType == null} ? '' : 'os-filter--fixed'">
         <div class="card-body">
-            <div class="os-filter-grid">
+            <div class="os-filter-grid os-filter-grid--compact">
                 <div class="os-filter-field"
                      th:if="${assignedStores != null and assignedStores.size() > 1}">
                     <label class="form-label" for="f-store">Chi nhánh</label>

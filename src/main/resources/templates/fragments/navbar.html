@@ -64,10 +64,17 @@
             height: 38px;
         }
 
-        .os-nav-link:hover,
-        .os-nav-link.active {
+        .os-nav-link:hover {
             color: #ff7f50 !important;
             background-color: #fffaf8;
+        }
+
+        /* Current page: filled brand-soft chip with bold brand text (existing brand tokens). */
+        .os-nav-link.active {
+            color: var(--brand-primary, #ff7f50) !important;
+            background-color: var(--brand-primary-light, #fff5f2);
+            font-weight: 700;
+            position: relative;
         }
 
         /* ------------------ RIGHT ACTION GROUP ------------------ */
@@ -227,6 +234,20 @@
             font-size: 1.1rem;
         }
 
+        .os-account-name {
+            max-width: 160px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        @media (max-width: 575.98px) {
+            .os-account-name { display: none; }
+        }
+
         .os-avatar-chevron {
             color: #64748b;
             transition: transform 0.2s ease, color 0.15s ease;
@@ -247,6 +268,14 @@
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
             background-color: #ffffff;
             margin-top: 8px !important;
+        }
+
+        /* Bootstrap runs this menu without Popper (it sits in a navbar), so centre it under the toggle with CSS;
+           --os-menu-shift is set by the script below only when the centred menu would leave the viewport. */
+        .os-account-dropdown .os-account-menu {
+            left: 50%;
+            right: auto;
+            transform: translateX(calc(-50% + var(--os-menu-shift, 0px)));
         }
 
         .os-account-menu-header {
@@ -531,6 +560,23 @@
             }
         }
     </style>
+    <script>
+        (function () {
+            var EDGE = 8;
+            document.addEventListener('shown.bs.dropdown', function (event) {
+                var host = event.target.closest && event.target.closest('.os-account-dropdown');
+                var menu = host && host.querySelector('.os-account-menu');
+                if (!menu) { return; }
+                menu.style.removeProperty('--os-menu-shift');
+                var rect = menu.getBoundingClientRect();
+                var width = document.documentElement.clientWidth;
+                var shift = 0;
+                if (rect.right > width - EDGE) { shift = width - EDGE - rect.right; }
+                else if (rect.left < EDGE) { shift = EDGE - rect.left; }
+                if (shift) { menu.style.setProperty('--os-menu-shift', shift + 'px'); }
+            });
+        })();
+    </script>
 
     <div class="container os-navbar-container">
         <!-- 1. CỘT TRÁI: Logo thương hiệu OneShop -->
@@ -543,9 +589,9 @@
         <!-- 2. CỘT GIỮA: Navigation căn chính giữa tuyệt đối trên Desktop -->
         <div class="os-nav-col-center">
             <ul class="os-nav-menu">
-                <li><a class="os-nav-link" th:href="@{/}">Trang chủ</a></li>
-                <li><a class="os-nav-link" th:href="@{/products}">Sản phẩm</a></li>
-                <li><a class="os-nav-link" th:href="@{/stores}">Hệ thống cửa hàng</a></li>
+                <li><a class="os-nav-link" th:href="@{/}" th:classappend="${currentPath == '/'} ? 'active'" th:attr="aria-current=${currentPath == '/'} ? 'page'">Trang chủ</a></li>
+                <li><a class="os-nav-link" th:href="@{/products}" th:classappend="${currentPath != null and (currentPath == '/products' or #strings.startsWith(currentPath, '/products/'))} ? 'active'" th:attr="aria-current=${currentPath != null and (currentPath == '/products' or #strings.startsWith(currentPath, '/products/'))} ? 'page'">Sản phẩm</a></li>
+                <li><a class="os-nav-link" th:href="@{/stores}" th:classappend="${currentPath != null and (currentPath == '/stores' or #strings.startsWith(currentPath, '/stores/'))} ? 'active'" th:attr="aria-current=${currentPath != null and (currentPath == '/stores' or #strings.startsWith(currentPath, '/stores/'))} ? 'page'">Hệ thống cửa hàng</a></li>
             </ul>
         </div>
 
@@ -562,42 +608,24 @@
                     <span>Giỏ hàng</span>
                 </a>
 
-                <!-- Nhân viên -->
-                <a class="nav-role-badge nav-role-staff" th:href="@{/staff}" sec:authorize="hasRole('STAFF')">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg>
-                    <span>Nhân viên</span>
-                </a>
-
-                <!-- Quản trị -->
-                <a class="nav-role-badge nav-role-admin" th:href="@{/admin}" sec:authorize="hasRole('ADMIN')">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                    <span>Quản trị</span>
-                </a>
-
                 <!-- Chưa đăng nhập: Đăng nhập & Đăng ký -->
                 <a class="btn-nav-login" th:href="@{/login}" sec:authorize="!isAuthenticated()">Đăng nhập</a>
                 <a class="btn-nav-register" th:href="@{/register}" sec:authorize="!isAuthenticated()">Đăng ký</a>
 
                 <!-- Đã đăng nhập: Avatar Tài khoản & Dropdown Menu -->
-                <div class="dropdown os-account-dropdown" sec:authorize="isAuthenticated()">
+                <div class="dropdown dropdown-center os-account-dropdown" sec:authorize="isAuthenticated()">
                     <button class="os-account-dropdown-toggle dropdown-toggle" type="button" id="userAccountDropdown"
                             data-bs-toggle="dropdown" aria-expanded="false" title="Tài khoản cá nhân">
                         <span class="os-avatar-circle"
-                              th:with="dispName=${currentUser != null and currentUser.fullName != null and !currentUser.fullName.isBlank() ? currentUser.fullName : #authentication.name}"
+                              th:with="dispName=${currentUser != null and currentUser.userName != null and !currentUser.userName.isBlank() ? currentUser.userName : (currentUser != null and currentUser.fullName != null and !currentUser.fullName.isBlank() ? currentUser.fullName : #authentication.name)}"
                               th:text="${#strings.substring(dispName, 0, 1).toUpperCase()}">U</span>
+                        <span class="os-account-name"
+                              th:text="${currentUser != null and currentUser.userName != null and !currentUser.userName.isBlank() ? currentUser.userName : (currentUser != null and currentUser.fullName != null and !currentUser.fullName.isBlank() ? currentUser.fullName : #authentication.name)}">username</span>
                         <svg class="os-avatar-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="6 9 12 15 18 9"></polyline>
                         </svg>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end os-account-menu" aria-labelledby="userAccountDropdown">
+                    <ul class="dropdown-menu os-account-menu" aria-labelledby="userAccountDropdown">
                         <!-- Dropdown Header: Avatar, Tên người dùng và Email -->
                         <li class="os-account-menu-header">
                             <div class="os-avatar-circle os-avatar-lg"
@@ -695,17 +723,19 @@
             </a>
 
             <!-- Avatar Dropdown trên Mobile (khi đã đăng nhập) -->
-            <div class="dropdown os-account-dropdown" sec:authorize="isAuthenticated()">
+            <div class="dropdown dropdown-center os-account-dropdown" sec:authorize="isAuthenticated()">
                 <button class="os-account-dropdown-toggle dropdown-toggle" type="button" id="mobileUserMenuDropdown"
                         data-bs-toggle="dropdown" aria-expanded="false" aria-label="Tài khoản cá nhân">
                     <span class="os-avatar-circle"
-                          th:with="dispName=${currentUser != null and currentUser.fullName != null and !currentUser.fullName.isBlank() ? currentUser.fullName : #authentication.name}"
+                          th:with="dispName=${currentUser != null and currentUser.userName != null and !currentUser.userName.isBlank() ? currentUser.userName : (currentUser != null and currentUser.fullName != null and !currentUser.fullName.isBlank() ? currentUser.fullName : #authentication.name)}"
                           th:text="${#strings.substring(dispName, 0, 1).toUpperCase()}">U</span>
+                    <span class="os-account-name"
+                              th:text="${currentUser != null and currentUser.userName != null and !currentUser.userName.isBlank() ? currentUser.userName : (currentUser != null and currentUser.fullName != null and !currentUser.fullName.isBlank() ? currentUser.fullName : #authentication.name)}">username</span>
                     <svg class="os-avatar-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end os-account-menu" aria-labelledby="mobileUserMenuDropdown">
+                <ul class="dropdown-menu os-account-menu" aria-labelledby="mobileUserMenuDropdown">
                     <li class="os-account-menu-header">
                         <div class="os-avatar-circle os-avatar-lg"
                              th:with="dispName=${currentUser != null and currentUser.fullName != null and !currentUser.fullName.isBlank() ? currentUser.fullName : #authentication.name}"
@@ -784,13 +814,13 @@
             <div class="os-mobile-drawer-body">
                 <ul class="navbar-nav gap-1 mb-3">
                     <li class="nav-item">
-                        <a class="nav-link os-nav-link" th:href="@{/}">Trang chủ</a>
+                        <a class="nav-link os-nav-link" th:href="@{/}" th:classappend="${currentPath == '/'} ? 'active'" th:attr="aria-current=${currentPath == '/'} ? 'page'">Trang chủ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link os-nav-link" th:href="@{/products}">Sản phẩm</a>
+                        <a class="nav-link os-nav-link" th:href="@{/products}" th:classappend="${currentPath != null and (currentPath == '/products' or #strings.startsWith(currentPath, '/products/'))} ? 'active'" th:attr="aria-current=${currentPath != null and (currentPath == '/products' or #strings.startsWith(currentPath, '/products/'))} ? 'page'">Sản phẩm</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link os-nav-link" th:href="@{/stores}">Hệ thống cửa hàng</a>
+                        <a class="nav-link os-nav-link" th:href="@{/stores}" th:classappend="${currentPath != null and (currentPath == '/stores' or #strings.startsWith(currentPath, '/stores/'))} ? 'active'" th:attr="aria-current=${currentPath != null and (currentPath == '/stores' or #strings.startsWith(currentPath, '/stores/'))} ? 'page'">Hệ thống cửa hàng</a>
                     </li>
                 </ul>
 
@@ -813,7 +843,7 @@
                     <div class="p-3 bg-light rounded-3 d-flex flex-column gap-2" sec:authorize="isAuthenticated()">
                         <div class="d-flex align-items-center gap-2 pb-2 border-bottom">
                             <span class="os-avatar-circle"
-                                  th:with="dispName=${currentUser != null and currentUser.fullName != null and !currentUser.fullName.isBlank() ? currentUser.fullName : #authentication.name}"
+                                  th:with="dispName=${currentUser != null and currentUser.userName != null and !currentUser.userName.isBlank() ? currentUser.userName : (currentUser != null and currentUser.fullName != null and !currentUser.fullName.isBlank() ? currentUser.fullName : #authentication.name)}"
                                   th:text="${#strings.substring(dispName, 0, 1).toUpperCase()}">U</span>
                             <div class="overflow-hidden">
                                 <div class="fw-bold text-dark text-truncate"

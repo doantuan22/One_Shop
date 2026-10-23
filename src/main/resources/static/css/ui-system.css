@@ -136,7 +136,7 @@ body {
 .badge.os-soft-warning { color: var(--os-warning); background: #fffaeb; border-color: #fedf89; }
 .badge.os-soft-info { color: var(--os-info); background: #eff8ff; border-color: #b2ddff; }
 .badge.os-soft-neutral { color: #475467; background: #f2f4f7; border-color: #e4e7ec; }
-.badge.os-soft-coral { color: #b84224; background: var(--os-brand-soft); border-color: var(--os-brand-border); }
+.badge.os-soft-coral { color: #d65426; background: var(--os-brand-soft); border-color: var(--os-brand-border); }
 
 /* Client chrome: a solid brand bar and lightweight navigation. */
 .os-topbar-coral { background: #f37348; }
@@ -234,7 +234,7 @@ body {
 .modern-store-card:hover { border-color: var(--os-brand-border); box-shadow: 0 4px 12px rgba(16, 24, 40, 0.06); }
 .modern-store-card.selected-active-store { border: 1px solid var(--os-brand); background: #fffaf8; box-shadow: none; }
 .store-card-title { font-size: 1rem; }
-.store-location-text { margin-bottom: 0.75rem; color: #b84224; }
+.store-location-text { margin-bottom: 0.75rem; color: #d65426; }
 .store-details-list { gap: 0.4rem; margin-bottom: 0.9rem; }
 .store-amenities { margin-bottom: 0.8rem; }
 .amenity-chip { border-radius: 999px; }
@@ -261,7 +261,7 @@ body {
 .product-current-price,
 .pcard__price,
 .product-price-current .os-price,
-.product-price-current { color: #c94f26; }
+.product-price-current { color: #d65426; }
 .btn-card-action,
 .pcard__btn-cart,
 .pcard__btn-login { border-radius: var(--os-radius-control); }
@@ -277,7 +277,7 @@ body {
 .home-store__meta { color: var(--os-text-muted); }
 .home-link,
 .home-search__scope a,
-.home-tile--plain .home-tile__cta { color: #b84224 !important; }
+.home-tile--plain .home-tile__cta { color: #d65426 !important; }
 .pcard__btn-login,
 .btn-card-login { color: var(--os-brand) !important; }
 .home-link:hover,
@@ -404,3 +404,135 @@ body {
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition-duration: 0.01ms !important; }
 }
+/* Shared pill tabs (payments, inventory history, stock adjust): wrap instead of scrolling, brand-coloured active tab. */
+.os-app .os-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.os-app .os-tabs .nav-link { padding: 0.35rem 0.85rem; border-radius: 999px; color: var(--os-text-strong); border: 1px solid var(--os-border); background: #fff; font-weight: 600; font-size: 0.875rem; white-space: nowrap; }
+.os-app .os-tabs .nav-link:hover { border-color: var(--os-brand); color: var(--os-brand-active); }
+.os-app .os-tabs .nav-link.active { background: var(--os-brand); border-color: var(--os-brand); color: #fff; }
+/* Row actions: one primary action plus a "more" menu, never wider than its cell. */
+.os-app .os-row-actions { display: inline-flex; align-items: center; justify-content: flex-end; gap: 0.375rem; }
+.os-app .os-row-actions .btn { min-height: 34px; }
+.os-app td:has(> .os-row-actions) { width: 11rem; white-space: nowrap; }
+/* Page header: description never pushes the action buttons below the title. */
+.os-app .os-page-header > div:first-child { flex: 1 1 24rem; min-width: 0; max-width: 52rem; }
+.os-app .os-page-header__actions { flex: 0 0 auto; margin-left: auto; }
+/* Pagination outside a card (list pages whose table fragment closes the card). */
+.os-app .os-pagination--standalone { background: #fff; border: 1px solid var(--os-border); border-radius: var(--os-radius-card); }
+/* Primary row action in staff queues: one width so the column reads as a column. */
+.os-app .os-next-action { min-width: 12.25rem; text-align: center; }
+/* The tabs that live in a card header keep spacing from the content below. */
+.os-app .os-tabs + .os-filter, .os-app nav > .os-tabs { margin-bottom: 0; }
+/* Compact filter grid: all fields and the buttons fit one row on desktop. */
+.os-app .os-filter-grid--compact { grid-template-columns: repeat(auto-fit, minmax(min(8.75rem, 100%), 1fr)); }
+/* Record id links (#12) read as links to the record, not default blue underlines. */
+.os-app .os-id-link { font-weight: 600; text-decoration: none; }
+.os-app .os-id-link:hover { text-decoration: underline; }
+/* ===== Button system for admin/staff: filled variants, existing tokens only =====
+   primary   -> .btn-primary           brand solid (same as "Thêm vào giỏ")
+   action    -> .btn-outline-primary   solid --os-text-strong (row actions: Chi tiết, Sửa, Điều chỉnh tồn ...)
+   secondary -> .btn-outline-secondary solid neutral (Lịch sử, Chi nhánh bản, Xóa lọc, Khác ...)
+   danger    -> .btn-outline-danger    solid --os-danger
+   The Bootstrap "outline-*" class names are kept so no href/form markup had to change; the look is filled. */
+.os-app .btn-outline-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--os-text-strong);
+    --bs-btn-border-color: var(--os-text-strong);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--os-text);
+    --bs-btn-hover-border-color: var(--os-text);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--os-text);
+    --bs-btn-active-border-color: var(--os-text);
+    --bs-btn-focus-shadow-rgb: 52, 64, 84;
+    --bs-btn-disabled-color: var(--os-text-muted);
+    --bs-btn-disabled-bg: #f2f4f7;
+    --bs-btn-disabled-border-color: #e4e7ec;
+}
+.os-app .btn-outline-secondary {
+    --bs-btn-color: var(--os-text);
+    --bs-btn-bg: #f2f4f7;
+    --bs-btn-border-color: #d0d5dd;
+    --bs-btn-hover-color: var(--os-text-strong);
+    --bs-btn-hover-bg: #e4e7ec;
+    --bs-btn-hover-border-color: #98a2b3;
+    --bs-btn-active-color: var(--os-text-strong);
+    --bs-btn-active-bg: #e4e7ec;
+    --bs-btn-active-border-color: #98a2b3;
+    --bs-btn-focus-shadow-rgb: 102, 112, 133;
+    --bs-btn-disabled-color: var(--os-text-muted);
+    --bs-btn-disabled-bg: #f9fafb;
+    --bs-btn-disabled-border-color: #e4e7ec;
+}
+.os-app .btn-outline-danger {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--os-danger);
+    --bs-btn-border-color: var(--os-danger);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #912018;
+    --bs-btn-hover-border-color: #912018;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #912018;
+    --bs-btn-active-border-color: #912018;
+    --bs-btn-focus-shadow-rgb: 180, 35, 24;
+}
+/* The generic .btn-outline-danger rule above sets color/background directly; inside the shell the filled variant must win. */
+.os-app .btn-outline-danger { color: var(--bs-btn-color); border-color: var(--bs-btn-border-color); }
+.os-app .btn-outline-danger:hover, .os-app .btn-outline-danger:focus-visible, .os-app .btn-outline-danger:active { background: var(--bs-btn-hover-bg); color: var(--bs-btn-hover-color); border-color: var(--bs-btn-hover-border-color); }
+.os-app .btn-outline-primary:focus-visible,
+.os-app .btn-outline-secondary:focus-visible,
+.os-app .btn-outline-danger:focus-visible,
+.os-app .btn-primary:focus-visible { outline: 2px solid var(--os-text-strong); outline-offset: 2px; }
+.os-app .btn-sm { min-height: 34px; padding: 0.32rem 0.75rem; font-size: 0.8125rem; font-weight: 650; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center; }
+.os-app td .btn-sm, .os-app .os-col-actions .btn-sm { min-width: 3.75rem; }
+.os-app .btn-group > .btn-sm:first-child { border-radius: 9px 0 0 9px; }
+.os-app .btn-group > .btn-sm:last-child { border-radius: 0 9px 9px 0; }
+.os-app .btn-outline-primary:disabled, .os-app .btn-outline-secondary:disabled { opacity: 1; }
+.os-app .btn-outline-primary:hover, .os-app .btn-outline-danger:hover, .os-app .btn-outline-secondary:hover { box-shadow: none; }
+
+@media (max-width: 575.98px) {
+    .os-app .btn-sm { min-height: 40px; }
+}
+
+.badge.os-soft { font-weight: 600; border-width: 1px; border-style: solid; }
+/* Dense admin tables: header text may wrap, id/action columns stay narrow so wide tables fit the 1440 content area. */
+.os-app .os-admin-payments .os-table thead th,
+.os-app .os-table--dense thead th { white-space: normal; vertical-align: bottom; }
+.os-app .os-admin-payments .os-table > :not(caption) > * > * { padding: 0.65rem 0.5rem; }
+.os-app .os-admin-payments .os-col-code { min-width: 4.5rem; }
+.os-app .os-admin-payments .os-col-actions { min-width: 5.5rem; }
+.os-app .os-table .os-col-code { min-width: 6.5rem; }
+.os-app .os-col-note { max-width: 12rem; }
+.os-app .os-note-ellipsis { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Appbar "Trang bán hàng": soft brand chip (existing brand tokens) so it reads as navigation, distinct from the white "Đăng xuất". */
+.os-appbar .os-appbar-link { gap: 0.4rem; align-items: center; background: var(--os-brand-soft); color: var(--brand-primary-text); border: 1px solid var(--os-brand-border); }
+.os-appbar .os-appbar-link:hover, .os-appbar .os-appbar-link:focus-visible { background: #fff; color: var(--os-brand-active); border-color: #fff; }
+.os-appbar .os-appbar-link:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.os-appbar .os-appbar-link__icon { flex: 0 0 auto; }
+
+/* Filter row with a wide product search box: store | product (wide) | status (narrow) | buttons. */
+.os-app .os-filter-grid--product-search { grid-template-columns: minmax(11rem, 1fr) minmax(18rem, 2.4fr) minmax(8.5rem, 0.7fr) auto; }
+@media (max-width: 991.98px) { .os-app .os-filter-grid--product-search { grid-template-columns: repeat(auto-fit, minmax(min(11rem, 100%), 1fr)); } }
+/* Search box with suggestion list (admin/store-products). */
+.os-app .os-suggest { position: relative; }
+.os-app .os-suggest__list { position: absolute; z-index: 20; top: calc(100% + 4px); left: 0; right: 0; max-height: 18rem; overflow-y: auto; margin: 0; padding: 0.25rem; list-style: none; background: var(--os-surface); border: 1px solid var(--os-border); border-radius: var(--os-radius-control); box-shadow: 0 10px 24px rgba(16, 24, 40, 0.12); }
+.os-app .os-suggest__item { display: flex; gap: 0.6rem; align-items: baseline; padding: 0.45rem 0.6rem; border-radius: 7px; font-size: 0.875rem; color: var(--os-text); cursor: pointer; }
+.os-app .os-suggest__item:hover, .os-app .os-suggest__item.active { background: var(--os-brand-soft); }
+.os-app .os-suggest__sku { flex: 0 0 auto; font-weight: 700; color: var(--os-text-strong); }
+.os-app .os-suggest__empty { padding: 0.5rem 0.6rem; font-size: 0.8125rem; color: var(--os-text-muted); }
+
+/* Search-box suggestion popup (os-suggest.js): fixed so no card or table can clip it. */
+.os-suggest-pop { position: fixed; z-index: 1085; max-height: 18rem; overflow-y: auto; margin: 0; padding: 0.25rem; list-style: none; background: var(--os-surface); border: 1px solid var(--os-border); border-radius: var(--os-radius-control); box-shadow: 0 10px 24px rgba(16, 24, 40, 0.12); text-align: left; }
+.os-suggest-pop__item { display: flex; gap: 0.6rem; align-items: baseline; padding: 0.5rem 0.65rem; border-radius: 7px; font-size: 0.875rem; line-height: 1.35; color: var(--os-text); cursor: pointer; }
+.os-suggest-pop__item:hover, .os-suggest-pop__item.active { background: var(--os-brand-soft); }
+.os-suggest-pop__sku { flex: 0 0 auto; font-weight: 700; color: var(--os-text-strong); }
+.os-suggest-pop__note { padding: 0.5rem 0.65rem; font-size: 0.8125rem; color: var(--os-text-muted); }
+
+/* Suggestion popup under the home search bar: same pill language as the bar (radius, shadow, icon column). */
+.os-suggest-pop mark { padding: 0; background: transparent; color: var(--os-text-strong); font-weight: 700; }
+.os-suggest-pop--pill { padding: 0.5rem; border-radius: 28px; border-color: var(--os-border); box-shadow: 0 14px 32px rgba(16, 24, 40, 0.14); }
+.os-suggest-pop--pill .os-suggest-pop__item { align-items: center; gap: 0.75rem; padding: 0.7rem 1rem; border-radius: 999px; font-size: 1rem; }
+.os-suggest-pop--pill .os-suggest-pop__icon { flex: 0 0 auto; color: var(--os-muted); }
+.os-suggest-pop--pill .os-suggest-pop__item:hover .os-suggest-pop__icon,
+.os-suggest-pop--pill .os-suggest-pop__item.active .os-suggest-pop__icon { color: var(--os-brand-active); }
+.os-suggest-pop--pill .os-suggest-pop__note { padding: 0.6rem 1rem; text-align: center; }

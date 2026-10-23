@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -35,6 +36,15 @@ public class AdminProductController {
 
     public AdminProductController(ProductService productService) {
         this.productService = productService;
+    }
+
+    /** SKU and name of every assignable product for the admin search-box suggestions. */
+    @GetMapping("/suggest")
+    @ResponseBody
+    public java.util.List<java.util.Map<String, String>> suggest() {
+        return productService.getAssignableProducts().stream()
+                .map(p -> java.util.Map.of("sku", p.sku(), "name", p.name()))
+                .toList();
     }
 
     @GetMapping

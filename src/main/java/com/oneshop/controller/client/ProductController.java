@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.security.Principal;
 
@@ -33,6 +34,15 @@ public class ProductController {
         this.productService = productService;
         this.storeProductService = storeProductService;
         this.reviewService = reviewService;
+    }
+
+    /** Product names and SKUs for the search-box suggestions (the public catalog; no stock or price). */
+    @GetMapping("/products/suggest")
+    @ResponseBody
+    public java.util.List<java.util.Map<String, String>> suggest() {
+        return productService.searchProducts(ProductSearchCriteria.none(), PageRequest.of(0, 500)).getContent().stream()
+                .map(p -> java.util.Map.of("sku", p.sku(), "name", p.name()))
+                .toList();
     }
 
     @GetMapping("/products")

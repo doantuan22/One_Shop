@@ -20,6 +20,10 @@ public interface StaffStoreAssignmentRepository extends JpaRepository<StaffStore
     @EntityGraph(attributePaths = "store")
     List<StaffStoreAssignment> findByUserIdAndStatus(Long userId, ActiveStatus status);
 
+    /** Staff accounts that currently work at a Store (ACTIVE assignment). */
+    @Query("select a.user.id from StaffStoreAssignment a where a.status = com.oneshop.entity.ActiveStatus.ACTIVE")
+    List<Long> findWorkingStaffIds();
+
     boolean existsByUserIdAndStoreIdAndStatus(Long userId, Long storeId, ActiveStatus status);
 
     Optional<StaffStoreAssignment> findByUserIdAndStoreId(Long userId, Long storeId);

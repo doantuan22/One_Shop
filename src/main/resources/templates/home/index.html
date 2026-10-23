@@ -43,7 +43,7 @@
                 <circle cx="11" cy="11" r="7"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-            <input class="home-search__input" id="hero-q" type="search" name="q" maxlength="100"
+            <input class="home-search__input" id="hero-q" type="search" name="q" th:attr="data-suggest-url=@{/products/suggest}" data-suggest-label="name" data-suggest-fill="name" maxlength="100"
                    placeholder="Tìm serum, son, sữa rửa mặt…" aria-label="Tìm sản phẩm"
                    enterkeyhint="search" autocomplete="off">
             <button class="btn btn-primary home-search__submit" type="submit">Tìm</button>

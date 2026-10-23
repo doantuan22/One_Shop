@@ -33,14 +33,15 @@
         <tr th:each="row : ${rows}"
             th:classappend="${row.blockedReason == null and row.nextAction != null} ? 'os-fulfillment-row--action-needed'"
             th:attr="data-fulfillment-id=${row.fulfillmentId},data-order-id=${row.orderId},data-store-id=${row.storeId}">
-            <td class="os-col-code"><a th:href="@{/staff/fulfillments/{id}(id=${row.fulfillmentId})}" th:text="'#' + ${row.fulfillmentId}">#10</a></td>
+            <td class="os-col-code"><a class="os-id-link" th:href="@{/staff/fulfillments/{id}(id=${row.fulfillmentId})}" th:text="'#' + ${row.fulfillmentId}">#10</a></td>
             <td th:text="'#' + ${row.orderId}">#77</td>
             <td class="os-fulfillment-extra-column"><span class="os-cell-main" th:text="${row.storeName}">OneShop Thủ Đức</span></td>
             <td><span class="os-cell-main" th:text="${row.customerName}">Nguyễn Khách</span></td>
             <td>
                 <span th:replace="~{staff/delivery/fragments :: method(${row.paymentMethod})}"></span>
-                <span class="small text-secondary" th:replace="~{staff/delivery/fragments :: payment(${row.paymentStatus})}"></span>
+                <span class="small text-secondary os-fulfillment-compact-only"><span th:replace="~{staff/delivery/fragments :: payment(${row.paymentStatus})}"></span></span>
             </td>
+            <td class="os-fulfillment-extra-column"><span th:replace="~{staff/delivery/fragments :: payment(${row.paymentStatus})}"></span></td>
             <td><span th:replace="~{staff/fulfillments/fragments :: status(${row.status})}"></span></td>
             <td class="os-fulfillment-extra-column"><span th:replace="~{staff/delivery/fragments :: state(${row.orderStatus})}"></span></td>
             <td class="text-end os-fulfillment-extra-column os-col-num" th:text="${row.totalQuantity} + ' (' + ${row.itemCount} + ' dòng)'">2 (1 dòng)</td>
@@ -48,7 +49,7 @@
             <td class="text-nowrap os-col-actions">
                 <span th:if="${row.blockedReason != null}" class="small text-warning-emphasis os-blocked"
                       th:text="${row.blockedReason}">Đơn hàng đang chờ thanh toán</span>
-                <a th:if="${row.blockedReason == null and row.nextAction != null}" class="btn btn-primary btn-sm text-nowrap"
+                <a th:if="${row.blockedReason == null and row.nextAction != null}" class="btn btn-primary btn-sm text-nowrap os-next-action"
                    th:href="@{/staff/fulfillments/{id}(id=${row.fulfillmentId})}" th:text="${row.nextAction.label}">Bắt đầu chuẩn bị</a>
                 <span th:if="${row.blockedReason == null and row.nextAction == null}" class="small text-secondary">—</span>
             </td>

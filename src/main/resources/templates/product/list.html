@@ -178,7 +178,7 @@
             gap: 5px;
             background-color: #fff7ed;
             border: 1px solid #fed7aa;
-            color: #c2410c;
+            color: #d65426;
             font-size: 0.8125rem;
             font-weight: 500;
             padding: 0.2rem 0.65rem;
@@ -196,7 +196,7 @@
         .active-filter-badge .badge-close {
             font-size: 1.1rem;
             line-height: 0.8;
-            color: #ea580c;
+            color: #d65426;
         }
 
         .btn-clear-all {
@@ -542,14 +542,14 @@
                         <circle cx="11" cy="11" r="8"/>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                     </svg>
-                    <input type="search" class="filter-search-input" id="q" name="q"
+                    <input type="search" class="filter-search-input" id="q" name="q" th:attr="data-suggest-url=@{/products/suggest}" data-suggest-label="name" data-suggest-fill="name"
                            th:value="${criteria.keyword}" placeholder="Tìm theo tên sản phẩm hoặc SKU..." maxlength="100">
                 </div>
             </div>
 
             <!-- Danh mục -->
             <div class="col-6 col-md-3 col-lg-3">
-                <select class="form-select filter-select" id="categoryId" name="categoryId">
+                <select class="form-select filter-select" id="categoryId" name="categoryId" aria-label="Danh mục">
                     <option value="">Tất cả danh mục</option>
                     <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
                             th:selected="${category.id == criteria.categoryId}">Chăm sóc da</option>
@@ -558,7 +558,7 @@
 
             <!-- Thương hiệu -->
             <div class="col-6 col-md-3 col-lg-3">
-                <select class="form-select filter-select" id="brandId" name="brandId">
+                <select class="form-select filter-select" id="brandId" name="brandId" aria-label="Thương hiệu">
                     <option value="">Tất cả thương hiệu</option>
                     <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"
                             th:selected="${brand.id == criteria.brandId}">Cocoon</option>

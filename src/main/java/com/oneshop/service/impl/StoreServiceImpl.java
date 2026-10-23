@@ -100,8 +100,19 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public org.springframework.data.domain.Page<StoreResponse> searchStores(String q, String area,
                                                                             ActiveStatus status, int page) {
-        var like = containsLike(q);
+        var words = com.oneshop.service.search.TextSearch.words(q);
         var areaText = area == null ? "" : area.trim();
+        if (!words.isEmpty()) {
+            var matched = storeRepository
+                    .searchAdmin("", areaText, status, org.springframework.data.domain.Pageable.unpaged())
+                    .getContent().stream()
+                    .filter(s -> com.oneshop.service.search.TextSearch.matchesAll(words, s.getCode(), s.getName(), s.getAddress(), s.getArea(),
+                            s.getProvinceCity()))
+                    .toList();
+            return com.oneshop.service.search.TextSearch.slice(matched, org.springframework.data.domain.PageRequest.of(Math.max(page, 0), 20))
+                    .map(storeMapper::toResponse);
+        }
+        var like = containsLike(q);
         return storeRepository
                 .searchAdmin(like, areaText, status, org.springframework.data.domain.PageRequest.of(Math.max(page, 0), 20))
                 .map(storeMapper::toResponse);

@@ -15,7 +15,7 @@
   --brand-primary-light: #fff5f2;
   --brand-primary-border: #ffd5c7;
   --brand-primary-contrast: #ffffff;
-  --brand-primary-text: #bf360c;
+  --brand-primary-text: #d65426;
 
   /* Primary: Cam San Hô Chủ Đạo theo logo One.png */
   --bs-primary: #ff7f50;
@@ -29,7 +29,7 @@
   --bs-secondary-hover: #f99577;
 
   /* Deep Tone: Cam đất đậm dùng cho tiêu đề & text nhấn */
-  --bs-dark-coral: #bf360c;
+  --bs-dark-coral: #d65426;
   --bs-dark-coral-rgb: 191, 54, 12;
 
   /* Tone nền dịu (Soft Backgrounds & Borders) */

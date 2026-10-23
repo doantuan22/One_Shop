@@ -25,7 +25,7 @@
 
 <form method="get" th:action="@{/admin/orders}" class="os-filter card mb-4" id="order-filter">
     <div class="card-body">
-        <div class="os-filter-grid">
+        <div class="os-filter-grid os-filter-grid--compact">
             <div class="os-filter-field">
                 <label class="form-label" for="filter-store">Chi nhánh</label>
                 <select id="filter-store" name="storeId" class="form-select form-select-sm">
@@ -36,7 +36,7 @@
             </div>
             <div class="os-filter-field">
                 <label class="form-label" for="filter-q">Tìm kiếm</label>
-                <input id="filter-q" name="q" type="text" class="form-control form-control-sm"
+                <input id="filter-q" name="q" type="text" class="form-control form-control-sm" th:attr="data-suggest-url=@{/admin/users/suggest(role=CUSTOMER)}"
                        th:value="${q}" placeholder="Mã đơn, tên khách, e-mail">
             </div>
             <div class="os-filter-field">

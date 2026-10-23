@@ -34,7 +34,7 @@
 
 <!--/* What a Client may know about stock: in stock or out of stock, never a quantity (BR-15). */-->
 <span th:fragment="availability(inStock)" class="badge"
-      th:classappend="${inStock} ? 'text-bg-success' : 'text-bg-secondary'"
+      th:classappend="${inStock} ? 'os-soft os-soft-success' : 'os-soft os-soft-neutral'"
       th:text="${inStock} ? 'Còn hàng' : 'Hết hàng'">Còn hàng</span>
 
 <!--/* Selling state of a Product (ACTIVE / INACTIVE / HIDDEN enum) in plain Vietnamese. */-->
@@ -56,7 +56,7 @@
 <!--/* One Staff-Store assignment row (ACTIVE / INACTIVE) in plain Vietnamese. */-->
 <span th:fragment="assignmentStatusBadge(status)" class="badge" th:with="name=${status.name()}"
       th:classappend="${name == 'ACTIVE'} ? 'os-soft-success' : 'os-soft-neutral'"
-      th:text="${name == 'ACTIVE'} ? 'Đang phân công' : 'Ngừng phân công'">Trạng thái phân công</span>
+      th:text="${name == 'ACTIVE'} ? 'Đang làm việc' : 'Tạm đình chỉ'">Trạng thái phân công</span>
 
 <!--/* Fulfillment type of an Order / Fulfillment (DELIVERY, STORE_PICKUP) in plain Vietnamese. */-->
 <span th:fragment="fulfillmentType(type)" th:text="${type != null and type.name() == 'STORE_PICKUP'} ? 'Nhận tại cửa hàng' : (${type != null and type.name() == 'DELIVERY'} ? 'Giao tận nơi' : 'Chưa xác định')">Giao tận nơi</span>

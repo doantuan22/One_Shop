@@ -37,8 +37,23 @@ public class AdminReviewService {
      * narrows visibility and {@code replied} (null = all) narrows the staff-answer state.
      */
     public Page<AdminReviewResponse> getReviews(int page, String q, VisibilityStatus status, Boolean replied) {
-        var spec = adminSpec(q, status, replied);
         var pageable = PageRequest.of(Math.max(0, page), 20);
+        var words = com.oneshop.service.search.TextSearch.words(q);
+        if (!words.isEmpty()) {
+            var base = adminSpec(null, status, replied);
+            var unpaged = org.springframework.data.domain.Pageable.unpaged();
+            var all = (base == null ? reviews.findAllByOrderByCreatedAtDescIdDesc(unpaged)
+                    : reviews.findAll(base, unpaged)).getContent().stream()
+                    .sorted(java.util.Comparator.comparing(com.oneshop.entity.Review::getCreatedAt).reversed()
+                            .thenComparing(com.oneshop.entity.Review::getId, java.util.Comparator.reverseOrder()))
+                    .toList();
+            var matched = all.stream()
+                    .filter(r -> com.oneshop.service.search.TextSearch.matchesAll(words, r.getUser().getFullName(), r.getUser().getEmail(),
+                            r.getProduct().getSku(), r.getProduct().getName()))
+                    .toList();
+            return com.oneshop.service.search.TextSearch.slice(matched, pageable).map(ReviewReadMapper::adminReview);
+        }
+        var spec = adminSpec(q, status, replied);
         return (spec == null
                 ? reviews.findAllByOrderByCreatedAtDescIdDesc(pageable)
                 : reviews.findAll(spec, pageable)).map(ReviewReadMapper::adminReview);

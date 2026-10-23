@@ -7,9 +7,8 @@
 <div class="os-page-header mb-4">
     <div>
         <h1 class="h3 mb-1">Nhật ký biến động tồn</h1>
-        <p class="text-secondary mb-0">Tất cả biến động tồn kho của các chi nhánh được phân công theo thời gian: xuất
-            bán, hoàn kho do hủy đơn và điều chỉnh kiểm kê. Chọn một SKU trong danh sách để xem lại nhật ký riêng
-            của nó.</p>
+        <p class="text-secondary mb-0">Biến động tồn kho của các chi nhánh được phân công: xuất bán, hoàn kho do hủy
+            đơn và điều chỉnh kiểm kê.</p>
     </div>
     <div class="os-page-header__actions">
         <a class="btn btn-outline-primary btn-sm" th:href="@{/staff/stock}">Tồn kho chi nhánh</a>
@@ -17,7 +16,7 @@
 </div>
 
 <nav class="mb-4">
-    <ul class="nav nav-pills" id="inventory-history-tabs" role="tablist">
+    <ul class="nav nav-pills os-tabs" id="inventory-history-tabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link" th:classappend="${!viewIsSelect} ? 'active'" type="button" role="tab"
                     id="tab-log-button" data-bs-toggle="pill" data-bs-target="#tab-log"
@@ -40,10 +39,10 @@
     <div class="tab-pane fade" th:classappend="${!viewIsSelect} ? 'show active'" id="tab-log" role="tabpanel">
         <form method="get" th:action="@{/staff/inventory-history}" class="os-filter card mb-4" id="movement-log-filter">
             <div class="card-body">
-                <div class="os-filter-grid">
+                <div class="os-filter-grid os-filter-grid--compact">
                     <div class="os-filter-field">
                         <label class="form-label" for="log-q">Tìm kiếm</label>
-                        <input id="log-q" name="q" type="text" class="form-control form-control-sm" th:value="${q}"
+                        <input id="log-q" name="q" type="text" class="form-control form-control-sm" th:attr="data-suggest-url=@{/products/suggest}" th:value="${q}"
                                placeholder="SKU, sản phẩm, chi nhánh, ghi chú hoặc mã Order">
                     </div>
                     <div class="os-filter-field">
@@ -100,13 +99,15 @@
                     </thead>
                     <tbody>
                     <tr th:each="row : ${log.content}" th:attr="data-movement-id=${row.id},data-type=${row.type}">
-                        <td class="os-col-code text-nowrap small"
-                            th:text="${#temporals.format(row.createdAt, 'dd/MM/yyyy HH:mm:ss')}">23/10/2026 10:00:00</td>
+                        <td class="os-col-code text-nowrap">
+                            <span class="os-cell-main" th:text="${#temporals.format(row.createdAt, 'dd/MM/yyyy')}">23/10/2026</span>
+                            <span class="os-cell-sub" th:text="${#temporals.format(row.createdAt, 'HH:mm:ss')}">10:00:00</span>
+                        </td>
                         <td>
                             <span class="os-cell-main" th:text="${row.sku}">OS-SKU-001</span>
                             <span class="os-cell-sub" th:text="${row.productName}">Tên sản phẩm</span>
                         </td>
-                        <td><span class="os-cell-main" th:text="${row.storeName}">OneShop Thủ Đức</span></td>
+                        <td class="text-nowrap"><span class="os-cell-main" th:text="${row.storeName}">OneShop Thủ Đức</span></td>
                         <td>
                             <span class="badge os-soft-info" th:if="${row.type.name() == 'ORDER'}">Xuất bán</span>
                             <span class="badge os-soft-purple" th:if="${row.type.name() == 'CANCEL_ORDER'}">Hoàn kho</span>
@@ -123,11 +124,10 @@
                             <span th:text="${row.quantityBefore}">20</span> →
                             <strong th:text="${row.quantityAfter}">19</strong>
                         </td>
-                        <td style="max-width: 220px;">
-                            <span style="display:block; max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"
-                                  th:title="${row.note}" th:text="${row.note}">Ghi chú biến động</span>
+                        <td class="os-col-note">
+                            <span class="os-note-ellipsis" th:title="${row.note}" th:text="${row.note}">Ghi chú biến động</span>
                         </td>
-                        <td>
+                        <td class="text-nowrap">
                             <span class="os-cell-main" th:text="${row.staffName}">Nhân viên Thủ Đức</span>
                             <span class="small text-secondary" th:if="${row.staffId == null}">Tự động từ hệ thống</span>
                         </td>

@@ -12,7 +12,7 @@
         <div class="d-flex flex-wrap justify-content-between gap-2">
             <div>
                 <a class="fw-semibold" th:href="@{/staff/reviews/{id}(id=${r.id})}" th:text="${r.productName}">Sản phẩm</a>
-                <span class="badge ms-1" th:classappend="${r.reply != null} ? 'text-bg-success' : 'text-bg-warning'"
+                <span class="badge ms-1" th:classappend="${r.reply != null} ? 'os-soft os-soft-success' : 'os-soft os-soft-warning'"
                       th:text="${r.reply != null} ? 'Đã phản hồi' : 'Cần phản hồi'">Cần phản hồi</span>
                 <div class="small text-secondary"><span th:text="${r.sku}">SKU</span> &middot; <span th:text="${r.storeName}">Chi nhánh</span></div>
             </div>

@@ -14,10 +14,10 @@
         </div>
     </div>
 
-    <div class="os-quick-chips os-pills-scroll-container mb-3" style="overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px;">
-        <ul class="nav nav-pills gap-1 flex-nowrap" id="payment-views" aria-label="Lọc theo trạng thái thanh toán">
-            <li class="nav-item flex-shrink-0" th:each="c : ${categories}">
-                <a class="nav-link py-1 px-3 text-nowrap" th:classappend="${view == c.key()} ? 'active'"
+    <div class="os-quick-chips mb-3">
+        <ul class="nav nav-pills os-tabs" id="payment-views" aria-label="Lọc theo trạng thái thanh toán">
+            <li class="nav-item" th:each="c : ${categories}">
+                <a class="nav-link" th:classappend="${view == c.key()} ? 'active'"
                    th:attr="aria-current=${view == c.key()} ? 'page'"
                    th:href="@{/admin/payments(view=${c.key()}, q=${q == null ? '' : q}, from=${from == null ? '' : from}, to=${to == null ? '' : to})}">
                     <span th:text="${c.label()}">Cần xử lý</span>
@@ -25,8 +25,8 @@
                           th:attr="data-count=${c.key()}">0</span>
                 </a>
             </li>
-            <li class="nav-item flex-shrink-0">
-                <a class="nav-link py-1 px-3 text-nowrap" th:classappend="${view == 'all'} ? 'active'"
+            <li class="nav-item">
+                <a class="nav-link" th:classappend="${view == 'all'} ? 'active'"
                    th:attr="aria-current=${view == 'all'} ? 'page'"
                    th:href="@{/admin/payments(view='all', q=${q == null ? '' : q}, from=${from == null ? '' : from}, to=${to == null ? '' : to})}">Tất cả
                     <span class="badge text-bg-light border ms-1" th:text="${counts['all']}" data-count="all">0</span></a>
@@ -40,7 +40,7 @@
             <div class="os-filter-grid">
                 <div class="os-filter-field">
                     <label class="form-label" for="payment-q">Tìm kiếm</label>
-                    <input class="form-control form-control-sm" id="payment-q" name="q" type="search" maxlength="100"
+                    <input class="form-control form-control-sm" id="payment-q" name="q" type="search" maxlength="100" th:attr="data-suggest-url=@{/admin/users/suggest(role=CUSTOMER)}"
                            th:value="${q}" placeholder="Mã đơn, tên hoặc email khách">
                 </div>
                 <div class="os-filter-field">
@@ -71,9 +71,9 @@
                 <thead class="table-light">
                 <tr>
                     <th scope="col" class="os-col-code">Đơn</th><th scope="col">Khách hàng</th><th scope="col">Phân loại</th>
-                    <th scope="col">Trạng thái đơn</th><th scope="col">Thanh toán</th><th scope="col">Cổng mô phỏng trả lời</th>
+                    <th scope="col">Trạng thái đơn</th><th scope="col">Thanh toán</th><th scope="col">Cổng mô phỏng</th>
                     <th scope="col">Hạn thanh toán</th><th scope="col">Đối soát đến</th>
-                    <th scope="col" class="os-col-num">Tổng tiền</th><th scope="col">Hoàn tiền mô phỏng</th>
+                    <th scope="col" class="os-col-num">Tổng tiền</th><th scope="col">Hoàn tiền (mô phỏng)</th>
                     <th scope="col" class="os-col-actions text-end">Thao tác</th>
                 </tr>
                 </thead>
@@ -92,8 +92,14 @@
                     <td><span th:replace="~{staff/delivery/fragments :: state(${c.orderStatus})}"></span></td>
                     <td><span th:replace="~{staff/delivery/fragments :: payment(${c.paymentStatus})}"></span></td>
                     <td><span th:replace="~{fragments/components :: gatewayAnswer(${c.verification})}"></span></td>
-                    <td th:text="${c.paymentDeadline != null} ? ${#temporals.format(c.paymentDeadline, 'dd/MM/yyyy HH:mm')} : '—'"></td>
-                    <td th:text="${c.reconciliationDeadline != null} ? ${#temporals.format(c.reconciliationDeadline, 'dd/MM/yyyy HH:mm')} : '—'"></td>
+                    <td class="text-nowrap">
+                        <span class="os-cell-main" th:text="${c.paymentDeadline != null} ? ${#temporals.format(c.paymentDeadline, 'dd/MM/yyyy')} : '—'"></span>
+                        <span class="os-cell-sub" th:if="${c.paymentDeadline != null}" th:text="${#temporals.format(c.paymentDeadline, 'HH:mm')}"></span>
+                    </td>
+                    <td class="text-nowrap">
+                        <span class="os-cell-main" th:text="${c.reconciliationDeadline != null} ? ${#temporals.format(c.reconciliationDeadline, 'dd/MM/yyyy')} : '—'"></span>
+                        <span class="os-cell-sub" th:if="${c.reconciliationDeadline != null}" th:text="${#temporals.format(c.reconciliationDeadline, 'HH:mm')}"></span>
+                    </td>
                     <td class="os-col-num"><span th:replace="~{fragments/components :: price(${c.totalAmount})}"></span></td>
                     <td><span th:replace="~{fragments/components :: refundStatus(${c.refundStatus})}"></span></td>
                     <td class="os-col-actions text-end">

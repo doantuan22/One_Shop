@@ -43,7 +43,7 @@
             </div>
             <div class="os-filter-field">
                 <label class="form-label" for="filter-q">Tìm kiếm</label>
-                <input id="filter-q" name="q" type="text" class="form-control form-control-sm" th:value="${q}"
+                <input id="filter-q" name="q" type="text" class="form-control form-control-sm" th:attr="data-suggest-url=@{/admin/products/suggest}" th:value="${q}"
                        placeholder="SKU, tên sản phẩm hoặc chi nhánh">
             </div>
             <div class="os-filter-field">
@@ -90,7 +90,7 @@
             <tr th:each="row : ${storeProducts.content}"
                 th:attr="data-store-product-id=${row.storeProductId},data-store-id=${row.storeId}">
                 <td class="os-col-code"><span class="os-cell-main" th:text="${row.storeName}">OneShop Thủ Đức</span></td>
-                <td><span class="os-cell-main" th:text="'#' + ${row.sku}">SKU-001</span></td>
+                <td><span class="os-cell-main" th:text="${row.sku}">SKU-001</span></td>
                 <td class="fw-semibold" th:text="${row.productName}">Tên sản phẩm</td>
                 <td class="os-col-num"><span th:replace="~{fragments/components :: price(${row.price})}"></span></td>
                 <td class="os-col-num" data-field="exact-quantity" th:text="${row.quantity}">40</td>

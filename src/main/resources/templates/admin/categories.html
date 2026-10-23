@@ -75,18 +75,9 @@
                     </div>
                 </form>
 
-                <section class="os-modal-image-tools mt-4 pt-3" th:if="${editCategory != null}">
-                    <h3 class="h6 mb-2">Ảnh hiện tại</h3>
-                    <form method="post" enctype="multipart/form-data" class="mb-2" th:action="@{/admin/categories/{id}/image(id=${editId})}">
-                        <div class="input-group">
-                            <input type="file" class="form-control" name="file" accept="image/jpeg,image/png,image/webp" required aria-label="Tệp ảnh"
-                                   th:attr="data-max-bytes=${maxFileSizeBytes},data-max-size=${maxFileSize}">
-                            <button type="submit" class="btn btn-outline-primary">Tải ảnh</button>
-                        </div>
-                        <div class="upload-file-error text-danger small mt-1" style="display:none;"></div>
-                    </form>
-                    <form method="post" th:action="@{/admin/categories/{id}/image/delete(id=${editId})}"
-                          th:if="${editCategory.imageUrl != null and !#strings.trim(editCategory.imageUrl).isEmpty()}">
+                <section class="os-modal-image-tools mt-3 pt-3"
+                         th:if="${editCategory != null and editCategory.imageUrl != null and !#strings.trim(editCategory.imageUrl).isEmpty()}">
+                    <form method="post" th:action="@{/admin/categories/{id}/image/delete(id=${editId})}">
                         <button type="submit" class="btn btn-outline-danger btn-sm">Xóa ảnh hiện tại</button>
                     </form>
                 </section>

@@ -11,8 +11,23 @@ import org.springframework.security.access.AccessDeniedException;
 @RequestMapping("/admin/reviews")
 public class AdminReviewController {
     private final AdminReviewService reviews;
-    public AdminReviewController(AdminReviewService reviews) {
+    private final com.oneshop.service.AdminUserService users;
+    private final com.oneshop.service.ProductService products;
+    public AdminReviewController(AdminReviewService reviews, com.oneshop.service.AdminUserService users,
+                                 com.oneshop.service.ProductService products) {
         this.reviews = reviews;
+        this.users = users;
+        this.products = products;
+    }
+
+    /** Customers (name + e-mail) and products (SKU + name) for the search-box suggestions. */
+    @GetMapping("/suggest")
+    @ResponseBody
+    public java.util.List<java.util.Map<String, String>> suggest() {
+        var out = new java.util.ArrayList<java.util.Map<String, String>>(
+                users.suggestions(com.oneshop.entity.RoleName.CUSTOMER));
+        products.getAssignableProducts().forEach(p -> out.add(java.util.Map.of("sku", p.sku(), "name", p.name())));
+        return out;
     }
     @GetMapping
     public String list(@RequestParam(required = false) String q,

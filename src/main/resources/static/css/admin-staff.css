@@ -267,7 +267,7 @@
 }
 
 .badge.os-soft-coral {
-    color: #b84224;
+    color: #d65426;
     background: #fff5f2;
     border-color: #ffd5c7;
 }
@@ -596,6 +596,11 @@
 @media (min-width: 1600px) {
     .os-fulfillment-extra-column {
         display: table-cell;
+    }
+
+    /* the payment status has its own column here, so it is not repeated under the method */
+    .os-fulfillment-compact-only {
+        display: none;
     }
 }
 

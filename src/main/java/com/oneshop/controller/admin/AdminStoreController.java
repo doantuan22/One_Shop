@@ -28,6 +28,15 @@ public class AdminStoreController {
         this.storeService = storeService;
     }
 
+    /** Store code and name for the search-box suggestions (os-suggest.js reads "sku" as the short code). */
+    @GetMapping("/suggest")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public java.util.List<java.util.Map<String, String>> suggest() {
+        return storeService.getAllStores().stream()
+                .map(s -> java.util.Map.of("sku", s.code(), "name", s.name()))
+                .toList();
+    }
+
     @GetMapping
     public String list(@RequestParam(required = false) String q,
                        @RequestParam(required = false) String area,

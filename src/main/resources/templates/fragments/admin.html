@@ -15,7 +15,7 @@
     <span class="badge os-scope-badge" id="admin-scope-badge">Toàn chuỗi</span>
 
     <div class="d-flex align-items-center gap-2 ms-auto">
-        <a class="btn btn-outline-light btn-sm d-none d-md-inline" th:href="@{/}">Trang bán hàng</a>
+        <a class="btn btn-sm os-appbar-link d-none d-md-inline-flex" th:href="@{/}"><svg class="os-appbar-link__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6.5 3.2 2.5h9.6L14 6.5"/><path d="M2 6.5a2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0"/><path d="M3 9v4.5h10V9"/><path d="M6.5 13.5v-3h3v3"/></svg><span>Trang bán hàng</span></a>
         <span class="text-white small d-none d-md-inline" sec:authentication="name">admin</span>
         <form th:action="@{/logout}" method="post" class="d-inline">
             <button type="submit" class="btn btn-light btn-sm">Đăng xuất</button>

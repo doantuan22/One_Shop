@@ -60,6 +60,13 @@ public interface StoreProductService {
      *  @param status    optional StoreProduct status filter */
     Page<StoreProductStockResponse> searchStoreProducts(Long storeId, Long productId, com.oneshop.entity.ActiveStatus status, Pageable pageable);
 
+    /**
+     * Same list, plus a free-text filter: every word typed must appear in the SKU or the product name
+     * (case- and accent-insensitive, any order). A blank text behaves like the overload without it.
+     */
+    Page<StoreProductStockResponse> searchStoreProducts(Long storeId, Long productId, com.oneshop.entity.ActiveStatus status,
+                                                        String q, Pageable pageable);
+
     /** Phase 6 overload kept for existing service callers: no status filter. */
     default Page<StoreProductStockResponse> searchStoreProducts(Long storeId, Long productId, Pageable pageable) {
         return searchStoreProducts(storeId, productId, null, pageable);

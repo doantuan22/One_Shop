@@ -16,7 +16,7 @@
         <div class="os-filter-grid">
             <div class="os-filter-field">
                 <label class="form-label" for="user-q">Tìm kiếm</label>
-                <input id="user-q" name="q" type="text" class="form-control form-control-sm" th:value="${q}"
+                <input id="user-q" name="q" type="text" class="form-control form-control-sm" th:attr="data-suggest-url=@{/admin/users/suggest}" th:value="${q}"
                        placeholder="Họ tên, e-mail, tên đăng nhập">
             </div>
             <div class="os-filter-field">
@@ -54,7 +54,7 @@
             <tbody>
             <tr th:each="u : ${users.content}" th:attr="data-user-id=${u.id}">
                 <td><span class="os-cell-main" th:text="${u.fullName}">Nguyễn Văn A</span></td>
-                <td><span class="os-cell-main" th:text="'#' + ${u.email}">a@oneshop.vn</span></td>
+                <td><span class="os-cell-main" th:text="${u.email}">a@oneshop.vn</span></td>
                 <td th:text="${u.userName}">van_a</td>
                 <td th:text="${u.phone}">090…</td>
                 <td><span th:replace="~{fragments/components :: roleBadge(${u.role})}"></span></td>

@@ -113,6 +113,10 @@ CREATE TABLE dbo.staff_store_assignments (
 );
 GO
 
+/* A Staff works at exactly one Store: at most one ACTIVE assignment per user (INACTIVE = suspended, any number). */
+CREATE UNIQUE INDEX UX_ssa_one_active_store_per_user ON dbo.staff_store_assignments (user_id) WHERE status = N'ACTIVE';
+GO
+
 /* ============================================================================
    6. categories
    ========================================================================== */

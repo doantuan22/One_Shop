@@ -63,7 +63,7 @@
         <div class="border rounded p-3 mb-3 os-failed-part" th:each="part : ${exception.failed}" th:attr="data-fulfillment-id=${part.fulfillmentId}">
             <div class="d-flex flex-wrap justify-content-between gap-2">
                 <strong th:text="'Phần giao #' + ${part.fulfillmentId} + ' · ' + ${part.storeName}"></strong>
-                <span class="badge text-bg-danger">Không thành công</span>
+                <span class="badge os-soft os-soft-danger">Không thành công</span>
             </div>
             <div class="small text-secondary">
                 <span th:replace="~{fragments/components :: fulfillmentType(${part.type})}"></span>

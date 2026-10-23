@@ -202,7 +202,7 @@
                                         <polyline points="22,6 12,13 2,6"></polyline>
                                     </svg>
                                 </span>
-                                <input type="text" class="form-control bg-light" th:value="${accountUser.email}" readonly disabled>
+                                <input type="text" class="form-control bg-light" aria-label="Email" th:value="${accountUser.email}" readonly disabled>
                                 <span class="input-group-text bg-light text-muted small">Cố định</span>
                             </div>
                         </div>
@@ -212,7 +212,7 @@
                             <label class="form-label fw-semibold text-dark">Tên đăng nhập (Username)</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light text-muted">@</span>
-                                <input type="text" class="form-control bg-light"
+                                <input type="text" class="form-control bg-light" aria-label="Tên đăng nhập"
                                        th:value="${accountUser.userName != null and !accountUser.userName.isBlank() ? accountUser.userName : 'Chưa thiết lập'}"
                                        readonly disabled>
                                 <span class="input-group-text bg-light text-muted small">Cố định</span>

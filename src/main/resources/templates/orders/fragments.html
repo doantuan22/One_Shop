@@ -27,7 +27,7 @@
             <div class="col-12 col-md-4">
                 <div class="text-secondary small">Trạng thái đơn hàng</div>
                 <div id="order-status" th:attr="data-status=${order.orderStatus}"><span th:replace="~{staff/delivery/fragments :: state(${order.orderStatus})}"></span>
-                    <span class="badge text-bg-warning ms-1" id="order-closed-partial" th:if="${refund != null and refund.closedWithUndelivered}">Hoàn tất một phần: có phần không giao được</span></div>
+                    <span class="badge os-soft os-soft-warning ms-1" id="order-closed-partial" th:if="${refund != null and refund.closedWithUndelivered}">Hoàn tất một phần: có phần không giao được</span></div>
             </div>
             <div class="col-12 col-md-4">
                 <div class="text-secondary small">Thanh toán</div>
@@ -76,7 +76,7 @@
             <div class="card-body">
                 <div class="d-flex flex-wrap justify-content-between gap-2">
                     <strong><span th:if="${detail.fulfillments.size() > 1}" th:text="'Phần ' + ${row.count} + ' · '"></span><span th:text="${part.storeName}"></span></strong>
-                    <span class="badge text-bg-danger os-part-undeliverable" th:if="${refund != null and refund.undeliverable.containsKey(part.fulfillmentId)}">Không giao được</span>
+                    <span class="badge os-soft os-soft-danger os-part-undeliverable" th:if="${refund != null and refund.undeliverable.containsKey(part.fulfillmentId)}">Không giao được</span>
                     <span th:unless="${refund != null and refund.undeliverable.containsKey(part.fulfillmentId)}" th:replace="~{staff/fulfillments/fragments :: status(${part.status})}"></span>
                 </div>
                 <p class="small mb-1 os-undeliverable-reason" th:if="${refund != null and refund.undeliverable.containsKey(part.fulfillmentId)}"

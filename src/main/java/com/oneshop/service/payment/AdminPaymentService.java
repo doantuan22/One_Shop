@@ -119,6 +119,17 @@ public class AdminPaymentService {
         if (q.length() > 100) {
             q = q.substring(0, 100);
         }
+        var words = q.matches("\\d+") ? java.util.List.<String>of() : com.oneshop.service.search.TextSearch.words(q);
+        if (!words.isEmpty()) {
+            var matched = orders.searchPaymentCases(view == null ? "all" : view.key(), "", "%%", deadlines.expiredBefore(),
+                            from == null ? null : from.atStartOfDay(),
+                            to == null ? null : to.plusDays(1).atStartOfDay(),
+                            org.springframework.data.domain.Pageable.unpaged())
+                    .getContent().stream()
+                    .filter(o -> com.oneshop.service.search.TextSearch.matchesAll(words, o.getUser().getFullName(), o.getUser().getEmail()))
+                    .toList();
+            return com.oneshop.service.search.TextSearch.slice(matched, PageRequest.of(Math.max(0, page), PAGE_SIZE)).map(this::summary);
+        }
         String like = "%" + q.toLowerCase(java.util.Locale.ROOT).replace("!", "!!").replace("%", "!%")
                 .replace("_", "!_") + "%";
         return orders.searchPaymentCases(view == null ? "all" : view.key(), q, like, deadlines.expiredBefore(),

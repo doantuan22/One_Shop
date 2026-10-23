@@ -85,7 +85,7 @@
             <button class="btn btn-primary" type="submit" id="action-recheck">Đối soát lại</button>
         </form>
         <div th:if="${paymentCase.canSettleGateway}" class="mb-3" id="gateway-console">
-            <p class="small text-secondary">Giả lập câu trả lời của cổng thanh toán cho lần thanh toán chưa xác định.</p>
+            <p class="small text-secondary">Ghi nhận kết quả phản hồi của cổng thanh toán (mô phỏng) cho lần thanh toán chưa xác định.</p>
             <form method="post" class="d-inline" th:action="@{/admin/payments/{id}/gateway(id=${c.orderId})}">
                 <input type="hidden" name="answer" value="COLLECTED">
                 <button class="btn btn-outline-success" type="submit" id="action-gateway-collected">Cổng xác nhận ĐÃ thu</button>

@@ -17,6 +17,13 @@ public class AdminUserController {
     public AdminUserController(AdminUserService users) { this.users = users; }
     @ModelAttribute("roles") public RoleName[] roles() { return RoleName.values(); }
     @ModelAttribute("statuses") public ActiveStatus[] statuses() { return ActiveStatus.values(); }
+    /** Full name and e-mail for the search-box suggestions (os-suggest.js shows "sku" first). */
+    @GetMapping("/suggest")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public java.util.List<java.util.Map<String, String>> suggest(@RequestParam(required = false) RoleName role) {
+        return users.suggestions(role);
+    }
+
     @GetMapping
     public String list(@RequestParam(required = false) RoleName role,
                        @RequestParam(required = false) ActiveStatus status,

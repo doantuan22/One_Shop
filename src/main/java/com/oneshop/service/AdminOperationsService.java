@@ -41,6 +41,15 @@ public class AdminOperationsService {
     public Page<AdminOrderSummaryResponse> getOrders(Long storeId, String q, OrderStatus orderStatus,
             OrderPaymentStatus paymentStatus, FulfillmentType fulfillmentType,
             java.time.LocalDate from, java.time.LocalDate to, int page) {
+        var words = orderQuery(q).isEmpty() ? com.oneshop.service.search.TextSearch.words(q) : java.util.List.<String>of();
+        if (!words.isEmpty()) {
+            var matched = orders.searchAdmin(storeId, "", "", orderStatus, paymentStatus, fulfillmentType,
+                            startOfDay(from), endExclusiveOf(to), org.springframework.data.domain.Pageable.unpaged())
+                    .getContent().stream()
+                    .filter(o -> com.oneshop.service.search.TextSearch.matchesAll(words, o.getUser().getFullName(), o.getUser().getEmail()))
+                    .toList();
+            return com.oneshop.service.search.TextSearch.slice(matched, PageRequest.of(Math.max(0, page), 20)).map(this::summary);
+        }
         return orders.searchAdmin(storeId, orderQuery(q), likePattern(q), orderStatus, paymentStatus, fulfillmentType,
                         startOfDay(from), endExclusiveOf(to), PageRequest.of(Math.max(0, page), 20))
                 .map(this::summary);

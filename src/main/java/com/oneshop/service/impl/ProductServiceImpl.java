@@ -76,8 +76,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductResponse> searchProducts(ProductSearchCriteria criteria, Pageable pageable) {
-        Page<Product> page = productRepository.searchVisible(criteria.likePattern(), criteria.categoryId(),
-                criteria.brandId(), pageable);
+        var words = com.oneshop.service.search.TextSearch.words(criteria.keyword());
+        Page<Product> page = words.isEmpty()
+                ? productRepository.searchVisible(criteria.likePattern(), criteria.categoryId(),
+                        criteria.brandId(), pageable)
+                : com.oneshop.service.search.TextSearch.slice(
+                        productRepository.searchVisible("%", criteria.categoryId(), criteria.brandId(),
+                                        Pageable.unpaged(pageable.getSort())).getContent().stream()
+                                .filter(p -> com.oneshop.service.search.TextSearch.matchesAll(words, p.getSku(), p.getName()))
+                                .toList(), pageable);
         Map<Long, String> primaryImages = getPrimaryImageUrls(page.getContent().stream().map(Product::getId).toList());
         return page.map(product -> productMapper.toResponse(product, primaryImages.get(product.getId())));
     }
@@ -327,16 +334,31 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<AdminProductResponse> searchAllProducts(String keyword, Pageable pageable) {
-        return productRepository.searchAll(ProductSearchCriteria.ofKeyword(keyword).likePattern(), pageable)
-                .map(catalogMapper::toAdminResponse);
+        var words = com.oneshop.service.search.TextSearch.words(keyword);
+        if (words.isEmpty()) {
+            return productRepository.searchAll(ProductSearchCriteria.ofKeyword(keyword).likePattern(), pageable)
+                    .map(catalogMapper::toAdminResponse);
+        }
+        var matched = productRepository.searchAll("%", Pageable.unpaged(pageable.getSort())).getContent().stream()
+                .filter(p -> com.oneshop.service.search.TextSearch.matchesAll(words, p.getSku(), p.getName()))
+                .toList();
+        return com.oneshop.service.search.TextSearch.slice(matched, pageable).map(catalogMapper::toAdminResponse);
     }
 
     @Override
     public Page<AdminProductResponse> searchAllProducts(String keyword, Long categoryId, Long brandId,
                                                         ProductStatus status, Pageable pageable) {
-        return productRepository.searchAdminProducts(ProductSearchCriteria.ofKeyword(keyword).likePattern(),
-                        categoryId, brandId, status, pageable)
-                .map(catalogMapper::toAdminResponse);
+        var words = com.oneshop.service.search.TextSearch.words(keyword);
+        if (words.isEmpty()) {
+            return productRepository.searchAdminProducts(ProductSearchCriteria.ofKeyword(keyword).likePattern(),
+                            categoryId, brandId, status, pageable)
+                    .map(catalogMapper::toAdminResponse);
+        }
+        var matched = productRepository.searchAdminProducts("%", categoryId, brandId, status,
+                        Pageable.unpaged(pageable.getSort())).getContent().stream()
+                .filter(p -> com.oneshop.service.search.TextSearch.matchesAll(words, p.getSku(), p.getName()))
+                .toList();
+        return com.oneshop.service.search.TextSearch.slice(matched, pageable).map(catalogMapper::toAdminResponse);
     }
 
     @Override

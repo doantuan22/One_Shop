@@ -22,7 +22,7 @@
         <div class="os-filter-grid">
             <div class="os-filter-field">
                 <label class="form-label" for="products-q">Tìm kiếm</label>
-                <input id="products-q" type="search" class="form-control form-control-sm" name="q"
+                <input id="products-q" type="search" class="form-control form-control-sm" name="q" th:attr="data-suggest-url=@{/admin/products/suggest}"
                        th:value="${q}" placeholder="Tên sản phẩm hoặc mã SKU" maxlength="100">
             </div>
             <div class="os-filter-field">
@@ -94,7 +94,7 @@
                  class="os-thumb" loading="lazy" decoding="async">
             <span class="os-thumb-ph" th:unless="${images[product.id]}" aria-hidden="true"></span>
         </td>
-        <td class="os-col-code"><span class="fw-semibold" th:text="'#' + ${product.sku}">SKU-001</span></td>
+        <td class="os-col-code"><span class="fw-semibold" th:text="${product.sku}">SKU-001</span></td>
         <td class="fw-semibold" th:text="${product.name}">Tên sản phẩm</td>
         <td th:text="${product.categoryName}">Chăm sóc da</td>
         <td th:text="${product.brandName}">Cocoon</td>

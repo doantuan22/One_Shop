@@ -37,7 +37,7 @@
         <div class="os-filter-grid">
             <div class="os-filter-field">
                 <label class="form-label" for="review-q">Tìm kiếm</label>
-                <input id="review-q" name="q" type="text" class="form-control form-control-sm" th:value="${q}"
+                <input id="review-q" name="q" type="text" class="form-control form-control-sm" th:attr="data-suggest-url=@{/admin/reviews/suggest}" th:value="${q}"
                        placeholder="Khách hàng, e-mail, SKU hoặc tên sản phẩm">
             </div>
             <div class="os-filter-field">

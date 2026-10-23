@@ -4,7 +4,7 @@ import { APP, CdpPage, sleep } from './lib/cdp.mjs';
 
 // FULL UI capture for every role and every page of the running app (GET-only).
 // - 4 roles: guest (not logged in), customer, staff, admin.
-// - 4 authentic device ratios: 1440x900 (desktop), 1366x768 (laptop), 768x1024 (tablet), 390x844 (phone).
+// - one device ratio only: 1440x900 (desktop).
 // - Pages long enough are split into several numbered parts (p01, p02, ...) without resetting scroll.
 // - Login-page states, form/new/edit pages, detail pages, 403/404 states and client-side modal
 //   states are all captured. The only POST that may run is adding ONE cart item when the
@@ -15,9 +15,6 @@ import { APP, CdpPage, sleep } from './lib/cdp.mjs';
 const ROOT = path.resolve('screenshots');
 const VIEWPORTS = [
   { label: 'desktop', w: 1440, h: 900 },
-  { label: 'laptop', w: 1366, h: 768 },
-  { label: 'tablet', w: 768, h: 1024 },
-  { label: 'phone', w: 390, h: 844 },
 ];
 const ADDRESS = encodeURIComponent('1 Nguyen Trai, TP. Ho Chi Minh');
 const ADDRESS_PLAIN = '1 Nguyen Trai, TP. Ho Chi Minh';
@@ -149,6 +146,31 @@ async function captureModal(page, roleOut, entry) {
   return meta;
 }
 
+
+// Expandable boxes that are not Bootstrap modals (dropdown menus, <details>): same flow as captureModal.
+const clickFirstVisible = (sel) => `(() => { const el = [...document.querySelectorAll(${JSON.stringify(sel)})].find(e => e.offsetWidth); el?.click(); return !!el; })()`;
+const dropdownExtra = (seq, name, dir, p, sel) => ({
+  seq, name, dir, path: p,
+  openExpr: clickFirstVisible(sel),
+  openWait: "!!document.querySelector('.dropdown-menu.show')",
+  closeExpr: "document.querySelector('.dropdown-menu.show')?.previousElementSibling?.click(); true",
+  closedWait: "!document.querySelector('.dropdown-menu.show')",
+});
+const detailsExtra = (seq, name, dir, p, sel) => ({
+  seq, name, dir, path: p,
+  openExpr: `(() => { const d = document.querySelector(${JSON.stringify(sel)}); d?.scrollIntoView({block: 'center'}); d?.querySelector('summary')?.click(); return !!d; })()`,
+  openWait: `!!document.querySelector(${JSON.stringify(sel + '[open]')})`,
+  closeExpr: `document.querySelector(${JSON.stringify(sel)})?.querySelector('summary')?.click(); true`,
+  closedWait: 'true',
+});
+const modalExtra = (seq, name, dir, p, openSel, modalSel) => ({
+  seq, name, dir, path: p,
+  openExpr: `document.querySelector(${JSON.stringify(openSel)})?.click(); true`,
+  openWait: `!!document.querySelector(${JSON.stringify(modalSel + '.show')})`,
+  closeExpr: `document.querySelector(${JSON.stringify(modalSel + ' [data-bs-dismiss=modal]')})?.click(); true`,
+  closedWait: `!document.querySelector(${JSON.stringify(modalSel + '.show')})`,
+});
+
 // Resolve a dynamic detail path by looking for a link on a list page (desktop only).
 async function resolveHref(page, srcPath, matchExpr) {
   await page.setViewport(VIEWPORTS[0].w, VIEWPORTS[0].h);
@@ -216,6 +238,14 @@ async function main() {
     for (const entry of guestRoutes) {
       console.log(`  guest ${entry.name} ${entry.path}`);
       try { guestFiles.push(...await captureRoute(page, 'guest', entry)); }
+      catch (e) { manifest.skipped.push(`guest/${entry.name}: ${e.message}`); console.log(`    [skip] ${e.message}`); }
+    }
+    const guestExtras = [
+      detailsExtra('130', 'product-other-stores', '130-chi-tiet-cua-hang-khac', guestResolvedProduct, 'details#other-stores'),
+    ].filter(r => r.path);
+    for (const entry of guestExtras) {
+      console.log(`  guest ${entry.name} (expanded, desktop)`);
+      try { guestFiles.push(...await captureModal(page, 'guest', entry)); }
       catch (e) { manifest.skipped.push(`guest/${entry.name}: ${e.message}`); console.log(`    [skip] ${e.message}`); }
     }
     manifest.roles.guest = { label: 'Khách (chưa đăng nhập)', pages: guestRoutes.length, files: guestFiles };
@@ -292,6 +322,15 @@ async function main() {
       try { customerFiles.push(...await captureRoute(page, 'customer', entry)); }
       catch (e) { manifest.skipped.push(`customer/${entry.name}: ${e.message}`); console.log(`    [skip] ${e.message}`); }
     }
+    const customerExtras = [
+      dropdownExtra('120', 'account-menu', '120-menu-tai-khoan', '/', '[data-bs-toggle=dropdown][aria-label="Tài khoản cá nhân"], [data-bs-toggle=dropdown][title="Tài khoản cá nhân"]'),
+      detailsExtra('130', 'product-other-stores', '130-chi-tiet-cua-hang-khac', guestResolvedProduct, 'details#other-stores'),
+    ].filter(r => r.path);
+    for (const entry of customerExtras) {
+      console.log(`  customer ${entry.name} (expanded, desktop)`);
+      try { customerFiles.push(...await captureModal(page, 'customer', entry)); }
+      catch (e) { manifest.skipped.push(`customer/${entry.name}: ${e.message}`); console.log(`    [skip] ${e.message}`); }
+    }
     manifest.roles.customer = { label: 'Khách hàng (khachhang1@example.com)', pages: customerRoutes.filter(r => r.path).length, files: customerFiles };
 
     // Restore the cart to its original state when we had to add an item.
@@ -350,6 +389,7 @@ async function main() {
         openWait: "!!document.querySelector('.modal.show[id^=adjust-modal-]')",
         closeExpr: "document.querySelector('.modal.show[id^=adjust-modal-] [data-bs-dismiss=modal]')?.click(); true",
         closedWait: "!document.querySelector('.modal.show[id^=adjust-modal-]')" },
+      detailsExtra('210', 'review-reply-box', '210-danh-gia-mo-khung-phan-hoi', '/staff/reviews', 'details.os-review-reply-box'),
     ];
 
     [fulfillmentId, staffOrderId, staffReviewId].forEach((v, i) => {
@@ -431,6 +471,10 @@ async function main() {
         openWait: "document.querySelector('#osReasonModal').classList.contains('show')",
         closeExpr: "document.querySelector('#osReasonModal [data-bs-dismiss=modal]')?.click(); true",
         closedWait: "!document.querySelector('#osReasonModal.show')" },
+      modalExtra('270', 'category-add-modal', '270-danh-muc-mo-cua-so-them', '/admin/categories', '[data-bs-target="#category-form-modal"]', '#category-form-modal'),
+      modalExtra('280', 'brand-add-modal', '280-thuong-hieu-mo-cua-so-them', '/admin/brands', '[data-bs-target="#brand-form-modal"]', '#brand-form-modal'),
+      dropdownExtra('290', 'dashboard-row-menu', '290-tong-quan-menu-thao-tac', '/admin', '#store-overview [data-bs-toggle=dropdown]'),
+      detailsExtra('300', 'review-details-open', '300-danh-gia-mo-noi-dung', '/admin/reviews', 'details.os-review-details'),
     ];
 
     const adminFiles = [];
@@ -476,7 +520,7 @@ thêm 1 món vào giỏ khi giỏ trống của khách hàng demo — được x
   thương hiệu, người dùng, chi nhánh), chi tiết đơn/thanh toán, đánh giá (+ modal lý do), lỗi 403.
 
 ## Tỉ lệ chuẩn từng thiết bị (viewport thật)
-driver = desktop 1440×900 · laptop 1366×768 · tablet 768×1024 · phone 390×844
+Một tỷ lệ duy nhất: desktop 1440×900
 
 ## Trang dài
 Chụp thành nhiều phần \`-p01, -p02, ...\` theo từng lần cuộn bằng chiều cao viewport (không thẳng lại,

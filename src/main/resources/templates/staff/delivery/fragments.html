@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <body>
-<span th:fragment="state(status)" class="badge text-bg-secondary" th:switch="${status.name()}">
+<span th:fragment="state(status)" class="badge os-soft" th:switch="${status.name()}"
+      th:classappend="${ {'COMPLETED':'os-soft-success','PENDING_PAYMENT':'os-soft-warning','PARTIALLY_COMPLETED':'os-soft-warning','NEEDS_ATTENTION':'os-soft-danger','FAILED':'os-soft-danger','CANCELLED':'os-soft-neutral','CONFIRMED':'os-soft-info','PREPARING':'os-soft-info','PACKED':'os-soft-info','PROCESSING':'os-soft-info','SHIPPING':'os-soft-coral','READY_FOR_PICKUP':'os-soft-coral'}[status.name()] ?: 'os-soft-neutral' }">
     <span th:case="'PENDING_PAYMENT'">Chờ thanh toán</span><span th:case="'CONFIRMED'">Đã xác nhận</span>
     <span th:case="'PREPARING'">Đang chuẩn bị</span><span th:case="'PACKED'">Đã đóng gói</span>
     <span th:case="'READY_FOR_PICKUP'">Sẵn sàng nhận tại cửa hàng</span>

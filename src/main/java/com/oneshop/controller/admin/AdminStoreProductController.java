@@ -47,11 +47,20 @@ public class AdminStoreProductController {
     @GetMapping
     public String list(@RequestParam(required = false) Long storeId, @RequestParam(required = false) Long productId,
                        @RequestParam(required = false) com.oneshop.entity.ActiveStatus status,
+                       @RequestParam(required = false) String q,
                        @RequestParam(defaultValue = "0") int page, Model model) {
+        var products = productService.getAssignableProducts();
+        // a product picked from the suggestions (or a deep link with productId) shows as its label in the search box
+        String text = q == null ? "" : q.trim();
+        if (text.isEmpty() && productId != null) {
+            text = products.stream().filter(p -> productId.equals(p.id())).findFirst()
+                    .map(p -> p.sku() + " - " + p.name()).orElse("");
+        }
         model.addAttribute("storeProducts", storeProductService.searchStoreProducts(storeId, productId, status,
-                PageRequest.of(Math.max(page, 0), PAGE_SIZE)));
+                productId != null ? null : text, PageRequest.of(Math.max(page, 0), PAGE_SIZE)));
         model.addAttribute("stores", storeService.getAllStores());
-        model.addAttribute("products", productService.getAssignableProducts());
+        model.addAttribute("products", products);
+        model.addAttribute("q", text);
         model.addAttribute("storeId", storeId);
         model.addAttribute("productId", productId);
         model.addAttribute("status", status);

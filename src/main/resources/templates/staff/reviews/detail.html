@@ -4,7 +4,7 @@
 <div class="card shadow-sm" th:attr="data-review-id=${review.id},data-review-item=${review.orderItemId}">
     <div class="card-body">
         <h1 class="h5" th:text="${review.productName}">Sản phẩm</h1>
-        <span class="badge" th:classappend="${review.reply != null} ? 'text-bg-success' : 'text-bg-warning'"
+        <span class="badge" th:classappend="${review.reply != null} ? 'os-soft os-soft-success' : 'os-soft os-soft-warning'"
               th:text="${review.reply != null} ? 'Đã phản hồi' : 'Cần phản hồi'">Cần phản hồi</span>
         <div class="text-secondary small"><span th:text="${review.sku}">SKU</span> &middot; <span th:text="${review.storeName}">Chi nhánh</span></div>
         <p class="mt-2"><span th:text="${review.customerName}">Khách hàng</span> &middot; <span th:text="${review.rating} + ' / 5 sao'">5 sao</span></p>

@@ -6,7 +6,7 @@
     --brand-primary-light: #fff5f2;
     --brand-primary-border: #ffd5c7;
     --brand-primary-contrast: #ffffff;
-    --brand-primary-text: #bf360c;
+    --brand-primary-text: #d65426;
 
     --os-brand-coral: #ff7f50;
     --os-coral: #ff7f50;
@@ -19,7 +19,7 @@
     --bs-primary-hover: #e86738;
     --bs-primary-active: #d65426;
     --bs-link-color: #d65426;
-    --bs-link-hover-color: #bf360c;
+    --bs-link-hover-color: #e86738;
 }
 
 body {

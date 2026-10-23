@@ -40,8 +40,30 @@ public class AdminUserService {
         return users.searchAdmin(role, PageRequest.of(Math.max(0, page), 20)).map(AdminUserService::response);
     }
 
+    /** Name and e-mail of every account for the search-box suggestions. */
+    public List<java.util.Map<String, String>> suggestions() {
+        return suggestions(null);
+    }
+
+    /** Same, limited to one role (the order and payment consoles search customers). */
+    public List<java.util.Map<String, String>> suggestions(RoleName role) {
+        return users.findAll().stream()
+                .filter(u -> role == null || u.getRole().getName() == role)
+                .map(u -> java.util.Map.of("sku", u.getFullName() == null ? u.getEmail() : u.getFullName(),
+                        "name", u.getEmail()))
+                .toList();
+    }
+
     /** User console search: role + account status + contains text over name / e-mail / user name. */
     public Page<AdminUserResponse> searchUsers(RoleName role, ActiveStatus status, String q, int page) {
+        var words = com.oneshop.service.search.TextSearch.words(q);
+        if (!words.isEmpty()) {
+            var matched = users.searchAdmin(role, status, "", org.springframework.data.domain.Pageable.unpaged())
+                    .getContent().stream()
+                    .filter(u -> com.oneshop.service.search.TextSearch.matchesAll(words, u.getFullName(), u.getEmail(), u.getUserName()))
+                    .toList();
+            return com.oneshop.service.search.TextSearch.slice(matched, PageRequest.of(Math.max(0, page), 20)).map(AdminUserService::response);
+        }
         var like = likeOf(q);
         return users.searchAdmin(role, status, like, PageRequest.of(Math.max(0, page), 20)).map(AdminUserService::response);
     }

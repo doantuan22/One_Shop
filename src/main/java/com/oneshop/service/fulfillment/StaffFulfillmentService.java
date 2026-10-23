@@ -129,6 +129,18 @@ public class StaffFulfillmentService {
                 : List.of(FulfillmentType.values());
         LocalDateTime from = f.from() == null ? MIN_TIME : f.from().atStartOfDay();
         LocalDateTime to = f.to() == null ? MAX_TIME : f.to().plusDays(1).atStartOfDay();
+        var words = com.oneshop.service.search.TextSearch.words(customer);
+        if (!words.isEmpty()) {
+            var matched = fulfillments.searchForStaff(storeIds, statuses, types,
+                            f.orderId() == null ? 0L : f.orderId(), from, to, "",
+                            org.springframework.data.domain.Pageable.unpaged())
+                    .getContent().stream()
+                    .filter(row -> com.oneshop.service.search.TextSearch.matchesAll(words, row.getOrder().getUser().getFullName(),
+                            row.getOrder().getUser().getEmail(), row.getOrder().getReceiverName(),
+                            row.getOrder().getReceiverPhone()))
+                    .toList();
+            return toQueueItems(com.oneshop.service.search.TextSearch.slice(matched, PageRequest.of(Math.max(0, page), PAGE_SIZE)));
+        }
         String pattern = likePattern(customer);
         Page<OrderFulfillment> rows = fulfillments.searchForStaff(storeIds, statuses, types,
                 f.orderId() == null ? 0L : f.orderId(), from, to,

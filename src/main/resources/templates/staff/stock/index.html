@@ -35,7 +35,7 @@
         <div class="os-filter-grid">
             <div class="os-filter-field">
                 <label class="form-label" for="stock-q">Tìm kiếm</label>
-                <input id="stock-q" name="q" type="text" class="form-control form-control-sm" th:value="${q}"
+                <input id="stock-q" name="q" type="text" class="form-control form-control-sm" th:attr="data-suggest-url=@{/products/suggest}" th:value="${q}"
                        placeholder="SKU, tên sản phẩm hoặc chi nhánh">
             </div>
             <div class="os-filter-field">

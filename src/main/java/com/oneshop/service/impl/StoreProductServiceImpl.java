@@ -172,15 +172,41 @@ public class StoreProductServiceImpl implements StoreProductService {
                 .map(storeProductMapper::toStockView);
     }
 
+    @Override
+    public Page<StoreProductStockResponse> searchStoreProducts(Long storeId, Long productId,
+                                                               com.oneshop.entity.ActiveStatus status, String q,
+                                                               Pageable pageable) {
+        List<String> words = com.oneshop.service.search.TextSearch.words(q);
+        if (words.isEmpty()) {
+            return searchStoreProducts(storeId, productId, status, pageable);
+        }
+        List<StoreProductStockResponse> matched = storeProductRepository
+                .searchForAdmin(storeId, productId, status, Pageable.unpaged())
+                .map(storeProductMapper::toStockView).getContent().stream()
+                .filter(row -> com.oneshop.service.search.TextSearch.matchesAll(words, row.sku(), row.productName()))
+                .toList();
+        return com.oneshop.service.search.TextSearch.slice(matched, pageable);
+    }
+
     private static final List<String> INVENTORY_LEVELS = List.of("all", "out", "low", "ok");
     private static final List<String> INVENTORY_SORTS = List.of("name", "qty_desc", "qty_asc");
 
     @Override
     public Page<StoreProductStockResponse> searchInventory(Long storeId, String q, String stockLevel, String sort,
                                                            Pageable pageable) {
-        var like = containsLike(q);
+        var words = com.oneshop.service.search.TextSearch.words(q);
+        var like = "";
         var level = stockLevel != null && INVENTORY_LEVELS.contains(stockLevel) ? stockLevel : "all";
         var order = sort != null && INVENTORY_SORTS.contains(sort) ? sort : "name";
+        if (!words.isEmpty()) {
+            var all = storeProductRepository
+                    .searchInventory(storeId, like, level, StaffOperationsService.LOW_STOCK_THRESHOLD, order,
+                            Pageable.unpaged(pageable.getSort()))
+                    .map(storeProductMapper::toStockView).getContent().stream()
+                    .filter(row -> com.oneshop.service.search.TextSearch.matchesAll(words, row.sku(), row.productName(), row.storeName()))
+                    .toList();
+            return com.oneshop.service.search.TextSearch.slice(all, pageable);
+        }
         return storeProductRepository
                 .searchInventory(storeId, like, level, StaffOperationsService.LOW_STOCK_THRESHOLD, order, pageable)
                 .map(storeProductMapper::toStockView);

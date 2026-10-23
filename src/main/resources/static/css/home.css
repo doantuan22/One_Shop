@@ -6,7 +6,7 @@
     --brand-primary-light: #fff5f2;
     --brand-primary-border: #ffd5c7;
     --brand-primary-contrast: #ffffff;
-    --brand-primary-text: #bf360c;
+    --brand-primary-text: #d65426;
 
     --os-brand-coral: #ff7f50;
     --os-coral: #ff7f50;
@@ -20,7 +20,7 @@
     --bs-primary-rgb: 255, 127, 80;
     --bs-primary-hover: #e86738;
     --bs-link-color: #d65426;
-    --bs-link-hover-color: #bf360c;
+    --bs-link-hover-color: #e86738;
 }
 
 /* ---------------------------------------------------------------------------------------------
@@ -37,7 +37,7 @@
     gap: 8px;
     margin-bottom: 1.25rem;
     padding: 8px 14px;
-    border: 1px solid rgba(255, 111, 97, 0.20);
+    border: 1px solid rgba(255, 127, 80, 0.20);
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.75);
     color: var(--os-coral-dark);
@@ -68,6 +68,7 @@ body:has(.home-hero) {
     /* Auto width plus symmetric viewport margins avoids the 15px desktop scrollbar overflow of 100vw. */
     width: auto;
     margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
     /* cancels the py-4 of the layout's <main>, so the photo starts right under the navbar */
     margin-top: -1.5rem;
     min-height: clamp(380px, 32vw, 460px);
@@ -193,7 +194,8 @@ body:has(.home-hero) {
     color: var(--os-muted);
 }
 
-.home-search__submit {
+/* two classes: beats the shared .btn radius from ui-system.css so the button follows the pill-shaped bar */
+.home-search__form .home-search__submit {
     flex: 0 0 auto;
     height: 100%;
     min-width: 96px;
@@ -794,10 +796,18 @@ body:has(.home-hero) {
     border: 1px solid var(--os-border);
     border-radius: 12px;
     background: var(--os-surface);
+    box-shadow: 0 6px 18px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.home-band--white .home-store {
-    background: var(--os-bg);
+.home-store:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(16, 24, 40, 0.12), 0 2px 4px rgba(16, 24, 40, 0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .home-store { transition: none; }
+    .home-store:hover { transform: none; }
 }
 
 .home-store h3 {

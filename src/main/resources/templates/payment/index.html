@@ -69,7 +69,7 @@
         <p class="small mb-1" th:if="${attempt.transactionCode}">Mã giao dịch: <span class="payment-transaction-code" th:text="${attempt.transactionCode}"></span></p>
         <p class="small mb-1" th:if="${attempt.paidAt != null and attempt.status.name() == 'SUCCESS'}">Đã thanh toán lúc: <span class="payment-paid-at" th:text="${#temporals.format(attempt.paidAt, 'dd/MM/yyyy HH:mm:ss')}"></span></p>
         <div class="os-gateway-simulation" th:if="${paymentOrder.canSimulate() and attempt.status.name() == 'PENDING'}">
-            <p class="small text-secondary mb-2">Cổng thanh toán mô phỏng (chỉ để trình diễn): chọn kết quả mà cổng sẽ phản hồi.
+            <p class="small text-secondary mb-2">Cổng thanh toán mô phỏng, không thu tiền thật: chọn kết quả mà cổng sẽ phản hồi.
                 Hệ thống xác minh lại với cổng, không tin vào nút bấm.</p>
             <form method="post" class="d-inline" th:each="scenario : ${ {'SUCCESS','FAILED','UNKNOWN'} }"
                   th:action="@{/orders/{id}/payments/{pid}/simulate(id=${paymentOrder.orderId},pid=${attempt.paymentId})}">

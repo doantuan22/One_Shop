@@ -63,9 +63,18 @@ public class StaffInventoryService {
      */
     public Page<StoreProductStockResponse> getStock(int page, String q, String level, String sort) {
         List<Long> storeIds = scope.getAssignedStoreIds();
-        String like = likePattern(q);
+        var words = com.oneshop.service.search.TextSearch.words(q);
+        String like = "";
         String cleanLevel = cleanLevel(level);
         String cleanSort = sort == null || sort.isBlank() ? "" : sort.trim();
+        if (!words.isEmpty()) {
+            var all = products.searchForStaffStores(storeIds, like, cleanLevel, StaffOperationsService.LOW_STOCK_THRESHOLD,
+                            cleanSort, org.springframework.data.domain.Pageable.unpaged()).getContent().stream()
+                    .filter(sp -> com.oneshop.service.search.TextSearch.matchesAll(words, sp.getProduct().getSku(),
+                            sp.getProduct().getName(), sp.getStore().getName()))
+                    .toList();
+            return com.oneshop.service.search.TextSearch.slice(all, PageRequest.of(Math.max(0, page), 20)).map(mapper::toStockView);
+        }
         boolean plain = like.isEmpty() && cleanLevel.equals("all") && !cleanSort.equals("qty_desc") && !cleanSort.equals("qty_asc");
         Page<com.oneshop.entity.StoreProduct> rows = plain
                 ? products.findByStoreIdInOrderByStoreNameAscProductNameAscIdAsc(storeIds,
@@ -113,10 +122,20 @@ public class StaffInventoryService {
         List<Long> storeIds = scope.getAssignedStoreIds();
         String text = q == null ? "" : q.trim();
         boolean numeric = text.matches("\\d+");
-        String like = numeric ? "" : likePattern(text);
+        String like = "";
         String query = numeric ? text : "";
         LocalDateTime fromAt = from == null ? null : from.atStartOfDay();
         LocalDateTime toAt = to == null ? null : to.plusDays(1).atStartOfDay();
+        var words = numeric ? java.util.List.<String>of() : com.oneshop.service.search.TextSearch.words(text);
+        if (!words.isEmpty()) {
+            var all = movements.searchLog(storeIds, type, staffId, "", like, fromAt, toAt,
+                            org.springframework.data.domain.Pageable.unpaged()).getContent().stream()
+                    .filter(m -> com.oneshop.service.search.TextSearch.matchesAll(words, m.getStoreProduct().getProduct().getSku(),
+                            m.getStoreProduct().getProduct().getName(), m.getStoreProduct().getStore().getName(),
+                            m.getNote()))
+                    .toList();
+            return com.oneshop.service.search.TextSearch.slice(all, PageRequest.of(Math.max(0, page), 20)).map(this::toLogView);
+        }
         return movements.searchLog(storeIds, type, staffId, query, like, fromAt, toAt,
                         PageRequest.of(Math.max(0, page), 20)).map(this::toLogView);
     }

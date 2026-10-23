@@ -23,7 +23,7 @@
         <div class="os-filter-grid">
             <div class="os-filter-field">
                 <label class="form-label" for="stores-q">Tìm kiếm</label>
-                <input id="stores-q" name="q" type="text" class="form-control form-control-sm" th:value="${q}"
+                <input id="stores-q" name="q" type="text" class="form-control form-control-sm" th:attr="data-suggest-url=@{/admin/stores/suggest}" th:value="${q}"
                        placeholder="Mã, tên, địa chỉ...">
             </div>
             <div class="os-filter-field">
@@ -93,6 +93,8 @@
             <div class="table-actions">
                 <a class="btn btn-outline-secondary btn-sm" th:if="${store.status.name() == 'ACTIVE'}"
                    th:href="@{/admin/store-products(storeId=${store.id})}">Sản phẩm</a>
+                <button type="button" class="btn btn-outline-secondary btn-sm" th:unless="${store.status.name() == 'ACTIVE'}"
+                        disabled title="Chi nhánh ngừng hoạt động">Sản phẩm</button>
                 <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/stores/{id}/edit(id=${store.id})}">Sửa</a>
             </div>
         </td>
