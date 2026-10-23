@@ -3,8 +3,11 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <th:block th:replace="~{fragments/assets :: head}"></th:block>
+    <!--/* Console layer for the Staff shell only; the public client pages never load it. */-->
+    <link rel="stylesheet" th:href="@{/css/admin-staff.css}">
     <title th:text="${#strings.isEmpty(pageTitle)} ? 'OneShop Staff' : ${pageTitle} + ' | OneShop Staff'">OneShop Staff</title>
     <th:block th:utext="${pageHead}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/ui-system.css}">
 </head>
 <body class="os-app os-app--staff" data-layout="staff">
 <a class="visually-hidden-focusable os-skip-link" href="#main-content">Bỏ qua đến nội dung chính</a>
@@ -18,5 +21,6 @@
 </div>
 
 <th:block th:replace="~{fragments/assets :: scripts}"></th:block>
+<script th:src="@{/js/admin-staff.js}" defer></script>
 </body>
 </html>

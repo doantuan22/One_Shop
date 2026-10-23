@@ -5,6 +5,7 @@ import com.oneshop.service.payment.OrderRefundViewService;
 import com.oneshop.service.payment.PaymentOutcome;
 import com.oneshop.service.payment.RefundService;
 import com.oneshop.service.payment.PaymentCaseCategory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,14 +37,18 @@ public class AdminPaymentController {
      */
     @GetMapping
     public String list(@RequestParam(required = false) String view, @RequestParam(required = false) String q,
+                       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate from,
+                       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate to,
                        @RequestParam(defaultValue = "0") int page, Model model) {
         boolean all = "all".equalsIgnoreCase(view == null ? "" : view.trim());
         PaymentCaseCategory selected = all ? null
                 : view == null ? PaymentCaseCategory.ATTENTION
                 : java.util.Objects.requireNonNullElse(PaymentCaseCategory.fromKey(view), PaymentCaseCategory.ATTENTION);
-        model.addAttribute("cases", payments.getCases(selected, q, page));
+        model.addAttribute("cases", payments.getCases(selected, q, from, to, page));
         model.addAttribute("view", all ? "all" : selected.key());
         model.addAttribute("q", q == null ? "" : q.trim());
+        model.addAttribute("from", from);
+        model.addAttribute("to", to);
         model.addAttribute("counts", payments.getCaseCounts());
         model.addAttribute("categories", java.util.Arrays.stream(PaymentCaseCategory.values())
                 .filter(c -> c != PaymentCaseCategory.OTHER).toList());

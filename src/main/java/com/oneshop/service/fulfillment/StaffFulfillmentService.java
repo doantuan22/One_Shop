@@ -107,6 +107,13 @@ public class StaffFulfillmentService {
 
     @Transactional(readOnly = true)
     public Page<FulfillmentQueueItemResponse> getQueue(FulfillmentQueueFilter filter, int page) {
+        // 2-arg entry point: the exact shape the queue page uses without a customer keyword.
+        return getQueue(filter, page, null);
+    }
+
+    /** Queue of the assigned Stores narrowed by an optional customer keyword (name / e-mail / receiver). */
+    @Transactional(readOnly = true)
+    public Page<FulfillmentQueueItemResponse> getQueue(FulfillmentQueueFilter filter, int page, String customer) {
         FulfillmentQueueFilter f = filter == null ? FulfillmentQueueFilter.none() : filter;
         List<Long> assigned = scope.getAssignedStoreIds();
         List<Long> storeIds = assigned;
@@ -122,9 +129,20 @@ public class StaffFulfillmentService {
                 : List.of(FulfillmentType.values());
         LocalDateTime from = f.from() == null ? MIN_TIME : f.from().atStartOfDay();
         LocalDateTime to = f.to() == null ? MAX_TIME : f.to().plusDays(1).atStartOfDay();
+        String pattern = likePattern(customer);
         Page<OrderFulfillment> rows = fulfillments.searchForStaff(storeIds, statuses, types,
-                f.orderId() == null ? 0L : f.orderId(), from, to, PageRequest.of(Math.max(0, page), PAGE_SIZE));
+                f.orderId() == null ? 0L : f.orderId(), from, to,
+                pattern, PageRequest.of(Math.max(0, page), PAGE_SIZE));
         return toQueueItems(rows);
+    }
+
+    /** lower-case contains pattern with ! as the escape character; empty for an empty or blank keyword. */
+    private static String likePattern(String customer) {
+        var text = customer == null ? "" : customer.trim().toLowerCase();
+        if (text.isEmpty()) {
+            return "";
+        }
+        return "%" + text.replace("!", "!!").replace("%", "!%").replace("_", "!_") + "%";
     }
 
     /** The most recent Fulfillments of the given (already authorized) Stores, for the dashboard. */

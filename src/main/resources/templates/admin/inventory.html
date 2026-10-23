@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Tồn kho toàn chuỗi</title>
+</head>
+<body>
+<div class="os-page-header mb-4">
+    <div>
+        <h1 class="h3 mb-1">Tồn kho toàn chuỗi</h1>
+        <p class="os-muted-text mb-0">Theo dõi tồn kho, mức cảnh báo và trạng thái bán của sản phẩm tại các chi nhánh.</p>
+    </div>
+    <div class="os-page-header__actions">
+        <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/store-products}">Sản phẩm theo chi nhánh</a>
+    </div>
+</div>
+
+<!--/* live counters for the chosen breadth: no hard-coded KPI anywhere. */-->
+<div class="os-kpi-chips mb-4">
+    <div class="os-kpi-chip os-kpi-chip--coral">
+        <div class="os-kpi-chip__label">Tổng số SKU theo chi nhánh</div>
+        <strong class="os-kpi-chip__value" id="stock-count" th:text="${summary.total}">0</strong>
+    </div>
+    <div class="os-kpi-chip">
+        <div class="os-kpi-chip__label">Sắp hết (1 đến <span th:text="${summary.lowThreshold}">5</span>)</div>
+        <strong class="os-kpi-chip__value text-warning-emphasis" th:text="${summary.low}">0</strong>
+    </div>
+    <div class="os-kpi-chip">
+        <div class="os-kpi-chip__label">Hết hàng (còn bán)</div>
+        <strong class="os-kpi-chip__value text-danger-emphasis" th:text="${summary.out}">0</strong>
+    </div>
+</div>
+
+<form method="get" th:action="@{/admin/inventory}" class="os-filter card mb-4" id="inventory-filter">
+    <div class="card-body">
+        <div class="os-filter-grid">
+            <div class="os-filter-field">
+                <label class="form-label" for="filter-store">Chi nhánh</label>
+                <select id="filter-store" name="storeId" class="form-select form-select-sm">
+                    <option value="">Tất cả chi nhánh</option>
+                    <option th:each="s : ${stores}" th:value="${s.id}" th:selected="${s.id == storeId}"
+                            th:text="${s.name} + ' · ' + ${s.status}"></option>
+                </select>
+            </div>
+            <div class="os-filter-field">
+                <label class="form-label" for="filter-q">Tìm kiếm</label>
+                <input id="filter-q" name="q" type="text" class="form-control form-control-sm" th:value="${q}"
+                       placeholder="SKU, tên sản phẩm hoặc chi nhánh">
+            </div>
+            <div class="os-filter-field">
+                <label class="form-label" for="filter-level">Mức tồn</label>
+                <select id="filter-level" name="stockLevel" class="form-select form-select-sm">
+                    <option value="">Tất cả mức tồn</option>
+                    <option value="out" th:selected="${stockLevel == 'out'}">Hết hàng (0)</option>
+                    <option value="low" th:selected="${stockLevel == 'low'}"
+                            th:text="'Sắp hết (1–' + ${summary.lowThreshold} + ')'">Sắp hết (1–5)</option>
+                    <option value="ok" th:selected="${stockLevel == 'ok'}">Tồn ổn định</option>
+                </select>
+            </div>
+            <div class="os-filter-field">
+                <label class="form-label" for="filter-sort">Sắp xếp</label>
+                <select id="filter-sort" name="sort" class="form-select form-select-sm">
+                    <option value="" th:selected="${sort == null or sort == ''}">Theo tên (chuẩn)</option>
+                    <option value="qty_desc" th:selected="${sort == 'qty_desc'}">Tồn giảm dần</option>
+                    <option value="qty_asc" th:selected="${sort == 'qty_asc'}">Tồn tăng dần</option>
+                </select>
+            </div>
+            <div class="os-filter-field d-flex align-items-end gap-2 pb-1">
+                <button type="submit" class="btn btn-primary btn-sm flex-shrink-0">Áp dụng</button>
+                <a class="btn btn-outline-secondary btn-sm flex-shrink-0" th:href="@{/admin/inventory}">Xóa lọc</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle os-table mb-0">
+            <thead class="table-light">
+            <tr>
+                <th scope="col" class="os-col-code">Chi nhánh</th>
+                <th scope="col">SKU</th>
+                <th scope="col">Sản phẩm</th>
+                <th scope="col" class="os-col-num">Giá online (chỉ đọc)</th>
+                <th scope="col" class="os-col-num">Tồn kho</th>
+                <th scope="col">Tình trạng tồn</th>
+                <th scope="col">Trạng thái bán</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="row : ${storeProducts.content}"
+                th:attr="data-store-product-id=${row.storeProductId},data-store-id=${row.storeId}">
+                <td class="os-col-code"><span class="os-cell-main" th:text="${row.storeName}">OneShop Thủ Đức</span></td>
+                <td><span class="os-cell-main" th:text="'#' + ${row.sku}">SKU-001</span></td>
+                <td class="fw-semibold" th:text="${row.productName}">Tên sản phẩm</td>
+                <td class="os-col-num"><span th:replace="~{fragments/components :: price(${row.price})}"></span></td>
+                <td class="os-col-num" data-field="exact-quantity" th:text="${row.quantity}">40</td>
+                <td>
+                    <span class="badge os-soft-danger" th:if="${row.quantity == 0}">Hết hàng</span>
+                    <span class="badge os-soft-warning"
+                          th:unless="${row.quantity == 0}"
+                          th:if="${row.quantity <= summary.lowThreshold}">Sắp hết</span>
+                    <span class="badge os-soft-success"
+                          th:if="${row.quantity > summary.lowThreshold}">Tồn ổn định</span>
+                </td>
+                <td><span th:replace="~{fragments/components :: statusBadge(${row.status})}"></span></td>
+            </tr>
+            <tr th:if="${storeProducts.isEmpty()}">
+                <td colspan="7" class="text-center text-secondary py-5">
+                    Không có dòng tồn kho nào khớp bộ lọc. Hãy xóa lọc hoặc chọn chi nhánh khác.
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <nav class="os-pagination" th:if="${storeProducts.totalPages > 1}" aria-label="Phân trang tồn kho">
+        <span class="os-page-info">
+            Trang <strong th:text="${storeProducts.number + 1}">1</strong> /
+            <strong th:text="${storeProducts.totalPages}">3</strong> ·
+            <span th:text="${storeProducts.totalElements}">300</span> dòng tồn kho
+        </span>
+        <ul class="pagination mb-0">
+            <li class="page-item" th:classappend="${storeProducts.first} ? 'disabled'"><a class="page-link"
+                th:href="@{/admin/inventory(page=${storeProducts.number - 1}, storeId=${storeId == null ? '' : storeId}, q=${q == null ? '' : q}, stockLevel=${stockLevel == null ? '' : stockLevel}, sort=${sort == null ? '' : sort})}">Trước</a></li>
+            <li class="page-item" th:classappend="${storeProducts.last} ? 'disabled'"><a class="page-link"
+                th:href="@{/admin/inventory(page=${storeProducts.number + 1}, storeId=${storeId == null ? '' : storeId}, q=${q == null ? '' : q}, stockLevel=${stockLevel == null ? '' : stockLevel}, sort=${sort == null ? '' : sort})}">Sau</a></li>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>

@@ -2,6 +2,7 @@ package com.oneshop.service;
 
 import com.oneshop.dto.request.StoreRequest;
 import com.oneshop.dto.response.StoreResponse;
+import com.oneshop.entity.ActiveStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +44,13 @@ public interface StoreService {
     // ---- Admin ----
 
     List<StoreResponse> getAllStores();
+
+    /**
+     * Admin store list search (admin/stores): contains-match over code / name / address / area, optional exact
+     * area and optional status. Everything unfetched returns every Store whatever its status.
+     */
+    org.springframework.data.domain.Page<StoreResponse> searchStores(String q, String area,
+                                                                     ActiveStatus status, int page);
 
     /** @throws com.oneshop.exception.BadRequestException if the code is already used */
     StoreResponse createStore(StoreRequest request);

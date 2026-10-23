@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Tổng quan toàn chuỗi</title></head><body>
-<div th:replace="~{fragments/components :: pageHeader('Tổng quan toàn chuỗi', 'Số liệu toàn chuỗi ở trên, mỗi chi nhánh một dòng ở dưới. Một đơn hàng được tính một lần; phần giao là phần hàng do từng chi nhánh xử lý.')}"></div>
+<div th:replace="~{fragments/components :: pageHeader('Tổng quan toàn chuỗi', 'Theo dõi nhanh đơn hàng, tồn kho và các việc cần chú ý tại từng chi nhánh.')}"></div>
 
 <!--/* chain-wide KPIs: Orders and Fulfillments are different things and are labelled as such */-->
 <section class="row g-3 mb-4" id="chain-summary" th:if="${chain != null}" aria-label="Số liệu toàn chuỗi">
@@ -16,7 +16,7 @@
     </div>
 </section>
 
-<section class="card mb-4"><div class="card-header">Lọc theo chi nhánh</div><div class="card-body">
+<section class="card os-filter mb-4"><div class="card-header">Lọc theo chi nhánh</div><div class="card-body">
     <form th:replace="~{admin/fragments :: storeFilter('/admin')}"></form></div></section>
 
 <section class="card mb-3" id="store-overview">
@@ -55,10 +55,5 @@
         </table>
     </div>
 </section>
-<p class="small text-secondary">
-    &ldquo;Cần Admin xử lý&rdquo;: đơn đang ngoại lệ (có phần giao không thành công hoặc thanh toán chưa xác định sau cửa sổ đối soát), đơn ONLINE quá hạn thanh toán mà chưa được quyết định,
-    và đơn đã thu tiền mà hoàn tiền mô phỏng chưa xong. Đơn Nhân viên đang xử lý bình thường (đã xác nhận, đang chuẩn bị, đang giao&hellip;) không tính vào đây.
-    Mỗi đơn chỉ đếm một lần ở số liệu toàn chuỗi; ở bảng chi nhánh, một đơn có phần giao tại nhiều chi nhánh xuất hiện ở từng chi nhánh đó.
-    SKU sắp hết: đang bán, tồn 1–5; hết hàng: tồn 0. Nhân viên có quyền: tài khoản, phân công và chi nhánh đều đang hoạt động.
-</p>
+<p class="small os-muted-text mb-0">Theo dõi các chỉ số theo chi nhánh để mở danh sách đơn hàng, tồn kho hoặc phân công tương ứng.</p>
 </body></html>

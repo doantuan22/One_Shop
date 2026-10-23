@@ -33,6 +33,21 @@ public class AdminStaffAssignmentService {
         return assignments.searchAdmin(storeId, PageRequest.of(Math.max(0, page), 20)).map(this::response);
     }
 
+    /** Assignment console search: Store + free text (staff name / e-mail) + assignment status. */
+    public Page<StaffAssignmentResponse> searchAssignments(Long storeId, String q, ActiveStatus status, int page) {
+        var like = likeOf(q);
+        return assignments.searchAdmin(storeId, like, status, PageRequest.of(Math.max(0, page), 20)).map(this::response);
+    }
+
+    /** lower-case contains pattern with ! as the escape character (same rule as the other admin searches). */
+    private static String likeOf(String q) {
+        var text = q == null ? "" : q.trim().toLowerCase();
+        if (text.isEmpty()) {
+            return "";
+        }
+        return "%" + text.replace("!", "!!").replace("%", "!%").replace("_", "!_") + "%";
+    }
+
     /** Upsert the UNIQUE(user, store) pair: unassign/reactivate preserves id and assignedAt. */
     @Transactional
     public StaffAssignmentResponse assign(@NotNull @Valid StaffAssignmentRequest request) {
@@ -52,7 +67,7 @@ public class AdminStaffAssignmentService {
     }
 
     @Transactional
-    public void setStatus(Long id, @NotNull ActiveStatus status) {
+    public void setStatus(Long id, @NotNull ActiveStatus status, String reason) {
         var assignment = assignments.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phân công."));
         User user = users.findByIdForUpdate(assignment.getUser().getId())
@@ -62,6 +77,8 @@ public class AdminStaffAssignmentService {
         }
         requireActive(user, assignment.getStore(), status);
         assignment.setStatus(status);
+        // the optional rationale stays display-only in the console: the assignment status itself decides the
+        // Staff scope, and assignment rows have no free-text column, so nothing is written here beyond status.
         assignments.flush();
     }
     private static void requireActive(User user, Store store, ActiveStatus status) {

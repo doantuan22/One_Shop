@@ -36,7 +36,7 @@
                     <label class="form-label" for="area">Khu vực <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" th:field="*{area}" th:errorclass="is-invalid" maxlength="100">
                     <div class="invalid-feedback" th:errors="*{area}">Lỗi</div>
-                    <div class="form-text">Chỉ để tra cứu và lọc trong Hệ thống cửa hàng. Đây không phải vùng phục vụ giao hàng: cửa hàng không tự giao được tới mọi nơi trong khu vực này.</div>
+                    <div class="form-text">Dùng để khách tra cứu và lọc cửa hàng.</div>
                 </div>
                 <div class="col-12 col-md-6">
                     <label class="form-label" for="phone">Điện thoại</label>
@@ -64,7 +64,7 @@
                         <option value="ACTIVE">Đang hoạt động</option>
                         <option value="INACTIVE">Ngừng hoạt động</option>
                     </select>
-                    <div class="form-text">Chi nhánh ngừng hoạt động không nhận phân bổ đơn mới và không được chọn để nhận tại cửa hàng. Đơn và lịch sử đã có được giữ nguyên.</div>
+                    <div class="form-text">Chi nhánh ngừng hoạt động sẽ không nhận đơn mới hoặc đơn nhận tại cửa hàng.</div>
                 </div>
             </div>
             <div class="mt-4">

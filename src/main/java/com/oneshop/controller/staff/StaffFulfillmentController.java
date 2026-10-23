@@ -43,26 +43,42 @@ public class StaffFulfillmentController {
                         @RequestParam(required = false) OrderFulfillmentStatus status,
                         @RequestParam(required = false) FulfillmentType type,
                         @RequestParam(required = false) Long orderId,
+                        @RequestParam(required = false) String q,
                         @RequestParam(required = false) String from,
                         @RequestParam(required = false) String to,
                         @RequestParam(defaultValue = "true") boolean open,
                         @RequestParam(defaultValue = "0") int page, HttpServletRequest request, Model model) {
         // one of two fixed paths, never a request value, so the pagination links cannot be steered
         String base = "/staff/orders".equals(request.getRequestURI()) ? "/staff/orders" : "/staff/fulfillments";
-        return show(new FulfillmentQueueFilter(storeId, status, type, orderId, StaffFulfillmentService.parseDate(from),
-                StaffFulfillmentService.parseDate(to), open && status == null), page, null, base, model);
+        return show(storeId, status, type, orderId, q, from, to, open && status == null, page,
+                null, base, model);
     }
 
     @GetMapping("/staff/fulfillments/delivery")
-    public String deliveryQueue(@RequestParam(defaultValue = "0") int page, Model model) {
-        return show(new FulfillmentQueueFilter(null, null, FulfillmentType.DELIVERY, null, null, null, true), page,
+    public String deliveryQueue(@RequestParam(required = false) Long storeId,
+                                @RequestParam(required = false) OrderFulfillmentStatus status,
+                                @RequestParam(required = false) Long orderId,
+                                @RequestParam(required = false) String q,
+                                @RequestParam(required = false) String from,
+                                @RequestParam(required = false) String to,
+                                @RequestParam(defaultValue = "true") boolean open,
+                                @RequestParam(defaultValue = "0") int page, Model model) {
+        // the fixed type is this path itself; every other filter stays usable inside the delivery queue
+        return show(storeId, status, FulfillmentType.DELIVERY, orderId, q, from, to, open && status == null, page,
                 FulfillmentType.DELIVERY, "/staff/fulfillments/delivery", model);
     }
 
     @GetMapping("/staff/fulfillments/pickup")
-    public String pickupQueue(@RequestParam(defaultValue = "0") int page, Model model) {
-        return show(new FulfillmentQueueFilter(null, null, FulfillmentType.STORE_PICKUP, null, null, null, true),
-                page, FulfillmentType.STORE_PICKUP, "/staff/fulfillments/pickup", model);
+    public String pickupQueue(@RequestParam(required = false) Long storeId,
+                              @RequestParam(required = false) OrderFulfillmentStatus status,
+                              @RequestParam(required = false) Long orderId,
+                              @RequestParam(required = false) String q,
+                              @RequestParam(required = false) String from,
+                              @RequestParam(required = false) String to,
+                              @RequestParam(defaultValue = "true") boolean open,
+                              @RequestParam(defaultValue = "0") int page, Model model) {
+        return show(storeId, status, FulfillmentType.STORE_PICKUP, orderId, q, from, to, open && status == null, page,
+                FulfillmentType.STORE_PICKUP, "/staff/fulfillments/pickup", model);
     }
 
     @GetMapping("/staff/fulfillments/{fulfillmentId:\\d+}")
@@ -117,11 +133,18 @@ public class StaffFulfillmentController {
         return "redirect:/staff/fulfillments/pickup";
     }
 
-    private String show(FulfillmentQueueFilter filter, int page, FulfillmentType fixedType, String basePath,
+    private String show(Long storeId, OrderFulfillmentStatus status, FulfillmentType type, Long orderId, String q,
+                        String from, String to, boolean openOnly, int page, FulfillmentType fixedType, String basePath,
                         Model model) {
-        model.addAttribute("queue", fulfillments.getQueue(filter, page));
+        FulfillmentQueueFilter filter = new FulfillmentQueueFilter(storeId, status, type, orderId,
+                StaffFulfillmentService.parseDate(from), StaffFulfillmentService.parseDate(to), openOnly);
+        // a blank keyword keeps the original 2-arg queue shape; a real keyword narrows it by customer
+        String customer = q == null || q.isBlank() ? null : q.trim();
+        model.addAttribute("queue", customer == null ? fulfillments.getQueue(filter, page)
+                : fulfillments.getQueue(filter, page, customer));
         model.addAttribute("basePath", basePath);
         model.addAttribute("filter", filter);
+        model.addAttribute("customer", q == null ? "" : q);
         model.addAttribute("fixedType", fixedType);
         model.addAttribute("statuses", OrderFulfillmentStatus.values());
         model.addAttribute("today", LocalDate.now());

@@ -19,6 +19,7 @@ import com.oneshop.repository.StoreProductRepository;
 import com.oneshop.repository.StoreRepository;
 import com.oneshop.service.InventoryService;
 import com.oneshop.service.ProductService;
+import com.oneshop.service.StaffOperationsService;
 import com.oneshop.service.StoreProductService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -164,8 +165,44 @@ public class StoreProductServiceImpl implements StoreProductService {
     // ------------------------------------------------------------------ Admin
 
     @Override
-    public Page<StoreProductStockResponse> searchStoreProducts(Long storeId, Long productId, Pageable pageable) {
-        return storeProductRepository.searchForAdmin(storeId, productId, pageable).map(storeProductMapper::toStockView);
+    public Page<StoreProductStockResponse> searchStoreProducts(Long storeId, Long productId,
+                                                               com.oneshop.entity.ActiveStatus status,
+                                                               Pageable pageable) {
+        return storeProductRepository.searchForAdmin(storeId, productId, status, pageable)
+                .map(storeProductMapper::toStockView);
+    }
+
+    private static final List<String> INVENTORY_LEVELS = List.of("all", "out", "low", "ok");
+    private static final List<String> INVENTORY_SORTS = List.of("name", "qty_desc", "qty_asc");
+
+    @Override
+    public Page<StoreProductStockResponse> searchInventory(Long storeId, String q, String stockLevel, String sort,
+                                                           Pageable pageable) {
+        var like = containsLike(q);
+        var level = stockLevel != null && INVENTORY_LEVELS.contains(stockLevel) ? stockLevel : "all";
+        var order = sort != null && INVENTORY_SORTS.contains(sort) ? sort : "name";
+        return storeProductRepository
+                .searchInventory(storeId, like, level, StaffOperationsService.LOW_STOCK_THRESHOLD, order, pageable)
+                .map(storeProductMapper::toStockView);
+    }
+
+    @Override
+    public com.oneshop.dto.response.InventorySummaryResponse inventorySummary(Long storeId) {
+        var threshold = StaffOperationsService.LOW_STOCK_THRESHOLD;
+        // "all" rows count every status (StoreProduct is the source of truth even when taken off sale)
+        var total = storeId == null ? storeProductRepository.count() : storeProductRepository.countByStoreId(storeId);
+        var low = storeProductRepository.countLowByStoreId(storeId, threshold);
+        var out = storeProductRepository.countOutByStoreId(storeId);
+        return new com.oneshop.dto.response.InventorySummaryResponse(total, low, out, threshold);
+    }
+
+    /** lower-case contains pattern with ! as the escape character (same rule as the catalog search). */
+    private static String containsLike(String q) {
+        var text = q == null ? "" : q.trim().toLowerCase();
+        if (text.isEmpty()) {
+            return "";
+        }
+        return "%" + text.replace("!", "!!").replace("%", "!%").replace("_", "!_") + "%";
     }
 
     @Override

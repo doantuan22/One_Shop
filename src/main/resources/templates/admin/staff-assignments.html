@@ -1,8 +1,16 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Phân công nhân viên</title></head><body>
-<div th:replace="~{fragments/components :: pageHeader('Phân công nhân viên', 'Một nhân viên có thể làm việc tại nhiều chi nhánh. Bỏ phân công bằng trạng thái INACTIVE.')}"></div>
+<div class="os-page-header mb-4">
+    <div>
+        <h1 class="h3 mb-1">Phân công nhân viên</h1>
+        <p class="os-muted-text mb-0">Quản lý chi nhánh mà từng nhân viên được phép hỗ trợ.</p>
+    </div>
+    <div class="os-page-header__actions">
+        <a th:href="@{/admin/users/new}" class="btn btn-outline-primary">Tạo Staff mới</a>
+    </div>
+</div>
 <div class="alert alert-success" th:if="${param.success}">Đã lưu phân công.</div>
-<a th:href="@{/admin/users/new}" class="btn btn-outline-primary mb-3">Tạo Staff mới</a>
+
 <form th:object="${form}" th:action="@{/admin/staff-assignments}" method="post" class="card card-body mb-4">
     <div class="alert alert-danger" th:if="${#fields.hasAnyErrors()}"><ul><li th:each="e : ${#fields.allErrors()}" th:text="${e}"></li></ul></div>
     <div class="row g-2"><div class="col-md-5"><label for="userId" class="form-label">Nhân viên</label>
@@ -10,19 +18,94 @@
             <option th:each="u : ${staff}" th:value="${u.id}" th:text="${u.fullName} + ' · ' + ${u.email} + ' · ' + ${u.status}"></option></select></div>
         <div class="col-md-4"><label for="storeId" class="form-label">Chi nhánh</label><select id="storeId" th:field="*{storeId}" class="form-select" required><option value="">Chọn chi nhánh</option>
             <option th:each="s : ${stores}" th:value="${s.id}" th:text="${s.name} + ' · ' + ${s.status}"></option></select></div>
-        <div class="col-md-3"><label for="status" class="form-label">Phân công</label><select id="status" th:field="*{status}" class="form-select"><option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option></select></div>
+        <div class="col-md-3"><label for="status" class="form-label">Phân công</label><select id="status" th:field="*{status}" class="form-select"><option th:each="s : ${statuses}" th:value="${s}" th:text="${s.name() == 'ACTIVE'} ? 'Đang phân công' : 'Ngừng phân công'"></option></select></div>
     </div><div class="mt-3"><button class="btn btn-primary">Gán / cập nhật phân công</button></div>
-    <p class="small text-secondary mt-2 mb-0">Chuyển chi nhánh: bỏ phân công cũ rồi gán chi nhánh mới. Gán lại cùng nhân viên và chi nhánh sử dụng lại bản ghi hiện có.</p>
+    <p class="os-muted-text small mt-2 mb-0">Cập nhật trạng thái phân công khi nhân viên thay đổi phạm vi làm việc.</p>
 </form>
-<form th:replace="~{admin/fragments :: storeFilter('/admin/staff-assignments')}"></form>
-<div class="table-responsive"><table class="table table-hover align-middle"><thead><tr><th>Nhân viên</th><th>Chi nhánh</th><th>Ngày phân công</th><th>Trạng thái</th><th class="text-end text-nowrap">Thao tác</th></tr></thead>
-<tbody><tr th:each="a : ${assignments.content}" th:attr="data-assignment-id=${a.id}">
-    <td><span th:text="${a.staff.fullName}"></span><div class="small text-secondary" th:text="${a.staff.email} + ' · ' + ${a.staff.role} + ' · ' + ${a.staff.status}"></div></td>
-    <td><span th:text="${a.store.name}"></span><div class="small" th:text="${a.store.status}"></div></td>
-    <td th:text="${#temporals.format(a.assignedAt, 'dd/MM/yyyy HH:mm')}"></td>
-    <td th:text="${a.status}"></td><td class="text-end text-nowrap"><form th:action="@{/admin/staff-assignments/{id}/status(id=${a.id})}" method="post" class="d-inline">
-        <input type="hidden" name="status" th:value="${a.status.name() == 'ACTIVE'} ? 'INACTIVE' : 'ACTIVE'">
-        <button class="btn btn-sm btn-outline-primary" th:text="${a.status.name() == 'ACTIVE'} ? 'Bỏ phân công' : 'Bật lại'"></button></form></td>
-</tr><tr th:if="${assignments.empty}"><td colspan="5">Chưa có phân công.</td></tr></tbody></table></div>
-<nav th:replace="~{admin/fragments :: pagination(${assignments}, '/admin/staff-assignments', 'storeId', ${storeId})}"></nav>
+
+<form method="get" th:action="@{/admin/staff-assignments}" class="os-filter card mb-4" id="assignment-filter">
+    <div class="card-body">
+        <div class="os-filter-grid">
+            <div class="os-filter-field">
+                <label class="form-label" for="assign-q">Tìm người dùng</label>
+                <input id="assign-q" name="q" type="text" class="form-control form-control-sm" th:value="${q}"
+                       placeholder="Tên hoặc e-mail nhân viên">
+            </div>
+            <div class="os-filter-field">
+                <label class="form-label" for="assign-store">Chi nhánh</label>
+                <select id="assign-store" name="storeId" class="form-select form-select-sm">
+                    <option value="">Tất cả chi nhánh</option>
+                    <option th:each="s : ${stores}" th:value="${s.id}" th:text="${s.name}"
+                            th:selected="${s.id == storeId}">OneShop Thủ Đức</option>
+                </select>
+            </div>
+            <div class="os-filter-field">
+                <label class="form-label" for="assign-status">Trạng thái phân công</label>
+                <select id="assign-status" name="status" class="form-select form-select-sm">
+                    <option value="">Tất cả</option>
+                    <option value="ACTIVE" th:selected="${status != null and status.name() == 'ACTIVE'}">Đang phân công</option>
+                    <option value="INACTIVE" th:selected="${status != null and status.name() == 'INACTIVE'}">Ngừng phân công</option>
+                </select>
+            </div>
+            <div class="os-filter-field d-flex align-items-end gap-2 pb-1">
+                <button type="submit" class="btn btn-primary btn-sm flex-shrink-0">Áp dụng</button>
+                <a class="btn btn-outline-secondary btn-sm flex-shrink-0" th:href="@{/admin/staff-assignments}">Xóa lọc</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle os-table mb-0">
+            <thead class="table-light"><tr>
+                <th scope="col">Nhân viên</th><th scope="col">Chi nhánh</th><th scope="col">Ngày phân công</th>
+                <th scope="col">Trạng thái</th><th scope="col" class="os-col-actions text-end">Thao tác</th>
+            </tr></thead>
+            <tbody>
+            <tr th:each="a : ${assignments.content}" th:attr="data-assignment-id=${a.id}">
+                <td>
+                    <span class="os-cell-main" th:text="${a.staff.fullName}">Trần Nhân Viên</span>
+                    <span class="os-cell-sub" th:text="'#' + ${a.staff.email}">staff@oneshop.vn</span>
+                    <span class="ms-1"><span th:replace="~{fragments/components :: roleBadge(${a.staff.role})}"></span></span>
+                </td>
+                <td>
+                    <span class="os-cell-main" th:text="${a.store.name}">OneShop Thủ Đức</span>
+                    <span class="os-cell-sub" th:text="${a.store.code} + ' · ' + ${a.store.area}">TD · Thủ Đức</span>
+                </td>
+                <td th:text="${#temporals.format(a.assignedAt, 'dd/MM/yyyy HH:mm')}">01/01/2026 09:00</td>
+                <td><span th:replace="~{fragments/components :: assignmentStatusBadge(${a.status})}"></span></td>
+                <td class="os-col-actions text-end">
+                    <form th:action="@{/admin/staff-assignments/{id}/status(id=${a.id})}" method="post" class="d-inline"
+                          th:if="${a.status.name() == 'ACTIVE'}"
+                          data-confirm-reason="true"
+                          th:attr="data-reason-title='Bỏ phân công ' + ${a.staff.fullName} + ' khỏi ' + ${a.store.name} + '?',
+                                   data-reason-desc='Nhân viên sẽ không còn thấy hay thao tác dữ liệu của chi nhánh này ngay sau khi xác nhận.',
+                                   data-reason-label='Lý do bỏ phân công',
+                                   data-reason-required='true',
+                                   data-reason-danger='true'">
+                        <input type="hidden" name="status" value="INACTIVE">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Bỏ phân công</button>
+                    </form>
+                    <form th:action="@{/admin/staff-assignments/{id}/status(id=${a.id})}" method="post" class="d-inline"
+                          th:if="${a.status.name() == 'INACTIVE'}">
+                        <input type="hidden" name="status" value="ACTIVE">
+                        <button type="submit" class="btn btn-outline-primary btn-sm">Bật lại</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${assignments.empty}"><td colspan="5" class="text-center text-secondary py-4">Chưa có phân công nào khớp bộ lọc.</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <nav class="os-pagination" th:if="${assignments.totalPages > 1}" aria-label="Phân trang phân công">
+        <span class="os-page-info"><span th:text="${assignments.totalElements}">40</span> phân công</span>
+        <ul class="pagination mb-0">
+            <li class="page-item" th:classappend="${assignments.first} ? 'disabled'"><a class="page-link"
+                th:href="@{/admin/staff-assignments(storeId=${storeId}, q=${q == null ? '' : q}, status=${status == null ? '' : status}, page=${assignments.number - 1})}">Trước</a></li>
+            <li class="page-item" th:classappend="${assignments.last} ? 'disabled'"><a class="page-link"
+                th:href="@{/admin/staff-assignments(storeId=${storeId}, q=${q == null ? '' : q}, status=${status == null ? '' : status}, page=${assignments.number + 1})}">Sau</a></li>
+        </ul>
+    </nav>
+</div>
 </body></html>

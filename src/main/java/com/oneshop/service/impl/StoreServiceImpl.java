@@ -98,6 +98,25 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
+    public org.springframework.data.domain.Page<StoreResponse> searchStores(String q, String area,
+                                                                            ActiveStatus status, int page) {
+        var like = containsLike(q);
+        var areaText = area == null ? "" : area.trim();
+        return storeRepository
+                .searchAdmin(like, areaText, status, org.springframework.data.domain.PageRequest.of(Math.max(page, 0), 20))
+                .map(storeMapper::toResponse);
+    }
+
+    /** lower-case contains pattern with ! as the escape character (same rule as the other admin searches). */
+    private static String containsLike(String q) {
+        var text = q == null ? "" : q.trim().toLowerCase();
+        if (text.isEmpty()) {
+            return "";
+        }
+        return "%" + text.replace("!", "!!").replace("%", "!%").replace("_", "!_") + "%";
+    }
+
+    @Override
     @Transactional
     public StoreResponse createStore(StoreRequest request) {
         String code = request.getCode().trim();

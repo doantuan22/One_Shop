@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,18 @@ public interface StaffStoreAssignmentRepository extends JpaRepository<StaffStore
     @EntityGraph(attributePaths = {"user", "user.role", "store"})
     @Query("select a from StaffStoreAssignment a where (:storeId is null or a.store.id = :storeId) order by a.id")
     Page<StaffStoreAssignment> searchAdmin(@Param("storeId") Long storeId, Pageable pageable);
+
+    /**
+     * Admin assignment console search: optional Store plus contains-match over the Staff's name / e-mail and an
+     * optional assignment status (all three unset = every assignment, in stable id order).
+     */
+    @EntityGraph(attributePaths = {"user", "user.role", "store"})
+    @Query("select a from StaffStoreAssignment a where (:storeId is null or a.store.id = :storeId)"
+            + " and (:like = '' or lower(a.user.fullName) like :like escape '!' or lower(a.user.email) like :like escape '!')"
+            + " and (:status is null or a.status = :status)"
+            + " order by a.id")
+    Page<StaffStoreAssignment> searchAdmin(@Param("storeId") Long storeId, @Param("like") String like,
+                                           @Param("status") ActiveStatus status, Pageable pageable);
 
     @Query("""
             select count(a) from StaffStoreAssignment a where a.store.id = :storeId
@@ -50,4 +63,14 @@ public interface StaffStoreAssignmentRepository extends JpaRepository<StaffStore
               and a.store.status = com.oneshop.entity.ActiveStatus.ACTIVE
             order by a.store.name""")
     List<Store> findActiveStoresByStaffEmail(@Param("email") String email);
+
+    /** The STAFF accounts with an ACTIVE assignment in the given Stores — the recorder filter of the central log.
+     *  No SQL DISTINCT: SQL Server rejects ORDER BY items outside the select list under DISTINCT; the caller dedupes. */
+    @Query("""
+            select a.user from StaffStoreAssignment a
+            where a.store.id in :storeIds
+              and a.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and a.user.role.name = com.oneshop.entity.RoleName.STAFF
+            order by lower(a.user.fullName)""")
+    List<com.oneshop.entity.User> findActiveStaffOfStores(@Param("storeIds") Collection<Long> storeIds);
 }

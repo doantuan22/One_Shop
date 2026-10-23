@@ -15,8 +15,16 @@ public class AdminReviewController {
         this.reviews = reviews;
     }
     @GetMapping
-    public String list(@RequestParam(defaultValue = "0") int page, Model model) {
-        model.addAttribute("reviews", reviews.getReviews(page)); return "admin/reviews";
+    public String list(@RequestParam(required = false) String q,
+                       @RequestParam(name = "status", required = false) VisibilityStatus status,
+                       @RequestParam(required = false) Boolean replied,
+                       @RequestParam(defaultValue = "0") int page, Model model) {
+        model.addAttribute("reviews", reviews.getReviews(page, q, status, replied));
+        model.addAttribute("stats", reviews.stats());
+        model.addAttribute("q", q);
+        model.addAttribute("status", status);
+        model.addAttribute("replied", replied);
+        return "admin/reviews";
     }
     @PostMapping("/{id}/status")
     public String status(@PathVariable Long id, @RequestParam VisibilityStatus status) {

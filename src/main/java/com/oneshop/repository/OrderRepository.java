@@ -2,6 +2,7 @@ package com.oneshop.repository;
 
 import com.oneshop.entity.Order;
 import com.oneshop.entity.FulfillmentType;
+import com.oneshop.entity.OrderPaymentStatus;
 import com.oneshop.entity.OrderStatus;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -20,12 +22,26 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     String STORE_SOURCE = " (exists (select f.id from OrderFulfillment f where f.order.id=o.id and f.store.id=:storeId)"
             + " or (o.store.id=:storeId and not exists (select f.id from OrderFulfillment f where f.order.id=o.id)))";
 
-    /** Admin sees every status, including historical orders of inactive Stores. */
+    /**
+     * Admin sees every status, including historical orders of inactive Stores. All filters are optional: chain-wide
+     * Store part, free text (exact Order id or a contains-pattern over customer name / e-mail, {@code !} as escape),
+     * order status, payment status, fulfillment type and a createdAt range ({@code toExclusive} excludes).
+     */
     @EntityGraph(attributePaths = {"store", "user"})
     @Query("select o from Order o where (:storeId is null or exists (select f.id from OrderFulfillment f "
             + "where f.order.id=o.id and f.store.id=:storeId) or (o.store.id=:storeId and not exists "
-            + "(select f.id from OrderFulfillment f where f.order.id=o.id))) order by o.createdAt desc, o.id desc")
-    Page<Order> searchAdmin(@Param("storeId") Long storeId, Pageable pageable);
+            + "(select f.id from OrderFulfillment f where f.order.id=o.id)))"
+            + " and (:q = '' or cast(o.id as string) = :q or lower(o.user.fullName) like :like escape '!'"
+            + " or lower(o.user.email) like :like escape '!')"
+            + " and (:orderStatus is null or o.orderStatus = :orderStatus)"
+            + " and (:paymentStatus is null or o.paymentStatus = :paymentStatus)"
+            + " and (:type is null or o.fulfillmentType = :type)"
+            + " and (:from is null or o.createdAt >= :from) and (:toExclusive is null or o.createdAt < :toExclusive)"
+            + " order by o.createdAt desc, o.id desc")
+    Page<Order> searchAdmin(@Param("storeId") Long storeId, @Param("q") String q, @Param("like") String like,
+            @Param("orderStatus") OrderStatus orderStatus, @Param("paymentStatus") OrderPaymentStatus paymentStatus,
+            @Param("type") FulfillmentType type, @Param("from") LocalDateTime from,
+            @Param("toExclusive") LocalDateTime toExclusive, Pageable pageable);
 
     @Query("select count(o) from Order o where" + STORE_SOURCE)
     long countByStoreId(@Param("storeId") Long storeId);
@@ -130,14 +146,19 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     /**
      * Admin payment list: ONLINE Orders of one {@code view} (attention, reconciling, waiting, paid, refunded, failed or
      * all), optionally searched by Order id or customer name / e-mail ({@code like} is a lower-case pattern using
-     * {@code !} as escape character, {@code q} the raw id text; both empty for no search). Read only.
+     * {@code !} as escape character, {@code q} the raw id text; both empty for no search) and optionally limited to a
+     * createdAt range ({@code toExclusive} excludes). Read only.
      */
     @EntityGraph(attributePaths = {"user"})
-    @Query("select o from Order o where " + ONLINE + " and " + VIEW_FILTER + " and (:q = '' or cast(o.id as string) = :q"
+    @Query("select o from Order o where " + ONLINE + " and " + VIEW_FILTER
+            + " and (:from is null or o.createdAt >= :from) and (:toExclusive is null or o.createdAt < :toExclusive)"
+            + " and (:q = '' or cast(o.id as string) = :q"
             + " or lower(o.user.email) like :like escape '!' or lower(o.user.fullName) like :like escape '!')"
             + " order by o.createdAt desc, o.id desc")
     Page<Order> searchPaymentCases(@Param("view") String view, @Param("q") String q, @Param("like") String like,
-                                   @Param("cutoff") java.time.LocalDateTime cutoff, Pageable pageable);
+                                   @Param("cutoff") java.time.LocalDateTime cutoff,
+                                   @Param("from") java.time.LocalDateTime from,
+                                   @Param("toExclusive") java.time.LocalDateTime toExclusive, Pageable pageable);
 
     @Query("select count(o) from Order o where " + ONLINE + " and " + VIEW_FILTER)
     long countPaymentCases(@Param("view") String view, @Param("cutoff") java.time.LocalDateTime cutoff);

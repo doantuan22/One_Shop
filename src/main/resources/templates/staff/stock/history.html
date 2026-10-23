@@ -1,208 +1,137 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <title>Lịch sử biến động tồn kho</title>
-    <style>
-        .os-stock-history {
-            --history-coral: #FF7F50;
-            --history-dark: #e86738;
-            --history-soft: #fff5f2;
-            --history-border: #ffd5c7;
-        }
-
-        .os-stock-history .os-history-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .os-stock-history .os-history-actions .btn {
-            border-radius: 10px;
-            padding: 9px 16px;
-            font-weight: 600;
-        }
-
-        .os-stock-history .btn-outline-primary {
-            color: var(--history-dark);
-            border-color: var(--history-coral);
-        }
-
-        .os-stock-history .btn-outline-primary:hover {
-            background: var(--history-coral);
-            color: #fff;
-        }
-
-        .os-stock-history .os-history-product {
-            padding: 22px;
-            margin-bottom: 22px;
-            border: 1px solid var(--history-border);
-            border-radius: 16px;
-            background: linear-gradient(135deg, var(--history-soft), #fff);
-        }
-
-        .os-stock-history .os-history-product h2 {
-            color: #bf360c;
-            font-weight: 800;
-        }
-
-        .os-stock-history .os-history-metrics {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 14px;
-            margin-top: 15px;
-        }
-
-        .os-stock-history .os-history-metrics p {
-            margin: 0;
-            background: white;
-            border: 1px solid var(--history-border);
-            padding: 10px 16px;
-            border-radius: 10px;
-        }
-
-        .os-stock-history .os-history-metrics strong {
-            color: var(--history-dark);
-            font-weight: 800;
-        }
-
-        .os-stock-history .os-history-table {
-            border: 1px solid var(--history-border);
-            border-radius: 16px;
-            overflow: hidden;
-            background: #fff;
-        }
-
-        .os-stock-history .os-history-table .table {
-            margin-bottom: 0;
-        }
-
-        .os-stock-history .os-history-table thead th {
-            background: var(--history-soft);
-            color: #bf360c;
-            font-weight: 700;
-            padding: 15px 14px;
-            white-space: nowrap;
-            border-bottom: 1px solid var(--history-border);
-        }
-
-        .os-stock-history .os-history-table tbody td {
-            padding: 14px;
-            border-color: #f3e5df;
-            vertical-align: middle;
-        }
-
-        .os-stock-history .os-history-table tbody tr:hover td {
-            background: #fffaf8;
-        }
-
-        .os-stock-history .os-history-pagination {
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 22px;
-            padding: 16px;
-            border: 1px solid #f3e5df;
-            border-radius: 12px;
-            background: #fff;
-        }
-
-        @media (max-width: 767.98px) {
-            .os-stock-history .os-history-table {
-                overflow-x: auto;
-            }
-
-            .os-stock-history .os-history-table .table {
-                min-width: 820px;
-            }
-        }
-    </style>
 </head>
-
 <body>
-    <div class="os-stock-history">
-
-        <div
-            th:replace="~{fragments/components :: pageHeader('Lịch sử biến động tồn kho', 'Biến động của sản phẩm thuộc chi nhánh được phân công.')}">
-        </div>
-
-        <div class="alert alert-success" role="alert"
-            th:if="${param.success != null and param.success[0] == 'adjusted'}">
-            Đã cập nhật tồn kho và ghi biến động.
-        </div>
-
-        <div class="alert alert-info" role="alert" th:if="${param.success != null and param.success[0] == 'unchanged'}">
-            Số lượng không thay đổi; không có biến động mới.
-        </div>
-
-        <div class="os-history-actions">
-            <a class="btn btn-outline-secondary" th:href="@{/staff/inventory-history}">Chọn sản phẩm khác</a>
-            <a class="btn btn-outline-primary" th:href="@{/staff/stock/{id}/adjust(id=${stock.storeProductId})}">Điều
-                chỉnh tồn</a>
-        </div>
-
-        <section class="os-history-product">
-            <h2 class="h5" th:text="${stock.productName}"></h2>
-            <p>
-                <span th:text="${stock.sku}"></span> ·
-                <span th:text="${stock.storeName}"></span>
-            </p>
-            <div class="os-history-metrics">
-                <p>Tồn hiện tại: <strong id="current-quantity" th:text="${stock.quantity}"></strong></p>
-                <p>Số biến động: <strong id="movement-count" th:text="${movements.totalElements}"></strong></p>
-            </div>
-        </section>
-
-        <div class="table-responsive os-history-table">
-            <table class="table os-table align-middle">
-                <thead>
-                    <tr>
-                        <th>Loại</th>
-                        <th>Trước</th>
-                        <th>Sau</th>
-                        <th>Thay đổi</th>
-                        <th>Người ghi nhận</th>
-                        <th>Ghi chú</th>
-                        <th>Thời gian</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="movement : ${movements.content}"
-                        th:attr="data-movement-id=${movement.id},data-type=${movement.type}">
-                        <td th:switch="${movement.type.name()}">
-                            <span th:case="'ORDER'">Trừ kho do đặt hàng</span>
-                            <span th:case="'CANCEL_ORDER'">Hoàn kho do hủy đơn</span>
-                            <span th:case="'STOCK_ADJUST'">Điều chỉnh tồn kho</span>
-                            <span th:case="*" th:text="${movement.type}"></span>
-                        </td>
-                        <td th:text="${movement.quantityBefore}"></td>
-                        <td th:text="${movement.quantityAfter}"></td>
-                        <td>
-                            <span class="badge" th:classappend="${movement.quantityChange > 0} ? 'text-bg-success' : (${movement.quantityChange < 0} ? 'text-bg-danger' : 'text-bg-light border')"
-                                  th:text="${movement.quantityChange > 0} ? '+' + ${movement.quantityChange} : ${movement.quantityChange}"></span>
-                        </td>
-                        <td th:text="${movement.staffName}"></td>
-                        <td th:text="${movement.note}"></td>
-                        <td th:text="${#temporals.format(movement.createdAt, 'dd/MM/yyyy HH:mm:ss')}"></td>
-                    </tr>
-                    <tr th:if="${movements.isEmpty()}">
-                        <td colspan="7" class="text-center text-secondary">Chưa có biến động tồn kho.</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <nav aria-label="Phân trang biến động tồn" class="d-flex align-items-center gap-3 os-history-pagination"
-            th:if="${movements.totalPages > 1}">
-            <a class="btn btn-outline-secondary" th:if="${movements.hasPrevious()}"
-                th:href="@{/staff/inventory-history/{id}(id=${stock.storeProductId},page=${movements.number - 1})}">Trang
-                trước</a>
-            <span th:text="'Trang ' + ${movements.number + 1} + ' / ' + ${movements.totalPages}"></span>
-            <a class="btn btn-outline-secondary" th:if="${movements.hasNext()}"
-                th:href="@{/staff/inventory-history/{id}(id=${stock.storeProductId},page=${movements.number + 1})}">Trang
-                sau</a>
-        </nav>
+<div class="os-page-header mb-4">
+    <div>
+        <h1 class="h3 mb-1">Lịch sử biến động tồn kho</h1>
+        <p class="text-secondary mb-0">Biến động của một SKU thuộc chi nhánh được phân công: xuất bán, hoàn kho do
+            hủy đơn và điều chỉnh kiểm kê, kèm người ghi nhận và lý do.</p>
     </div>
-</body>
+    <div class="os-page-header__actions">
+        <div class="btn-group">
+            <a class="btn btn-outline-secondary btn-sm" th:href="@{/staff/inventory-history}">Nhật ký chung</a>
+            <a class="btn btn-outline-primary btn-sm" th:href="@{/staff/stock/{id}/adjust(id=${stock.storeProductId})}">Điều chỉnh tồn</a>
+        </div>
+    </div>
+</div>
 
+<div class="alert alert-success" role="alert"
+     th:if="${param.success != null and param.success[0] == 'adjusted'}">
+    Đã cập nhật tồn kho và ghi lại biến động.
+</div>
+
+<div class="alert alert-info" role="alert" th:if="${param.success != null and param.success[0] == 'unchanged'}">
+    Số lượng không thay đổi; hệ thống không ghi biến động mới.
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-12 col-lg-5">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5 fw-semibold mb-1" th:text="${stock.productName}">Tên sản phẩm</h2>
+                <div class="text-secondary small">
+                    <span class="os-store-chip me-2" th:text="${stock.storeName}">OneShop Thủ Đức</span>
+                    <span th:text="${stock.sku}">OS-SKU-001</span>
+                </div>
+                <hr>
+                <div class="d-flex flex-wrap gap-4">
+                    <div>
+                        <div class="text-secondary small">Tồn hiện tại</div>
+                        <strong class="fs-3" id="current-quantity" th:text="${stock.quantity}">20</strong>
+                    </div>
+                    <div>
+                        <div class="text-secondary small">Số biến động</div>
+                        <strong class="fs-3 text-secondary" id="movement-count" th:text="${movements.totalElements}">0</strong>
+                    </div>
+                    <div>
+                        <div class="text-secondary small">Giá online chung</div>
+                        <strong class="fs-5"><span th:replace="~{fragments/components :: price(${stock.price})}"></span></strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-7">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h6 text-secondary text-uppercase fw-semibold mb-3">Tồn theo loại biến động gần nhất</h2>
+                <p class="text-secondary mb-0 small">
+                    Biến động xuất bán làm giảm tồn, hoàn kho khi hủy đơn và điều chỉnh kiểm kê (nhân viên nhập) làm
+                    thay đổi trực tiếp số tồn thực tế. Tổng biến động luôn khớp với lịch sử của SKU qua từng lần ghi.
+                </p>
+                <div class="mt-3 d-flex flex-wrap gap-2">
+                    <span class="badge os-soft-info">Xuất bán</span>
+                    <span class="badge os-soft-purple">Hoàn kho</span>
+                    <span class="badge os-soft-coral">Điều chỉnh kiểm kê</span>
+                    <span class="badge os-soft-neutral">Người ghi nhận: nhân viên hoặc Hệ thống</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle os-table mb-0">
+            <thead class="table-light">
+            <tr>
+                <th scope="col" class="os-col-code">Thời gian</th>
+                <th scope="col">Loại</th>
+                <th scope="col" class="os-col-num">Trước</th>
+                <th scope="col" class="os-col-num">Sau</th>
+                <th scope="col" class="os-col-num">Thay đổi</th>
+                <th scope="col">Người ghi nhận</th>
+                <th scope="col">Ghi chú</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="movement : ${movements.content}"
+                th:attr="data-movement-id=${movement.id},data-type=${movement.type}">
+                <td class="os-col-code text-nowrap small"
+                    th:text="${#temporals.format(movement.createdAt, 'dd/MM/yyyy HH:mm:ss')}">23/10/2026 10:00:00</td>
+                <td th:switch="${movement.type.name()}">
+                    <span class="badge os-soft-info" th:case="'ORDER'">Xuất bán</span>
+                    <span class="badge os-soft-purple" th:case="'CANCEL_ORDER'">Hoàn kho do hủy đơn</span>
+                    <span class="badge os-soft-coral" th:case="'STOCK_ADJUST'">Điều chỉnh tồn kho</span>
+                    <span class="badge os-soft-neutral" th:case="*" th:text="${movement.type}"></span>
+                </td>
+                <td class="os-col-num" th:text="${movement.quantityBefore}">20</td>
+                <td class="os-col-num" th:text="${movement.quantityAfter}">19</td>
+                <td class="os-col-num">
+                    <span class="badge os-delta-pos" th:if="${movement.quantityChange > 0}"
+                          th:text="'+' + ${movement.quantityChange}">+2</span>
+                    <span class="badge os-delta-neg" th:if="${movement.quantityChange < 0}"
+                          th:text="${movement.quantityChange}">-1</span>
+                    <span class="badge os-delta-neutral" th:if="${movement.quantityChange == 0}">0</span>
+                </td>
+                <td th:text="${movement.staffName}">Nhân viên A</td>
+                <td style="max-width: 260px;"><span
+                        style="display:block; max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"
+                        th:title="${movement.note}" th:text="${movement.note}">Ghi chú</span></td>
+            </tr>
+            <tr th:if="${movements.isEmpty()}">
+                <td colspan="7" class="text-center text-secondary py-5">Chưa có biến động tồn kho nào của SKU này.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <nav class="os-pagination" th:if="${movements.totalPages > 1}" aria-label="Phân trang biến động tồn">
+        <span class="os-page-info">
+            Trang <strong th:text="${movements.number + 1}">1</strong> /
+            <strong th:text="${movements.totalPages}">2</strong> ·
+            <span th:text="${movements.totalElements}">0</span> biến động
+        </span>
+        <ul class="pagination mb-0">
+            <li class="page-item" th:classappend="${movements.first} ? 'disabled'"><a class="page-link"
+                th:href="@{/staff/inventory-history/{id}(id=${stock.storeProductId},page=${movements.number - 1})}">Trước</a></li>
+            <li class="page-item" th:classappend="${movements.last} ? 'disabled'"><a class="page-link"
+                th:href="@{/staff/inventory-history/{id}(id=${stock.storeProductId},page=${movements.number + 1})}">Sau</a></li>
+        </ul>
+    </nav>
+</div>
+</body>
 </html>

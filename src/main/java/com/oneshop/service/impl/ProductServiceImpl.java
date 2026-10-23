@@ -332,6 +332,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Page<AdminProductResponse> searchAllProducts(String keyword, Long categoryId, Long brandId,
+                                                        ProductStatus status, Pageable pageable) {
+        return productRepository.searchAdminProducts(ProductSearchCriteria.ofKeyword(keyword).likePattern(),
+                        categoryId, brandId, status, pageable)
+                .map(catalogMapper::toAdminResponse);
+    }
+
+    @Override
     public List<AdminProductResponse> getAssignableProducts() {
         return productRepository.findByStatusNotOrderByName(ProductStatus.INACTIVE).stream()
                 .map(catalogMapper::toAdminResponse).toList();

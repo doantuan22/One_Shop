@@ -2,6 +2,7 @@ package com.oneshop.controller.admin;
 
 import com.oneshop.dto.request.ProductRequest;
 import com.oneshop.dto.response.AdminProductResponse;
+import com.oneshop.entity.ProductStatus;
 import com.oneshop.exception.BadRequestException;
 import com.oneshop.exception.ImageStorageException;
 import com.oneshop.service.ProductService;
@@ -38,10 +39,23 @@ public class AdminProductController {
 
     @GetMapping
     public String list(@RequestParam(name = "q", required = false) String keyword,
+                       @RequestParam(required = false) Long categoryId,
+                       @RequestParam(required = false) Long brandId,
+                       @RequestParam(required = false) ProductStatus status,
                        @RequestParam(defaultValue = "0") int page, Model model) {
-        model.addAttribute("products",
-                productService.searchAllProducts(keyword, PageRequest.of(Math.max(page, 0), PAGE_SIZE)));
+        var products = productService.searchAllProducts(keyword, categoryId, brandId, status,
+                PageRequest.of(Math.max(page, 0), PAGE_SIZE));
+        // one batched Cloudinary lookup for the thumbnails of the page
+        model.addAttribute("products", products);
+        model.addAttribute("images", productService.getPrimaryImageUrls(
+                products.getContent().stream().map(AdminProductResponse::id).toList()));
         model.addAttribute("q", keyword);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("brandId", brandId);
+        model.addAttribute("status", status);
+        model.addAttribute("categories", productService.getAllCategories());
+        model.addAttribute("brands", productService.getAllBrands());
+        model.addAttribute("statuses", ProductStatus.values());
         return "admin/products";
     }
 

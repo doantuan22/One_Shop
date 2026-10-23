@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.domain.Specification;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.repository.query.Param;
 
@@ -48,6 +49,19 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @EntityGraph(attributePaths = {"user", "product", "order", "orderItem.order.user", "orderItem.fulfillment.store",
             "orderItem.fulfillment.order", "orderItem.storeProduct.product", "orderItem.storeProduct.store", "reviewReply"})
     Page<Review> findAllByOrderByCreatedAtDescIdDesc(Pageable pageable);
+
+    /**
+     * Dynamic admin moderation list (text / visibility / replied filters). Redeclared with the same
+     * {@link EntityGraph} as the unfiltered page view so moderation keeps identical eager loading.
+     */
+    @EntityGraph(attributePaths = {"user", "product", "order", "orderItem.order.user", "orderItem.fulfillment.store",
+            "orderItem.fulfillment.order", "orderItem.storeProduct.product", "orderItem.storeProduct.store", "reviewReply"})
+    Page<Review> findAll(Specification<Review> spec, Pageable pageable);
+
+    long countByStatus(VisibilityStatus status);
+
+    /** Effective "chưa phản hồi": neither the 1--1 reply record nor any legacy reply column exists. */
+    long countByReviewReplyIsNullAndReplyIsNull();
 
     /** SQL-scoped provenance; both content and count exclude untraceable/mismatched historical reviews. */
     String STAFF_SOURCE = " from Review r join r.orderItem oi join oi.order o join oi.fulfillment f"

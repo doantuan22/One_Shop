@@ -71,7 +71,15 @@ try{
     if(config.mode==='REVIEW'){
       await nav(customer,`/orders/${id}`);await field(customer,'form[action="/reviews"] [name="rating"]',5);await field(customer,'form[action="/reviews"] [name="comment"]','BE07 browser review');await submit(customer,'form[action="/reviews"] button');
       await nav(staff,'/staff/reviews');const reviewPath=await evaluate(staff,`[...document.querySelectorAll('a[href]')].map(a=>a.getAttribute('href')).find(x=>x.startsWith('/staff/reviews/') && Number(x.substring(15))>0)`);if(!reviewPath)throw new Error('Review missing from Staff queue');await nav(staff,reviewPath);await field(staff,'#reply','BE07 browser staff reply');await submit(staff,'form[action$="/reply"] button');await screenshot(staff,'05-staff-reply');
-      const admin=await login('admin@oneshop.vn');await nav(admin,'/admin/reviews');const reviewId=Number(reviewPath.split('/').pop());await submit(admin,`tr[data-review-id="${reviewId}"] form[action$="/status"] button`);await screenshot(admin,'06-admin-moderation');
+      const admin=await login('admin@oneshop.vn');await nav(admin,'/admin/reviews');const reviewId=Number(reviewPath.split('/').pop());
+      // Moderation goes through the confirm-with-reason modal: Ẩn opens #osReasonModal, a
+      // mandatory reason must be typed, then #osReasonConfirm performs the real POST.
+      await click(admin,`tr[data-review-id="${reviewId}"] form[action$="/status"] button`);
+      await until(()=>evaluate(admin,`document.querySelector('#osReasonModal').classList.contains('show')`),'reason modal');
+      await field(admin,'#osReasonInput','BE07 browser hide reason');
+      await submit(admin,'#osReasonConfirm');
+      await until(()=>evaluate(admin,'location.pathname==="/admin/reviews" && location.search.includes("success")'),'moderation saved');
+      await screenshot(admin,'06-admin-moderation');
     }
   }
   await nav(customer,`/orders/${id}`);await screenshot(customer,'07-customer-final');

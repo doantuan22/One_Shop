@@ -16,7 +16,7 @@
 <div class="alert alert-danger" th:if="${param.error != null or error != null}" th:switch="${param.error != null ? param.error[0] : error}">
     <span th:case="'image-size'" th:text="${errorMessage != null ? errorMessage : 'Ảnh vượt quá ' + (maxFileSize != null ? maxFileSize : '5MB') + '. Vui lòng chọn tệp nhỏ hơn.'}">Ảnh vượt quá dung lượng cho phép.</span>
     <span th:case="'image-invalid'">Tệp không hợp lệ. Vui lòng chọn một tệp hình ảnh.</span>
-    <span th:case="*">Không thể làm việc với Cloudinary. Kiểm tra cấu hình CLOUDINARY_* rồi thử lại.</span>
+    <span th:case="*">Không thể tải ảnh. Vui lòng thử lại hoặc liên hệ quản trị viên.</span>
 </div>
 
 <div class="row g-4">
@@ -107,7 +107,7 @@
                         <button type="submit" class="btn btn-outline-primary">Tải lên</button>
                     </div>
                     <div class="upload-file-error text-danger small mt-1" style="display:none;"></div>
-                    <div class="form-text">Ảnh được lưu trên Cloudinary. Ảnh đầu tiên sẽ là ảnh đại diện.</div>
+                    <div class="form-text">Ảnh đầu tiên sẽ được dùng làm ảnh đại diện sản phẩm.</div>
                 </form>
 
                 <p class="text-secondary mb-0" th:if="${images.isEmpty()}">Sản phẩm chưa có ảnh.</p>

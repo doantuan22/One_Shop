@@ -37,10 +37,26 @@
       th:classappend="${inStock} ? 'text-bg-success' : 'text-bg-secondary'"
       th:text="${inStock} ? 'Còn hàng' : 'Hết hàng'">Còn hàng</span>
 
+<!--/* Selling state of a Product (ACTIVE / INACTIVE / HIDDEN enum) in plain Vietnamese. */-->
+<span th:fragment="productStatusLabel(status)" th:switch="${status.name()}">
+    <span th:case="'ACTIVE'">Đang bán</span><span th:case="'HIDDEN'">Đang ẩn</span>
+    <span th:case="'INACTIVE'">Ngừng bán</span><span th:case="*">Trạng thái chưa xác định</span>
+</span>
+
 <!--/* Status of an Admin record (ACTIVE / INACTIVE / HIDDEN enums). */-->
-<span th:fragment="statusBadge(status)" class="badge" th:with="name=${status.name()}"
-      th:classappend="${name == 'ACTIVE'} ? 'text-bg-success' : (${name == 'HIDDEN'} ? 'text-bg-warning' : 'text-bg-secondary')"
+<span th:fragment="statusBadge(status)" class="badge os-soft" th:with="name=${status.name()}"
+      th:classappend="${name == 'ACTIVE'} ? 'os-soft-success' : (${name == 'HIDDEN'} ? 'os-soft-warning' : 'os-soft-neutral')"
       th:text="${name == 'ACTIVE'} ? 'Đang hoạt động' : (${name == 'HIDDEN'} ? 'Đang ẩn' : 'Ngừng hoạt động')">Trạng thái</span>
+
+<!--/* Account role (RoleName enum) in Vietnamese: badge ("roleBadge") and plain label ("roleLabel"). */-->
+<span th:fragment="roleBadge(role)" class="badge" th:with="name=${role.name()}"
+      th:classappend="${name == 'ADMIN'} ? 'os-soft-danger' : (${name == 'STAFF'} ? 'os-soft-coral' : 'os-soft-neutral')"
+      th:text="${name == 'ADMIN'} ? 'Quản trị viên' : (${name == 'STAFF'} ? 'Nhân viên' : 'Khách hàng')">Vai trò</span>
+
+<!--/* One Staff-Store assignment row (ACTIVE / INACTIVE) in plain Vietnamese. */-->
+<span th:fragment="assignmentStatusBadge(status)" class="badge" th:with="name=${status.name()}"
+      th:classappend="${name == 'ACTIVE'} ? 'os-soft-success' : 'os-soft-neutral'"
+      th:text="${name == 'ACTIVE'} ? 'Đang phân công' : 'Ngừng phân công'">Trạng thái phân công</span>
 
 <!--/* Fulfillment type of an Order / Fulfillment (DELIVERY, STORE_PICKUP) in plain Vietnamese. */-->
 <span th:fragment="fulfillmentType(type)" th:text="${type != null and type.name() == 'STORE_PICKUP'} ? 'Nhận tại cửa hàng' : (${type != null and type.name() == 'DELIVERY'} ? 'Giao tận nơi' : 'Chưa xác định')">Giao tận nơi</span>

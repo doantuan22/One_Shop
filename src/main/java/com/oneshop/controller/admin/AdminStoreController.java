@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /** Admin: Stores of the chain. A Store is taken out of sale with status INACTIVE, never deleted (BR-17). */
 @Controller
@@ -28,8 +29,21 @@ public class AdminStoreController {
     }
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("stores", storeService.getAllStores());
+    public String list(@RequestParam(required = false) String q,
+                       @RequestParam(required = false) String area,
+                       @RequestParam(required = false) com.oneshop.entity.ActiveStatus status,
+                       @RequestParam(defaultValue = "0") int page, Model model) {
+        var all = storeService.getAllStores();
+        var results = storeService.searchStores(q, area, status, page);
+        // pagination page object is always materialized even when the service layer yields nothing
+        model.addAttribute("stores", results == null ? org.springframework.data.domain.Page.empty() : results);
+        // area options come from the live data, no hard-coded list
+        model.addAttribute("areas", all == null ? java.util.List.of()
+                : all.stream().map(s -> s.area()).distinct().sorted().toList());
+        model.addAttribute("statuses", com.oneshop.entity.ActiveStatus.values());
+        model.addAttribute("q", q);
+        model.addAttribute("area", area);
+        model.addAttribute("status", status);
         return "admin/stores";
     }
 

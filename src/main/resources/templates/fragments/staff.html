@@ -6,169 +6,20 @@
     Staff layout parts. The Store scope reads the model attribute `assignedStores` (List<StoreResponse> of the
     logged-in Staff's ACTIVE assignments, Roadmap V2 BR-14), set on every Staff request by StaffStoreScopeInterceptor.
     This is display only: the scope itself is enforced by that interceptor and by StoreService.requireAssignedStore.
+    The header is the same operation-console appbar as the Admin area (css/admin-staff.css); only the scope badge
+    and the sidebar items differ.
 */-->
-    <header th:fragment="topbar" class="navbar navbar-light os-appbar os-staff-coral-header sticky-top px-3"
-        th:with="stores=${assignedStores}">
-        <style>
-            /* OneShop Staff Coral: đồng bộ tone màu nhận diện thương hiệu logo #FF7F50 */
-            .os-app--staff {
-                --os-staff-coral: #ff7f50;
-                --os-staff-coral-hover: #e86738;
-            }
-
-            .os-app--staff .os-staff-coral-header {
-                display: grid;
-                grid-template-columns: minmax(0, 1fr) auto;
-                grid-template-rows: 40px 72px;
-                align-items: center;
-                gap: 0 16px;
-                padding: 0 24px !important;
-                background: #fff !important;
-                border-bottom: 1px solid #f3e5df;
-                box-shadow: 0 2px 10px rgba(44, 48, 56, .05);
-                isolation: isolate;
-                min-height: 112px;
-            }
-
-            .os-app--staff .os-staff-coral-header::before {
-                content: "";
-                position: absolute;
-                z-index: -1;
-                inset: 0 0 auto;
-                height: 40px;
-                background: linear-gradient(100deg, #ff7f50, #e86738);
-            }
-
-            .os-app--staff .os-staff-coral-header>.os-staff-brand-row {
-                grid-column: 1;
-                grid-row: 2;
-                min-width: 0;
-            }
-
-            .os-app--staff .os-staff-coral-header .navbar-brand {
-                color: #ff7f50 !important;
-                font-weight: 800 !important;
-                letter-spacing: -.03em;
-                font-size: 1.35rem;
-                text-decoration: none;
-            }
-
-            .os-app--staff .os-staff-coral-header .navbar-brand span {
-                color: #424956;
-                opacity: 1 !important;
-            }
-
-            .os-app--staff .os-staff-coral-header #staff-scope-badge {
-                grid-column: 1 / -1;
-                grid-row: 1;
-                justify-self: start;
-                background: rgba(255, 255, 255, .15) !important;
-                border: 1px solid rgba(255, 255, 255, .45);
-                border-radius: 999px;
-                color: #fff !important;
-                padding: .45rem .9rem;
-                font-size: .8rem;
-                font-weight: 700;
-            }
-
-            .os-app--staff .os-staff-coral-header>.os-staff-header-actions {
-                grid-column: 2;
-                grid-row: 2;
-                display: flex;
-                align-items: center;
-                gap: .65rem !important;
-            }
-
-            .os-app--staff .os-staff-coral-header .btn {
-                border-radius: 10px;
-                padding: .48rem .9rem;
-                font-weight: 600;
-                color: #536179 !important;
-                border-color: #d7dfeb !important;
-                background: #fff !important;
-                transition: background-color .2s, border-color .2s, color .2s;
-            }
-
-            .os-app--staff .os-staff-coral-header .btn:hover {
-                color: var(--os-staff-coral-hover) !important;
-                background: #fff5f2 !important;
-                border-color: #ffd5c7 !important;
-            }
-
-            .os-app--staff .os-staff-coral-header .os-staff-account {
-                border: 1px solid #edf0f4;
-                background: #f8fafc;
-                border-radius: 999px;
-                padding: .55rem .85rem;
-                color: #344054 !important;
-                font-weight: 500;
-            }
-
-            .os-app--staff .os-staff-coral-header .navbar-toggler {
-                border-color: #ffd5c7;
-                padding: .35rem .5rem;
-            }
-
-            .os-app--staff .os-sidebar {
-                background: #fff !important;
-                border-right: 1px solid #f3e5df !important;
-            }
-
-            .os-app--staff .os-sidebar .os-store-scope {
-                background: #fff8f5;
-                border: 1px solid #ffdfd3;
-                border-radius: 14px;
-            }
-
-            .os-app--staff .os-sidebar .os-nav-link {
-                border-radius: 10px;
-            }
-
-            .os-app--staff .os-sidebar .os-nav-link:hover:not(.active) {
-                color: #e86738;
-                background: #fff5f2;
-            }
-
-            .os-app--staff .os-sidebar .nav-pills .os-nav-link.active {
-                background: #ff7f50 !important;
-                color: #fff !important;
-                box-shadow: 0 4px 12px rgba(255, 127, 80, .25);
-            }
-
-            @media (max-width: 767.98px) {
-                .os-app--staff .os-staff-coral-header {
-                    grid-template-rows: 36px 64px;
-                    gap: 0 8px;
-                    padding: 0 12px !important;
-                    min-height: 100px;
-                }
-
-                .os-app--staff .os-staff-coral-header::before {
-                    height: 36px;
-                }
-
-                .os-app--staff .os-staff-coral-header .navbar-brand {
-                    font-size: 1.12rem;
-                }
-
-                .os-app--staff .os-staff-coral-header .btn {
-                    padding: .4rem .65rem;
-                }
-            }
-        </style>
-        <div class="d-flex align-items-center gap-2 os-staff-brand-row">
+    <header th:fragment="topbar" class="navbar navbar-dark os-appbar sticky-top px-3" th:with="stores=${assignedStores}">
+        <div class="d-flex align-items-center gap-2">
             <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas"
                 data-bs-target="#appSidebar" aria-controls="appSidebar" aria-label="Mở menu">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand os-staff-brand mb-0 fw-bold" th:href="@{/staff}">
-                <img th:src="@{/images/One.png}" src="/images/One.png" alt="OneShop" class="os-staff-brand-logo"
-                    width="80" height="80">
-
-                <span class="os-staff-brand-text">
-                    OneShop
-                    <span class="fw-normal os-staff-brand-role">Staff</span>
+            <a class="navbar-brand mb-0 fw-bold d-inline-flex align-items-center gap-2" th:href="@{/staff}">
+                <span class="os-brand-logo-chip">
+                    <img th:src="@{/images/One.png}" src="/images/One.png" alt="OneShop" width="26" height="26">
                 </span>
+                OneShop <span class="fw-normal opacity-75">Staff</span>
             </a>
         </div>
 
@@ -176,11 +27,11 @@
             th:text="${stores == null or stores.isEmpty()} ? 'Chưa được phân công' : (${stores.size() == 1} ? ${stores[0].name} : ${stores.size()} + ' chi nhánh')">Chi
             nhánh</span>
 
-        <div class="d-flex align-items-center gap-2 ms-auto os-staff-header-actions">
-            <a class="btn btn-outline-primary btn-sm d-none d-md-inline" th:href="@{/}">Trang bán hàng</a>
-            <span class="os-staff-account small d-none d-md-inline" sec:authentication="name">staff</span>
+        <div class="d-flex align-items-center gap-2 ms-auto">
+            <a class="btn btn-outline-light btn-sm d-none d-md-inline" th:href="@{/}">Trang bán hàng</a>
+            <span class="text-white small d-none d-md-inline" sec:authentication="name">staff</span>
             <form th:action="@{/logout}" method="post" class="d-inline">
-                <button type="submit" class="btn btn-outline-primary btn-sm">Đăng xuất</button>
+                <button type="submit" class="btn btn-light btn-sm">Đăng xuất</button>
             </form>
         </div>
     </header>
@@ -198,7 +49,7 @@
                 <div th:if="${stores != null and !stores.isEmpty()}">
                     <div class="mb-1" th:each="store : ${stores}">
                         <strong th:text="${store.name}">OneShop Thủ Đức</strong>
-                        <div class="small text-secondary" th:text="${store.code} + ' · ' + ${store.area}">TD · Thủ Đức
+                        <div class="small os-muted-text" th:text="${store.code} + ' · ' + ${store.area}">TD · Thủ Đức
                         </div>
                     </div>
                 </div>
@@ -213,7 +64,7 @@
                         th:replace="~{fragments/components :: navItem('/staff', 'Tổng quan', ${currentPath == '/staff/dashboard' or currentPath == '/staff/'} ? '/staff' : ${currentPath}, true)}">
                     </li>
                     <li
-                        th:replace="~{fragments/components :: navItem('/staff/fulfillments', 'Phần giao hàng', ${currentPath != null and (#strings.startsWith(currentPath, '/staff/fulfillments/delivery') or #strings.startsWith(currentPath, '/staff/fulfillments/pickup'))} ? null : ${currentPath}, true)}">
+                        th:replace="~{fragments/components :: navItem('/staff/fulfillments', 'Đơn hàng cần xử lý', ${currentPath != null and (#strings.startsWith(currentPath, '/staff/fulfillments/delivery') or #strings.startsWith(currentPath, '/staff/fulfillments/pickup'))} ? null : ${currentPath}, true)}">
                     </li>
                     <li
                         th:replace="~{fragments/components :: navItem('/staff/fulfillments/delivery', 'Giao tận nơi', ${currentPath}, true)}">
@@ -228,7 +79,7 @@
                         th:replace="~{fragments/components :: navItem('/staff/reviews', 'Đánh giá', ${currentPath}, true)}">
                     </li>
                     <li
-                        th:replace="~{fragments/components :: navItem('/staff/inventory-history', 'Lịch sử tồn kho', ${currentPath}, true)}">
+                        th:replace="~{fragments/components :: navItem('/staff/inventory-history', 'Nhật ký biến động tồn', ${currentPath}, true)}">
                     </li>
                 </ul>
             </nav>

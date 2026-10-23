@@ -105,6 +105,16 @@ public class AdminPaymentService {
      */
     @Transactional(readOnly = true)
     public Page<AdminPaymentCaseResponse> getCases(PaymentCaseCategory view, String search, int page) {
+        return getCases(view, search, null, null, page);
+    }
+
+    /**
+     * Console with an optional createdAt range ({@code from} inclusive, {@code to} inclusive — the query excludes the
+     * first instant after). Nothing is written: listing never changes a payment state.
+     */
+    @Transactional(readOnly = true)
+    public Page<AdminPaymentCaseResponse> getCases(PaymentCaseCategory view, String search,
+                                                   java.time.LocalDate from, java.time.LocalDate to, int page) {
         String q = search == null ? "" : search.trim();
         if (q.length() > 100) {
             q = q.substring(0, 100);
@@ -112,6 +122,8 @@ public class AdminPaymentService {
         String like = "%" + q.toLowerCase(java.util.Locale.ROOT).replace("!", "!!").replace("%", "!%")
                 .replace("_", "!_") + "%";
         return orders.searchPaymentCases(view == null ? "all" : view.key(), q, like, deadlines.expiredBefore(),
+                from == null ? null : from.atStartOfDay(),
+                to == null ? null : to.plusDays(1).atStartOfDay(),
                 PageRequest.of(Math.max(0, page), PAGE_SIZE)).map(this::summary);
     }
 

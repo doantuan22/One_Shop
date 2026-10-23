@@ -30,6 +30,8 @@ public class AdminStoreProductController {
 
     private static final String FORM_VIEW = "admin/store-product-form";
     private static final int PAGE_SIZE = 20;
+    private static final com.oneshop.entity.ActiveStatus[] STATUS_FILTERS =
+            com.oneshop.entity.ActiveStatus.values();
 
     private final StoreProductService storeProductService;
     private final StoreService storeService;
@@ -44,13 +46,16 @@ public class AdminStoreProductController {
 
     @GetMapping
     public String list(@RequestParam(required = false) Long storeId, @RequestParam(required = false) Long productId,
+                       @RequestParam(required = false) com.oneshop.entity.ActiveStatus status,
                        @RequestParam(defaultValue = "0") int page, Model model) {
-        model.addAttribute("storeProducts", storeProductService.searchStoreProducts(storeId, productId,
+        model.addAttribute("storeProducts", storeProductService.searchStoreProducts(storeId, productId, status,
                 PageRequest.of(Math.max(page, 0), PAGE_SIZE)));
         model.addAttribute("stores", storeService.getAllStores());
         model.addAttribute("products", productService.getAssignableProducts());
         model.addAttribute("storeId", storeId);
         model.addAttribute("productId", productId);
+        model.addAttribute("status", status);
+        model.addAttribute("statusFilters", STATUS_FILTERS);
         return "admin/store-products";
     }
 

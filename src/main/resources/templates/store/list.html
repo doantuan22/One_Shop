@@ -299,12 +299,8 @@
 <body class="os-home">
 <div class="store-finder-container">
     <div class="store-hero">
-        <div class="os-eyebrow mb-2">
-            <span class="os-eyebrow-dot"></span>
-            HỆ THỐNG PHÂN PHỐI · TOÀN QUỐC
-        </div>
-        <div th:replace="~{fragments/components :: pageHeader('Hệ thống cửa hàng', 'Tra cứu địa chỉ, giờ mở cửa và dịch vụ của từng cửa hàng. Bạn không cần chọn cửa hàng để mua online: chỉ chọn khi muốn nhận tại cửa hàng ở bước thanh toán.')}">
-            <h1>Hệ thống cửa hàng</h1>
+        <div th:replace="~{fragments/components :: pageHeader('Hệ thống cửa hàng OneShop', 'Tra cứu địa chỉ, giờ mở cửa và dịch vụ tại từng chi nhánh.')}">
+            <h1>Hệ thống cửa hàng OneShop</h1>
             <p>Tra cứu địa chỉ, giờ mở cửa và dịch vụ của từng cửa hàng.</p>
         </div>
     </div>
@@ -344,6 +340,9 @@
                     </svg>
                     Tìm cửa hàng
                 </button>
+            </div>
+            <div class="col-12" th:if="${!#strings.isEmpty(provinceCity) or !#strings.isEmpty(area)}">
+                <a class="small text-coral fw-semibold text-decoration-none" th:href="@{/stores}">Xóa bộ lọc</a>
             </div>
         </div>
     </form>
@@ -422,13 +421,14 @@
                     </span>
                 </div>
 
-                <div class="mt-auto pt-2 small text-secondary" th:if="${active}">
-                    <span th:if="${store.pickupEnabled}">Chọn &ldquo;Nhận tại cửa hàng&rdquo; khi thanh toán nếu cửa hàng này đủ hàng cho giỏ của bạn.</span>
-                    <span th:unless="${store.pickupEnabled}">Cửa hàng này hiện không nhận đơn tại cửa hàng.</span>
-                </div>
-                <div class="text-secondary small py-2" th:unless="${active}">
-                    Cửa hàng đang tạm ngừng hoạt động.
-                </div>
+                <form class="mt-auto pt-2" method="post" th:action="@{/stores/select}" th:if="${active}">
+                    <input type="hidden" name="storeId" th:value="${store.id}">
+                    <input type="hidden" name="returnTo" value="/products">
+                    <button type="submit" class="btn-select-store" th:disabled="${selectedStore != null and selectedStore.id == store.id}">
+                        <span th:text="${selectedStore != null and selectedStore.id == store.id} ? 'Đang xem cửa hàng này' : 'Xem sản phẩm tại cửa hàng'">Xem sản phẩm tại cửa hàng</span>
+                    </button>
+                </form>
+                <div class="text-secondary small pt-2 mt-auto" th:unless="${active}">Cửa hàng đang tạm ngừng hoạt động.</div>
             </article>
         </div>
     </div>

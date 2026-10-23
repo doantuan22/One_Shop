@@ -63,7 +63,7 @@ public class AdminCategoryController {
             } catch (BadRequestException ex) {
                 FormErrors.reject(bindingResult, ex);
             } catch (ImageStorageException ex) {
-                bindingResult.reject("imageStorage", "Không thể làm việc với Cloudinary. Kiểm tra cấu hình CLOUDINARY_* rồi thử lại.");
+                bindingResult.reject("imageStorage", "Không thể tải ảnh. Vui lòng thử lại hoặc liên hệ quản trị viên.");
             }
         }
         return page(model, null);
@@ -81,7 +81,7 @@ public class AdminCategoryController {
             } catch (BadRequestException ex) {
                 FormErrors.reject(bindingResult, ex);
             } catch (ImageStorageException ex) {
-                bindingResult.reject("imageStorage", "Không thể làm việc với Cloudinary. Kiểm tra cấu hình CLOUDINARY_* rồi thử lại.");
+                bindingResult.reject("imageStorage", "Không thể tải ảnh. Vui lòng thử lại hoặc liên hệ quản trị viên.");
             }
         }
         return page(model, id);

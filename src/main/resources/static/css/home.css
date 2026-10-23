@@ -65,7 +65,8 @@ body:has(.home-hero) {
 .home-hero {
     position: relative;
     isolation: isolate;
-    width: 100vw;
+    /* Auto width plus symmetric viewport margins avoids the 15px desktop scrollbar overflow of 100vw. */
+    width: auto;
     margin-left: calc(50% - 50vw);
     /* cancels the py-4 of the layout's <main>, so the photo starts right under the navbar */
     margin-top: -1.5rem;

@@ -79,6 +79,37 @@ public interface OrderFulfillmentRepository extends JpaRepository<OrderFulfillme
                                           @Param("fromAt") LocalDateTime fromAt, @Param("toAt") LocalDateTime toAt,
                                           Pageable pageable);
 
+    /**
+     * The same Staff queue narrowed by an optional customer keyword: an empty {@code pattern} keeps the result
+     * identical to {@link #searchForStaff}; otherwise it is a lower-case contains-pattern (with {@code !} as the
+     * like escape) over the customer identity and the receiver data of each Order.
+     */
+    @EntityGraph(attributePaths = {"order", "order.user", "store"})
+    @Query(value = "select f from OrderFulfillment f where f.store.id in :storeIds and f.status in :statuses"
+            + " and f.fulfillmentType in :types and (:orderId = 0 or f.order.id = :orderId)"
+            + " and f.assignedAt >= :fromAt and f.assignedAt < :toAt"
+            + " and (:pattern = '' or lower(f.order.user.fullName) like :pattern escape '!'"
+            + " or lower(f.order.user.email) like :pattern escape '!'"
+            + " or lower(f.order.receiverName) like :pattern escape '!'"
+            + " or lower(f.order.receiverPhone) like :pattern escape '!')"
+            + " order by case when f.status in (com.oneshop.entity.OrderFulfillmentStatus.CONFIRMED,"
+            + " com.oneshop.entity.OrderFulfillmentStatus.PREPARING, com.oneshop.entity.OrderFulfillmentStatus.PACKED,"
+            + " com.oneshop.entity.OrderFulfillmentStatus.SHIPPING, com.oneshop.entity.OrderFulfillmentStatus.READY_FOR_PICKUP)"
+            + " then 0 else 1 end asc, f.assignedAt asc, f.id asc",
+            countQuery = "select count(f) from OrderFulfillment f where f.store.id in :storeIds and f.status in :statuses"
+            + " and f.fulfillmentType in :types and (:orderId = 0 or f.order.id = :orderId)"
+            + " and f.assignedAt >= :fromAt and f.assignedAt < :toAt"
+            + " and (:pattern = '' or lower(f.order.user.fullName) like :pattern escape '!'"
+            + " or lower(f.order.user.email) like :pattern escape '!'"
+            + " or lower(f.order.receiverName) like :pattern escape '!'"
+            + " or lower(f.order.receiverPhone) like :pattern escape '!')")
+    Page<OrderFulfillment> searchForStaff(@Param("storeIds") Collection<Long> storeIds,
+                                          @Param("statuses") Collection<OrderFulfillmentStatus> statuses,
+                                          @Param("types") Collection<com.oneshop.entity.FulfillmentType> types,
+                                          @Param("orderId") long orderId,
+                                          @Param("fromAt") LocalDateTime fromAt, @Param("toAt") LocalDateTime toAt,
+                                          @Param("pattern") String pattern, Pageable pageable);
+
     /** Detail read, scoped to the assigned Stores in SQL. */
     @EntityGraph(attributePaths = {"order", "order.user", "store"})
     @Query("select f from OrderFulfillment f where f.id = :id and f.store.id in :storeIds")

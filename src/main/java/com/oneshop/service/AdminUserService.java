@@ -40,6 +40,21 @@ public class AdminUserService {
         return users.searchAdmin(role, PageRequest.of(Math.max(0, page), 20)).map(AdminUserService::response);
     }
 
+    /** User console search: role + account status + contains text over name / e-mail / user name. */
+    public Page<AdminUserResponse> searchUsers(RoleName role, ActiveStatus status, String q, int page) {
+        var like = likeOf(q);
+        return users.searchAdmin(role, status, like, PageRequest.of(Math.max(0, page), 20)).map(AdminUserService::response);
+    }
+
+    /** lower-case contains pattern with ! as the escape character (same rule as the other admin searches). */
+    private static String likeOf(String q) {
+        var text = q == null ? "" : q.trim().toLowerCase();
+        if (text.isEmpty()) {
+            return "";
+        }
+        return "%" + text.replace("!", "!!").replace("%", "!%").replace("_", "!_") + "%";
+    }
+
     public AdminUserResponse getUser(Long id) { return response(user(id)); }
 
     public List<AdminUserResponse> getStaffAccounts() {

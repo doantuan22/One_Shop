@@ -1,0 +1,406 @@
+/* OneShop commercial UI system — loaded last by every SiteMesh decorator. */
+:root {
+    --os-brand: #ff7f50;
+    --os-brand-hover: #e86738;
+    --os-brand-active: #d65426;
+    --os-brand-soft: #fff5f2;
+    --os-brand-border: #ffd5c7;
+    --os-canvas: #f8f9fb;
+    --os-surface: #ffffff;
+    --os-surface-subtle: #fcfcfd;
+    --os-border: #e7eaf0;
+    --os-text-strong: #182230;
+    --os-text: #344054;
+    --os-text-muted: #667085;
+    --os-muted: #667085;
+    --os-success: #027a48;
+    --os-warning: #b54708;
+    --os-danger: #b42318;
+    --os-info: #175cd3;
+    --os-radius-card: 12px;
+    --os-radius-control: 9px;
+    --os-shadow-card: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+html { overflow-x: clip; }
+body {
+    color: var(--os-text);
+    background: var(--os-canvas);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    overflow-x: clip;
+}
+
+/* Shared hierarchy, forms and feedback */
+.os-page-header {
+    align-items: flex-start;
+    gap: 0.75rem 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom-color: var(--os-border);
+}
+.os-page-header h1,
+.os-page-header .h3 {
+    color: var(--os-text-strong);
+    font-size: clamp(1.45rem, 2vw, 1.75rem);
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+}
+.os-page-header p,
+.os-muted-text,
+.text-secondary { color: var(--os-text-muted) !important; }
+
+.card,
+.modal-content {
+    border-color: var(--os-border);
+    border-radius: var(--os-radius-card);
+    box-shadow: var(--os-shadow-card);
+}
+.card-header,
+.modal-header,
+.modal-footer {
+    border-color: var(--os-border);
+    background: var(--os-surface);
+}
+.card-header { padding: 0.75rem 1rem; }
+.card-body { padding: 1rem; }
+
+.form-label {
+    margin-bottom: 0.35rem;
+    color: #475467;
+    font-size: 0.8125rem;
+    font-weight: 650;
+}
+.form-control,
+.form-select {
+    min-height: 40px;
+    border-color: #d9dee8;
+    border-radius: var(--os-radius-control);
+    padding: 0.45rem 0.75rem;
+    color: var(--os-text-strong);
+    box-shadow: none;
+}
+.form-control::placeholder { color: #98a2b3; }
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--os-brand-hover) !important;
+    box-shadow: 0 0 0 3px rgba(232, 103, 56, 0.16) !important;
+}
+.form-text { color: var(--os-text-muted); }
+.alert { border-radius: var(--os-radius-control); }
+
+/* Buttons: deliberately compact in operation consoles, standard touch size on mobile. */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    min-height: 40px;
+    padding: 0.45rem 0.85rem;
+    border-radius: var(--os-radius-control);
+    font-weight: 650;
+    line-height: 1.2;
+    white-space: nowrap;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
+}
+.btn-primary { box-shadow: none; }
+.btn-primary:hover,
+.btn-primary:active { box-shadow: 0 2px 6px rgba(232, 103, 56, 0.2) !important; transform: none; }
+.btn-outline-secondary {
+    border-color: #d0d5dd;
+    color: #475467;
+}
+.btn-outline-secondary:hover {
+    border-color: #98a2b3;
+    background: #f9fafb;
+    color: #344054;
+}
+.btn-outline-danger { color: var(--os-danger); border-color: #fecdca; }
+.btn-outline-danger:hover { background: #fef3f2; color: #912018; border-color: #fda29b; }
+.btn-sm {
+    min-height: 34px;
+    padding: 0.32rem 0.65rem;
+    font-size: 0.8125rem;
+}
+.btn:disabled,
+.btn.disabled { opacity: 0.58; cursor: not-allowed; box-shadow: none !important; }
+
+.badge {
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 650;
+    line-height: 1.3;
+    padding: 0.28rem 0.55rem;
+}
+.badge.os-soft-success { color: var(--os-success); background: #ecfdf3; border-color: #abefc6; }
+.badge.os-soft-danger { color: var(--os-danger); background: #fef3f2; border-color: #fecdca; }
+.badge.os-soft-warning { color: var(--os-warning); background: #fffaeb; border-color: #fedf89; }
+.badge.os-soft-info { color: var(--os-info); background: #eff8ff; border-color: #b2ddff; }
+.badge.os-soft-neutral { color: #475467; background: #f2f4f7; border-color: #e4e7ec; }
+.badge.os-soft-coral { color: #b84224; background: var(--os-brand-soft); border-color: var(--os-brand-border); }
+
+/* Client chrome: a solid brand bar and lightweight navigation. */
+.os-topbar-coral { background: #f37348; }
+.os-navbar-custom { box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04); }
+.btn-nav-register,
+.btn-nav-register:hover,
+.os-avatar-circle { background: var(--os-brand) !important; box-shadow: none; }
+.btn-nav-register:hover { background: var(--os-brand-hover) !important; }
+
+/* CTA surfaces use the original OneShop coral; structure and interaction rules stay centralized. */
+.btn-primary,
+.btn-auth-submit,
+.btn-auth-submit:hover,
+.btn-filter-submit,
+.btn-filter-submit:hover,
+.btn-select-store,
+.btn-select-store:hover,
+.btn-card-add-cart,
+.btn-card-add-cart:hover,
+.pcard__btn-cart,
+.pcard__btn-cart:hover,
+.btn-add-cart,
+.btn-add-cart:hover,
+.btn-confirm-order,
+.btn-confirm-order:hover,
+.btn-checkout-submit,
+.btn-checkout-submit:hover,
+.btn-coral-save,
+.btn-coral-save:hover,
+.btn-order-online,
+.btn-order-online:hover {
+    background: var(--os-brand) !important;
+    border-color: var(--os-brand) !important;
+    color: #fff !important;
+}
+.btn-primary:hover,
+.btn-primary:active,
+.btn-auth-submit:hover,
+.btn-filter-submit:hover,
+.btn-select-store:hover,
+.btn-card-add-cart:hover,
+.pcard__btn-cart:hover,
+.btn-add-cart:hover,
+.btn-confirm-order:hover,
+.btn-checkout-submit:hover,
+.btn-coral-save:hover,
+.btn-order-online:hover {
+    background: var(--os-brand-hover) !important;
+    border-color: var(--os-brand-hover) !important;
+}
+
+/* Authentication and account surfaces retain the brand while avoiding promotional decoration. */
+.auth-card {
+    border-color: var(--os-border);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(16, 24, 40, 0.07);
+}
+.auth-card::before,
+.auth-card::after { display: none; }
+.btn-auth-submit { box-shadow: none; }
+.profile-avatar-circle { background: var(--os-brand); box-shadow: none; }
+.profile-card { border-color: var(--os-border); box-shadow: var(--os-shadow-card); }
+
+/* Store finder: results appear early; the content stays useful without a hero. */
+.store-finder-container { max-width: 1264px; padding: 0.5rem 0 3rem; }
+.store-hero {
+    margin-bottom: 1.25rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    overflow: visible;
+}
+.store-hero::before { display: none; }
+.store-hero h1,
+.store-hero .h1,
+.store-hero .h3 { font-size: clamp(1.55rem, 2.4vw, 1.9rem); }
+.store-hero p { max-width: 620px; color: var(--os-text-muted); }
+.store-hero .os-eyebrow { display: none; }
+.filter-panel {
+    margin-bottom: 1.25rem;
+    padding: 0.9rem 1rem;
+    border-color: var(--os-border);
+    border-radius: var(--os-radius-card);
+    box-shadow: var(--os-shadow-card);
+}
+.filter-select { min-height: 40px; padding: 0.45rem 0.75rem; border-color: #d9dee8; border-radius: var(--os-radius-control); background: #fff; }
+.btn-filter-submit { min-height: 40px; height: 40px; border-radius: var(--os-radius-control); box-shadow: none; }
+.modern-store-card {
+    padding: 1.1rem;
+    border-color: var(--os-border);
+    border-radius: var(--os-radius-card);
+    box-shadow: var(--os-shadow-card);
+}
+.modern-store-card:hover { border-color: var(--os-brand-border); box-shadow: 0 4px 12px rgba(16, 24, 40, 0.06); }
+.modern-store-card.selected-active-store { border: 1px solid var(--os-brand); background: #fffaf8; box-shadow: none; }
+.store-card-title { font-size: 1rem; }
+.store-location-text { margin-bottom: 0.75rem; color: #b84224; }
+.store-details-list { gap: 0.4rem; margin-bottom: 0.9rem; }
+.store-amenities { margin-bottom: 0.8rem; }
+.amenity-chip { border-radius: 999px; }
+.current-selection-badge { background: var(--os-brand); box-shadow: none; }
+.btn-select-store { min-height: 40px; background: var(--os-brand); box-shadow: none; }
+.btn-select-store:hover { background: var(--os-brand-hover); box-shadow: none; }
+
+/* Catalog and product details share a quieter retail surface. */
+.catalog-filter-bar,
+.product-image-stage,
+.store-check-drawer,
+.checkout-store-card,
+.order-summary-card,
+.cart-store-group,
+.cart-summary-panel { border-color: var(--os-border); box-shadow: var(--os-shadow-card); }
+.catalog-filter-bar { padding: 0.8rem 0.9rem; border-radius: var(--os-radius-card); }
+.retail-product-card,
+.pcard { border-color: var(--os-border); border-radius: var(--os-radius-card); box-shadow: var(--os-shadow-card); }
+.retail-product-card:hover,
+.pcard:hover { border-color: #cfd6e2; box-shadow: 0 5px 16px rgba(16, 24, 40, 0.07); }
+.product-thumb-stage,
+.pcard__media { background: #fafbfc; }
+.product-card-sku { color: #98a2b3; margin-bottom: 0.5rem; }
+.product-current-price,
+.pcard__price,
+.product-price-current .os-price,
+.product-price-current { color: #c94f26; }
+.btn-card-action,
+.pcard__btn-cart,
+.pcard__btn-login { border-radius: var(--os-radius-control); }
+.product-main-title { color: var(--os-text-strong); font-weight: 700; }
+.product-purchase-area { border-color: var(--os-border); }
+.product-discount-badge { display: none; }
+.product-info-column { padding-left: 0; }
+.success-banner-card,
+.order-card { border-color: var(--os-border); box-shadow: var(--os-shadow-card); }
+
+/* Client copy and links: dark coral is reserved for text on light surfaces. */
+.home-section__head p,
+.home-store__meta { color: var(--os-text-muted); }
+.home-link,
+.home-search__scope a,
+.home-tile--plain .home-tile__cta { color: #b84224 !important; }
+.pcard__btn-login,
+.btn-card-login { color: var(--os-brand) !important; }
+.home-link:hover,
+.home-search__scope a:hover,
+.home-tile--plain .home-tile__cta:hover { color: #922f1c !important; }
+.pcard__btn-login:hover,
+.btn-card-login:hover { color: var(--os-brand-hover) !important; }
+.pcard__btn-login,
+.btn-card-login { border-color: var(--os-brand-border) !important; }
+.home-store__tags li { color: #9a3412; }
+
+/* Admin / staff: dense, scannable operational UI. */
+.os-app { background: #f7f8fa; }
+.os-app--admin .os-appbar,
+.os-app--staff .os-appbar { background: #f37348; box-shadow: 0 1px 3px rgba(16, 24, 40, 0.12); }
+.os-app .os-sidebar { background: #fbfcfe; border-right-color: var(--os-border); }
+.os-app .os-store-scope { background: #fff; border-color: var(--os-border); }
+.os-app .os-sidebar .os-nav-link { border-radius: 8px; }
+.os-app .nav-pills .os-nav-link.active { background: var(--os-brand); }
+.os-app .card { box-shadow: var(--os-shadow-card); }
+.os-app .card-header { font-weight: 650; }
+.os-app .os-stat { border-color: var(--os-border); box-shadow: var(--os-shadow-card); }
+.os-app .os-stat__value { font-size: clamp(1.55rem, 2vw, 1.9rem); color: var(--os-text-strong); }
+.os-app .os-stat .card-body { min-height: 126px; padding: 1rem; }
+.os-app .os-filter { border-color: var(--os-border); background: var(--os-surface); }
+.os-app .os-filter .card-body { padding: 0.8rem 1rem; }
+.os-app .os-filter-grid { gap: 0.55rem 0.75rem; }
+.os-app .os-filter-field .form-label { font-size: 0.75rem; margin-bottom: 0.2rem; }
+.os-app .os-filter-field .form-control,
+.os-app .os-filter-field .form-select { min-height: 36px; padding-block: 0.35rem; }
+.os-app .os-kpi-chips .os-kpi-chip { min-width: 7.75rem; padding: 0.45rem 0.7rem; border-color: var(--os-border); border-radius: 10px; }
+.os-app .os-kpi-chip .os-kpi-chip__value { color: var(--os-text-strong); }
+.os-app .table { --bs-table-bg: transparent; margin-bottom: 0; }
+.os-app .table > :not(caption) > * > * { padding: 0.7rem 0.55rem; border-bottom-color: var(--os-border); }
+.os-app .table thead th { color: #475467; background: #fafbfc; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.01em; }
+.os-app .table-hover > tbody > tr:hover > * { --bs-table-accent-bg: #fafbfc; }
+.os-app .os-col-code { min-width: 8rem; }
+.os-app .os-col-actions { min-width: 10.5rem; }
+.os-app .table-actions { gap: 0.375rem; }
+.os-app .table-actions .btn,
+.os-app .os-col-actions .btn { min-height: 34px; padding: 0.32rem 0.58rem; font-size: 0.78rem; }
+.os-app .os-col-actions .btn-primary { max-width: 12.75rem; overflow: hidden; text-overflow: ellipsis; }
+.os-app .modal-content { box-shadow: 0 16px 36px rgba(16, 24, 40, 0.16); }
+.os-app .modal-header,
+.os-app .modal-footer { padding: 0.75rem 1rem; }
+.os-app .os-admin-form-modal { max-width: 34rem; }
+.os-app .os-admin-form-modal .modal-body { padding: 1.25rem; }
+.os-app .os-admin-form-modal .modal-footer { gap: 0.5rem; }
+.os-app .os-admin-form-image {
+    display: block;
+    width: 88px;
+    height: 88px;
+    object-fit: contain;
+    padding: 0.35rem;
+    border: 1px solid var(--os-border);
+    border-radius: 10px;
+    background: #fafbfc;
+}
+.os-app .os-modal-image-tools { border-top: 1px solid var(--os-border); }
+/* Category/Brand tables: fixed, balanced columns while every cell stays a real table-cell. */
+.os-app .os-catalog-table .os-table { table-layout: fixed; width: 100%; }
+.os-app .os-catalog-table .os-col-thumb { width: 4.5rem; }
+.os-app .os-catalog-table .os-col-name { width: 22%; overflow-wrap: anywhere; }
+.os-app .os-catalog-table .os-col-status { width: 9.5rem; }
+.os-app .os-catalog-table .os-col-actions { width: 6.5rem; min-width: 0; }
+.os-app .os-catalog-table .os-col-desc { overflow: hidden; }
+/* The table fits its container, so the sticky-column divider used by wide tables is only visual noise here. */
+.os-app .os-catalog-table .os-table thead th.os-col-actions,
+.os-app .os-catalog-table .os-table tbody td.os-col-actions { position: static; box-shadow: none; }
+/* Clamp the text inside the cell, never the <td> itself (that removes display: table-cell). */
+.os-app .os-table-description {
+    display: -webkit-box;
+    max-width: 100%;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+/* Replace the previous staff dashboard's decorative surfaces with practical hierarchy. */
+.os-staff-dashboard .os-dashboard-store {
+    padding: 1rem;
+    border-color: var(--os-border);
+    border-radius: var(--os-radius-card);
+    background: #fff;
+    box-shadow: var(--os-shadow-card);
+}
+.os-staff-dashboard .os-dashboard-store-name,
+.os-staff-dashboard .os-dashboard-orders-title { color: var(--os-text-strong); }
+.os-staff-dashboard .os-dashboard-metrics { margin-top: 0.75rem; }
+.os-staff-dashboard .os-dashboard-metric .card,
+.os-staff-dashboard .os-dashboard-metric .os-card { border-color: var(--os-border); border-radius: 10px; box-shadow: none; }
+.os-staff-dashboard .os-dashboard-metric .card:hover,
+.os-staff-dashboard .os-dashboard-metric .os-card:hover { transform: none; box-shadow: var(--os-shadow-card); }
+.os-staff-dashboard .os-dashboard-orders-table { border-color: var(--os-border); border-radius: var(--os-radius-card); }
+
+@media (max-width: 767.98px) {
+    .os-page-header { margin-bottom: 1rem !important; }
+    .os-page-header__actions { width: 100%; }
+    .os-page-header__actions .btn { flex: 1 1 auto; }
+    .store-finder-container { padding-inline: 0; }
+    .store-hero { margin-bottom: 1rem; }
+    .filter-panel { padding: 0.8rem; }
+    .modern-store-card { padding: 1rem; }
+    .os-app main { padding-top: 1rem !important; }
+    .os-app .os-filter-grid { grid-template-columns: 1fr; }
+    .os-app .os-filter-field.d-flex { padding-top: 0.15rem; }
+    .os-app .os-filter-field.d-flex .btn { flex: 1; }
+    .os-app .os-kpi-chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .os-app .os-kpi-chips .os-kpi-chip { min-width: 0; }
+}
+
+@media (max-width: 575.98px) {
+    .btn { min-height: 44px; }
+    .btn-sm { min-height: 40px; }
+    .os-app .table > :not(caption) > * > * { padding: 0.6rem 0.5rem; }
+    .os-app .os-col-actions { min-width: 12rem; }
+    .os-app .os-col-actions .btn { min-height: 40px; }
+    .os-app .os-catalog-table .os-table { min-width: 44rem; }
+    .os-app .os-catalog-table .os-col-actions { min-width: 0; }
+    .os-app .os-admin-form-modal { max-width: calc(100% - 1.5rem); }
+    .catalog-filter-bar { padding: 0.75rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: 0.01ms !important; }
+}

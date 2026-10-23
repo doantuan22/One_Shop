@@ -4,10 +4,20 @@
     <title>Thương hiệu</title>
 </head>
 <body>
-<div th:replace="~{fragments/components :: pageHeader('Thương hiệu', 'Thương hiệu dùng chung toàn chuỗi. Logo được lưu trên Cloudinary.')}"></div>
+<div class="os-page-header mb-4">
+    <div>
+        <h1 class="h3 mb-1">Thương hiệu</h1>
+        <p class="os-muted-text mb-0">Quản lý các thương hiệu mỹ phẩm trong hệ thống OneShop.</p>
+    </div>
+    <div class="os-page-header__actions">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#brand-form-modal">
+            <span aria-hidden="true">+</span> Thêm thương hiệu
+        </button>
+    </div>
+</div>
 
 <div class="alert alert-success" th:if="${param.success}" th:switch="${param.success[0]}">
-    <span th:case="'created'">Đã thêm thương hiệu. Bạn có thể tải logo lên ngay bên dưới.</span>
+    <span th:case="'created'">Đã thêm thương hiệu. Bạn có thể thêm logo trong biểu mẫu chỉnh sửa.</span>
     <span th:case="'logo-uploaded'">Đã tải logo lên.</span>
     <span th:case="'logo-removed'">Đã xóa logo.</span>
     <span th:case="*">Đã cập nhật thương hiệu.</span>
@@ -15,20 +25,29 @@
 <div class="alert alert-danger" th:if="${param.error != null or error != null}" th:switch="${param.error != null ? param.error[0] : error}">
     <span th:case="'image-size'" th:text="${errorMessage != null ? errorMessage : 'Ảnh vượt quá ' + (maxFileSize != null ? maxFileSize : '5MB') + '. Vui lòng chọn tệp nhỏ hơn.'}">Ảnh vượt quá dung lượng cho phép.</span>
     <span th:case="'image-invalid'">Tệp không hợp lệ. Vui lòng chọn một tệp hình ảnh.</span>
-    <span th:case="*">Không thể làm việc với Cloudinary. Kiểm tra cấu hình CLOUDINARY_* rồi thử lại.</span>
+    <span th:case="*">Không thể tải logo. Vui lòng thử lại hoặc liên hệ quản trị viên.</span>
 </div>
 
-<div class="row g-4">
-    <div class="col-12 col-xl-4 order-xl-2">
-        <section class="card shadow-sm mb-4">
-            <div class="card-header bg-white fw-semibold" th:text="${editId == null} ? 'Thêm thương hiệu' : 'Sửa thương hiệu'">Thêm thương hiệu</div>
-            <div class="card-body">
-                <form method="post" th:object="${form}" id="brand-form" novalidate
+<div class="os-catalog-table">
+    <div th:replace="~{fragments/components :: dataTable(~{::#brand-head}, ~{::#brand-body})}"></div>
+</div>
+
+<div class="modal fade" id="brand-form-modal" tabindex="-1" aria-labelledby="brand-form-modal-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable os-admin-form-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title h5" id="brand-form-modal-title"
+                    th:text="${editId == null} ? 'Thêm thương hiệu' : 'Chỉnh sửa thương hiệu'">Thêm thương hiệu</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" th:object="${form}" id="brand-form" novalidate data-os-save-form
+                      th:attr="data-os-open-modal=${#fields.hasErrors()} ? 'brand-form-modal' : null"
                       th:action="${editId == null} ? @{/admin/brands} : @{/admin/brands/{id}(id=${editId})}">
                     <div class="alert alert-danger" th:each="message : ${#fields.globalErrors()}" th:text="${message}">Lỗi</div>
                     <div class="mb-3">
                         <label class="form-label" for="name">Tên thương hiệu <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" th:field="*{name}" th:errorclass="is-invalid" maxlength="150">
+                        <input type="text" class="form-control" th:field="*{name}" th:errorclass="is-invalid" maxlength="150" required>
                         <div class="invalid-feedback" th:errors="*{name}">Lỗi</div>
                     </div>
                     <div class="mb-3">
@@ -36,67 +55,69 @@
                         <textarea class="form-control" rows="3" th:field="*{description}" th:errorclass="is-invalid" maxlength="500"></textarea>
                         <div class="invalid-feedback" th:errors="*{description}">Lỗi</div>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-0">
                         <label class="form-label" for="status">Trạng thái</label>
                         <select class="form-select" th:field="*{status}">
                             <option value="ACTIVE">Đang hoạt động</option>
-                            <option value="HIDDEN">Đang ẩn</option>
+                            <option value="HIDDEN">Tạm ẩn</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary" th:text="${editId == null} ? 'Thêm' : 'Lưu thay đổi'">Lưu</button>
-                    <a class="btn btn-outline-secondary" th:href="@{/admin/brands}" th:if="${editId != null}">Hủy</a>
                 </form>
+
+                <section class="os-modal-image-tools mt-4 pt-3" th:if="${editBrand != null}">
+                    <h3 class="h6 mb-2">Logo thương hiệu</h3>
+                    <img th:if="${editBrand.logoUrl}" th:src="${editBrand.logoUrl}" th:alt="${editBrand.name}"
+                         class="os-admin-form-image mb-2" data-image-preview>
+                    <img class="os-admin-form-image mb-2 d-none" alt="Xem trước logo đã chọn" data-image-preview>
+                    <form method="post" enctype="multipart/form-data" class="mb-2" th:action="@{/admin/brands/{id}/logo(id=${editId})}">
+                        <div class="input-group">
+                            <input type="file" class="form-control" name="file" accept="image/jpeg,image/png,image/webp" required
+                                   aria-label="Tệp logo" data-image-preview-input
+                                   th:attr="data-max-bytes=5242880,data-max-size=${maxFileSize != null ? maxFileSize : '5MB'}">
+                            <button type="submit" class="btn btn-outline-primary">Tải logo</button>
+                        </div>
+                        <div class="upload-file-error text-danger small mt-1" style="display:none;"></div>
+                        <div class="form-text" th:text="'JPEG, PNG hoặc WebP · tối đa ' + (${maxFileSize != null ? maxFileSize : '5MB'}) + '.'">JPEG, PNG hoặc WebP · tối đa 5MB.</div>
+                    </form>
+                    <form method="post" th:action="@{/admin/brands/{id}/logo/delete(id=${editId})}" th:if="${editBrand.logoUrl}">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Xóa logo hiện tại</button>
+                    </form>
+                </section>
+                <p class="form-text mb-0" th:if="${editBrand == null}">Bạn có thể thêm logo sau khi lưu thương hiệu.</p>
             </div>
-        </section>
-
-        <section class="card shadow-sm" id="brand-logo" th:if="${editBrand != null}">
-            <div class="card-header bg-white fw-semibold">Logo</div>
-            <div class="card-body">
-                <img th:if="${editBrand.logoUrl}" th:src="${editBrand.logoUrl}" th:alt="${editBrand.name}"
-                     class="os-brand-logo border rounded mb-3">
-                <p class="text-secondary small" th:unless="${editBrand.logoUrl}">Chưa có logo.</p>
-
-                <form method="post" enctype="multipart/form-data" class="mb-2"
-                      th:action="@{/admin/brands/{id}/logo(id=${editId})}">
-                    <div class="input-group">
-                        <input type="file" class="form-control" name="file" accept="image/*" required aria-label="Tệp logo"
-                               th:attr="data-max-bytes=5242880,data-max-size=${maxFileSize != null ? maxFileSize : '5MB'}">
-                        <button type="submit" class="btn btn-outline-primary">Tải lên</button>
-                    </div>
-                    <div class="upload-file-error text-danger small mt-1" style="display:none;"></div>
-                </form>
-                <form method="post" th:action="@{/admin/brands/{id}/logo/delete(id=${editId})}" th:if="${editBrand.logoUrl}">
-                    <button type="submit" class="btn btn-outline-danger btn-sm">Xóa logo</button>
-                </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-primary" form="brand-form"
+                        th:text="${editId == null} ? 'Lưu thương hiệu' : 'Lưu thay đổi'">Lưu thương hiệu</button>
             </div>
-        </section>
-    </div>
-
-    <div class="col-12 col-xl-8 order-xl-1">
-        <div th:replace="~{fragments/components :: dataTable(~{::#brand-head}, ~{::#brand-body})}"></div>
+        </div>
     </div>
 </div>
+
+<div class="d-none" th:if="${editId != null}" data-os-open-modal="brand-form-modal"></div>
 
 <th:block th:remove="all">
     <thead id="brand-head">
     <tr>
-        <th scope="col">Logo</th>
-        <th scope="col">Tên</th>
-        <th scope="col">Mô tả</th>
-        <th scope="col">Trạng thái</th>
-        <th scope="col" class="text-end">Thao tác</th>
+        <th scope="col" class="os-col-thumb">Logo</th>
+        <th scope="col" class="os-col-name">Tên</th>
+        <th scope="col" class="os-col-desc">Mô tả</th>
+        <th scope="col" class="os-col-status">Trạng thái</th>
+        <th scope="col" class="os-col-actions text-end">Thao tác</th>
     </tr>
     </thead>
     <tbody id="brand-body">
     <tr th:each="brand : ${brands}" th:classappend="${brand.id == editId} ? 'table-active'">
-        <td>
+        <td class="os-col-thumb">
             <img th:if="${brand.logoUrl}" th:src="${brand.logoUrl}" th:alt="${brand.name}" class="os-brand-logo-sm rounded border">
             <span class="text-secondary" th:unless="${brand.logoUrl}">—</span>
         </td>
-        <td class="fw-semibold" th:text="${brand.name}">Cocoon</td>
-        <td class="text-secondary" th:text="${brand.description}">Mô tả</td>
-        <td><span th:replace="~{fragments/components :: statusBadge(${brand.status})}"></span></td>
-        <td class="text-end">
+        <td class="os-col-name fw-semibold" th:text="${brand.name}">Cocoon</td>
+        <td class="os-col-desc text-secondary">
+            <span class="os-table-description" th:text="${brand.description}" th:title="${brand.description}">Mô tả</span>
+        </td>
+        <td class="os-col-status"><span th:replace="~{fragments/components :: statusBadge(${brand.status})}"></span></td>
+        <td class="os-col-actions text-end">
             <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/brands/{id}/edit(id=${brand.id})}">Sửa</a>
         </td>
     </tr>
@@ -106,5 +127,6 @@
     </tbody>
 </th:block>
 <script th:src="@{/js/upload-validator.js}"></script>
+<script th:src="@{/js/admin-form-modal.js}"></script>
 </body>
 </html>
