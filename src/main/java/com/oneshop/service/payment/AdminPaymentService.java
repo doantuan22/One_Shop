@@ -115,6 +115,7 @@ public class AdminPaymentService {
     @Transactional(readOnly = true)
     public Page<AdminPaymentCaseResponse> getCases(PaymentCaseCategory view, String search,
                                                    java.time.LocalDate from, java.time.LocalDate to, int page) {
+        var range = com.oneshop.service.query.SqlDayRange.of(from, to);
         String q = search == null ? "" : search.trim();
         if (q.length() > 100) {
             q = q.substring(0, 100);
@@ -122,20 +123,18 @@ public class AdminPaymentService {
         var words = q.matches("\\d+") ? java.util.List.<String>of() : com.oneshop.service.search.TextSearch.words(q);
         if (!words.isEmpty()) {
             var matched = orders.searchPaymentCases(view == null ? "all" : view.key(), "", "%%", deadlines.expiredBefore(),
-                            from == null ? null : from.atStartOfDay(),
-                            to == null ? null : to.plusDays(1).atStartOfDay(),
+                            range.fromInclusive(), range.toExclusive(),
                             org.springframework.data.domain.Pageable.unpaged())
                     .getContent().stream()
                     .filter(o -> com.oneshop.service.search.TextSearch.matchesAll(words, o.getUser().getFullName(), o.getUser().getEmail()))
                     .toList();
-            return com.oneshop.service.search.TextSearch.slice(matched, PageRequest.of(Math.max(0, page), PAGE_SIZE)).map(this::summary);
+            return com.oneshop.service.search.TextSearch.slice(matched, com.oneshop.service.query.Paging.page(page, PAGE_SIZE)).map(this::summary);
         }
         String like = "%" + q.toLowerCase(java.util.Locale.ROOT).replace("!", "!!").replace("%", "!%")
                 .replace("_", "!_") + "%";
         return orders.searchPaymentCases(view == null ? "all" : view.key(), q, like, deadlines.expiredBefore(),
-                from == null ? null : from.atStartOfDay(),
-                to == null ? null : to.plusDays(1).atStartOfDay(),
-                PageRequest.of(Math.max(0, page), PAGE_SIZE)).map(this::summary);
+                range.fromInclusive(), range.toExclusive(),
+                com.oneshop.service.query.Paging.page(page, PAGE_SIZE)).map(this::summary);
     }
 
     /** Size of every filter, for the tabs of the console (same rules as the list and as the Dashboard). */

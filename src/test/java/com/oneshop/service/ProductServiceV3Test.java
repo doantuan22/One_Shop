@@ -71,7 +71,7 @@ class ProductServiceV3Test {
                 productImageRepository,
                 categoryRepository,
                 brandRepository,
-                cloudinaryService,
+                com.oneshop.UnitImageTransactions.coordinator(cloudinaryService),
                 productMapper,
                 catalogMapper
         );
@@ -280,4 +280,3 @@ class ProductServiceV3Test {
         assertThat(allOutOfStock.inStockStoreCount()).isEqualTo(0);
     }
 }
-

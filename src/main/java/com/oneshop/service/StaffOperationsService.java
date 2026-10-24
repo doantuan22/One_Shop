@@ -79,7 +79,7 @@ public class StaffOperationsService {
     }
 
     public Page<StaffOrderSummaryResponse> getOrders(int page) {
-        return readOrders(scope.getAssignedStoreIds(), Math.max(0, page), 20);
+        return readOrders(scope.getAssignedStoreIds(), page, 20);
     }
 
     public StaffOrderDetailResponse getOrder(Long orderId) {
@@ -93,7 +93,7 @@ public class StaffOperationsService {
     public Page<StaffOrderSummaryResponse> getPickupQueue(int page) {
         return orders.findByStoreIdInAndFulfillmentTypeAndOrderStatusInOrderByCreatedAtDescIdDesc(
                 scope.getAssignedStoreIds(), FulfillmentType.STORE_PICKUP, PICKUP_QUEUE,
-                PageRequest.of(Math.max(0, page), 20))
+                com.oneshop.service.query.Paging.page(page, 20))
                 .map(o -> new StaffOrderSummaryResponse(views.summary(o, false, null), o.getUser().getFullName()));
     }
 
@@ -134,7 +134,7 @@ public class StaffOperationsService {
     }
 
     private Page<StaffOrderSummaryResponse> readOrders(Collection<Long> assignedIds, int page, int size) {
-        return orders.findByStoreIdInOrderByCreatedAtDescIdDesc(assignedIds, PageRequest.of(page, size))
+        return orders.findByStoreIdInOrderByCreatedAtDescIdDesc(assignedIds, com.oneshop.service.query.Paging.page(page, size))
                 .map(o -> new StaffOrderSummaryResponse(views.summary(o, false, null), o.getUser().getFullName()));
     }
 }

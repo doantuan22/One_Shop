@@ -1,0 +1,7 @@
+{
+  "timestamp" : "2026-10-24T02:58:49.391338300Z",
+  "request" : "/admin/payments?page=107374183",
+  "expected" : "success/empty page or controlled 4xx; never 5xx",
+  "actual" : 400,
+  "actor" : "admin@oneshop.vn"
+}

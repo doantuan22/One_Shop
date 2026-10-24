@@ -96,7 +96,7 @@ SET IDENTITY_INSERT dbo.staff_store_assignments OFF;
 SET IDENTITY_INSERT dbo.categories ON;
 INSERT INTO dbo.categories (category_id, name, description, image_url, image_public_id, status) VALUES
  (1, N'Chăm sóc da', N'Kem dưỡng, tinh chất và chăm sóc da mặt', N'/images/site/categories/category-skincare.webp', NULL, N'ACTIVE'),
- (2, N'Trang điểm', N'Son, kem nền, kem che khuyết điểm', N'https://res.cloudinary.com/dfyfpuguj/image/upload/v1791803748/oneshop/seed/categories/trang-diem.webp', N'oneshop/seed/categories/trang-diem', N'ACTIVE'),
+ (2, N'Trang điểm', N'Son, kem nền, kem che khuyết điểm', N'/images/site/categories/category-placeholder.svg', NULL, N'ACTIVE'), -- original local placeholder; no live Cloudinary ownership/reference implied
  (3, N'Chăm sóc cơ thể', N'Kem dưỡng thể, sáp dưỡng ẩm', N'https://res.cloudinary.com/dfyfpuguj/image/upload/v1791803739/oneshop/seed/categories/cham-soc-co-the.jpg', N'oneshop/seed/categories/cham-soc-co-the', N'ACTIVE'),
  (4, N'Tẩy trang & làm sạch', N'Sữa rửa mặt, gel rửa mặt, nước tẩy trang', N'https://res.cloudinary.com/dfyfpuguj/image/upload/v1791803745/oneshop/seed/categories/tay-trang-va-lam-sach.jpg', N'oneshop/seed/categories/tay-trang-va-lam-sach', N'ACTIVE');
 SET IDENTITY_INSERT dbo.categories OFF;

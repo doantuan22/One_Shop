@@ -1,0 +1,7 @@
+{
+  "actual" : 400,
+  "actor" : "staff.thuduc@oneshop.vn",
+  "timestamp" : "2026-10-24T03:18:48.922180900Z",
+  "request" : "/staff/stock?page=abc",
+  "expected" : "success/empty page or controlled 4xx; never 5xx"
+}

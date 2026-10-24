@@ -1,0 +1,596 @@
+[ {
+  "method" : "home",
+  "verb" : "GET",
+  "path" : "/",
+  "controller" : "com.oneshop.controller.client.HomeController"
+}, {
+  "method" : "profile",
+  "verb" : "GET",
+  "path" : "/account",
+  "controller" : "com.oneshop.controller.client.AccountController"
+}, {
+  "method" : "updateProfile",
+  "verb" : "POST",
+  "path" : "/account",
+  "controller" : "com.oneshop.controller.client.AccountController"
+}, {
+  "method" : "edit",
+  "verb" : "GET",
+  "path" : "/admin/brands/{id}/edit",
+  "controller" : "com.oneshop.controller.admin.AdminBrandController"
+}, {
+  "method" : "removeLogo",
+  "verb" : "POST",
+  "path" : "/admin/brands/{id}/logo/delete",
+  "controller" : "com.oneshop.controller.admin.AdminBrandController"
+}, {
+  "method" : "uploadLogo",
+  "verb" : "POST",
+  "path" : "/admin/brands/{id}/logo",
+  "controller" : "com.oneshop.controller.admin.AdminBrandController"
+}, {
+  "method" : "update",
+  "verb" : "POST",
+  "path" : "/admin/brands/{id}",
+  "controller" : "com.oneshop.controller.admin.AdminBrandController"
+}, {
+  "method" : "list",
+  "verb" : "GET",
+  "path" : "/admin/brands",
+  "controller" : "com.oneshop.controller.admin.AdminBrandController"
+}, {
+  "method" : "create",
+  "verb" : "POST",
+  "path" : "/admin/brands",
+  "controller" : "com.oneshop.controller.admin.AdminBrandController"
+}, {
+  "method" : "edit",
+  "verb" : "GET",
+  "path" : "/admin/categories/{id}/edit",
+  "controller" : "com.oneshop.controller.admin.AdminCategoryController"
+}, {
+  "method" : "removeImage",
+  "verb" : "POST",
+  "path" : "/admin/categories/{id}/image/delete",
+  "controller" : "com.oneshop.controller.admin.AdminCategoryController"
+}, {
+  "method" : "uploadImage",
+  "verb" : "POST",
+  "path" : "/admin/categories/{id}/image",
+  "controller" : "com.oneshop.controller.admin.AdminCategoryController"
+}, {
+  "method" : "update",
+  "verb" : "POST",
+  "path" : "/admin/categories/{id}",
+  "controller" : "com.oneshop.controller.admin.AdminCategoryController"
+}, {
+  "method" : "list",
+  "verb" : "GET",
+  "path" : "/admin/categories",
+  "controller" : "com.oneshop.controller.admin.AdminCategoryController"
+}, {
+  "method" : "create",
+  "verb" : "POST",
+  "path" : "/admin/categories",
+  "controller" : "com.oneshop.controller.admin.AdminCategoryController"
+}, {
+  "method" : "retry",
+  "verb" : "POST",
+  "path" : "/admin/images/cleanup/retry",
+  "controller" : "com.oneshop.controller.admin.AdminImageCleanupController"
+}, {
+  "method" : "list",
+  "verb" : "GET",
+  "path" : "/admin/inventory",
+  "controller" : "com.oneshop.controller.admin.AdminInventoryController"
+}, {
+  "method" : "detail",
+  "verb" : "GET",
+  "path" : "/admin/orders/{id}",
+  "controller" : "com.oneshop.controller.admin.AdminOrderController"
+}, {
+  "method" : "redeliver",
+  "verb" : "POST",
+  "path" : "/admin/orders/{orderId}/fulfillments/{fulfillmentId}/redeliver",
+  "controller" : "com.oneshop.controller.admin.AdminFulfillmentExceptionController"
+}, {
+  "method" : "undeliverable",
+  "verb" : "POST",
+  "path" : "/admin/orders/{orderId}/fulfillments/{fulfillmentId}/undeliverable",
+  "controller" : "com.oneshop.controller.admin.AdminFulfillmentExceptionController"
+}, {
+  "method" : "list",
+  "verb" : "GET",
+  "path" : "/admin/orders",
+  "controller" : "com.oneshop.controller.admin.AdminOrderController"
+}, {
+  "method" : "gateway",
+  "verb" : "POST",
+  "path" : "/admin/payments/{orderId:\\d+}/gateway",
+  "controller" : "com.oneshop.controller.admin.AdminPaymentController"
+}, {
+  "method" : "recheck",
+  "verb" : "POST",
+  "path" : "/admin/payments/{orderId:\\d+}/recheck",
+  "controller" : "com.oneshop.controller.admin.AdminPaymentController"
+}, {
+  "method" : "refund",
+  "verb" : "POST",
+  "path" : "/admin/payments/{orderId:\\d+}/refund",
+  "controller" : "com.oneshop.controller.admin.AdminPaymentController"
+}, {
+  "method" : "detail",
+  "verb" : "GET",
+  "path" : "/admin/payments/{orderId:\\d+}",
+  "controller" : "com.oneshop.controller.admin.AdminPaymentController"
+}, {
+  "method" : "list",
+  "verb" : "GET",
+  "path" : "/admin/payments",
+  "controller" : "com.oneshop.controller.admin.AdminPaymentController"
+}, {
+  "method" : "createForm",
+  "verb" : "GET",
+  "path" : "/admin/products/new",
+  "controller" : "com.oneshop.controller.admin.AdminProductController"
+}, {
+  "method" : "suggest",
+  "verb" : "GET",
+  "path" : "/admin/products/suggest",
+  "controller" : "com.oneshop.controller.admin.AdminProductController"
+}, {
+  "method" : "editForm",
+  "verb" : "GET",
+  "path" : "/admin/products/{id}/edit",
+  "controller" : "com.oneshop.controller.admin.AdminProductController"
+}, {
+  "method" : "deleteImage",
+  "verb" : "POST",
+  "path" : "/admin/products/{id}/images/{imageId}/delete",
+  "controller" : "com.oneshop.controller.admin.AdminProductController"
+}, {
+  "method" : "setPrimaryImage",
+  "verb" : "POST",
+  "path" : "/admin/products/{id}/images/{imageId}/primary",
+  "controller" : "com.oneshop.controller.admin.AdminProductController"
+}, {
+  "method" : "uploadImage",
+  "verb" : "POST",
+  "path" : "/admin/products/{id}/images",
+  "controller" : "com.oneshop.controller.admin.AdminProductController"
+}, {
+  "method" : "update",
+  "verb" : "POST",
+  "path" : "/admin/products/{id}",
+  "controller" : "com.oneshop.controller.admin.AdminProductController"
+}, {
+  "method" : "list",
+  "verb" : "GET",
+  "path" : "/admin/products",
+  "controller" : "com.oneshop.controller.admin.AdminProductController"
+}, {
+  "method" : "create",
+  "verb" : "POST",
+  "path" : "/admin/products",
+  "controller" : "com.oneshop.controller.admin.AdminProductController"
+}, {
+  "method" : "suggest",
+  "verb" : "GET",
+  "path" : "/admin/reviews/suggest",
+  "controller" : "com.oneshop.controller.admin.AdminReviewController"
+}, {
+  "method" : "reply",
+  "verb" : "POST",
+  "path" : "/admin/reviews/{id}/reply",
+  "controller" : "com.oneshop.controller.admin.AdminReviewController"
+}, {
+  "method" : "status",
+  "verb" : "POST",
+  "path" : "/admin/reviews/{id}/status",
+  "controller" : "com.oneshop.controller.admin.AdminReviewController"
+}, {
+  "method" : "list",
+  "verb" : "GET",
+  "path" : "/admin/reviews",
+  "controller" : "com.oneshop.controller.admin.AdminReviewController"
+}, {
+  "method" : "suggest",
+  "verb" : "GET",
+  "path" : "/admin/staff-assignments/suggest",
+  "controller" : "com.oneshop.controller.admin.AdminStaffAssignmentController"
+}, {
+  "method" : "transfer",
+  "verb" : "POST",
+  "path" : "/admin/staff-assignments/transfer",
+  "controller" : "com.oneshop.controller.admin.AdminStaffAssignmentController"
+}, {
+  "method" : "status",
+  "verb" : "POST",
+  "path" : "/admin/staff-assignments/{id}/status",
+  "controller" : "com.oneshop.controller.admin.AdminStaffAssignmentController"
+}, {
+  "method" : "list",
+  "verb" : "GET",
+  "path" : "/admin/staff-assignments",
+  "controller" : "com.oneshop.controller.admin.AdminStaffAssignmentController"
+}, {
+  "method" : "assign",
+  "verb" : "POST",
+  "path" : "/admin/staff-assignments",
+  "controller" : "com.oneshop.controller.admin.AdminStaffAssignmentController"
+}, {
+  "method" : "createForm",
+  "verb" : "GET",
+  "path" : "/admin/store-products/new",
+  "controller" : "com.oneshop.controller.admin.AdminStoreProductController"
+}, {
+  "method" : "editForm",
+  "verb" : "GET",
+  "path" : "/admin/store-products/{id}/edit",
+  "controller" : "com.oneshop.controller.admin.AdminStoreProductController"
+}, {
+  "method" : "update",
+  "verb" : "POST",
+  "path" : "/admin/store-products/{id}",
+  "controller" : "com.oneshop.controller.admin.AdminStoreProductController"
+}, {
+  "method" : "list",
+  "verb" : "GET",
+  "path" : "/admin/store-products",
+  "controller" : "com.oneshop.controller.admin.AdminStoreProductController"
+}, {
+  "method" : "create",
+  "verb" : "POST",
+  "path" : "/admin/store-products",
+  "controller" : "com.oneshop.controller.admin.AdminStoreProductController"
+}, {
+  "method" : "createForm",
+  "verb" : "GET",
+  "path" : "/admin/stores/new",
+  "controller" : "com.oneshop.controller.admin.AdminStoreController"
+}, {
+  "method" : "suggest",
+  "verb" : "GET",
+  "path" : "/admin/stores/suggest",
+  "controller" : "com.oneshop.controller.admin.AdminStoreController"
+}, {
+  "method" : "editForm",
+  "verb" : "GET",
+  "path" : "/admin/stores/{id}/edit",
+  "controller" : "com.oneshop.controller.admin.AdminStoreController"
+}, {
+  "method" : "update",
+  "verb" : "POST",
+  "path" : "/admin/stores/{id}",
+  "controller" : "com.oneshop.controller.admin.AdminStoreController"
+}, {
+  "method" : "list",
+  "verb" : "GET",
+  "path" : "/admin/stores",
+  "controller" : "com.oneshop.controller.admin.AdminStoreController"
+}, {
+  "method" : "create",
+  "verb" : "POST",
+  "path" : "/admin/stores",
+  "controller" : "com.oneshop.controller.admin.AdminStoreController"
+}, {
+  "method" : "createForm",
+  "verb" : "GET",
+  "path" : "/admin/users/new",
+  "controller" : "com.oneshop.controller.admin.AdminUserController"
+}, {
+  "method" : "suggest",
+  "verb" : "GET",
+  "path" : "/admin/users/suggest",
+  "controller" : "com.oneshop.controller.admin.AdminUserController"
+}, {
+  "method" : "editForm",
+  "verb" : "GET",
+  "path" : "/admin/users/{id}/edit",
+  "controller" : "com.oneshop.controller.admin.AdminUserController"
+}, {
+  "method" : "update",
+  "verb" : "POST",
+  "path" : "/admin/users/{id}",
+  "controller" : "com.oneshop.controller.admin.AdminUserController"
+}, {
+  "method" : "list",
+  "verb" : "GET",
+  "path" : "/admin/users",
+  "controller" : "com.oneshop.controller.admin.AdminUserController"
+}, {
+  "method" : "create",
+  "verb" : "POST",
+  "path" : "/admin/users",
+  "controller" : "com.oneshop.controller.admin.AdminUserController"
+}, {
+  "method" : "dashboard",
+  "verb" : "GET",
+  "path" : "/admin",
+  "controller" : "com.oneshop.controller.admin.AdminDashboardController"
+}, {
+  "method" : "login",
+  "verb" : "POST",
+  "path" : "/api/auth/login",
+  "controller" : "com.oneshop.controller.api.AuthApiController"
+}, {
+  "method" : "register",
+  "verb" : "POST",
+  "path" : "/api/auth/register",
+  "controller" : "com.oneshop.controller.api.AuthApiController"
+}, {
+  "method" : "remove",
+  "verb" : "POST",
+  "path" : "/cart/items/{cartItemId}/delete",
+  "controller" : "com.oneshop.controller.client.CartController"
+}, {
+  "method" : "update",
+  "verb" : "POST",
+  "path" : "/cart/items/{cartItemId}",
+  "controller" : "com.oneshop.controller.client.CartController"
+}, {
+  "method" : "add",
+  "verb" : "POST",
+  "path" : "/cart/items",
+  "controller" : "com.oneshop.controller.client.CartController"
+}, {
+  "method" : "view",
+  "verb" : "GET",
+  "path" : "/cart",
+  "controller" : "com.oneshop.controller.client.CartController"
+}, {
+  "method" : "result",
+  "verb" : "GET",
+  "path" : "/checkout/{checkoutId}",
+  "controller" : "com.oneshop.controller.client.CheckoutController"
+}, {
+  "method" : "form",
+  "verb" : "GET",
+  "path" : "/checkout",
+  "controller" : "com.oneshop.controller.client.CheckoutController"
+}, {
+  "method" : "placeOrder",
+  "verb" : "POST",
+  "path" : "/checkout",
+  "controller" : "com.oneshop.controller.client.CheckoutController"
+}, {
+  "method" : "admin",
+  "verb" : "GET",
+  "path" : "/decorators/admin",
+  "controller" : "com.oneshop.controller.web.DecoratorController"
+}, {
+  "method" : "client",
+  "verb" : "GET",
+  "path" : "/decorators/client",
+  "controller" : "com.oneshop.controller.web.DecoratorController"
+}, {
+  "method" : "staff",
+  "verb" : "GET",
+  "path" : "/decorators/staff",
+  "controller" : "com.oneshop.controller.web.DecoratorController"
+}, {
+  "method" : "errorHtml",
+  "verb" : "GET",
+  "path" : "/error",
+  "controller" : "org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController"
+}, {
+  "method" : "error",
+  "verb" : "GET",
+  "path" : "/error",
+  "controller" : "org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController"
+}, {
+  "method" : "health",
+  "verb" : "GET",
+  "path" : "/health",
+  "controller" : "com.oneshop.controller.api.HealthController"
+}, {
+  "method" : "imageCredits",
+  "verb" : "GET",
+  "path" : "/image-credits",
+  "controller" : "com.oneshop.controller.client.ImageCreditsController"
+}, {
+  "method" : "loginForm",
+  "verb" : "GET",
+  "path" : "/login",
+  "controller" : "com.oneshop.controller.client.AuthController"
+}, {
+  "method" : "login",
+  "verb" : "POST",
+  "path" : "/login",
+  "controller" : "com.oneshop.controller.client.AuthController"
+}, {
+  "method" : "logout",
+  "verb" : "POST",
+  "path" : "/logout",
+  "controller" : "SecurityFilterChain"
+}, {
+  "method" : "cancel",
+  "verb" : "POST",
+  "path" : "/orders/{orderId}/cancel",
+  "controller" : "com.oneshop.controller.client.CustomerOrderController"
+}, {
+  "method" : "start",
+  "verb" : "POST",
+  "path" : "/orders/{orderId}/payments/attempts",
+  "controller" : "com.oneshop.controller.client.PaymentController"
+}, {
+  "method" : "failure",
+  "verb" : "POST",
+  "path" : "/orders/{orderId}/payments/{paymentId}/failure",
+  "controller" : "com.oneshop.controller.client.PaymentController"
+}, {
+  "method" : "simulate",
+  "verb" : "POST",
+  "path" : "/orders/{orderId}/payments/{paymentId}/simulate",
+  "controller" : "com.oneshop.controller.client.PaymentController"
+}, {
+  "method" : "success",
+  "verb" : "POST",
+  "path" : "/orders/{orderId}/payments/{paymentId}/success",
+  "controller" : "com.oneshop.controller.client.PaymentController"
+}, {
+  "method" : "view",
+  "verb" : "GET",
+  "path" : "/orders/{orderId}/payments",
+  "controller" : "com.oneshop.controller.client.PaymentController"
+}, {
+  "method" : "detail",
+  "verb" : "GET",
+  "path" : "/orders/{orderId}",
+  "controller" : "com.oneshop.controller.client.CustomerOrderController"
+}, {
+  "method" : "list",
+  "verb" : "GET",
+  "path" : "/orders",
+  "controller" : "com.oneshop.controller.client.CustomerOrderController"
+}, {
+  "method" : "suggest",
+  "verb" : "GET",
+  "path" : "/products/suggest",
+  "controller" : "com.oneshop.controller.client.ProductController"
+}, {
+  "method" : "detail",
+  "verb" : "GET",
+  "path" : "/products/{id}",
+  "controller" : "com.oneshop.controller.client.ProductController"
+}, {
+  "method" : "list",
+  "verb" : "GET",
+  "path" : "/products",
+  "controller" : "com.oneshop.controller.client.ProductController"
+}, {
+  "method" : "registerForm",
+  "verb" : "GET",
+  "path" : "/register",
+  "controller" : "com.oneshop.controller.client.AuthController"
+}, {
+  "method" : "register",
+  "verb" : "POST",
+  "path" : "/register",
+  "controller" : "com.oneshop.controller.client.AuthController"
+}, {
+  "method" : "submit",
+  "verb" : "POST",
+  "path" : "/reviews",
+  "controller" : "com.oneshop.controller.client.ReviewController"
+}, {
+  "method" : "landing",
+  "verb" : "GET",
+  "path" : "/staff/",
+  "controller" : "com.oneshop.controller.staff.StaffDashboardController"
+}, {
+  "method" : "dashboard",
+  "verb" : "GET",
+  "path" : "/staff/dashboard",
+  "controller" : "com.oneshop.controller.staff.StaffDashboardController"
+}, {
+  "method" : "deliveryQueue",
+  "verb" : "GET",
+  "path" : "/staff/fulfillments/delivery",
+  "controller" : "com.oneshop.controller.staff.StaffFulfillmentController"
+}, {
+  "method" : "pickupQueue",
+  "verb" : "GET",
+  "path" : "/staff/fulfillments/pickup",
+  "controller" : "com.oneshop.controller.staff.StaffFulfillmentController"
+}, {
+  "method" : "act",
+  "verb" : "POST",
+  "path" : "/staff/fulfillments/{fulfillmentId:\\d+}/{actionPath}",
+  "controller" : "com.oneshop.controller.staff.StaffFulfillmentController"
+}, {
+  "method" : "detail",
+  "verb" : "GET",
+  "path" : "/staff/fulfillments/{fulfillmentId:\\d+}",
+  "controller" : "com.oneshop.controller.staff.StaffFulfillmentController"
+}, {
+  "method" : "queue",
+  "verb" : "GET",
+  "path" : "/staff/fulfillments",
+  "controller" : "com.oneshop.controller.staff.StaffFulfillmentController"
+}, {
+  "method" : "history",
+  "verb" : "GET",
+  "path" : "/staff/inventory-history/{id}",
+  "controller" : "com.oneshop.controller.staff.StaffStockController"
+}, {
+  "method" : "historySelection",
+  "verb" : "GET",
+  "path" : "/staff/inventory-history",
+  "controller" : "com.oneshop.controller.staff.StaffStockController"
+}, {
+  "method" : "legacyDelivery",
+  "verb" : "GET",
+  "path" : "/staff/orders/delivery",
+  "controller" : "com.oneshop.controller.staff.StaffFulfillmentController"
+}, {
+  "method" : "legacyPickup",
+  "verb" : "GET",
+  "path" : "/staff/orders/pickup",
+  "controller" : "com.oneshop.controller.staff.StaffFulfillmentController"
+}, {
+  "method" : "legacyOrder",
+  "verb" : "GET",
+  "path" : "/staff/orders/{orderId:\\d+}",
+  "controller" : "com.oneshop.controller.staff.StaffFulfillmentController"
+}, {
+  "method" : "queue",
+  "verb" : "GET",
+  "path" : "/staff/orders",
+  "controller" : "com.oneshop.controller.staff.StaffFulfillmentController"
+}, {
+  "method" : "legacyPickup",
+  "verb" : "GET",
+  "path" : "/staff/pickup",
+  "controller" : "com.oneshop.controller.staff.StaffFulfillmentController"
+}, {
+  "method" : "reply",
+  "verb" : "POST",
+  "path" : "/staff/reviews/{id}/reply",
+  "controller" : "com.oneshop.controller.staff.StaffReviewController"
+}, {
+  "method" : "detail",
+  "verb" : "GET",
+  "path" : "/staff/reviews/{id}",
+  "controller" : "com.oneshop.controller.staff.StaffReviewController"
+}, {
+  "method" : "list",
+  "verb" : "GET",
+  "path" : "/staff/reviews",
+  "controller" : "com.oneshop.controller.staff.StaffReviewController"
+}, {
+  "method" : "adjustForm",
+  "verb" : "GET",
+  "path" : "/staff/stock/{id}/adjust",
+  "controller" : "com.oneshop.controller.staff.StaffStockController"
+}, {
+  "method" : "adjust",
+  "verb" : "POST",
+  "path" : "/staff/stock/{id}/adjust",
+  "controller" : "com.oneshop.controller.staff.StaffStockController"
+}, {
+  "method" : "stock",
+  "verb" : "GET",
+  "path" : "/staff/stock",
+  "controller" : "com.oneshop.controller.staff.StaffStockController"
+}, {
+  "method" : "landing",
+  "verb" : "GET",
+  "path" : "/staff",
+  "controller" : "com.oneshop.controller.staff.StaffDashboardController"
+}, {
+  "method" : "clear",
+  "verb" : "POST",
+  "path" : "/stores/clear",
+  "controller" : "com.oneshop.controller.client.StoreController"
+}, {
+  "method" : "select",
+  "verb" : "POST",
+  "path" : "/stores/select",
+  "controller" : "com.oneshop.controller.client.StoreController"
+}, {
+  "method" : "finder",
+  "verb" : "GET",
+  "path" : "/stores",
+  "controller" : "com.oneshop.controller.client.StoreController"
+} ]

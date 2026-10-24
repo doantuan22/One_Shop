@@ -1,0 +1,7 @@
+{
+  "actor" : "admin@oneshop.vn",
+  "actual" : 400,
+  "expected" : "success/empty page or controlled 4xx; never 5xx",
+  "request" : "/admin/payments?from=invalid&to=invalid",
+  "timestamp" : "2026-10-24T03:18:17.377737900Z"
+}

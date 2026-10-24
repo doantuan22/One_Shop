@@ -1,0 +1,14 @@
+{
+  "executedAt" : "2026-10-24T03:24:00.160399100Z",
+  "location" : "",
+  "route" : {
+    "method" : "act",
+    "verb" : "POST",
+    "path" : "/staff/fulfillments/{fulfillmentId:\\d+}/{actionPath}",
+    "controller" : "com.oneshop.controller.staff.StaffFulfillmentController"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/staff/fulfillments/999999999/999999999",
+  "actual" : 403,
+  "expected" : 403
+}

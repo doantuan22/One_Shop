@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "GET",
+    "method" : "loginForm",
+    "controller" : "com.oneshop.controller.client.AuthController",
+    "path" : "/login"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:15.558214700Z",
+  "expected" : 200,
+  "actual" : 200,
+  "requestPath" : "/login",
+  "kind" : "anonymous guard/input probe"
+}

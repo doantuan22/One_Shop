@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "GET",
+    "method" : "view",
+    "controller" : "com.oneshop.controller.client.CartController",
+    "path" : "/cart"
+  },
+  "location" : "http://localhost:56221/login",
+  "executedAt" : "2026-10-24T02:07:15.171651800Z",
+  "expected" : 302,
+  "actual" : 302,
+  "requestPath" : "/cart",
+  "kind" : "anonymous guard/input probe"
+}

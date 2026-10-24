@@ -1,0 +1,4 @@
+{
+  "externalFilesAfterRollback" : [ "qa-audit/new" ],
+  "databaseReferenceAfterRollback" : "qa-audit/old"
+}

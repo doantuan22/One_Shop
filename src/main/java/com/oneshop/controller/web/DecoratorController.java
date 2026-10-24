@@ -8,6 +8,7 @@ import org.sitemesh.webapp.WebAppContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.util.HtmlUtils;
 
 import static com.oneshop.config.SiteMeshConfig.ADMIN_DECORATOR_PATH;
 import static com.oneshop.config.SiteMeshConfig.CLIENT_DECORATOR_PATH;
@@ -45,7 +46,9 @@ public class DecoratorController {
         Object content = request.getAttribute(WebAppContext.CONTENT_KEY);
         if (content instanceof Content page) {
             ContentProperty properties = page.getExtractedProperties();
-            model.addAttribute("pageTitle", properties.getChild("title").getValue());
+            // SiteMesh extracts the already HTML-escaped <title> text. Convert entities back to plain text
+            // once; Thymeleaf th:text in the layout performs the sole output escaping.
+            model.addAttribute("pageTitle", HtmlUtils.htmlUnescape(properties.getChild("title").getValue()));
             model.addAttribute("pageHead", properties.getChild("head").getValue());
             model.addAttribute("pageBody", properties.getChild("body").getValue());
         }

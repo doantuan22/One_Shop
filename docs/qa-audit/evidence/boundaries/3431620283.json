@@ -1,0 +1,7 @@
+{
+  "actual" : 400,
+  "expected" : "success/empty page or controlled 4xx; never 5xx",
+  "request" : "/staff/stock?page=abc",
+  "timestamp" : "2026-10-24T02:06:57.076924600Z",
+  "actor" : "staff.thuduc@oneshop.vn"
+}

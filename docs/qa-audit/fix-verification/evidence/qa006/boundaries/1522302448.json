@@ -1,0 +1,7 @@
+{
+  "timestamp" : "2026-10-24T02:58:42.035621500Z",
+  "request" : "/admin/stores?page=0&q=qa-no-match-999",
+  "expected" : "success/empty page or controlled 4xx; never 5xx",
+  "actual" : 200,
+  "actor" : "admin@oneshop.vn"
+}

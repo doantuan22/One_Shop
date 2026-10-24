@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "uploadImage",
+    "controller" : "com.oneshop.controller.admin.AdminProductController",
+    "path" : "/admin/products/{id}/images"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:11.857651600Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/admin/products/999999999/images",
+  "kind" : "anonymous guard/input probe"
+}

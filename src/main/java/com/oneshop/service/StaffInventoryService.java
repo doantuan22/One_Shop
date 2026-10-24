@@ -73,14 +73,14 @@ public class StaffInventoryService {
                     .filter(sp -> com.oneshop.service.search.TextSearch.matchesAll(words, sp.getProduct().getSku(),
                             sp.getProduct().getName(), sp.getStore().getName()))
                     .toList();
-            return com.oneshop.service.search.TextSearch.slice(all, PageRequest.of(Math.max(0, page), 20)).map(mapper::toStockView);
+            return com.oneshop.service.search.TextSearch.slice(all, com.oneshop.service.query.Paging.page(page, 20)).map(mapper::toStockView);
         }
         boolean plain = like.isEmpty() && cleanLevel.equals("all") && !cleanSort.equals("qty_desc") && !cleanSort.equals("qty_asc");
         Page<com.oneshop.entity.StoreProduct> rows = plain
                 ? products.findByStoreIdInOrderByStoreNameAscProductNameAscIdAsc(storeIds,
-                        PageRequest.of(Math.max(0, page), 20))
+                        com.oneshop.service.query.Paging.page(page, 20))
                 : products.searchForStaffStores(storeIds, like, cleanLevel, StaffOperationsService.LOW_STOCK_THRESHOLD,
-                        cleanSort, PageRequest.of(Math.max(0, page), 20));
+                        cleanSort, com.oneshop.service.query.Paging.page(page, 20));
         return rows.map(mapper::toStockView);
     }
 
@@ -124,8 +124,9 @@ public class StaffInventoryService {
         boolean numeric = text.matches("\\d+");
         String like = "";
         String query = numeric ? text : "";
-        LocalDateTime fromAt = from == null ? null : from.atStartOfDay();
-        LocalDateTime toAt = to == null ? null : to.plusDays(1).atStartOfDay();
+        var range = com.oneshop.service.query.SqlDayRange.of(from, to);
+        LocalDateTime fromAt = range.fromInclusive();
+        LocalDateTime toAt = range.toExclusive();
         var words = numeric ? java.util.List.<String>of() : com.oneshop.service.search.TextSearch.words(text);
         if (!words.isEmpty()) {
             var all = movements.searchLog(storeIds, type, staffId, "", like, fromAt, toAt,
@@ -134,10 +135,10 @@ public class StaffInventoryService {
                             m.getStoreProduct().getProduct().getName(), m.getStoreProduct().getStore().getName(),
                             m.getNote()))
                     .toList();
-            return com.oneshop.service.search.TextSearch.slice(all, PageRequest.of(Math.max(0, page), 20)).map(this::toLogView);
+            return com.oneshop.service.search.TextSearch.slice(all, com.oneshop.service.query.Paging.page(page, 20)).map(this::toLogView);
         }
         return movements.searchLog(storeIds, type, staffId, query, like, fromAt, toAt,
-                        PageRequest.of(Math.max(0, page), 20)).map(this::toLogView);
+                        com.oneshop.service.query.Paging.page(page, 20)).map(this::toLogView);
     }
 
     private InventoryMovementLogResponse toLogView(InventoryMovement m) {
@@ -173,7 +174,7 @@ public class StaffInventoryService {
     public StaffInventoryHistoryResponse getHistory(Long id, int page) {
         var stock = getStoreProduct(id); // Refuse cross-Store/missing resources before reading any history.
         var history = movements.findByStoreProductIdAndStoreProductStoreIdInOrderByCreatedAtDescIdDesc(
-                id, scope.getAssignedStoreIds(), PageRequest.of(Math.max(0, page), 20)).map(m -> {
+                id, scope.getAssignedStoreIds(), com.oneshop.service.query.Paging.page(page, 20)).map(m -> {
             var actor = m.getStaff();
             return new InventoryMovementResponse(m.getId(), m.getType(), m.getQuantityBefore(), m.getQuantityAfter(),
                     m.getQuantityChange(), actor == null ? null : actor.getId(), actor == null ? "Hệ thống" : actor.getFullName(),

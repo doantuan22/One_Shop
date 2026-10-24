@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "uploadImage",
+    "controller" : "com.oneshop.controller.admin.AdminCategoryController",
+    "path" : "/admin/categories/{id}/image"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:09.716655700Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/admin/categories/999999999/image",
+  "kind" : "anonymous guard/input probe"
+}

@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "removeLogo",
+    "controller" : "com.oneshop.controller.admin.AdminBrandController",
+    "path" : "/admin/brands/{id}/logo/delete"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:08.621243200Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/admin/brands/999999999/logo/delete",
+  "kind" : "anonymous guard/input probe"
+}

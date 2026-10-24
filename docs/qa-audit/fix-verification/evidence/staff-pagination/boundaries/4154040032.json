@@ -1,0 +1,7 @@
+{
+  "request" : "/admin/users?page=1.5&q=qa-no-match-999",
+  "timestamp" : "2026-10-24T03:11:55.226919900Z",
+  "actor" : "admin@oneshop.vn",
+  "actual" : 400,
+  "expected" : "success/empty page or controlled 4xx; never 5xx"
+}

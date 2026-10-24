@@ -1,0 +1,34 @@
+{
+  "browser": "Chrome/155.0.8059.85",
+  "mode": "COD_SPLIT",
+  "orderIds": [
+    838,
+    839
+  ],
+  "fulfillmentIds": [
+    975,
+    976
+  ],
+  "trace": [
+    {
+      "step": "00-login-filled",
+      "url": "/login",
+      "title": "Đăng nhập - OneShop | OneShop"
+    },
+    {
+      "step": "01-checkout",
+      "url": "/checkout?cartItemIds=1018&fulfillmentType=DELIVERY&paymentMethod=COD&shippingAddress=1%20Nguyen%20Trai%2C%20TP.%20Ho%20Chi%20Minh",
+      "title": "Đặt hàng - OneShop | OneShop"
+    },
+    {
+      "step": "02-created",
+      "url": "/checkout/729?success=placed",
+      "title": "Đặt hàng thành công - OneShop | OneShop"
+    },
+    {
+      "step": "07-customer-final",
+      "url": "/orders/838",
+      "title": "Chi tiết đơn hàng | OneShop"
+    }
+  ]
+}

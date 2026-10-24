@@ -37,7 +37,7 @@ public class AdminUserService {
     }
 
     public Page<AdminUserResponse> getUsers(RoleName role, int page) {
-        return users.searchAdmin(role, PageRequest.of(Math.max(0, page), 20)).map(AdminUserService::response);
+        return users.searchAdmin(role, com.oneshop.service.query.Paging.page(page, 20)).map(AdminUserService::response);
     }
 
     /** Name and e-mail of every account for the search-box suggestions. */
@@ -62,10 +62,10 @@ public class AdminUserService {
                     .getContent().stream()
                     .filter(u -> com.oneshop.service.search.TextSearch.matchesAll(words, u.getFullName(), u.getEmail(), u.getUserName()))
                     .toList();
-            return com.oneshop.service.search.TextSearch.slice(matched, PageRequest.of(Math.max(0, page), 20)).map(AdminUserService::response);
+            return com.oneshop.service.search.TextSearch.slice(matched, com.oneshop.service.query.Paging.page(page, 20)).map(AdminUserService::response);
         }
         var like = likeOf(q);
-        return users.searchAdmin(role, status, like, PageRequest.of(Math.max(0, page), 20)).map(AdminUserService::response);
+        return users.searchAdmin(role, status, like, com.oneshop.service.query.Paging.page(page, 20)).map(AdminUserService::response);
     }
 
     /** lower-case contains pattern with ! as the escape character (same rule as the other admin searches). */

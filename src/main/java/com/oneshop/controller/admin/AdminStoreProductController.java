@@ -57,7 +57,7 @@ public class AdminStoreProductController {
                     .map(p -> p.sku() + " - " + p.name()).orElse("");
         }
         model.addAttribute("storeProducts", storeProductService.searchStoreProducts(storeId, productId, status,
-                productId != null ? null : text, PageRequest.of(Math.max(page, 0), PAGE_SIZE)));
+                productId != null ? null : text, com.oneshop.service.query.Paging.page(page, PAGE_SIZE)));
         model.addAttribute("stores", storeService.getAllStores());
         model.addAttribute("products", products);
         model.addAttribute("q", text);

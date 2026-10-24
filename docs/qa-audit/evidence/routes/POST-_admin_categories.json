@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "create",
+    "controller" : "com.oneshop.controller.admin.AdminCategoryController",
+    "path" : "/admin/categories"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:10.128480100Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/admin/categories",
+  "kind" : "anonymous guard/input probe"
+}

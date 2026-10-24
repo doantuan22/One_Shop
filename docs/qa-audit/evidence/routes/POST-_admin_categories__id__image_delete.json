@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "removeImage",
+    "controller" : "com.oneshop.controller.admin.AdminCategoryController",
+    "path" : "/admin/categories/{id}/image/delete"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:09.535677200Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/admin/categories/999999999/image/delete",
+  "kind" : "anonymous guard/input probe"
+}

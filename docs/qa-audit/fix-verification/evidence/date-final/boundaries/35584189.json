@@ -1,0 +1,7 @@
+{
+  "actor" : "admin@oneshop.vn",
+  "actual" : 400,
+  "expected" : "success/empty page or controlled 4xx; never 5xx",
+  "request" : "/admin/products?page=2147483646&q=qa-no-match-999",
+  "timestamp" : "2026-10-24T03:17:59.429588300Z"
+}

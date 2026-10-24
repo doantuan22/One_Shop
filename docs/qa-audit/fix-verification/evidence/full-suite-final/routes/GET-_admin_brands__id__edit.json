@@ -1,0 +1,14 @@
+{
+  "executedAt" : "2026-10-24T03:23:53.875289900Z",
+  "location" : "http://localhost:50550/login",
+  "route" : {
+    "method" : "edit",
+    "verb" : "GET",
+    "path" : "/admin/brands/{id}/edit",
+    "controller" : "com.oneshop.controller.admin.AdminBrandController"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/admin/brands/999999999/edit",
+  "actual" : 302,
+  "expected" : 302
+}

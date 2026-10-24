@@ -28,7 +28,7 @@ public class AdminReviewService {
     private final ReviewRepository reviews;
     public AdminReviewService(ReviewRepository reviews) { this.reviews = reviews; }
     public Page<AdminReviewResponse> getReviews(int page) {
-        return reviews.findAllByOrderByCreatedAtDescIdDesc(PageRequest.of(Math.max(0, page), 20))
+        return reviews.findAllByOrderByCreatedAtDescIdDesc(com.oneshop.service.query.Paging.page(page, 20))
                 .map(ReviewReadMapper::adminReview);
     }
 
@@ -37,7 +37,7 @@ public class AdminReviewService {
      * narrows visibility and {@code replied} (null = all) narrows the staff-answer state.
      */
     public Page<AdminReviewResponse> getReviews(int page, String q, VisibilityStatus status, Boolean replied) {
-        var pageable = PageRequest.of(Math.max(0, page), 20);
+        var pageable = com.oneshop.service.query.Paging.page(page, 20);
         var words = com.oneshop.service.search.TextSearch.words(q);
         if (!words.isEmpty()) {
             var base = adminSpec(null, status, replied);

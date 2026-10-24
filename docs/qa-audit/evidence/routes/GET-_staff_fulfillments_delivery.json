@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "GET",
+    "method" : "deliveryQueue",
+    "controller" : "com.oneshop.controller.staff.StaffFulfillmentController",
+    "path" : "/staff/fulfillments/delivery"
+  },
+  "location" : "http://localhost:56221/login",
+  "executedAt" : "2026-10-24T02:07:16.839689200Z",
+  "expected" : 302,
+  "actual" : 302,
+  "requestPath" : "/staff/fulfillments/delivery",
+  "kind" : "anonymous guard/input probe"
+}

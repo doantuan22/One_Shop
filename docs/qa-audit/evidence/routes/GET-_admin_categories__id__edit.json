@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "GET",
+    "method" : "edit",
+    "controller" : "com.oneshop.controller.admin.AdminCategoryController",
+    "path" : "/admin/categories/{id}/edit"
+  },
+  "location" : "http://localhost:56221/login",
+  "executedAt" : "2026-10-24T02:07:09.459165900Z",
+  "expected" : 302,
+  "actual" : 302,
+  "requestPath" : "/admin/categories/999999999/edit",
+  "kind" : "anonymous guard/input probe"
+}

@@ -27,7 +27,7 @@ public class AdminInventoryController {
                        @RequestParam(required = false) String sort,
                        @RequestParam(defaultValue = "0") int page, Model model) {
         model.addAttribute("storeProducts", stock.searchInventory(storeId, q, stockLevel, sort,
-                PageRequest.of(Math.max(page, 0), 20)));
+                com.oneshop.service.query.Paging.page(page, 20)));
         model.addAttribute("summary", stock.inventorySummary(storeId));
         model.addAttribute("stores", stores.getAllStores());
         model.addAttribute("storeId", storeId);

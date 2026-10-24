@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "logout",
+    "controller" : "SecurityFilterChain",
+    "path" : "/logout"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:15.578476700Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/logout",
+  "kind" : "anonymous guard/input probe"
+}

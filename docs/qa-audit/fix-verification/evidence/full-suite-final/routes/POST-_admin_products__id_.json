@@ -1,0 +1,14 @@
+{
+  "executedAt" : "2026-10-24T03:23:56.408595400Z",
+  "location" : "",
+  "route" : {
+    "method" : "update",
+    "verb" : "POST",
+    "path" : "/admin/products/{id}",
+    "controller" : "com.oneshop.controller.admin.AdminProductController"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/admin/products/999999999",
+  "actual" : 403,
+  "expected" : 403
+}

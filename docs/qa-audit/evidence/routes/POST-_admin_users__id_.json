@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "update",
+    "controller" : "com.oneshop.controller.admin.AdminUserController",
+    "path" : "/admin/users/{id}"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:14.333671Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/admin/users/999999999",
+  "kind" : "anonymous guard/input probe"
+}

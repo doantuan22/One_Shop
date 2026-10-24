@@ -41,17 +41,18 @@ public class AdminOperationsService {
     public Page<AdminOrderSummaryResponse> getOrders(Long storeId, String q, OrderStatus orderStatus,
             OrderPaymentStatus paymentStatus, FulfillmentType fulfillmentType,
             java.time.LocalDate from, java.time.LocalDate to, int page) {
+        var range = com.oneshop.service.query.SqlDayRange.of(from, to);
         var words = orderQuery(q).isEmpty() ? com.oneshop.service.search.TextSearch.words(q) : java.util.List.<String>of();
         if (!words.isEmpty()) {
             var matched = orders.searchAdmin(storeId, "", "", orderStatus, paymentStatus, fulfillmentType,
-                            startOfDay(from), endExclusiveOf(to), org.springframework.data.domain.Pageable.unpaged())
+                            range.fromInclusive(), range.toExclusive(), org.springframework.data.domain.Pageable.unpaged())
                     .getContent().stream()
                     .filter(o -> com.oneshop.service.search.TextSearch.matchesAll(words, o.getUser().getFullName(), o.getUser().getEmail()))
                     .toList();
-            return com.oneshop.service.search.TextSearch.slice(matched, PageRequest.of(Math.max(0, page), 20)).map(this::summary);
+            return com.oneshop.service.search.TextSearch.slice(matched, com.oneshop.service.query.Paging.page(page, 20)).map(this::summary);
         }
         return orders.searchAdmin(storeId, orderQuery(q), likePattern(q), orderStatus, paymentStatus, fulfillmentType,
-                        startOfDay(from), endExclusiveOf(to), PageRequest.of(Math.max(0, page), 20))
+                        range.fromInclusive(), range.toExclusive(), com.oneshop.service.query.Paging.page(page, 20))
                 .map(this::summary);
     }
 
@@ -61,7 +62,7 @@ public class AdminOperationsService {
     }
 
     public Page<AdminOrderSummaryResponse> getOrdersNeedingAttention(Long storeId, int page) {
-        return orders.searchAdminAttention(storeId, deadlines.expiredBefore(), PageRequest.of(Math.max(0, page), 20))
+        return orders.searchAdminAttention(storeId, deadlines.expiredBefore(), com.oneshop.service.query.Paging.page(page, 20))
                 .map(this::summary);
     }
 
@@ -88,14 +89,6 @@ public class AdminOperationsService {
         return "%" + text.replace("!", "!!").replace("%", "!%").replace("_", "!_") + "%";
     }
 
-    private static java.time.LocalDateTime startOfDay(java.time.LocalDate date) {
-        return date == null ? null : date.atStartOfDay();
-    }
-
-    /** the upper bound excludes the first instant after the chosen end date. */
-    private static java.time.LocalDateTime endExclusiveOf(java.time.LocalDate date) {
-        return date == null ? null : date.plusDays(1).atStartOfDay();
-    }
     public AdminOrderDetailResponse getOrder(Long id) {
         var order = orders.findById(id).orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đơn hàng."));
         return new AdminOrderDetailResponse(views.detail(order, false, null), order.getCheckoutSession().getId(),

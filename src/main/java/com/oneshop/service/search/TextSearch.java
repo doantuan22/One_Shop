@@ -48,11 +48,12 @@ public final class TextSearch {
 
     /** One page of an already filtered and ordered list. */
     public static <T> Page<T> slice(List<T> all, Pageable pageable) {
+        com.oneshop.service.query.Paging.validate(pageable);
         if (pageable.isUnpaged()) {
             return new PageImpl<>(all, pageable, all.size());
         }
         int from = (int) Math.min(pageable.getOffset(), all.size());
-        int to = Math.min(from + pageable.getPageSize(), all.size());
+        int to = (int) Math.min((long) from + pageable.getPageSize(), all.size());
         return new PageImpl<>(all.subList(from, to), pageable, all.size());
     }
 }

@@ -1,0 +1,7 @@
+{
+  "actor" : "staff.thuduc@oneshop.vn",
+  "actual" : 400,
+  "expected" : "success/empty page or controlled 4xx; never 5xx",
+  "request" : "/staff/fulfillments?page=178956970",
+  "timestamp" : "2026-10-24T02:54:22.487830Z"
+}

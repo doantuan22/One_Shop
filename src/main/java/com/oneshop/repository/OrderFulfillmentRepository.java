@@ -64,14 +64,14 @@ public interface OrderFulfillmentRepository extends JpaRepository<OrderFulfillme
     @EntityGraph(attributePaths = {"order", "order.user", "store"})
     @Query(value = "select f from OrderFulfillment f where f.store.id in :storeIds and f.status in :statuses"
             + " and f.fulfillmentType in :types and (:orderId = 0 or f.order.id = :orderId)"
-            + " and f.assignedAt >= :fromAt and f.assignedAt < :toAt"
+            + " and f.assignedAt >= :fromAt and (:toAt is null or f.assignedAt < :toAt)"
             + " order by case when f.status in (com.oneshop.entity.OrderFulfillmentStatus.CONFIRMED,"
             + " com.oneshop.entity.OrderFulfillmentStatus.PREPARING, com.oneshop.entity.OrderFulfillmentStatus.PACKED,"
             + " com.oneshop.entity.OrderFulfillmentStatus.SHIPPING, com.oneshop.entity.OrderFulfillmentStatus.READY_FOR_PICKUP)"
             + " then 0 else 1 end asc, f.assignedAt asc, f.id asc",
             countQuery = "select count(f) from OrderFulfillment f where f.store.id in :storeIds and f.status in :statuses"
             + " and f.fulfillmentType in :types and (:orderId = 0 or f.order.id = :orderId)"
-            + " and f.assignedAt >= :fromAt and f.assignedAt < :toAt")
+            + " and f.assignedAt >= :fromAt and (:toAt is null or f.assignedAt < :toAt)")
     Page<OrderFulfillment> searchForStaff(@Param("storeIds") Collection<Long> storeIds,
                                           @Param("statuses") Collection<OrderFulfillmentStatus> statuses,
                                           @Param("types") Collection<com.oneshop.entity.FulfillmentType> types,
@@ -87,7 +87,7 @@ public interface OrderFulfillmentRepository extends JpaRepository<OrderFulfillme
     @EntityGraph(attributePaths = {"order", "order.user", "store"})
     @Query(value = "select f from OrderFulfillment f where f.store.id in :storeIds and f.status in :statuses"
             + " and f.fulfillmentType in :types and (:orderId = 0 or f.order.id = :orderId)"
-            + " and f.assignedAt >= :fromAt and f.assignedAt < :toAt"
+            + " and f.assignedAt >= :fromAt and (:toAt is null or f.assignedAt < :toAt)"
             + " and (:pattern = '' or lower(f.order.user.fullName) like :pattern escape '!'"
             + " or lower(f.order.user.email) like :pattern escape '!'"
             + " or lower(f.order.receiverName) like :pattern escape '!'"
@@ -98,7 +98,7 @@ public interface OrderFulfillmentRepository extends JpaRepository<OrderFulfillme
             + " then 0 else 1 end asc, f.assignedAt asc, f.id asc",
             countQuery = "select count(f) from OrderFulfillment f where f.store.id in :storeIds and f.status in :statuses"
             + " and f.fulfillmentType in :types and (:orderId = 0 or f.order.id = :orderId)"
-            + " and f.assignedAt >= :fromAt and f.assignedAt < :toAt"
+            + " and f.assignedAt >= :fromAt and (:toAt is null or f.assignedAt < :toAt)"
             + " and (:pattern = '' or lower(f.order.user.fullName) like :pattern escape '!'"
             + " or lower(f.order.user.email) like :pattern escape '!'"
             + " or lower(f.order.receiverName) like :pattern escape '!'"

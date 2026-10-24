@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "GET",
+    "method" : "dashboard",
+    "controller" : "com.oneshop.controller.staff.StaffDashboardController",
+    "path" : "/staff/dashboard"
+  },
+  "location" : "http://localhost:56221/login",
+  "executedAt" : "2026-10-24T02:07:16.780347500Z",
+  "expected" : 302,
+  "actual" : 302,
+  "requestPath" : "/staff/dashboard",
+  "kind" : "anonymous guard/input probe"
+}

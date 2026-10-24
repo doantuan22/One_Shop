@@ -31,7 +31,7 @@ public class AdminStaffAssignmentService {
         this.assignments = assignments; this.users = users; this.stores = stores; this.mapper = mapper;
     }
     public Page<StaffAssignmentResponse> getAssignments(Long storeId, int page) {
-        return assignments.searchAdmin(storeId, PageRequest.of(Math.max(0, page), 20)).map(this::response);
+        return assignments.searchAdmin(storeId, com.oneshop.service.query.Paging.page(page, 20)).map(this::response);
     }
 
     /** Assignment console search: Store + free text (staff name / e-mail) + assignment status. */
@@ -43,10 +43,10 @@ public class AdminStaffAssignmentService {
                     .filter(a -> com.oneshop.service.search.TextSearch.matchesAll(words, a.getUser().getFullName(), a.getUser().getEmail(),
                             a.getUser().getUserName(), a.getStore().getName()))
                     .toList();
-            return com.oneshop.service.search.TextSearch.slice(matched, PageRequest.of(Math.max(0, page), 20)).map(this::response);
+            return com.oneshop.service.search.TextSearch.slice(matched, com.oneshop.service.query.Paging.page(page, 20)).map(this::response);
         }
         var like = likeOf(q);
-        return assignments.searchAdmin(storeId, like, status, PageRequest.of(Math.max(0, page), 20)).map(this::response);
+        return assignments.searchAdmin(storeId, like, status, com.oneshop.service.query.Paging.page(page, 20)).map(this::response);
     }
 
     /** lower-case contains pattern with ! as the escape character (same rule as the other admin searches). */

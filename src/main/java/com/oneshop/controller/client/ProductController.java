@@ -40,7 +40,7 @@ public class ProductController {
     @GetMapping("/products/suggest")
     @ResponseBody
     public java.util.List<java.util.Map<String, String>> suggest() {
-        return productService.searchProducts(ProductSearchCriteria.none(), PageRequest.of(0, 500)).getContent().stream()
+        return productService.searchProducts(ProductSearchCriteria.none(), com.oneshop.service.query.Paging.page(0, 500)).getContent().stream()
                 .map(p -> java.util.Map.of("sku", p.sku(), "name", p.name()))
                 .toList();
     }
@@ -52,7 +52,7 @@ public class ProductController {
                        @RequestParam(defaultValue = "0") int page,
                        Model model) {
         ProductSearchCriteria criteria = new ProductSearchCriteria(keyword, categoryId, brandId);
-        Pageable pageable = PageRequest.of(Math.max(page, 0), PAGE_SIZE);
+        Pageable pageable = com.oneshop.service.query.Paging.page(page, PAGE_SIZE);
 
         model.addAttribute("catalog", storeProductService.getChainCatalog(criteria, pageable));
         model.addAttribute("criteria", criteria);

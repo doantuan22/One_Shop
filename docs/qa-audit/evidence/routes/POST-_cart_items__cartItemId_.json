@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "update",
+    "controller" : "com.oneshop.controller.client.CartController",
+    "path" : "/cart/items/{cartItemId}"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:14.914622100Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/cart/items/999999999",
+  "kind" : "anonymous guard/input probe"
+}

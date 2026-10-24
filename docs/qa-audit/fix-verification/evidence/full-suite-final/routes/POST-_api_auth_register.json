@@ -1,0 +1,14 @@
+{
+  "executedAt" : "2026-10-24T03:23:58.558754500Z",
+  "location" : "",
+  "route" : {
+    "method" : "register",
+    "verb" : "POST",
+    "path" : "/api/auth/register",
+    "controller" : "com.oneshop.controller.api.AuthApiController"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/api/auth/register",
+  "actual" : 400,
+  "expected" : 400
+}

@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "updateProfile",
+    "controller" : "com.oneshop.controller.client.AccountController",
+    "path" : "/account"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:08.542265600Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/account",
+  "kind" : "anonymous guard/input probe"
+}

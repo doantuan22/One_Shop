@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "GET",
+    "method" : "admin",
+    "controller" : "com.oneshop.controller.web.DecoratorController",
+    "path" : "/decorators/admin"
+  },
+  "location" : "http://localhost:56221/login",
+  "executedAt" : "2026-10-24T02:07:15.486447200Z",
+  "expected" : 302,
+  "actual" : 302,
+  "requestPath" : "/decorators/admin",
+  "kind" : "anonymous guard/input probe"
+}

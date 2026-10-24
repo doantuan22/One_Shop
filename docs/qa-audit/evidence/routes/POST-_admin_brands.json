@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "create",
+    "controller" : "com.oneshop.controller.admin.AdminBrandController",
+    "path" : "/admin/brands"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:09.278980100Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/admin/brands",
+  "kind" : "anonymous guard/input probe"
+}

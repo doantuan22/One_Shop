@@ -54,7 +54,7 @@ public class AdminProductController {
                        @RequestParam(required = false) ProductStatus status,
                        @RequestParam(defaultValue = "0") int page, Model model) {
         var products = productService.searchAllProducts(keyword, categoryId, brandId, status,
-                PageRequest.of(Math.max(page, 0), PAGE_SIZE));
+                com.oneshop.service.query.Paging.page(page, PAGE_SIZE));
         // one batched Cloudinary lookup for the thumbnails of the page
         model.addAttribute("products", products);
         model.addAttribute("images", productService.getPrimaryImageUrls(

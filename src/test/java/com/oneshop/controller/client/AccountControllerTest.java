@@ -27,6 +27,7 @@ class AccountControllerTest {
     private UserRepository userRepository;
     private CustomerAddressRepository addressRepository;
     private MockMvc mockMvc;
+    private com.oneshop.service.AccountProfileService profiles;
 
     private User sampleUser;
     private Principal mockPrincipal;
@@ -35,7 +36,8 @@ class AccountControllerTest {
     void setUp() {
         userRepository = mock(UserRepository.class);
         addressRepository = mock(CustomerAddressRepository.class);
-        AccountController controller = new AccountController(userRepository, addressRepository);
+        profiles = mock(com.oneshop.service.AccountProfileService.class);
+        AccountController controller = new AccountController(userRepository, addressRepository, profiles);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 
         Role customerRole = new Role(RoleName.CUSTOMER);
@@ -75,9 +77,9 @@ class AccountControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/account?success"));
 
-        assertEquals("Nguyễn Văn Đổi Tên", sampleUser.getFullName());
-        assertEquals("0987654321", sampleUser.getPhone());
-        verify(userRepository).save(sampleUser);
+        verify(profiles).update(eq(mockPrincipal.getName()), argThat(r ->
+                r.getFullName().equals("Nguyễn Văn Đổi Tên") && r.getPhone().equals("0987654321")));
+        verify(userRepository, never()).save(any());
     }
 
     @Test
@@ -92,6 +94,7 @@ class AccountControllerTest {
                 .andExpect(model().attributeHasFieldErrors("updateAccountRequest", "fullName"));
 
         verify(userRepository, never()).save(any());
+        verifyNoInteractions(profiles);
     }
 
     @Test
@@ -106,6 +109,7 @@ class AccountControllerTest {
                 .andExpect(redirectedUrl("/account?success"));
 
         assertEquals("khachhang", sampleUser.getUserName(), "Tên đăng nhập bắt buộc phải giữ nguyên không đổi");
-        verify(userRepository).save(sampleUser);
+        verify(profiles).update(eq(mockPrincipal.getName()), any(UpdateAccountRequest.class));
+        verify(userRepository, never()).save(any());
     }
 }

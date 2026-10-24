@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "recheck",
+    "controller" : "com.oneshop.controller.admin.AdminPaymentController",
+    "path" : "/admin/payments/{orderId:\\d+}/recheck"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:10.943476Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/admin/payments/999999999/recheck",
+  "kind" : "anonymous guard/input probe"
+}

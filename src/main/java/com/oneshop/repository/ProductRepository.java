@@ -14,6 +14,10 @@ import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @Query("select p from Product p where p.id=:id")
+    Optional<Product> findByIdForUpdate(@Param("id") Long id);
+
     @EntityGraph(attributePaths = {"category", "brand"})
     Page<Product> findByStatus(ProductStatus status, Pageable pageable);
 

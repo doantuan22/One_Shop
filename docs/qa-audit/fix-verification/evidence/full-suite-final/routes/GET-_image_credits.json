@@ -1,0 +1,14 @@
+{
+  "executedAt" : "2026-10-24T03:23:59.136589100Z",
+  "location" : "",
+  "route" : {
+    "method" : "imageCredits",
+    "verb" : "GET",
+    "path" : "/image-credits",
+    "controller" : "com.oneshop.controller.client.ImageCreditsController"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/image-credits",
+  "actual" : 200,
+  "expected" : 200
+}

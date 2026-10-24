@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "GET",
+    "method" : "legacyOrder",
+    "controller" : "com.oneshop.controller.staff.StaffFulfillmentController",
+    "path" : "/staff/orders/{orderId:\\d+}"
+  },
+  "location" : "http://localhost:56221/login",
+  "executedAt" : "2026-10-24T02:07:17.414745100Z",
+  "expected" : 302,
+  "actual" : 302,
+  "requestPath" : "/staff/orders/999999999",
+  "kind" : "anonymous guard/input probe"
+}

@@ -5,6 +5,7 @@ import com.oneshop.entity.User;
 import com.oneshop.exception.ResourceNotFoundException;
 import com.oneshop.repository.CustomerAddressRepository;
 import com.oneshop.repository.UserRepository;
+import com.oneshop.service.AccountProfileService;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -30,10 +31,13 @@ public class AccountController {
 
     private final UserRepository userRepository;
     private final CustomerAddressRepository addressRepository;
+    private final AccountProfileService profiles;
 
-    public AccountController(UserRepository userRepository, CustomerAddressRepository addressRepository) {
+    public AccountController(UserRepository userRepository, CustomerAddressRepository addressRepository,
+                             AccountProfileService profiles) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
+        this.profiles = profiles;
     }
 
     @GetMapping
@@ -54,18 +58,13 @@ public class AccountController {
                                 @Valid @ModelAttribute("updateAccountRequest") UpdateAccountRequest request,
                                 BindingResult bindingResult,
                                 Model model) {
-        User user = getUser(principal);
-
         if (bindingResult.hasErrors()) {
-            populateModel(user, model);
+            populateModel(getUser(principal), model);
             return "account/profile";
         }
 
-        // Chỉ cho phép cập nhật họ tên và số điện thoại.
-        // Tên đăng nhập (username) và email bị khóa hoàn toàn.
-        user.setFullName(request.getFullName().trim());
-        user.setPhone(request.getPhone() != null && !request.getPhone().isBlank() ? request.getPhone().trim() : null);
-        userRepository.save(user);
+        if (principal == null) throw new ResourceNotFoundException("Chưa đăng nhập.");
+        profiles.update(principal.getName(), request);
 
         return "redirect:/account?success";
     }

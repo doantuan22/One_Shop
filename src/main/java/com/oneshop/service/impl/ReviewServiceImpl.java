@@ -147,7 +147,7 @@ public class ReviewServiceImpl implements ReviewService {
     @PreAuthorize("hasRole('STAFF')")
     public Page<StaffReviewResponse> getStaffReviews(int page) {
         return reviews.findByOrderStoreIds(scope.getAssignedStoreIds(), VisibilityStatus.ACTIVE,
-                PageRequest.of(Math.max(0, page), PAGE_SIZE)).map(ReviewReadMapper::staffReview);
+                com.oneshop.service.query.Paging.page(page, PAGE_SIZE)).map(ReviewReadMapper::staffReview);
     }
 
     @Override

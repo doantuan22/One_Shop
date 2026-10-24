@@ -1,0 +1,26 @@
+{
+  "phase": "ui-final",
+  "total": 2,
+  "counts": {
+    "FAIL": 1,
+    "PASS": 1
+  },
+  "cases": [
+    {
+      "suite": "com.oneshop.QaFixUiBrowserDatabaseIntegrationTest",
+      "test": "seedResourcesAndFallback",
+      "status": "FAIL",
+      "message": "\nExpecting map:\n  {\"image_public_id\"=\"oneshop/seed/categories/trang-diem\", \"image_url\"=\"https://res.cloudinary.com/dfyfpuguj/image/upload/v1791803748/oneshop/seed/categories/trang-diem.webp\"}\nto contain entries:\n  [\"image_url\"=\"/images/site/categories/category-placeholder.svg\"]\nbut the following map entries had different values:\n  [\"image_url\"=\"https://res.cloudinary.com/dfyfpuguj/image/upload/v1791803748/oneshop/seed/categories/trang-diem.webp\" (expected: \"/images/site/categories/category-placeholder.svg\")]",
+      "timestamp": null,
+      "seconds": "0.076"
+    },
+    {
+      "suite": "com.oneshop.QaFixUiBrowserDatabaseIntegrationTest",
+      "test": "realFormsPrimaryFallbackProfileAndSafeTitles",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "9.346"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "setPrimaryImage",
+    "controller" : "com.oneshop.controller.admin.AdminProductController",
+    "path" : "/admin/products/{id}/images/{imageId}/primary"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:11.716991900Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/admin/products/999999999/images/999999999/primary",
+  "kind" : "anonymous guard/input probe"
+}

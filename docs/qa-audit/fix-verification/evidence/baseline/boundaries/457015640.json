@@ -1,0 +1,7 @@
+{
+  "request" : "/staff/fulfillments?page=178956970&q=qa-no-match-999",
+  "timestamp" : "2026-10-24T02:38:33.090187300Z",
+  "actor" : "staff.thuduc@oneshop.vn",
+  "actual" : 200,
+  "expected" : "success/empty page or controlled 4xx; never 5xx"
+}

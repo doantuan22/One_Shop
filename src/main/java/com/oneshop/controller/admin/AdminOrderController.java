@@ -33,8 +33,10 @@ public class AdminOrderController {
                        @RequestParam(required = false) FulfillmentType fulfillmentType,
                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
-                       @RequestParam(defaultValue = "0") int page,
-                       @RequestParam(required = false, defaultValue = "false") boolean attention, Model model) {
+                        @RequestParam(defaultValue = "0") int page,
+                        @RequestParam(required = false, defaultValue = "false") boolean attention, Model model) {
+        // Validate date semantics before the attention/list split: malformed ranges are never ignored.
+        com.oneshop.service.query.SqlDayRange.of(from, to);
         model.addAttribute("orders", attention ? operations.getOrdersNeedingAttention(storeId, page)
                 : operations.getOrders(storeId, q, orderStatus, paymentStatus, fulfillmentType, from, to, page));
         model.addAttribute("attention", attention);

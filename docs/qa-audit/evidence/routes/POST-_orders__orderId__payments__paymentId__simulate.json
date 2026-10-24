@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "simulate",
+    "controller" : "com.oneshop.controller.client.PaymentController",
+    "path" : "/orders/{orderId}/payments/{paymentId}/simulate"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:16.014377400Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/orders/999999999/payments/999999999/simulate",
+  "kind" : "anonymous guard/input probe"
+}

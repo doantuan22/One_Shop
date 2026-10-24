@@ -1,0 +1,571 @@
+{
+  "mode": "forms-titles",
+  "results": [
+    {
+      "id": "QA001 actual Customer profile form",
+      "status": "PASS",
+      "actual": {
+        "name": "QA UI Profile",
+        "phone": "0987654321",
+        "url": "/account?success"
+      },
+      "timestamp": "2026-10-24T03:06:19.246Z"
+    },
+    {
+      "id": "QA002 actual Admin upload/select/delete primary forms",
+      "status": "PASS",
+      "actual": {
+        "uploadedAndDeletedImage": 29
+      },
+      "timestamp": "2026-10-24T03:06:22.529Z"
+    },
+    {
+      "id": "QA007 catalog title /products",
+      "status": "PASS",
+      "actual": "Mỹ phẩm & Chăm sóc sắc đẹp - OneShop | OneShop",
+      "timestamp": "2026-10-24T03:06:23.056Z"
+    },
+    {
+      "id": "QA007 catalog title /products?q=CeraVe",
+      "status": "PASS",
+      "actual": "Mỹ phẩm & Chăm sóc sắc đẹp - OneShop | OneShop",
+      "timestamp": "2026-10-24T03:06:23.494Z"
+    },
+    {
+      "id": "QA007 plain-text title A & B",
+      "status": "PASS",
+      "actual": {
+        "title": "A & B | OneShop",
+        "text": "A & B",
+        "injected": false,
+        "scripts": 0
+      },
+      "timestamp": "2026-10-24T03:06:23.839Z"
+    },
+    {
+      "id": "QA007 plain-text title Tiếng Việt có dấu",
+      "status": "PASS",
+      "actual": {
+        "title": "Tiếng Việt có dấu | OneShop",
+        "text": "Tiếng Việt có dấu",
+        "injected": false,
+        "scripts": 0
+      },
+      "timestamp": "2026-10-24T03:06:24.182Z"
+    },
+    {
+      "id": "QA007 plain-text title <b>Text only</b>",
+      "status": "PASS",
+      "actual": {
+        "title": "<b>Text only</b> | OneShop",
+        "text": "<b>Text only</b>",
+        "injected": false,
+        "scripts": 0
+      },
+      "timestamp": "2026-10-24T03:06:24.527Z"
+    },
+    {
+      "id": "QA007 plain-text title </title><script>window.qaXss=1</script>",
+      "status": "PASS",
+      "actual": {
+        "title": "</title><script>window.qaXss=1</script> | OneShop",
+        "text": "</title><script>window.qaXss=1</script>",
+        "injected": false,
+        "scripts": 0
+      },
+      "timestamp": "2026-10-24T03:06:24.873Z"
+    },
+    {
+      "id": "QA007 plain-text title Literal &amp;",
+      "status": "PASS",
+      "actual": {
+        "title": "Literal &amp; | OneShop",
+        "text": "Literal &amp;",
+        "injected": false,
+        "scripts": 0
+      },
+      "timestamp": "2026-10-24T03:06:25.320Z"
+    },
+    {
+      "id": "Staff Dashboard still renders",
+      "status": "PASS",
+      "actual": "Tổng quan chi nhánh | OneShop Staff",
+      "timestamp": "2026-10-24T03:06:26.963Z"
+    }
+  ],
+  "network": [
+    {
+      "url": "http://localhost:60894/login",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "http://localhost:60894/images/One.png",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "http://localhost:60894/images/site/hero/hero-800.webp",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/images/One.png",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/images/site/categories/category-placeholder.svg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/images/site/categories/category-skincare.webp",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/c_pad,w_800,h_800,b_white,f_auto,q_auto/v1792488089/oneshop/v3/products/cetaphil-gentle-473.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/f_auto,q_auto,w_800/v1791803745/oneshop/seed/categories/tay-trang-va-lam-sach.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/f_auto,q_auto,w_800/v1791803739/oneshop/seed/categories/cham-soc-co-the.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/c_pad,w_800,h_800,b_white,f_auto,q_auto/v1792488082/oneshop/v3/products/cerave-cream-177.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/account",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "http://localhost:60894/images/One.png",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/account?success",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "http://localhost:60894/images/One.png",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/login",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "http://localhost:60894/images/One.png",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/admin",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/admin/products/11/edit",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/c_pad,w_800,h_800,b_white,f_auto,q_auto/v1792488101/oneshop/v3/products/simple-purify-150.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/admin/products/11/edit?success=image-uploaded",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/c_pad,w_800,h_800,b_white,f_auto,q_auto/v1792488101/oneshop/v3/products/simple-purify-150.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/images/site/categories/category-placeholder.svg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/admin/products/11/edit?success=image-primary",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/c_pad,w_800,h_800,b_white,f_auto,q_auto/v1792488101/oneshop/v3/products/simple-purify-150.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/images/site/categories/category-placeholder.svg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/admin/products/11/edit?success=image-deleted",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/c_pad,w_800,h_800,b_white,f_auto,q_auto/v1792488101/oneshop/v3/products/simple-purify-150.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/products",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "http://localhost:60894/images/One.png",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/c_pad,w_800,h_800,b_white,f_auto,q_auto/v1792488082/oneshop/v3/products/cerave-cream-177.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/c_pad,w_800,h_800,b_white,f_auto,q_auto/v1792488099/oneshop/v3/products/lrp-effaclar-mp-200.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/c_pad,w_800,h_800,b_white,f_auto,q_auto/v1792488105/oneshop/v3/products/simple-micellar-150.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/c_pad,w_800,h_800,b_white,f_auto,q_auto/v1792488091/oneshop/v3/products/bioderma-atoderm-500.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/c_pad,w_800,h_800,b_white,f_auto,q_auto/v1792488107/oneshop/v3/products/mayb-concealer-15.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/c_pad,w_800,h_800,b_white,f_auto,q_auto/v1792488079/oneshop/v3/products/cerave-cream-340.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/products?q=CeraVe",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "http://localhost:60894/images/One.png",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/c_pad,w_800,h_800,b_white,f_auto,q_auto/v1792488082/oneshop/v3/products/cerave-cream-177.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/c_pad,w_800,h_800,b_white,f_auto,q_auto/v1792488079/oneshop/v3/products/cerave-cream-340.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/c_pad,w_800,h_800,b_white,f_auto,q_auto/v1792488083/oneshop/v3/products/cerave-foam-88.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/c_pad,w_800,h_800,b_white,f_auto,q_auto/v1792488085/oneshop/v3/products/cerave-hydra-236.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/products/qa-title?text=A%20%26%20B",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "http://localhost:60894/images/One.png",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/products/qa-title?text=Ti%E1%BA%BFng%20Vi%E1%BB%87t%20c%C3%B3%20d%E1%BA%A5u",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "http://localhost:60894/images/One.png",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/products/qa-title?text=%3Cb%3EText%20only%3C%2Fb%3E",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "http://localhost:60894/images/One.png",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/products/qa-title?text=%3C%2Ftitle%3E%3Cscript%3Ewindow.qaXss%3D1%3C%2Fscript%3E",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "http://localhost:60894/images/One.png",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/products/qa-title?text=Literal%20%26amp%3B",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "http://localhost:60894/images/One.png",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/login",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "http://localhost:60894/images/One.png",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/staff",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/images/One.png",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/staff/dashboard",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:60894/images/One.png",
+      "status": 200,
+      "type": "Image"
+    }
+  ],
+  "errors": [
+    "Failed to load resource: the server responded with a status of 404 ()"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "GET",
+    "method" : "dashboard",
+    "controller" : "com.oneshop.controller.admin.AdminDashboardController",
+    "path" : "/admin"
+  },
+  "location" : "http://localhost:56221/login",
+  "executedAt" : "2026-10-24T02:07:14.666688400Z",
+  "expected" : 302,
+  "actual" : 302,
+  "requestPath" : "/admin",
+  "kind" : "anonymous guard/input probe"
+}

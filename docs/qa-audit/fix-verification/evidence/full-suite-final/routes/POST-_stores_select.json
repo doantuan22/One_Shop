@@ -1,0 +1,14 @@
+{
+  "executedAt" : "2026-10-24T03:24:01.070088100Z",
+  "location" : "",
+  "route" : {
+    "method" : "select",
+    "verb" : "POST",
+    "path" : "/stores/select",
+    "controller" : "com.oneshop.controller.client.StoreController"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/stores/select",
+  "actual" : 403,
+  "expected" : 403
+}

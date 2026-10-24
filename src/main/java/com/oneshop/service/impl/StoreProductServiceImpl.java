@@ -72,6 +72,7 @@ public class StoreProductServiceImpl implements StoreProductService {
 
     @Override
     public Page<CatalogItemResponse> getChainCatalog(ProductSearchCriteria criteria, Pageable pageable) {
+        com.oneshop.service.query.Paging.validate(pageable);
         Page<ProductResponse> products = productService.searchProducts(criteria, pageable);
         List<Long> productIds = products.getContent().stream().map(ProductResponse::id).toList();
 
@@ -134,6 +135,7 @@ public class StoreProductServiceImpl implements StoreProductService {
 
     @Override
     public Page<CatalogItemResponse> getStoreCatalog(Long storeId, ProductSearchCriteria criteria, Pageable pageable) {
+        com.oneshop.service.query.Paging.validate(pageable);
         Page<StoreProduct> page = storeProductRepository.searchSellableInStore(storeId, criteria.likePattern(),
                 criteria.categoryId(), criteria.brandId(), pageable);
         Map<Long, String> primaryImages = productService.getPrimaryImageUrls(
@@ -168,6 +170,7 @@ public class StoreProductServiceImpl implements StoreProductService {
     public Page<StoreProductStockResponse> searchStoreProducts(Long storeId, Long productId,
                                                                com.oneshop.entity.ActiveStatus status,
                                                                Pageable pageable) {
+        com.oneshop.service.query.Paging.validate(pageable);
         return storeProductRepository.searchForAdmin(storeId, productId, status, pageable)
                 .map(storeProductMapper::toStockView);
     }
@@ -176,6 +179,7 @@ public class StoreProductServiceImpl implements StoreProductService {
     public Page<StoreProductStockResponse> searchStoreProducts(Long storeId, Long productId,
                                                                com.oneshop.entity.ActiveStatus status, String q,
                                                                Pageable pageable) {
+        com.oneshop.service.query.Paging.validate(pageable);
         List<String> words = com.oneshop.service.search.TextSearch.words(q);
         if (words.isEmpty()) {
             return searchStoreProducts(storeId, productId, status, pageable);
@@ -193,7 +197,8 @@ public class StoreProductServiceImpl implements StoreProductService {
 
     @Override
     public Page<StoreProductStockResponse> searchInventory(Long storeId, String q, String stockLevel, String sort,
-                                                           Pageable pageable) {
+                                                            Pageable pageable) {
+        com.oneshop.service.query.Paging.validate(pageable);
         var words = com.oneshop.service.search.TextSearch.words(q);
         var like = "";
         var level = stockLevel != null && INVENTORY_LEVELS.contains(stockLevel) ? stockLevel : "all";

@@ -6,6 +6,7 @@ import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -43,4 +44,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select u from User u where u.id = :id")
     Optional<User> findByIdForUpdate(@Param("id") Long id);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("update User u set u.fullName = :fullName, u.phone = :phone, u.updatedAt = :updatedAt"
+            + " where u.email = :email and u.status = com.oneshop.entity.ActiveStatus.ACTIVE")
+    int updateProfileFields(@Param("email") String email, @Param("fullName") String fullName,
+                            @Param("phone") String phone, @Param("updatedAt") java.time.LocalDateTime updatedAt);
 }

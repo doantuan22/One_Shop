@@ -1,0 +1,14 @@
+{
+  "executedAt" : "2026-10-24T03:23:59.881023900Z",
+  "location" : "",
+  "route" : {
+    "method" : "submit",
+    "verb" : "POST",
+    "path" : "/reviews",
+    "controller" : "com.oneshop.controller.client.ReviewController"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/reviews",
+  "actual" : 403,
+  "expected" : 403
+}

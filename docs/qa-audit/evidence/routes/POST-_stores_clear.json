@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "clear",
+    "controller" : "com.oneshop.controller.client.StoreController",
+    "path" : "/stores/clear"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:18.041511Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/stores/clear",
+  "kind" : "anonymous guard/input probe"
+}

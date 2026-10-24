@@ -23,6 +23,17 @@ SET ANSI_NULLS ON;
 SET QUOTED_IDENTIFIER ON;
 GO
 
+/* Operational retry journal; no image bytes and no automatic external cleanup worker. */
+CREATE TABLE dbo.image_cleanup_tasks (
+    task_id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_image_cleanup_tasks PRIMARY KEY,
+    public_id NVARCHAR(255) NOT NULL,
+    attempts INT NOT NULL CONSTRAINT DF_image_cleanup_attempts DEFAULT 0,
+    last_error NVARCHAR(500) NULL,
+    created_at DATETIME2(7) NOT NULL CONSTRAINT DF_image_cleanup_created DEFAULT SYSDATETIME(),
+    CONSTRAINT CK_image_cleanup_attempts CHECK (attempts >= 0)
+);
+GO
+
 /* ============================================================================
    1. roles  - CUSTOMER / STAFF / ADMIN
    ========================================================================== */
@@ -188,6 +199,8 @@ CREATE TABLE dbo.product_images (
     CONSTRAINT PK_product_images PRIMARY KEY (image_id),
     CONSTRAINT FK_product_images_product FOREIGN KEY (product_id) REFERENCES dbo.products (product_id)
 );
+GO
+CREATE UNIQUE INDEX UX_product_images_one_primary ON dbo.product_images(product_id) WHERE is_primary=1;
 GO
 
 /* ============================================================================
@@ -573,14 +586,14 @@ GO
 
 /* Structural verification (read only). Any violation THROWs, so a broken install is never silent. */
 DECLARE @tables INT = (SELECT COUNT(*) FROM sys.tables WHERE is_ms_shipped = 0);
-IF @tables <> 23 THROW 50001, 'Expected exactly 23 tables.', 1;
+IF @tables <> 24 THROW 50001, 'Expected exactly 24 tables (23 domain tables plus image cleanup journal).', 1;
 DECLARE @expected TABLE (name SYSNAME PRIMARY KEY);
 INSERT INTO @expected VALUES
  (N'roles'),(N'users'),(N'customer_addresses'),(N'stores'),(N'staff_store_assignments'),
  (N'categories'),(N'brands'),(N'products'),(N'product_images'),(N'store_products'),
  (N'carts'),(N'cart_items'),(N'checkout_sessions'),(N'orders'),(N'order_fulfillments'),
  (N'order_fulfillment_status_history'),(N'order_items'),(N'payments'),(N'inventory_movements'),
- (N'order_status_history'),(N'reviews'),(N'review_replies'),(N'payment_refunds');
+  (N'order_status_history'),(N'reviews'),(N'review_replies'),(N'payment_refunds'),(N'image_cleanup_tasks');
 IF EXISTS (SELECT 1 FROM @expected e WHERE NOT EXISTS (SELECT 1 FROM sys.tables t WHERE t.name = e.name))
    OR EXISTS (SELECT 1 FROM sys.tables t WHERE t.is_ms_shipped = 0 AND NOT EXISTS (SELECT 1 FROM @expected e WHERE e.name = t.name))
     THROW 50011, 'Table set differs from the OneShop V3 specification list.', 1;
@@ -592,7 +605,7 @@ INSERT INTO @required VALUES
  (N'UQ_order_fulfillments_order_store'),(N'UQ_review_replies_review'),
  (N'CK_products_price'),(N'CK_store_products_quantity'),(N'CK_cart_items_quantity'),
  (N'CK_order_items_quantity'),(N'CK_order_items_subtotal'),(N'CK_inventory_movements_math'),
- (N'CK_reviews_rating'),(N'UX_users_user_name'),
+  (N'CK_reviews_rating'),(N'UX_users_user_name'),(N'UX_product_images_one_primary'),
  (N'IX_store_products_store_status_qty'),(N'IX_store_products_product_status'),
  (N'IX_order_fulfillments_store_status'),(N'IX_order_fulfillments_order_status'),
  (N'IX_order_items_fulfillment'),(N'IX_order_items_store_product'),
@@ -616,5 +629,5 @@ IF EXISTS (SELECT 1 FROM sys.check_constraints WHERE is_not_trusted = 1) OR EXIS
     THROW 50090, 'Untrusted constraint found.', 1;
 GO
 
-PRINT 'OneShop V3 fresh-install schema created and verified: 23 tables with DEC-26 Review uniqueness and the OPEN-10.1 refund ledger.';
+PRINT 'OneShop V3 fresh-install schema created and verified: 24 tables including the image cleanup journal, primary image uniqueness, DEC-26 and OPEN-10.1.';
 GO

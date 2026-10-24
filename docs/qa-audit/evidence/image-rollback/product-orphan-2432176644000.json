@@ -1,0 +1,5 @@
+{
+  "externalFilesAfterRollback" : [ "qa-audit/new" ],
+  "databaseRowsBefore" : 1,
+  "databaseRowsAfter" : 1
+}

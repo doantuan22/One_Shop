@@ -1,0 +1,7 @@
+{
+  "request" : "/admin/products?page=107374183",
+  "timestamp" : "2026-10-24T02:38:20.191216800Z",
+  "actor" : "admin@oneshop.vn",
+  "actual" : 500,
+  "expected" : "success/empty page or controlled 4xx; never 5xx"
+}

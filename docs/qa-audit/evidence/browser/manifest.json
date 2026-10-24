@@ -1,0 +1,37 @@
+[
+  {
+    "mode": "COD",
+    "source": "target/be07-evidence/browser/COD-1792807231581",
+    "result": "PASS"
+  },
+  {
+    "mode": "COD_SPLIT",
+    "source": "target/be07-evidence/browser/COD_SPLIT-1792807241925",
+    "result": "PASS"
+  },
+  {
+    "mode": "PICKUP",
+    "source": "target/be07-evidence/browser/PICKUP-1792807253050",
+    "result": "PASS"
+  },
+  {
+    "mode": "ONLINE",
+    "source": "target/be07-evidence/browser/ONLINE-1792807269365",
+    "result": "PASS"
+  },
+  {
+    "mode": "FAILED",
+    "source": "target/be07-evidence/browser/FAILED-1792807288015",
+    "result": "PASS"
+  },
+  {
+    "mode": "REFUND",
+    "source": "target/be07-evidence/browser/REFUND-1792807300010",
+    "result": "PASS"
+  },
+  {
+    "mode": "REVIEW",
+    "source": "target/be07-evidence/browser/REVIEW-1792807313156",
+    "result": "PASS"
+  }
+]

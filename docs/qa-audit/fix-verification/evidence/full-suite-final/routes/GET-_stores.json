@@ -1,0 +1,14 @@
+{
+  "executedAt" : "2026-10-24T03:24:01.083698Z",
+  "location" : "",
+  "route" : {
+    "method" : "finder",
+    "verb" : "GET",
+    "path" : "/stores",
+    "controller" : "com.oneshop.controller.client.StoreController"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/stores",
+  "actual" : 200,
+  "expected" : 200
+}

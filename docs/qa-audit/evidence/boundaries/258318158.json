@@ -1,0 +1,7 @@
+{
+  "actual" : 500,
+  "expected" : "success/empty page or controlled 4xx; never 5xx",
+  "request" : "/admin/inventory?page=178956970",
+  "timestamp" : "2026-10-24T02:06:51.254899600Z",
+  "actor" : "admin@oneshop.vn"
+}

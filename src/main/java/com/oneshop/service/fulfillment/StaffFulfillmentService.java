@@ -127,8 +127,9 @@ public class StaffFulfillmentService {
                 : f.openOnly() ? OPEN_STATUSES : List.of(OrderFulfillmentStatus.values());
         Collection<FulfillmentType> types = f.type() != null ? List.of(f.type())
                 : List.of(FulfillmentType.values());
-        LocalDateTime from = f.from() == null ? MIN_TIME : f.from().atStartOfDay();
-        LocalDateTime to = f.to() == null ? MAX_TIME : f.to().plusDays(1).atStartOfDay();
+        var range = com.oneshop.service.query.SqlDayRange.of(f.from(), f.to());
+        LocalDateTime from = f.from() == null ? MIN_TIME : range.fromInclusive();
+        LocalDateTime to = f.to() == null ? MAX_TIME : range.toExclusive();
         var words = com.oneshop.service.search.TextSearch.words(customer);
         if (!words.isEmpty()) {
             var matched = fulfillments.searchForStaff(storeIds, statuses, types,
@@ -139,12 +140,12 @@ public class StaffFulfillmentService {
                             row.getOrder().getUser().getEmail(), row.getOrder().getReceiverName(),
                             row.getOrder().getReceiverPhone()))
                     .toList();
-            return toQueueItems(com.oneshop.service.search.TextSearch.slice(matched, PageRequest.of(Math.max(0, page), PAGE_SIZE)));
+            return toQueueItems(com.oneshop.service.search.TextSearch.slice(matched, com.oneshop.service.query.Paging.page(page, PAGE_SIZE)));
         }
         String pattern = likePattern(customer);
         Page<OrderFulfillment> rows = fulfillments.searchForStaff(storeIds, statuses, types,
                 f.orderId() == null ? 0L : f.orderId(), from, to,
-                pattern, PageRequest.of(Math.max(0, page), PAGE_SIZE));
+                pattern, com.oneshop.service.query.Paging.page(page, PAGE_SIZE));
         return toQueueItems(rows);
     }
 
@@ -164,7 +165,7 @@ public class StaffFulfillmentService {
             return List.of();
         }
         return toQueueItems(fulfillments.searchForStaff(storeIds, OPEN_STATUSES,
-                List.of(FulfillmentType.values()), 0L, MIN_TIME, MAX_TIME, PageRequest.of(0, size))).getContent();
+                List.of(FulfillmentType.values()), 0L, MIN_TIME, MAX_TIME, com.oneshop.service.query.Paging.page(0, size))).getContent();
     }
 
     @Transactional(readOnly = true)

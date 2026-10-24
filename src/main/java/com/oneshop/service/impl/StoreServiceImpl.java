@@ -102,6 +102,7 @@ public class StoreServiceImpl implements StoreService {
                                                                             ActiveStatus status, int page) {
         var words = com.oneshop.service.search.TextSearch.words(q);
         var areaText = area == null ? "" : area.trim();
+        var pageable = com.oneshop.service.query.Paging.page(page, 20);
         if (!words.isEmpty()) {
             var matched = storeRepository
                     .searchAdmin("", areaText, status, org.springframework.data.domain.Pageable.unpaged())
@@ -109,12 +110,12 @@ public class StoreServiceImpl implements StoreService {
                     .filter(s -> com.oneshop.service.search.TextSearch.matchesAll(words, s.getCode(), s.getName(), s.getAddress(), s.getArea(),
                             s.getProvinceCity()))
                     .toList();
-            return com.oneshop.service.search.TextSearch.slice(matched, org.springframework.data.domain.PageRequest.of(Math.max(page, 0), 20))
+            return com.oneshop.service.search.TextSearch.slice(matched, pageable)
                     .map(storeMapper::toResponse);
         }
         var like = containsLike(q);
         return storeRepository
-                .searchAdmin(like, areaText, status, org.springframework.data.domain.PageRequest.of(Math.max(page, 0), 20))
+                .searchAdmin(like, areaText, status, pageable)
                 .map(storeMapper::toResponse);
     }
 

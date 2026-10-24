@@ -38,8 +38,9 @@ public class AdminPaymentController {
     @GetMapping
     public String list(@RequestParam(required = false) String view, @RequestParam(required = false) String q,
                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate from,
-                       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate to,
-                       @RequestParam(defaultValue = "0") int page, Model model) {
+                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate to,
+                        @RequestParam(defaultValue = "0") int page, Model model) {
+        com.oneshop.service.query.SqlDayRange.of(from, to);
         boolean all = "all".equalsIgnoreCase(view == null ? "" : view.trim());
         PaymentCaseCategory selected = all ? null
                 : view == null ? PaymentCaseCategory.ATTENTION
