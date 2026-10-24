@@ -6,7 +6,7 @@
     "path" : "/admin/brands/{id}/logo/delete"
   },
   "location" : "",
-  "executedAt" : "2026-10-24T02:07:08.621243200Z",
+  "executedAt" : "2026-10-24T09:12:14.012791500Z",
   "expected" : 403,
   "actual" : 403,
   "requestPath" : "/admin/brands/999999999/logo/delete",

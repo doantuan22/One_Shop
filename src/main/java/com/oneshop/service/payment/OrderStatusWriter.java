@@ -7,6 +7,8 @@ import com.oneshop.entity.User;
 import com.oneshop.exception.BadRequestException;
 import com.oneshop.repository.OrderRepository;
 import com.oneshop.repository.OrderStatusHistoryRepository;
+import com.oneshop.service.promotion.PromotionReleaseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +46,20 @@ public class OrderStatusWriter {
         this.histories = histories;
     }
 
+    /** A cancelled Order gives its promotion use back (setter injection keeps the two-argument constructor usable). */
+    private PromotionReleaseService promotionRelease;
+
+    @Autowired(required = false)
+    void setPromotionRelease(PromotionReleaseService promotionRelease) {
+        this.promotionRelease = promotionRelease;
+    }
+
+    private void releasePromotion(Order order, OrderStatus target) {
+        if (target == OrderStatus.CANCELLED && promotionRelease != null) {
+            promotionRelease.releaseIfCancelled(order);
+        }
+    }
+
     @Transactional(propagation = Propagation.MANDATORY)
     public void write(Order lockedOrder, OrderStatus target, User actor, String note) {
         OrderStatus current = lockedOrder.getOrderStatus();
@@ -59,6 +75,7 @@ public class OrderStatusWriter {
         lockedOrder.setOrderStatus(target);
         orders.saveAndFlush(lockedOrder);
         histories.save(history);
+        releasePromotion(lockedOrder, target);
     }
 
     /**
@@ -83,6 +100,7 @@ public class OrderStatusWriter {
         lockedOrder.setOrderStatus(target);
         orders.saveAndFlush(lockedOrder);
         histories.save(history);
+        releasePromotion(lockedOrder, target);
     }
 
     /** An audit row for an action that changed no status (for example an Admin re-check that found nothing new). */

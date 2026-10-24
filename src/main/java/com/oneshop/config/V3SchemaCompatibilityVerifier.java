@@ -29,6 +29,35 @@ public class V3SchemaCompatibilityVerifier implements SmartInitializingSingleton
                 rs.getString(4),rs.getInt(5),rs.getString(6)));
         requireCompatible(keys);
         requireRefundLedger();
+        requireReturnFlow();
+        requirePromotions();
+    }
+
+    /** Promotion codes: the two tables and the discount snapshot columns of orders / order_items. */
+    private void requirePromotions() {
+        Integer tables = jdbc.queryForObject("select count(*) from sys.tables where name in "
+                + "(N'promotions',N'promotion_usages')", Integer.class);
+        Integer columns = jdbc.queryForObject("select count(*) from sys.columns where "
+                + "(object_id=object_id(N'dbo.orders') and name in (N'discount_amount',N'promotion_code')) or "
+                + "(object_id=object_id(N'dbo.order_items') and name=N'discount_amount')", Integer.class);
+        if (tables == null || tables != 2 || columns == null || columns != 3) {
+            throw new IllegalStateException("V3 schema prerequisite missing: promotion codes. "
+                    + "Stop startup; back up and obtain approval for docs/v3/migration-history/20261025_promotions.sql (an existing database only; a fresh install uses database/01_schema.sql). "
+                    + "No migration was executed automatically.");
+        }
+    }
+
+    /** Post-delivery returns: the three return tables and the RETURN ledger key (one refund per return). */
+    private void requireReturnFlow() {
+        Integer tables = jdbc.queryForObject("select count(*) from sys.tables where name in "
+                + "(N'order_returns',N'order_return_images',N'order_return_items')", Integer.class);
+        Integer ledgerKey = jdbc.queryForObject("select count(*) from sys.indexes where object_id=object_id(N'dbo.payment_refunds')"
+                + " and name=N'UX_payment_refunds_return' and is_unique=1 and has_filter=1 and is_disabled=0", Integer.class);
+        if (tables == null || tables != 3 || ledgerKey == null || ledgerKey != 1) {
+            throw new IllegalStateException("V3 schema prerequisite missing: post-delivery return flow. "
+                    + "Stop startup; back up and obtain approval for docs/v3/migration-history/20261024_order_returns.sql (an existing database only; a fresh install uses database/01_schema.sql). "
+                    + "No migration was executed automatically.");
+        }
     }
 
     /** OPEN-10.1: the refund ledger and its filtered unique keys (they are what makes a double refund impossible). */

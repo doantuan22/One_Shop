@@ -5,8 +5,8 @@
     "controller" : "com.oneshop.controller.admin.AdminBrandController",
     "path" : "/admin/brands"
   },
-  "location" : "http://localhost:56221/login",
-  "executedAt" : "2026-10-24T02:07:09.175708400Z",
+  "location" : "http://localhost:57296/login",
+  "executedAt" : "2026-10-24T09:12:14.504848600Z",
   "expected" : 302,
   "actual" : 302,
   "requestPath" : "/admin/brands",

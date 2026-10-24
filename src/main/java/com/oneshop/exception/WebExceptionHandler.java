@@ -27,6 +27,7 @@ public class WebExceptionHandler {
     private static final String VIEW = "error-message";
 
     private static final Pattern PRODUCT_URI = Pattern.compile("^/admin/products/(\\d+)(?:/.*)?$");
+    private static final Pattern RETURN_URI = Pattern.compile("^/orders/(\\d+)/return/?$");
     private static final Pattern BRAND_URI = Pattern.compile("^/admin/brands/(\\d+)(?:/.*)?$");
     private static final Pattern CATEGORY_URI = Pattern.compile("^/admin/categories/(\\d+)(?:/.*)?$");
 
@@ -46,6 +47,12 @@ public class WebExceptionHandler {
         if (flashMap != null) {
             flashMap.put("error", "image-size");
             flashMap.put("errorMessage", sizeMsg);
+        }
+
+        // a Customer's return photos: back to that return form, never to the Admin product list
+        Matcher returnMatcher = RETURN_URI.matcher(uri);
+        if (returnMatcher.matches()) {
+            return "redirect:/orders/" + returnMatcher.group(1) + "/return?error=size";
         }
 
         String name = request.getParameter("name");

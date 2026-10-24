@@ -6,7 +6,7 @@
     "path" : "/admin/products/{id}/images/{imageId}/primary"
   },
   "location" : "",
-  "executedAt" : "2026-10-24T02:07:11.716991900Z",
+  "executedAt" : "2026-10-24T09:12:16.732318600Z",
   "expected" : 403,
   "actual" : 403,
   "requestPath" : "/admin/products/999999999/images/999999999/primary",

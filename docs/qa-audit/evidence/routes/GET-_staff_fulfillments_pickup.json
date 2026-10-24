@@ -5,8 +5,8 @@
     "controller" : "com.oneshop.controller.staff.StaffFulfillmentController",
     "path" : "/staff/fulfillments/pickup"
   },
-  "location" : "http://localhost:56221/login",
-  "executedAt" : "2026-10-24T02:07:16.899350500Z",
+  "location" : "http://localhost:57296/login",
+  "executedAt" : "2026-10-24T09:12:22.627231600Z",
   "expected" : 302,
   "actual" : 302,
   "requestPath" : "/staff/fulfillments/pickup",

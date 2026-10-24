@@ -1,7 +1,7 @@
 {
-  "actual" : 200,
   "expected" : "success/empty page or controlled 4xx; never 5xx",
   "request" : "/admin/products?page=1",
-  "timestamp" : "2026-10-24T02:06:45.275766100Z",
-  "actor" : "admin@oneshop.vn"
+  "timestamp" : "2026-10-24T09:11:54.491377500Z",
+  "actor" : "admin@oneshop.vn",
+  "actual" : 200
 }

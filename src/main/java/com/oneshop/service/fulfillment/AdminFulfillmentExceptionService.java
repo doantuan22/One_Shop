@@ -478,7 +478,8 @@ public class AdminFulfillmentExceptionService {
     }
 
     private static BigDecimal sum(List<OrderItem> lines) {
-        return lines.stream().map(OrderItem::getSubtotal).reduce(BigDecimal.ZERO, BigDecimal::add);
+        // what the lines are worth after a promotion: money (refunds, delivered / owed) is always counted on this
+        return lines.stream().map(OrderItem::getNetSubtotal).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private static String reason(String reason) {

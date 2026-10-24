@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "GET",
+    "method" : "editForm",
+    "controller" : "com.oneshop.controller.admin.AdminPromotionController",
+    "path" : "/admin/promotions/{id}/edit"
+  },
+  "location" : "http://localhost:57296/login",
+  "executedAt" : "2026-10-24T09:12:17.457387100Z",
+  "expected" : 302,
+  "actual" : 302,
+  "requestPath" : "/admin/promotions/999999999/edit",
+  "kind" : "anonymous guard/input probe"
+}

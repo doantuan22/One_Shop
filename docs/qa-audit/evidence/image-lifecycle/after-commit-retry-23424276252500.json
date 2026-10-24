@@ -1,0 +1,7 @@
+{
+  "tasks" : [ ],
+  "files" : [ ],
+  "scenario" : "after-commit-retry",
+  "timestamp" : "2026-10-24T08:00:31.245778700Z",
+  "database" : "oneshop_returns_20261024_test"
+}

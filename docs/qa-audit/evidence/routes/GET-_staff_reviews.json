@@ -5,8 +5,8 @@
     "controller" : "com.oneshop.controller.staff.StaffReviewController",
     "path" : "/staff/reviews"
   },
-  "location" : "http://localhost:56221/login",
-  "executedAt" : "2026-10-24T02:07:17.730145Z",
+  "location" : "http://localhost:57296/login",
+  "executedAt" : "2026-10-24T09:12:23.760569900Z",
   "expected" : 302,
   "actual" : 302,
   "requestPath" : "/staff/reviews",

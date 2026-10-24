@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head><title>Hàng khách trả</title></head>
+<body>
+<div th:replace="~{fragments/components :: pageHeader('Hàng khách trả', 'Các sản phẩm khách trả lại đã được quản trị viên duyệt, do chi nhánh của bạn giao. Với mỗi dòng hãy chọn một lần: nhập lại kho (cộng tồn kho đúng số lượng) hoặc xử lý ngoài hệ thống (không đổi tồn kho).')}"></div>
+
+<div class="alert os-return-result" id="return-result" role="status" th:if="${param.result != null}"
+     th:classappend="${#strings.startsWith(param.result[0], 'refused') or #strings.startsWith(param.result[0], 'invalid') or param.result[0] == 'forbidden'} ? 'alert-warning' : 'alert-success'"
+     th:switch="${param.result[0]}">
+    <span th:case="'restocked'">Đã nhập lại kho và cộng tồn kho của chi nhánh.</span>
+    <span th:case="'disposed'">Đã ghi nhận xử lý hàng hoàn; tồn kho không thay đổi.</span>
+    <span th:case="'forbidden'">Bạn không được phân công tại chi nhánh đã giao dòng hàng này.</span>
+    <span th:case="'refused:RETURN_ALREADY_HANDLED'">Dòng hàng này đã được xử lý trước đó; không có thay đổi nào được thực hiện lại.</span>
+    <span th:case="'invalid:note'" th:text="'Ghi chú tối đa ' + ${maxNote} + ' ký tự.'"></span>
+    <span th:case="*">Không thể thực hiện thao tác. Dữ liệu có thể đã thay đổi; vui lòng tải lại trang.</span>
+</div>
+
+<div class="os-quick-chips mb-3">
+    <ul class="nav nav-pills os-tabs" id="return-lines-views" aria-label="Lọc dòng hàng hoàn">
+        <li class="nav-item"><a class="nav-link" th:classappend="${view == 'pending'} ? 'active'" th:href="@{/staff/returns}">
+            Chờ xử lý <span class="badge text-bg-light border ms-1" id="return-waiting" th:text="${waiting}">0</span></a></li>
+        <li class="nav-item"><a class="nav-link" th:classappend="${view == 'all'} ? 'active'" th:href="@{/staff/returns(view='all')}">Tất cả</a></li>
+    </ul>
+</div>
+
+<div class="alert alert-secondary" th:if="${lines.empty}">Không có dòng hàng hoàn nào.</div>
+<div class="card shadow-sm mb-3" th:each="l : ${lines.content}" th:attr="data-return-item=${l.returnItemId}">
+    <div class="card-body">
+        <div class="d-flex flex-wrap justify-content-between gap-2">
+            <div>
+                <div class="fw-semibold" th:text="${l.productName}">Sản phẩm</div>
+                <div class="small text-secondary"><span th:text="${l.sku}">SKU</span> &middot; <span th:text="${l.storeName}">Chi nhánh</span>
+                    &middot; Đơn #<span th:text="${l.orderId}">1</span></div>
+            </div>
+            <div class="text-end">
+                <div class="fw-semibold" th:text="'Số lượng trả: ' + ${l.quantity}">Số lượng</div>
+                <span th:replace="~{fragments/returns :: disposition(${l.disposition})}"></span>
+            </div>
+        </div>
+        <p class="small mb-1 mt-2"><span class="text-secondary">Lý do của khách:</span> <span style="white-space: pre-line" th:text="${l.reason}"></span></p>
+        <div class="mb-2" th:replace="~{fragments/returns :: photos(${l.imageUrls})}"></div>
+        <p class="small text-secondary mb-2" th:text="'Tồn kho hiện tại của chi nhánh: ' + ${l.currentStock}"></p>
+
+        <div th:if="${l.pending}" class="d-flex flex-wrap gap-3 align-items-start">
+            <form method="post" class="flex-grow-1" th:id="'return-form-' + ${l.returnItemId}">
+                <label class="form-label small" th:for="'return-note-' + ${l.returnItemId}">Ghi chú (không bắt buộc)</label>
+                <input class="form-control form-control-sm mb-2" type="text" th:id="'return-note-' + ${l.returnItemId}" name="note" th:maxlength="${maxNote}">
+                <div class="d-flex flex-wrap gap-2">
+                    <button class="btn btn-success btn-sm" type="submit" name="restock"
+                            th:formaction="@{/staff/returns/items/{id}/restock(id=${l.returnItemId})}"
+                            th:text="'Nhập lại kho (+' + ${l.quantity} + ')'">Nhập lại kho</button>
+                    <button class="btn btn-outline-secondary btn-sm" type="submit" name="dispose"
+                            th:formaction="@{/staff/returns/items/{id}/dispose(id=${l.returnItemId})}">Xử lý (không nhập kho)</button>
+                </div>
+            </form>
+        </div>
+        <div th:unless="${l.pending}" class="small text-secondary">
+            <span th:text="${l.handlerName}">Nhân viên</span> &middot; <span th:text="${#temporals.format(l.handledAt, 'dd/MM/yyyy HH:mm')}"></span>
+            <span th:if="${l.handleNote != null}" th:text="'· ' + ${l.handleNote}"></span>
+        </div>
+    </div>
+</div>
+<nav aria-label="Phân trang hàng hoàn" class="d-flex align-items-center gap-3" th:if="${lines.totalPages > 1}">
+    <a class="btn btn-outline-secondary" th:if="${lines.hasPrevious()}" th:href="@{/staff/returns(view=${view}, page=${lines.number - 1})}">Trang trước</a>
+    <span th:text="'Trang ' + ${lines.number + 1} + ' / ' + ${lines.totalPages}"></span>
+    <a class="btn btn-outline-secondary" th:if="${lines.hasNext()}" th:href="@{/staff/returns(view=${view}, page=${lines.number + 1})}">Trang sau</a>
+</nav>
+</body>
+</html>

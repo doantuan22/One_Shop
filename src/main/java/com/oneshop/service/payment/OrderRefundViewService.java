@@ -71,13 +71,17 @@ public class OrderRefundViewService {
                 undeliverable.put(part.getId(), reason.substring(AdminFulfillmentExceptionService.UNDELIVERABLE_PREFIX.length()));
             }
         }
+        List<PaymentRefund> history = ledger.findByOrderIdOrdered(order.getId());
+        // COD / pay-at-store collect nothing online, but a returned Order was paid on delivery: then what was
+        // collected is the SUCCESS payment the return was refunded from
+        boolean returned = history.stream().anyMatch(r -> r.getComponent() == PaymentRefundComponent.RETURN);
         BigDecimal collected = BigDecimal.ZERO;
-        if (order.getPaymentMethod() == PaymentMethod.ONLINE) {
+        if (order.getPaymentMethod() == PaymentMethod.ONLINE || returned) {
             collected = payments.findByOrderIdOrderByIdAsc(order.getId()).stream()
-                    .filter(p -> p.getMethod() == PaymentMethod.ONLINE && p.getStatus() == PaymentStatus.SUCCESS)
+                    .filter(p -> (returned || p.getMethod() == PaymentMethod.ONLINE) && p.getStatus() == PaymentStatus.SUCCESS)
                     .map(Payment::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
         }
-        List<OrderRefundSummaryResponse.Line> lines = ledger.findByOrderIdOrdered(order.getId()).stream()
+        List<OrderRefundSummaryResponse.Line> lines = history.stream()
                 .map(r -> new OrderRefundSummaryResponse.Line(r.getId(), r.getRequestedAt(), label(r.getComponent()),
                         r.getFulfillment() == null ? null : r.getFulfillment().getId(), r.getAmount(), r.getStatus(),
                         r.getReason(), withActors ? actor(r) : null)).toList();
@@ -97,6 +101,7 @@ public class OrderRefundViewService {
             case GOODS -> "Hoàn tiền hàng không giao được";
             case SHIPPING -> "Hoàn phí giao hàng (không có hàng nào được giao)";
             case WHOLE_ORDER -> "Hoàn tiền toàn bộ đơn";
+            case RETURN -> "Hoàn tiền hàng trả lại (giữ lại phí giao hàng)";
         };
     }
 }

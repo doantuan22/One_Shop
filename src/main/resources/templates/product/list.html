@@ -610,6 +610,11 @@
         <div class="catalog-count-text" id="catalog-count">
             Tìm thấy <strong th:text="${catalog.totalElements}">12</strong> sản phẩm phù hợp
         </div>
+        <form method="post" th:action="@{/stores/clear}" class="d-flex align-items-center gap-2 flex-wrap" id="catalog-store-scope" th:if="${selectedStore != null}">
+            <input type="hidden" name="returnTo" value="/products">
+            <span class="small">Đang xem sản phẩm tại <strong th:text="${selectedStore.name}">OneShop Thủ Đức</strong></span>
+            <button type="submit" class="btn btn-outline-secondary btn-sm">Xem toàn chuỗi</button>
+        </form>
     </div>
 
     <!-- Empty State -->
@@ -656,13 +661,16 @@
                         </div>
 
                         <!-- Trạng thái kho hàng toàn chuỗi -->
-                        <div class="stock-badge-row" th:with="available=${#lists.size(item.stores.?[inStock]) > 0}">
-                            <span class="stock-badge-tag in-stock" th:if="${available}">Còn hàng toàn hệ thống</span>
+                        <!-- (khi đã chọn chi nhánh: còn hàng tại chính chi nhánh đó) -->
+                        <div class="stock-badge-row"
+                             th:with="available=${item.atSelectedStore != null ? item.atSelectedStore.inStock : #lists.size(item.stores.?[inStock]) > 0}">
+                            <span class="stock-badge-tag in-stock" th:if="${available and item.atSelectedStore == null}">Còn hàng toàn hệ thống</span>
+                            <span class="stock-badge-tag in-stock" th:if="${available and item.atSelectedStore != null}">Còn hàng tại chi nhánh</span>
                             <span class="stock-badge-tag out-stock" th:unless="${available}">Hết hàng</span>
                         </div>
 
                         <!-- Thao tác mua hàng -->
-                        <div th:if="${#lists.size(item.stores.?[inStock]) > 0}">
+                        <div th:if="${item.atSelectedStore != null ? item.atSelectedStore.inStock : #lists.size(item.stores.?[inStock]) > 0}">
                             <form th:action="@{/cart/items}" method="post" sec:authorize="hasRole('CUSTOMER')">
                                 <input type="hidden" name="productId" th:value="${product.id}">
                                 <input type="hidden" name="quantity" value="1">

@@ -5,8 +5,8 @@
     "controller" : "com.oneshop.controller.admin.AdminReviewController",
     "path" : "/admin/reviews"
   },
-  "location" : "http://localhost:56221/login",
-  "executedAt" : "2026-10-24T02:07:12.656912400Z",
+  "location" : "http://localhost:57296/login",
+  "executedAt" : "2026-10-24T09:12:18.468216800Z",
   "expected" : 302,
   "actual" : 302,
   "requestPath" : "/admin/reviews",

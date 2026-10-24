@@ -131,7 +131,7 @@ class CheckoutWebIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void checkoutPageHasNoStoreGroupsAndShowsOneOrderWithItsFulfillments() throws Exception {
-        when(checkoutService.preview(eq(CUSTOMER), any(), any(), any(), any(), any()))
+        when(checkoutService.preview(eq(CUSTOMER), any(), any(), any(), any(), any(), any()))
                 .thenReturn(preview(FulfillmentType.DELIVERY, PaymentMethod.ONLINE, true, true, true));
 
         String html = get("/checkout?cartItemIds=11&cartItemIds=12&fulfillmentType=DELIVERY&paymentMethod=ONLINE",
@@ -149,12 +149,12 @@ class CheckoutWebIntegrationTest extends AbstractIntegrationTest {
         assertThat(html).contains("id=\"online-deadline\"");
         assertThat(html).doesNotContain("id=\"cod-split\"");
         verify(checkoutService).preview(CUSTOMER, List.of(11L, 12L), FulfillmentType.DELIVERY, PaymentMethod.ONLINE,
-                null, null);
+                null, null, null);
     }
 
     @Test
     void codFromSeveralStoresAsksForExplicitSplitConsent() throws Exception {
-        when(checkoutService.preview(eq(CUSTOMER), any(), any(), any(), any(), any()))
+        when(checkoutService.preview(eq(CUSTOMER), any(), any(), any(), any(), any(), any()))
                 .thenReturn(preview(FulfillmentType.DELIVERY, PaymentMethod.COD, true, true, true));
 
         String html = get("/checkout?cartItemIds=11&cartItemIds=12", "Cookie", cookieOf(CUSTOMER, RoleName.CUSTOMER)).body();
@@ -165,7 +165,7 @@ class CheckoutWebIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void closedFlowsAreShownAsClosedNotHidden() throws Exception {
-        when(checkoutService.preview(eq(CUSTOMER), any(), any(), any(), any(), any()))
+        when(checkoutService.preview(eq(CUSTOMER), any(), any(), any(), any(), any(), any()))
                 .thenReturn(preview(FulfillmentType.DELIVERY, PaymentMethod.COD, false, false, false));
 
         String html = get("/checkout?cartItemIds=11", "Cookie", cookieOf(CUSTOMER, RoleName.CUSTOMER)).body();
@@ -222,7 +222,7 @@ class CheckoutWebIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void aRefusalShowsTheCheckoutPageAgainWithTheReasonAndTheChoicesMade() throws Exception {
-        when(checkoutService.preview(eq(CUSTOMER), any(), any(), any(), any(), any()))
+        when(checkoutService.preview(eq(CUSTOMER), any(), any(), any(), any(), any(), any()))
                 .thenReturn(preview(FulfillmentType.DELIVERY, PaymentMethod.COD, true, true, true));
         when(checkoutService.placeOrder(eq(CUSTOMER), any(PlaceOrderRequest.class)))
                 .thenThrow(new CheckoutConflictException(CheckoutConflictException.CODE_PLAN_CHANGED,
@@ -241,7 +241,7 @@ class CheckoutWebIntegrationTest extends AbstractIntegrationTest {
     void aBusinessRefusalWithoutAPreviewFallsBackToTheCart() throws Exception {
         when(checkoutService.placeOrder(eq(CUSTOMER), any(PlaceOrderRequest.class)))
                 .thenThrow(new BadRequestException("cartItemIds", "Có sản phẩm đã chọn không còn trong giỏ hàng."));
-        when(checkoutService.preview(eq(CUSTOMER), any(), any(), any(), any(), any()))
+        when(checkoutService.preview(eq(CUSTOMER), any(), any(), any(), any(), any(), any()))
                 .thenThrow(new BadRequestException("cartItemIds", "Có sản phẩm đã chọn không còn trong giỏ hàng."));
 
         HttpResponse<String> response = postAs(cookieOf(CUSTOMER, RoleName.CUSTOMER), delivery());
@@ -252,7 +252,7 @@ class CheckoutWebIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void aLockConflictIsReportedAsBusyNotAsAnError() throws Exception {
-        when(checkoutService.preview(eq(CUSTOMER), any(), any(), any(), any(), any()))
+        when(checkoutService.preview(eq(CUSTOMER), any(), any(), any(), any(), any(), any()))
                 .thenReturn(preview(FulfillmentType.DELIVERY, PaymentMethod.COD, true, true, false));
         when(checkoutService.placeOrder(eq(CUSTOMER), any(PlaceOrderRequest.class)))
                 .thenThrow(new CannotAcquireLockException("deadlock victim"));
@@ -266,7 +266,7 @@ class CheckoutWebIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void invalidFormValuesNeverReachTheService() throws Exception {
-        when(checkoutService.preview(eq(CUSTOMER), any(), any(), any(), any(), any()))
+        when(checkoutService.preview(eq(CUSTOMER), any(), any(), any(), any(), any(), any()))
                 .thenReturn(preview(FulfillmentType.DELIVERY, PaymentMethod.COD, true, true, false));
         String jwt = cookieOf(CUSTOMER, RoleName.CUSTOMER);
 

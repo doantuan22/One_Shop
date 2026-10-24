@@ -1,0 +1,1 @@
+{"request":"/admin/products?page=2147483646","expected":400,"timestamp":"2026-10-24T09:13:12.426759Z","actual":400}

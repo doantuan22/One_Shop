@@ -1,0 +1,249 @@
+{
+  "actual" : 403,
+  "databaseAfter" : {
+    "brands" : {
+      "n" : 8,
+      "c" : -973703262
+    },
+    "cart_items" : {
+      "n" : 4,
+      "c" : 67306240
+    },
+    "carts" : {
+      "n" : 2,
+      "c" : 16128
+    },
+    "categories" : {
+      "n" : 5,
+      "c" : -1965189473
+    },
+    "checkout_sessions" : {
+      "n" : 8,
+      "c" : 162995925
+    },
+    "customer_addresses" : {
+      "n" : 5,
+      "c" : -89776972
+    },
+    "image_cleanup_tasks" : {
+      "n" : 0,
+      "c" : null
+    },
+    "inventory_movements" : {
+      "n" : 16,
+      "c" : 428750690
+    },
+    "order_fulfillment_status_history" : {
+      "n" : 33,
+      "c" : -582819563
+    },
+    "order_fulfillments" : {
+      "n" : 12,
+      "c" : -1329872354
+    },
+    "order_items" : {
+      "n" : 13,
+      "c" : 1557741534
+    },
+    "order_return_images" : {
+      "n" : 0,
+      "c" : null
+    },
+    "order_return_items" : {
+      "n" : 0,
+      "c" : null
+    },
+    "order_returns" : {
+      "n" : 0,
+      "c" : null
+    },
+    "order_status_history" : {
+      "n" : 23,
+      "c" : 531544076
+    },
+    "orders" : {
+      "n" : 8,
+      "c" : -598035477
+    },
+    "payment_refunds" : {
+      "n" : 1,
+      "c" : 1807713238
+    },
+    "payments" : {
+      "n" : 8,
+      "c" : -1083495551
+    },
+    "product_images" : {
+      "n" : 27,
+      "c" : -1147781977
+    },
+    "products" : {
+      "n" : 27,
+      "c" : -1021701651
+    },
+    "promotion_usages" : {
+      "n" : 0,
+      "c" : null
+    },
+    "promotions" : {
+      "n" : 3,
+      "c" : 1771025411
+    },
+    "review_replies" : {
+      "n" : 3,
+      "c" : 482680295
+    },
+    "reviews" : {
+      "n" : 3,
+      "c" : -1037222342
+    },
+    "roles" : {
+      "n" : 3,
+      "c" : -1820414750
+    },
+    "staff_store_assignments" : {
+      "n" : 5,
+      "c" : 1743337656
+    },
+    "store_products" : {
+      "n" : 47,
+      "c" : -549853999
+    },
+    "stores" : {
+      "n" : 6,
+      "c" : 182220037
+    },
+    "users" : {
+      "n" : 10,
+      "c" : 2110111169
+    }
+  },
+  "executedAt" : "2026-10-24T09:12:23.543218300Z",
+  "kind" : "wrong-role with valid JWT and CSRF",
+  "actor" : "khachhang1@example.com",
+  "expected" : 403,
+  "route" : {
+    "verb" : "GET",
+    "method" : "list",
+    "controller" : "com.oneshop.controller.staff.StaffOrderReturnController",
+    "path" : "/staff/returns"
+  },
+  "databaseBefore" : {
+    "brands" : {
+      "n" : 8,
+      "c" : -973703262
+    },
+    "cart_items" : {
+      "n" : 4,
+      "c" : 67306240
+    },
+    "carts" : {
+      "n" : 2,
+      "c" : 16128
+    },
+    "categories" : {
+      "n" : 5,
+      "c" : -1965189473
+    },
+    "checkout_sessions" : {
+      "n" : 8,
+      "c" : 162995925
+    },
+    "customer_addresses" : {
+      "n" : 5,
+      "c" : -89776972
+    },
+    "image_cleanup_tasks" : {
+      "n" : 0,
+      "c" : null
+    },
+    "inventory_movements" : {
+      "n" : 16,
+      "c" : 428750690
+    },
+    "order_fulfillment_status_history" : {
+      "n" : 33,
+      "c" : -582819563
+    },
+    "order_fulfillments" : {
+      "n" : 12,
+      "c" : -1329872354
+    },
+    "order_items" : {
+      "n" : 13,
+      "c" : 1557741534
+    },
+    "order_return_images" : {
+      "n" : 0,
+      "c" : null
+    },
+    "order_return_items" : {
+      "n" : 0,
+      "c" : null
+    },
+    "order_returns" : {
+      "n" : 0,
+      "c" : null
+    },
+    "order_status_history" : {
+      "n" : 23,
+      "c" : 531544076
+    },
+    "orders" : {
+      "n" : 8,
+      "c" : -598035477
+    },
+    "payment_refunds" : {
+      "n" : 1,
+      "c" : 1807713238
+    },
+    "payments" : {
+      "n" : 8,
+      "c" : -1083495551
+    },
+    "product_images" : {
+      "n" : 27,
+      "c" : -1147781977
+    },
+    "products" : {
+      "n" : 27,
+      "c" : -1021701651
+    },
+    "promotion_usages" : {
+      "n" : 0,
+      "c" : null
+    },
+    "promotions" : {
+      "n" : 3,
+      "c" : 1771025411
+    },
+    "review_replies" : {
+      "n" : 3,
+      "c" : 482680295
+    },
+    "reviews" : {
+      "n" : 3,
+      "c" : -1037222342
+    },
+    "roles" : {
+      "n" : 3,
+      "c" : -1820414750
+    },
+    "staff_store_assignments" : {
+      "n" : 5,
+      "c" : 1743337656
+    },
+    "store_products" : {
+      "n" : 47,
+      "c" : -549853999
+    },
+    "stores" : {
+      "n" : 6,
+      "c" : 182220037
+    },
+    "users" : {
+      "n" : 10,
+      "c" : 2110111169
+    }
+  }
+}

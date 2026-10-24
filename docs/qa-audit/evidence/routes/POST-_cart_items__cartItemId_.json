@@ -6,7 +6,7 @@
     "path" : "/cart/items/{cartItemId}"
   },
   "location" : "",
-  "executedAt" : "2026-10-24T02:07:14.914622100Z",
+  "executedAt" : "2026-10-24T09:12:20.529539900Z",
   "expected" : 403,
   "actual" : 403,
   "requestPath" : "/cart/items/999999999",

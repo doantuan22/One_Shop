@@ -42,6 +42,11 @@ public class PaymentRefund {
     @JoinColumn(name = "fulfillment_id")
     private OrderFulfillment fulfillment;
 
+    /** Set only for the RETURN component. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "return_id")
+    private OrderReturn orderReturn;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private PaymentRefundComponent component;
@@ -92,6 +97,14 @@ public class PaymentRefund {
 
     public void setFulfillment(OrderFulfillment fulfillment) {
         this.fulfillment = fulfillment;
+    }
+
+    public OrderReturn getOrderReturn() {
+        return orderReturn;
+    }
+
+    public void setOrderReturn(OrderReturn orderReturn) {
+        this.orderReturn = orderReturn;
     }
 
     public PaymentRefundComponent getComponent() {

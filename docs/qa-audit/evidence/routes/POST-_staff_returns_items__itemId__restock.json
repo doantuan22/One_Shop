@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "restock",
+    "controller" : "com.oneshop.controller.staff.StaffOrderReturnController",
+    "path" : "/staff/returns/items/{itemId}/restock"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T09:12:23.395990500Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/staff/returns/items/999999999/restock",
+  "kind" : "anonymous guard/input probe"
+}

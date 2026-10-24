@@ -40,9 +40,20 @@ public interface CheckoutService {
      * @throws BadRequestException if nothing is chosen, an id is not a line of this customer's cart, or a chosen
      *                             line cannot be bought right now
      */
+    default CheckoutPreviewResponse preview(String customerEmail, Collection<Long> cartItemIds,
+                                            FulfillmentType fulfillmentType, PaymentMethod paymentMethod,
+                                            Long pickupStoreId, String shippingAddress) {
+        return preview(customerEmail, cartItemIds, fulfillmentType, paymentMethod, pickupStoreId, shippingAddress, null);
+    }
+
+    /**
+     * The same preview with the promotion code the customer picked (blank for none). The page also lists every open
+     * code with whether it works for this cart. A code that cannot be used is reported in
+     * {@code promotionProblem}; it never fails the preview and nothing is spent.
+     */
     CheckoutPreviewResponse preview(String customerEmail, Collection<Long> cartItemIds,
                                     FulfillmentType fulfillmentType, PaymentMethod paymentMethod, Long pickupStoreId,
-                                    String shippingAddress);
+                                    String shippingAddress, String promotionCode);
 
     /**
      * Places the order, all or nothing, in one transaction: loads the lines of the customer's own cart under the

@@ -5,8 +5,8 @@
     "controller" : "com.oneshop.controller.client.CheckoutController",
     "path" : "/checkout"
   },
-  "location" : "http://localhost:56221/login",
-  "executedAt" : "2026-10-24T02:07:15.278760200Z",
+  "location" : "http://localhost:57296/login",
+  "executedAt" : "2026-10-24T09:12:20.898217800Z",
   "expected" : 302,
   "actual" : 302,
   "requestPath" : "/checkout",

@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "GET",
+    "method" : "list",
+    "controller" : "com.oneshop.controller.staff.StaffOrderReturnController",
+    "path" : "/staff/returns"
+  },
+  "location" : "http://localhost:57296/login",
+  "executedAt" : "2026-10-24T09:12:23.520458700Z",
+  "expected" : 302,
+  "actual" : 302,
+  "requestPath" : "/staff/returns",
+  "kind" : "anonymous guard/input probe"
+}

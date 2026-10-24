@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head><title>Khuyến mãi</title></head>
+<body>
+<div class="os-page-header mb-4">
+    <div>
+        <h1 class="h3 mb-1">Mã khuyến mãi</h1>
+        <p class="os-muted-text mb-0">Khách chọn một mã ở trang thanh toán để giảm tiền hàng (không giảm phí giao hàng).
+            Mỗi mã có số lượt sử dụng và điều kiện; mã chỉ dùng được khi còn lượt và đơn đạt điều kiện.</p>
+    </div>
+    <div class="os-page-header__actions">
+        <a class="btn btn-primary" id="promotion-new" th:href="@{/admin/promotions/new}"><span aria-hidden="true">+</span> Thêm mã khuyến mãi</a>
+    </div>
+</div>
+
+<div class="alert alert-success" th:if="${param.success != null}" th:switch="${param.success[0]}">
+    <span th:case="'deleted'">Đã xóa mã khuyến mãi.</span>
+    <span th:case="*">Đã lưu mã khuyến mãi.</span>
+</div>
+<div class="alert alert-warning" th:if="${param.error != null}">
+    Mã này đã được khách hàng sử dụng nên không thể xóa (lịch sử đơn hàng được giữ lại). Hãy chỉnh sửa và chuyển sang "Ngừng áp dụng".
+</div>
+
+<form class="os-filter card mb-3" method="get" th:action="@{/admin/promotions}" role="search">
+    <div class="card-body">
+        <div class="os-filter-grid">
+            <div class="os-filter-field">
+                <label class="form-label" for="promo-q">Tìm kiếm</label>
+                <input class="form-control form-control-sm" id="promo-q" name="q" type="search" maxlength="100" th:value="${q}" placeholder="Mã hoặc tên khuyến mãi">
+            </div>
+            <div class="os-filter-field">
+                <label class="form-label" for="promo-status">Trạng thái</label>
+                <select class="form-select form-select-sm" id="promo-status" name="status">
+                    <option value="">Tất cả</option>
+                    <option value="ACTIVE" th:selected="${status != null and status.name() == 'ACTIVE'}">Đang áp dụng</option>
+                    <option value="INACTIVE" th:selected="${status != null and status.name() == 'INACTIVE'}">Ngừng áp dụng</option>
+                </select>
+            </div>
+            <div class="os-filter-field d-flex align-items-end gap-2 pb-1">
+                <button class="btn btn-primary btn-sm" type="submit">Áp dụng</button>
+                <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/promotions}">Xóa lọc</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="alert alert-secondary" th:if="${promotions.empty}">Chưa có mã khuyến mãi nào.</div>
+<div class="card shadow-sm" th:unless="${promotions.empty}">
+    <div class="table-responsive">
+        <table class="table align-middle os-table mb-0" id="promotions-table">
+            <thead><tr><th>Mã</th><th>Giảm</th><th>Điều kiện</th><th class="text-end">Lượt dùng</th><th>Thời gian</th><th>Trạng thái</th><th></th></tr></thead>
+            <tbody>
+            <tr th:each="p : ${promotions.content}" th:attr="data-promotion-code=${p.code}">
+                <td><div class="fw-semibold font-monospace" th:text="${p.code}">WELCOME10</div><div class="small text-secondary" th:text="${p.name}">Tên</div></td>
+                <td>
+                    <span th:if="${p.discountType.name() == 'PERCENT'}" th:text="${#numbers.formatDecimal(p.discountValue, 1, 0)} + '%'">10%</span>
+                    <span th:if="${p.discountType.name() == 'FIXED'}"><span th:replace="~{fragments/components :: price(${p.discountValue})}"></span></span>
+                    <div class="small text-secondary" th:if="${p.maxDiscountAmount != null}">tối đa <span th:replace="~{fragments/components :: price(${p.maxDiscountAmount})}"></span></div>
+                </td>
+                <td class="small">
+                    <div>Tiền hàng từ <span th:replace="~{fragments/components :: price(${p.minOrderAmount})}"></span></div>
+                    <div class="text-secondary" th:text="'Mỗi khách tối đa ' + ${p.perUserLimit} + ' lần'">Mỗi khách</div>
+                </td>
+                <td class="text-end"><span th:text="${p.usedCount} + ' / ' + ${p.usageLimit}">0 / 100</span>
+                    <div class="small text-secondary" th:text="'còn ' + ${p.remaining()}">còn 100</div></td>
+                <td class="small">
+                    <div th:text="${p.startAt != null} ? 'Từ ' + ${#temporals.format(p.startAt, 'dd/MM/yyyy HH:mm')} : 'Từ khi tạo'">Từ</div>
+                    <div th:text="${p.endAt != null} ? 'Đến ' + ${#temporals.format(p.endAt, 'dd/MM/yyyy HH:mm')} : 'Không giới hạn'">Đến</div>
+                </td>
+                <td><span class="badge os-soft" th:attr="data-state=${p.state}"
+                          th:classappend="${p.state == 'ACTIVE'} ? 'os-soft-success' : (${p.state == 'SCHEDULED'} ? 'os-soft-info' : (${p.state == 'INACTIVE'} ? 'os-soft-neutral' : 'os-soft-warning'))"
+                          th:text="${p.state == 'ACTIVE'} ? 'Đang áp dụng' : (${p.state == 'SCHEDULED'} ? 'Chưa bắt đầu' : (${p.state == 'EXPIRED'} ? 'Hết hạn' : (${p.state == 'EXHAUSTED'} ? 'Hết lượt' : 'Ngừng áp dụng')))">Trạng thái</span></td>
+                <td class="text-end text-nowrap">
+                    <a class="btn btn-sm btn-outline-primary" th:href="@{/admin/promotions/{id}/edit(id=${p.id})}">Sửa</a>
+                    <form class="d-inline" method="post" th:action="@{/admin/promotions/{id}/delete(id=${p.id})}"
+                          onsubmit="return confirm('Xóa mã khuyến mãi này?');">
+                        <button class="btn btn-sm btn-outline-danger" type="submit" th:disabled="${p.usedCount > 0}"
+                                th:title="${p.usedCount > 0} ? 'Mã đã được sử dụng, hãy chuyển sang Ngừng áp dụng' : null">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<nav aria-label="Phân trang khuyến mãi" class="d-flex align-items-center gap-3 mt-3" th:if="${promotions.totalPages > 1}">
+    <a class="btn btn-outline-secondary" th:if="${promotions.hasPrevious()}" th:href="@{/admin/promotions(status=${status}, q=${q}, page=${promotions.number - 1})}">Trang trước</a>
+    <span th:text="'Trang ' + ${promotions.number + 1} + ' / ' + ${promotions.totalPages}"></span>
+    <a class="btn btn-outline-secondary" th:if="${promotions.hasNext()}" th:href="@{/admin/promotions(status=${status}, q=${q}, page=${promotions.number + 1})}">Trang sau</a>
+</nav>
+</body>
+</html>

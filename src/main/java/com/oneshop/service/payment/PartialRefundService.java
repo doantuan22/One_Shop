@@ -5,6 +5,7 @@ import com.oneshop.entity.OrderFulfillment;
 import com.oneshop.entity.OrderFulfillmentStatus;
 import com.oneshop.entity.OrderItem;
 import com.oneshop.entity.OrderPaymentStatus;
+import com.oneshop.entity.OrderReturn;
 import com.oneshop.entity.Payment;
 import com.oneshop.entity.PaymentMethod;
 import com.oneshop.entity.PaymentRefund;
@@ -109,17 +110,61 @@ public class PartialRefundService {
         BigDecimal goods = goodsValue(part);
         BigDecimal shipping = shippingRefundDue(lockedOrder, part, parts) ? shippingFee(lockedOrder) : BigDecimal.ZERO;
         BigDecimal remaining = collected.getAmount().subtract(refunds.sumCommitted(collected.getId()));
-        if (goods.signum() <= 0 || goods.add(shipping).compareTo(remaining) > 0) {
+        // a part whose goods were fully covered by a promotion is worth 0: there is no goods row to refund then
+        if (goods.signum() < 0 || goods.add(shipping).compareTo(remaining) > 0) {
             throw new FulfillmentConflictException(FulfillmentConflictException.INCONSISTENT_FULFILLMENT,
                     "Số tiền hoàn vượt quá số tiền còn có thể hoàn của khoản thanh toán; không thực hiện hoàn tiền.");
         }
         boolean failed = false;
-        failed |= !record(lockedOrder, collected, part, PaymentRefundComponent.GOODS, goods, reason, actor);
+        if (goods.signum() > 0) {
+            failed |= !record(lockedOrder, collected, part, PaymentRefundComponent.GOODS, goods, reason, actor);
+        }
         if (shipping.signum() > 0) {
             failed |= !record(lockedOrder, collected, null, PaymentRefundComponent.SHIPPING, shipping, reason, actor);
         }
         boolean full = !failed && closeWhenFullyRefunded(lockedOrder, collected, reason);
         return new Result(failed ? Status.SIMULATION_FAILED : Status.REFUNDED, goods, shipping, full);
+    }
+
+    /**
+     * Post-delivery return approved by an Administrator: gives back the goods value of the returned Order in
+     * simulation, recorded as ONE {@code RETURN} ledger row. The shipping fee is never part of it. Works for every
+     * payment method, because a COMPLETED Order always has exactly one collected ({@code SUCCESS}) payment. A failed
+     * simulation throws, so the caller's approval rolls back whole and can simply be repeated.
+     *
+     * @param lockedOrder the Order, locked by the caller
+     * @param amount      goods value of the returned lines
+     */
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void refundReturn(Order lockedOrder, OrderReturn orderReturn, BigDecimal amount, User admin, String reason) {
+        List<Payment> collected = payments.findForLockedOrder(lockedOrder.getId()).stream()
+                .filter(p -> p.getStatus() == PaymentStatus.SUCCESS).toList();
+        if (collected.size() != 1) {
+            throw new FulfillmentConflictException(FulfillmentConflictException.INCONSISTENT_FULFILLMENT,
+                    "Đơn hàng không có đúng một khoản thanh toán đã thu để hoàn tiền.");
+        }
+        Payment payment = collected.get(0);
+        BigDecimal remaining = payment.getAmount().subtract(refunds.sumCommitted(payment.getId()));
+        if (amount == null || amount.signum() <= 0 || amount.compareTo(remaining) > 0) {
+            throw new FulfillmentConflictException(FulfillmentConflictException.INCONSISTENT_FULFILLMENT,
+                    "Số tiền hoàn vượt quá số tiền còn có thể hoàn của khoản thanh toán; không thực hiện hoàn tiền.");
+        }
+        PaymentRefund row = new PaymentRefund();
+        row.setPayment(payment);
+        row.setOrder(lockedOrder);
+        row.setOrderReturn(orderReturn);
+        row.setComponent(PaymentRefundComponent.RETURN);
+        row.setAmount(amount);
+        row.setStatus(PaymentRefundStatus.PENDING_SIMULATION);
+        row.setReason(OrderStatusWriter.abbreviate(reason));
+        row.setRequestedBy(admin);
+        row.setRequestedAt(LocalDateTime.now().withNano(0));
+        refunds.saveAndFlush(row);
+        if (!simulate(row)) {
+            throw new FulfillmentConflictException(FulfillmentConflictException.INCONSISTENT_FULFILLMENT,
+                    "Hoàn tiền mô phỏng chưa thành công; yêu cầu trả hàng chưa được duyệt, vui lòng thử lại.");
+        }
+        closeWhenFullyRefunded(lockedOrder, payment, reason);
     }
 
     /** Retries the ledger rows whose simulation failed. Idempotent: finished rows are not touched. */
@@ -155,7 +200,7 @@ public class PartialRefundService {
     }
 
     private BigDecimal goodsValue(OrderFulfillment part) {
-        return items.findByFulfillmentIdInOrderByIdAsc(List.of(part.getId())).stream().map(OrderItem::getSubtotal)
+        return items.findByFulfillmentIdInOrderByIdAsc(List.of(part.getId())).stream().map(OrderItem::getNetSubtotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 

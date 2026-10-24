@@ -504,6 +504,50 @@
               </div>
             </section>
 
+            <!-- 2b. promotion code: ONE code for the whole order, a discount on the goods only -->
+            <section class="checkout-store-card mt-4" id="checkout-promotions" th:if="${preview.plan != null}">
+              <div class="store-header-bar">
+                <div>
+                  <h2 class="store-title">Mã khuyến mãi</h2>
+                  <div class="store-subtext">Chọn một mã để giảm tiền hàng (không giảm phí giao hàng).</div>
+                </div>
+              </div>
+              <div class="p-3">
+                <div class="alert alert-warning small" id="promotion-problem" th:if="${preview.promotionProblem != null}"
+                     th:text="${preview.promotionProblem}">Mã không dùng được</div>
+                <div class="text-secondary small" id="promotion-none" th:if="${preview.promotions.isEmpty()}">Hiện chưa có mã khuyến mãi nào đang áp dụng.</div>
+                <label class="selection-tile" th:unless="${preview.promotions.isEmpty()}">
+                  <input type="radio" name="promotionCode" value="" class="os-refresh"
+                         th:checked="${preview.appliedPromotion == null}" />
+                  <span class="selection-tile-content">
+                    <span class="selection-tile-label">Không dùng mã khuyến mãi</span>
+                  </span>
+                </label>
+                <label class="selection-tile mt-2" th:each="promo : ${preview.promotions}"
+                       th:classappend="${!promo.eligible} ? 'opacity-50'" th:attr="data-promotion=${promo.code},data-eligible=${promo.eligible}">
+                  <input type="radio" name="promotionCode" class="os-refresh" th:value="${promo.code}" th:disabled="${!promo.eligible}"
+                         th:checked="${preview.appliedPromotion != null and preview.appliedPromotion.code == promo.code}" />
+                  <span class="selection-tile-content">
+                    <span class="selection-tile-label"><span class="font-monospace" th:text="${promo.code}">WELCOME10</span> &middot; <span th:text="${promo.name}">Tên</span></span>
+                    <span class="small d-block" th:if="${promo.type.name() == 'PERCENT'}">
+                      Giảm <span th:text="${#numbers.formatDecimal(promo.value, 1, 0)}">10</span>%<span th:if="${promo.maxDiscount != null}"> (tối đa <span th:replace="~{fragments/components :: price(${promo.maxDiscount})}"></span>)</span>
+                    </span>
+                    <span class="small d-block" th:if="${promo.type.name() == 'FIXED'}">
+                      Giảm <span th:replace="~{fragments/components :: price(${promo.value})}"></span>
+                    </span>
+                    <span class="small text-secondary d-block">
+                      Đơn từ <span th:replace="~{fragments/components :: price(${promo.minOrderAmount})}"></span>
+                      &middot; còn <span th:text="${promo.remaining}">10</span> lượt<span th:if="${promo.endAt != null}"> &middot; đến <span th:text="${#temporals.format(promo.endAt, 'dd/MM/yyyy HH:mm')}">hạn</span></span>
+                    </span>
+                    <span class="small text-success d-block" th:if="${promo.eligible}">
+                      Bạn được giảm <span th:replace="~{fragments/components :: price(${promo.discount})}"></span>
+                    </span>
+                    <span class="small text-danger d-block" th:unless="${promo.eligible}" th:text="${promo.reason}">Chưa đủ điều kiện</span>
+                  </span>
+                </label>
+              </div>
+            </section>
+
             <!-- 3. where it comes from -->
             <section class="checkout-store-card mt-4" id="checkout-plan">
               <div class="store-header-bar">
@@ -574,6 +618,12 @@
                 <span>Tiền hàng</span>
                 <span class="fw-semibold text-dark" th:if="${preview.plan != null}">
                   <span th:replace="~{fragments/components :: price(${preview.plan.itemsTotal})}"></span>
+                </span>
+              </div>
+              <div class="summary-metric-row" id="discount-row" th:if="${preview.hasDiscount()}">
+                <span>Khuyến mãi <span class="font-monospace" th:text="${preview.appliedPromotion.code}">MÃ</span></span>
+                <span class="fw-semibold text-success" id="discount-amount">
+                  &minus;<span th:replace="~{fragments/components :: price(${preview.discountTotal})}"></span>
                 </span>
               </div>
               <div class="summary-metric-row" th:if="${preview.shippingFeePerOrder != null}">
@@ -660,6 +710,8 @@
           var pay = form.querySelector('input[name="paymentMethod"]:checked');
           var store = form.querySelector('input[name="pickupStoreId"]:checked');
           var addr = form.querySelector('input[name="shippingAddress"]');
+          var promo = form.querySelector('input[name="promotionCode"]:checked');
+          if (promo && promo.value) params.set("promotionCode", promo.value);
           if (type) params.set("fulfillmentType", type.value);
           if (pay) params.set("paymentMethod", pay.value);
           if (store) params.set("pickupStoreId", store.value);

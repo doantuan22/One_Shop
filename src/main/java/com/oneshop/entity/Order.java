@@ -88,6 +88,14 @@ public class Order extends TimestampedEntity {
     @Column(name = "shipping_fee", nullable = false, precision = 18, scale = 2)
     private BigDecimal shippingFee = BigDecimal.ZERO;
 
+    /** Promotion: taken off the goods (never the shipping fee). {@code totalAmount = goods - discountAmount + shippingFee}. */
+    @Column(name = "discount_amount", nullable = false, precision = 18, scale = 2)
+    private BigDecimal discountAmount = BigDecimal.ZERO;
+
+    /** Snapshot of the promotion code used, so editing or deleting the promotion never changes this Order. */
+    @Column(name = "promotion_code", length = 50)
+    private String promotionCode;
+
     @OneToMany(mappedBy = "order")
     private List<OrderFulfillment> fulfillments = new ArrayList<>();
 
@@ -222,6 +230,22 @@ public class Order extends TimestampedEntity {
 
     public void setShippingFee(BigDecimal shippingFee) {
         this.shippingFee = shippingFee;
+    }
+
+    public BigDecimal getDiscountAmount() {
+        return discountAmount == null ? BigDecimal.ZERO : discountAmount;
+    }
+
+    public void setDiscountAmount(BigDecimal discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public String getPromotionCode() {
+        return promotionCode;
+    }
+
+    public void setPromotionCode(String promotionCode) {
+        this.promotionCode = promotionCode;
     }
 
     public List<OrderFulfillment> getFulfillments() {

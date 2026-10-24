@@ -55,12 +55,13 @@ public class CheckoutController {
                        @RequestParam(name = "shippingAddress", required = false) String shippingAddress,
                        @RequestParam(name = "receiverName", required = false) String receiverName,
                        @RequestParam(name = "receiverPhone", required = false) String receiverPhone,
+                       @RequestParam(name = "promotionCode", required = false) String promotionCode,
                        Principal principal, Model model, HttpServletResponse response) {
         PlaceOrderRequest edited = receiverName == null && receiverPhone == null ? null
                 : new PlaceOrderRequest(cartItemIds, fulfillmentType, paymentMethod, receiverName, receiverPhone,
-                shippingAddress, pickupStoreId, false, null, null);
+                shippingAddress, pickupStoreId, false, null, null, promotionCode);
         return checkoutPage(principal, model, response, cartItemIds, fulfillmentType, paymentMethod, pickupStoreId,
-                shippingAddress, edited, null, null);
+                shippingAddress, promotionCode, edited, null, null);
     }
 
     /** Places the order. On any refusal nothing was created and the page says why, with a fresh preview. */
@@ -93,7 +94,8 @@ public class CheckoutController {
                 request == null ? null : request.fulfillmentType(),
                 request == null ? null : request.paymentMethod(),
                 request == null ? null : request.pickupStoreId(),
-                request == null ? null : request.shippingAddress(), request, error, code);
+                request == null ? null : request.shippingAddress(), request == null ? null : request.promotionCode(),
+                request, error, code);
     }
 
     /** What a checkout created: its Order(s), and for each Order the Fulfillment of every supplying Store. */
@@ -109,11 +111,11 @@ public class CheckoutController {
      */
     private String checkoutPage(Principal principal, Model model, HttpServletResponse response,
                                 List<Long> cartItemIds, FulfillmentType fulfillmentType, PaymentMethod paymentMethod,
-                                Long pickupStoreId, String shippingAddress, PlaceOrderRequest submitted,
-                                String error, String errorCode) {
+                                Long pickupStoreId, String shippingAddress, String promotionCode,
+                                PlaceOrderRequest submitted, String error, String errorCode) {
         try {
             model.addAttribute("preview", checkoutService.preview(principal.getName(), cartItemIds, fulfillmentType,
-                    paymentMethod, pickupStoreId, shippingAddress));
+                    paymentMethod, pickupStoreId, shippingAddress, promotionCode));
             model.addAttribute("form", submitted);
             model.addAttribute("checkoutError", error);
             model.addAttribute("checkoutErrorCode", errorCode);

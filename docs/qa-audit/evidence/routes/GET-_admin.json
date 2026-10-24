@@ -5,8 +5,8 @@
     "controller" : "com.oneshop.controller.admin.AdminDashboardController",
     "path" : "/admin"
   },
-  "location" : "http://localhost:56221/login",
-  "executedAt" : "2026-10-24T02:07:14.666688400Z",
+  "location" : "http://localhost:57296/login",
+  "executedAt" : "2026-10-24T09:12:20.322999200Z",
   "expected" : 302,
   "actual" : 302,
   "requestPath" : "/admin",

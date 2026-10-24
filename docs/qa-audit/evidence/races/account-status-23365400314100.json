@@ -1,0 +1,20 @@
+{
+  "before" : {
+    "user_id" : 2,
+    "role_id" : 2,
+    "status" : "ACTIVE",
+    "full_name" : "Nguyá»…n VÄƒn An (Thá»§ Äá»©c)",
+    "phone" : "0900000002",
+    "updated_at" : 1792828003000
+  },
+  "httpStatus" : 403,
+  "afterAdmin" : {
+    "role_id" : 2,
+    "status" : "INACTIVE"
+  },
+  "afterProfile" : {
+    "role_id" : 2,
+    "status" : "INACTIVE"
+  },
+  "nextStaffHttpStatus" : 302
+}

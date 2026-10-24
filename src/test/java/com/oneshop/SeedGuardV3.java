@@ -50,6 +50,7 @@ final class SeedGuardV3 {
     private long maxHistory;
     private long maxFulfillment;
     private long maxStoreProduct;
+    private long maxPromotion;
     private List<StoreProductState> storeProducts;
     private List<ProductState> products;
     private List<StoreState> stores;
@@ -75,6 +76,7 @@ final class SeedGuardV3 {
         maxHistory = max("order_status_history", "history_id");
         maxFulfillment = max("order_fulfillments", "fulfillment_id");
         maxStoreProduct = max("store_products", "store_product_id");
+        maxPromotion = max("promotions", "promotion_id");
         storeProducts = jdbc.query("select store_product_id, quantity, reserved_quantity, price, status, updated_at "
                         + "from dbo.store_products",
                 (rs, i) -> new StoreProductState(rs.getLong(1), rs.getInt(2), rs.getInt(3), rs.getBigDecimal(4),
@@ -111,7 +113,18 @@ final class SeedGuardV3 {
         jdbc.update("delete from dbo.order_status_history where history_id > ?", maxHistory);
         jdbc.update("delete from dbo.order_fulfillment_status_history where fulfillment_id > ?", maxFulfillment);
         jdbc.update("delete from dbo.payment_refunds where order_id > ?", maxOrder);
+        // post-delivery returns of the Orders above: ledger rows first (they point at the return), then its children
+        jdbc.update("delete from dbo.order_return_images where return_id in "
+                + "(select return_id from dbo.order_returns where order_id > ?)", maxOrder);
+        jdbc.update("delete from dbo.order_return_items where return_id in "
+                + "(select return_id from dbo.order_returns where order_id > ?)", maxOrder);
+        jdbc.update("delete from dbo.order_returns where order_id > ?", maxOrder);
         jdbc.update("delete from dbo.payments where order_id > ?", maxOrder);
+        // promotion uses of the checkouts above, and the uses they spent (usage rows are put back to the remembered count)
+        jdbc.update("delete from dbo.promotion_usages where checkout_id > ?", maxCheckout);
+        jdbc.update("delete from dbo.promotions where promotion_id > ?", maxPromotion);
+        jdbc.update("update dbo.promotions set used_count = (select count(*) from dbo.promotion_usages u where "
+                + "u.promotion_id = promotions.promotion_id and u.status = 'USED')");
         jdbc.update("delete from dbo.order_items where order_id > ?", maxOrder);
         jdbc.update("delete from dbo.order_fulfillments where fulfillment_id > ?", maxFulfillment);
         jdbc.update("delete from dbo.orders where order_id > ?", maxOrder);

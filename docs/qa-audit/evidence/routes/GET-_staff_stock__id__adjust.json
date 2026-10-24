@@ -5,8 +5,8 @@
     "controller" : "com.oneshop.controller.staff.StaffStockController",
     "path" : "/staff/stock/{id}/adjust"
   },
-  "location" : "http://localhost:56221/login",
-  "executedAt" : "2026-10-24T02:07:17.777763800Z",
+  "location" : "http://localhost:57296/login",
+  "executedAt" : "2026-10-24T09:12:23.818393Z",
   "expected" : 302,
   "actual" : 302,
   "requestPath" : "/staff/stock/999999999/adjust",

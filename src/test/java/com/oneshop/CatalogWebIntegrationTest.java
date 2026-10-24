@@ -110,10 +110,19 @@ class CatalogWebIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void aStaleStoreCookieNoLongerScopesTheCatalog() throws Exception {
+    void aSelectedStoreScopesTheCatalogToItsOwnProducts() throws Exception {
         String html = get("/products?q=serum", "Cookie", STORE_COOKIE + "=2").body();
 
-        assertThat(html).contains("138.000 ₫").doesNotContain("135.000 ₫", "data-store-scope");
+        assertThat(html).contains("id=\"catalog-store-scope\"", "OneShop Gò Vấp", "Xem toàn chuỗi");
+        verify(storeProductService).getStoreCatalog(eq(2L), any(), any());
+        verify(storeProductService, never()).getChainCatalog(any(), any());
+    }
+
+    @Test
+    void aStoreInTheUrlNeverScopesTheCatalog() throws Exception {
+        String html = get("/products?q=serum&storeId=2&selectedStoreId=2").body();
+
+        assertThat(html).doesNotContain("id=\"catalog-store-scope\"");
         verify(storeProductService).getChainCatalog(any(), any());
         verify(storeProductService, never()).getStoreCatalog(anyLong(), any(), any());
     }

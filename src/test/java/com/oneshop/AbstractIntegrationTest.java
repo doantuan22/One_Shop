@@ -119,6 +119,10 @@ abstract class AbstractIntegrationTest {
     @MockitoBean
     protected com.oneshop.service.payment.OrderRefundViewService orderRefundViewService;
 
+    /** Post-delivery return read model: database tests cover it; unstubbed, no Order has a return and none may start one. */
+    @MockitoBean
+    protected com.oneshop.service.returns.CustomerOrderReturnService customerOrderReturnService;
+
     @BeforeEach
     void staffReadModelsByDefault() {
         when(staffOperationsService.getDashboard()).thenAnswer(invocation -> new StaffDashboardResponse(

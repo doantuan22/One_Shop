@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "approve",
+    "controller" : "com.oneshop.controller.admin.AdminOrderReturnController",
+    "path" : "/admin/returns/{id}/approve"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T09:12:17.812742100Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/admin/returns/999999999/approve",
+  "kind" : "anonymous guard/input probe"
+}

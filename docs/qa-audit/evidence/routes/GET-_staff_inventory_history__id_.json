@@ -5,8 +5,8 @@
     "controller" : "com.oneshop.controller.staff.StaffStockController",
     "path" : "/staff/inventory-history/{id}"
   },
-  "location" : "http://localhost:56221/login",
-  "executedAt" : "2026-10-24T02:07:17.206257100Z",
+  "location" : "http://localhost:57296/login",
+  "executedAt" : "2026-10-24T09:12:22.899722900Z",
   "expected" : 302,
   "actual" : 302,
   "requestPath" : "/staff/inventory-history/999999999",

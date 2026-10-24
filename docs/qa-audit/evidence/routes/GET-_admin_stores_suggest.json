@@ -5,8 +5,8 @@
     "controller" : "com.oneshop.controller.admin.AdminStoreController",
     "path" : "/admin/stores/suggest"
   },
-  "location" : "http://localhost:56221/login",
-  "executedAt" : "2026-10-24T02:07:13.738739600Z",
+  "location" : "http://localhost:57296/login",
+  "executedAt" : "2026-10-24T09:12:19.467138100Z",
   "expected" : 302,
   "actual" : 302,
   "requestPath" : "/admin/stores/suggest",

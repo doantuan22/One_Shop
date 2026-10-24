@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head><title>Yêu cầu trả hàng</title></head>
+<body>
+<div th:replace="~{fragments/components :: pageHeader('Yêu cầu trả hàng', 'Khách trả cả đơn trong 3 ngày kể từ khi nhận hàng. Chỉ quản trị viên duyệt hoặc từ chối; khi duyệt, tiền hàng được hoàn mô phỏng ngay và hàng hoàn chuyển cho nhân viên chi nhánh đã giao.')}"></div>
+
+<div class="os-quick-chips mb-3">
+    <ul class="nav nav-pills os-tabs" id="return-views" aria-label="Lọc theo trạng thái">
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${status == null} ? 'active'" th:href="@{/admin/returns}">Tất cả</a>
+        </li>
+        <li class="nav-item" th:each="s : ${statuses}">
+            <a class="nav-link" th:classappend="${status == s} ? 'active'" th:href="@{/admin/returns(status=${s})}">
+                <span th:text="${s.name() == 'REQUESTED'} ? 'Chờ duyệt' : (${s.name() == 'APPROVED'} ? 'Đã duyệt' : (${s.name() == 'COMPLETED'} ? 'Hoàn tất' : 'Từ chối'))">Chờ duyệt</span>
+                <span class="badge text-bg-light border ms-1" id="return-waiting" th:if="${s.name() == 'REQUESTED'}" th:text="${waiting}">0</span>
+            </a>
+        </li>
+    </ul>
+</div>
+
+<div class="alert alert-secondary" th:if="${returns.empty}">Chưa có yêu cầu trả hàng nào.</div>
+<div class="card shadow-sm" th:unless="${returns.empty}">
+    <div class="table-responsive">
+        <table class="table align-middle os-table mb-0" id="returns-table">
+            <thead><tr><th>Yêu cầu</th><th>Đơn hàng</th><th>Khách hàng</th><th class="text-end">Tiền hàng hoàn</th><th>Trạng thái</th><th>Gửi lúc</th><th></th></tr></thead>
+            <tbody>
+            <tr th:each="r : ${returns.content}" th:attr="data-return-id=${r.returnId}">
+                <td th:text="'#' + ${r.returnId}">#1</td>
+                <td><a th:href="@{/admin/orders/{id}(id=${r.orderId})}" th:text="'#' + ${r.orderId}">#1</a></td>
+                <td><div th:text="${r.customerName}">Khách</div><div class="small text-secondary" th:text="${r.customerEmail}"></div></td>
+                <td class="text-end"><span th:replace="~{fragments/components :: price(${r.refundAmount})}"></span></td>
+                <td><span th:replace="~{fragments/returns :: status(${r.status})}"></span></td>
+                <td th:text="${#temporals.format(r.requestedAt, 'dd/MM/yyyy HH:mm')}"></td>
+                <td class="text-end"><a class="btn btn-sm btn-outline-primary" th:href="@{/admin/returns/{id}(id=${r.returnId})}">Xem</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<nav aria-label="Phân trang yêu cầu trả hàng" class="d-flex align-items-center gap-3 mt-3" th:if="${returns.totalPages > 1}">
+    <a class="btn btn-outline-secondary" th:if="${returns.hasPrevious()}" th:href="@{/admin/returns(status=${status}, page=${returns.number - 1})}">Trang trước</a>
+    <span th:text="'Trang ' + ${returns.number + 1} + ' / ' + ${returns.totalPages}"></span>
+    <a class="btn btn-outline-secondary" th:if="${returns.hasNext()}" th:href="@{/admin/returns(status=${status}, page=${returns.number + 1})}">Trang sau</a>
+</nav>
+</body>
+</html>

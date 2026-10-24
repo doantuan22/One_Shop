@@ -5,8 +5,8 @@
     "controller" : "com.oneshop.controller.admin.AdminStoreProductController",
     "path" : "/admin/store-products"
   },
-  "location" : "http://localhost:56221/login",
-  "executedAt" : "2026-10-24T02:07:13.491608600Z",
+  "location" : "http://localhost:57296/login",
+  "executedAt" : "2026-10-24T09:12:19.231101900Z",
   "expected" : 302,
   "actual" : 302,
   "requestPath" : "/admin/store-products",

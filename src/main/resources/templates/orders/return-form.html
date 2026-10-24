@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Yêu cầu trả hàng</title></head><body>
+<a class="btn btn-outline-secondary btn-sm mb-3" th:href="@{/orders/{id}(id=${orderId})}">Quay lại đơn hàng</a>
+<h1 class="h3 mb-3" th:text="'Trả hàng - đơn #' + ${orderId}">Trả hàng</h1>
+
+<div class="alert alert-danger" role="alert" th:if="${param.error != null}" th:switch="${param.error[0]}">
+    <span th:case="'reason'" th:text="'Vui lòng nhập lý do trả hàng từ ' + ${minReason} + ' đến ' + ${maxReason} + ' ký tự.'"></span>
+    <span th:case="'images'" th:text="'Vui lòng đính kèm từ 1 đến ' + ${maxImages} + ' hình ảnh.'"></span>
+    <span th:case="'size'">Ảnh quá lớn. Mỗi ảnh tối đa 5MB và tổng dung lượng tối đa 6MB.</span>
+    <span th:case="'upload'">Không thể tải ảnh lên lúc này. Vui lòng thử lại sau.</span>
+    <span th:case="*">Không thể gửi yêu cầu trả hàng. Đơn hàng có thể đã hết hạn trả hoặc đã có yêu cầu; vui lòng kiểm tra lại.</span>
+</div>
+
+<div class="alert alert-warning" id="return-blocked" th:unless="${eligibility.allowed}" th:text="${eligibility.message}">Không thể trả hàng</div>
+
+<form th:if="${eligibility.allowed}" method="post" enctype="multipart/form-data"
+      th:action="@{/orders/{id}/return(id=${orderId})}" class="card shadow-sm" id="return-form">
+    <div class="card-body">
+        <p>Bạn đang trả <strong>toàn bộ</strong> các sản phẩm đã nhận của đơn hàng này. Hạn gửi yêu cầu:
+            <strong th:text="${#temporals.format(eligibility.deadline, 'dd/MM/yyyy HH:mm')}"></strong>
+            (<span th:text="${windowDays}">3</span> ngày kể từ khi nhận hàng).</p>
+        <p>Tiền hàng được hoàn mô phỏng sau khi quản trị viên duyệt:
+            <strong><span th:replace="~{fragments/components :: price(${eligibility.refundAmount})}"></span></strong>.
+            Phí giao hàng không được hoàn.</p>
+        <div class="mb-3">
+            <label class="form-label" for="return-reason">Lý do trả hàng <span class="text-danger">*</span></label>
+            <textarea class="form-control" id="return-reason" name="reason" rows="4" required
+                      th:minlength="${minReason}" th:maxlength="${maxReason}"
+                      placeholder="Ví dụ: sản phẩm bị lỗi, giao sai hàng, không đúng mô tả..."></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="return-images">Hình ảnh minh chứng <span class="text-danger">*</span></label>
+            <input class="form-control" type="file" id="return-images" name="images" multiple required
+                   accept="image/jpeg,image/png,image/webp">
+            <div class="form-text" th:text="'Từ 1 đến ' + ${maxImages} + ' ảnh JPEG, PNG hoặc WebP; mỗi ảnh tối đa 5MB, tổng tối đa 6MB.'"></div>
+        </div>
+        <button class="btn btn-danger" type="submit">Gửi yêu cầu trả hàng</button>
+        <a class="btn btn-outline-secondary ms-2" th:href="@{/orders/{id}(id=${orderId})}">Hủy</a>
+    </div>
+</form>
+</body></html>

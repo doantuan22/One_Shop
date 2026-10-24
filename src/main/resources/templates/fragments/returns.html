@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--/*
+    Building blocks of the post-delivery return flow, shared by Customer, Admin and Staff screens.
+    A return is a layer above the Order: the Order and its parts stay "Hoàn tất" whatever happens here.
+*/-->
+
+<!--/* Status of a return request (OrderReturnStatus). */-->
+<span th:fragment="status(status)" class="badge os-soft os-return-status" th:attr="data-status=${status.name()}"
+      th:with="name=${status.name()}"
+      th:classappend="${name == 'REQUESTED'} ? 'os-soft-warning' : (${name == 'APPROVED'} ? 'os-soft-info' : (${name == 'COMPLETED'} ? 'os-soft-success' : 'os-soft-danger'))"
+      th:text="${name == 'REQUESTED'} ? 'Chờ quản trị viên duyệt' : (${name == 'APPROVED'} ? 'Đã duyệt - đang xử lý hàng hoàn' : (${name == 'COMPLETED'} ? 'Đã hoàn tất' : 'Bị từ chối'))">Trạng thái</span>
+
+<!--/* What Staff did with one returned line (ReturnDisposition). */-->
+<span th:fragment="disposition(disposition)" class="badge os-soft os-return-disposition" th:attr="data-disposition=${disposition.name()}"
+      th:with="name=${disposition.name()}"
+      th:classappend="${name == 'PENDING'} ? 'os-soft-warning' : (${name == 'RESTOCKED'} ? 'os-soft-success' : 'os-soft-neutral')"
+      th:text="${name == 'PENDING'} ? 'Chờ nhân viên xử lý' : (${name == 'RESTOCKED'} ? 'Đã nhập lại kho' : 'Đã xử lý (không nhập kho)')">Chờ xử lý</span>
+
+<!--/* Photos the Customer attached (links open the full image). */-->
+<div th:fragment="photos(urls)" class="d-flex flex-wrap gap-2 os-return-photos" th:if="${urls != null and !urls.isEmpty()}">
+    <a th:each="url : ${urls}" th:href="${url}" target="_blank" rel="noopener noreferrer">
+        <img th:src="${url}" alt="Ảnh khách gửi kèm yêu cầu trả hàng" class="rounded border"
+             style="width: 96px; height: 96px; object-fit: cover" loading="lazy">
+    </a>
+</div>
+
+<!--/* The returned lines of a request with what happened to each. `actors` shows Staff names (Admin only). */-->
+<div th:fragment="lines(orderReturn, actors)" class="table-responsive">
+    <table class="table align-middle os-table mb-2">
+        <thead><tr><th>Sản phẩm</th><th>Chi nhánh giao</th><th class="text-end">Số lượng</th>
+            <th class="text-end">Thành tiền</th><th>Xử lý hàng hoàn</th></tr></thead>
+        <tbody>
+        <tr th:each="line : ${orderReturn.items}" th:attr="data-return-item=${line.returnItemId}">
+            <td th:text="${line.productName}">Sản phẩm</td>
+            <td th:text="${line.storeName}">Chi nhánh</td>
+            <td class="text-end" th:text="${line.quantity}">1</td>
+            <td class="text-end"><span th:replace="~{fragments/components :: price(${line.subtotal})}"></span></td>
+            <td>
+                <span th:replace="~{fragments/returns :: disposition(${line.disposition})}"></span>
+                <div class="small text-secondary" th:if="${actors and line.handlerName != null}"
+                     th:text="${line.handlerName} + ' · ' + ${#temporals.format(line.handledAt, 'dd/MM/yyyy HH:mm')}"></div>
+                <div class="small text-secondary" th:if="${actors and line.handleNote != null}" th:text="${line.handleNote}"></div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!--/* Customer order page: the request made, or the way to make one while the 3 days last. */-->
+<section th:fragment="customerPanel(orderId, orderReturn, eligibility)" id="order-return" class="card shadow-sm mt-4"
+         th:if="${orderReturn != null or (eligibility != null and (eligibility.allowed or eligibility.receivedAt != null))}">
+    <div class="card-header bg-white fw-semibold">Trả hàng</div>
+    <div class="card-body">
+        <div th:if="${orderReturn != null}" th:attr="data-return-status=${orderReturn.status}">
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+                <span th:replace="~{fragments/returns :: status(${orderReturn.status})}"></span>
+                <span class="small text-secondary"
+                      th:text="'Gửi lúc ' + ${#temporals.format(orderReturn.requestedAt, 'dd/MM/yyyy HH:mm')}"></span>
+            </div>
+            <p class="mt-2 mb-1"><span class="text-secondary">Lý do của bạn:</span> <span style="white-space: pre-line" th:text="${orderReturn.reason}"></span></p>
+            <div th:replace="~{fragments/returns :: photos(${orderReturn.imageUrls})}"></div>
+            <div th:replace="~{fragments/returns :: lines(${orderReturn}, false)}"></div>
+            <p class="mb-1">Tiền hàng được hoàn: <strong><span th:replace="~{fragments/components :: price(${orderReturn.refundAmount})}"></span></strong>
+                <span class="small text-secondary">(phí giao hàng không được hoàn; hoàn tiền là mô phỏng)</span></p>
+            <div class="alert alert-info small mb-0" th:if="${orderReturn.status.name() == 'REQUESTED'}">
+                Yêu cầu đang chờ quản trị viên duyệt. Tiền hàng chỉ được hoàn sau khi yêu cầu được duyệt.</div>
+            <div class="alert alert-success small mb-0" th:if="${orderReturn.status.name() == 'APPROVED' or orderReturn.status.name() == 'COMPLETED'}">
+                Yêu cầu đã được duyệt và tiền hàng đã được hoàn mô phỏng về tài khoản thanh toán của bạn.</div>
+            <div class="alert alert-danger small mb-0" th:if="${orderReturn.status.name() == 'REJECTED'}">
+                Yêu cầu bị từ chối<span th:if="${orderReturn.reviewNote != null}">. Lý do: <span th:text="${orderReturn.reviewNote}"></span></span>.</div>
+        </div>
+        <div th:if="${orderReturn == null and eligibility != null}">
+            <div th:if="${eligibility.allowed}">
+                <p class="mb-2">Bạn có thể trả <strong>cả đơn hàng</strong> này đến hết
+                    <strong id="return-deadline" th:text="${#temporals.format(eligibility.deadline, 'dd/MM/yyyy HH:mm')}"></strong>
+                    (3 ngày kể từ khi nhận hàng). Tiền hàng hoàn lại:
+                    <strong><span th:replace="~{fragments/components :: price(${eligibility.refundAmount})}"></span></strong>
+                    (không gồm phí giao hàng).</p>
+                <a class="btn btn-outline-danger" id="return-start" th:href="@{/orders/{id}/return(id=${orderId})}">Yêu cầu trả hàng</a>
+            </div>
+            <p class="text-secondary mb-0" id="return-blocked" th:unless="${eligibility.allowed}" th:text="${eligibility.message}"></p>
+        </div>
+    </div>
+</section>
+</body>
+</html>

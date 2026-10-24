@@ -6,7 +6,7 @@
     "path" : "/admin/categories/{id}/image/delete"
   },
   "location" : "",
-  "executedAt" : "2026-10-24T02:07:09.535677200Z",
+  "executedAt" : "2026-10-24T09:12:14.756923600Z",
   "expected" : 403,
   "actual" : 403,
   "requestPath" : "/admin/categories/999999999/image/delete",

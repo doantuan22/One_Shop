@@ -6,7 +6,7 @@
     "path" : "/image-credits"
   },
   "location" : "",
-  "executedAt" : "2026-10-24T02:07:15.542333300Z",
+  "executedAt" : "2026-10-24T09:12:21.103158400Z",
   "expected" : 200,
   "actual" : 200,
   "requestPath" : "/image-credits",

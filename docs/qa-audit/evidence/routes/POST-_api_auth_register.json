@@ -6,7 +6,7 @@
     "path" : "/api/auth/register"
   },
   "location" : "",
-  "executedAt" : "2026-10-24T02:07:14.786839100Z",
+  "executedAt" : "2026-10-24T09:12:20.396445300Z",
   "expected" : 400,
   "actual" : 400,
   "requestPath" : "/api/auth/register",

@@ -25,6 +25,8 @@ import java.util.List;
  *                        because an unticked checkbox sends no parameter at all
  * @param planSignature   fingerprint of the allocation shown on the preview (mandatory for a COD split)
  * @param expectedTotal   total shown on the preview, to detect a price or fee change
+ * @param promotionCode   the ONE promotion code picked on the checkout page, or blank for none; it is read and decided
+ *                        again by the backend (conditions, uses left, amount) and never trusted from the browser
  */
 public record PlaceOrderRequest(
         @NotEmpty(message = "Vui lòng chọn ít nhất một sản phẩm") List<@NotNull Long> cartItemIds,
@@ -38,7 +40,16 @@ public record PlaceOrderRequest(
         Long pickupStoreId,
         Boolean splitCodConsent,
         String planSignature,
-        BigDecimal expectedTotal) {
+        BigDecimal expectedTotal,
+        @Size(max = 50, message = "Mã khuyến mãi tối đa 50 ký tự") String promotionCode) {
+
+    /** The request without a promotion code. */
+    public PlaceOrderRequest(List<Long> cartItemIds, FulfillmentType fulfillmentType, PaymentMethod paymentMethod,
+                             String receiverName, String receiverPhone, String shippingAddress, Long pickupStoreId,
+                             Boolean splitCodConsent, String planSignature, BigDecimal expectedTotal) {
+        this(cartItemIds, fulfillmentType, paymentMethod, receiverName, receiverPhone, shippingAddress, pickupStoreId,
+                splitCodConsent, planSignature, expectedTotal, null);
+    }
 
     /** True only when the customer ticked the split consent. */
     public boolean consentsToSplit() {

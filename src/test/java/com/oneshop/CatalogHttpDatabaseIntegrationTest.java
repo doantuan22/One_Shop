@@ -203,20 +203,24 @@ class CatalogHttpDatabaseIntegrationTest {
                 "Cookie", csrf.cookie());
         assertThat(select.statusCode()).isEqualTo(302);
 
-        // ... but V3 sells one shared catalog: the catalog, the prices and the header never follow a Store
+        // ... and the product list then shows only what that Store sells, with a way back to the whole chain
         String html = get("/products?q=SIMPLE-PURIFY-150", "Cookie", storeCookie(goVap)).body();
-        assertThat(html).doesNotContain("data-store-scope", "Đổi chi nhánh", "Chi nhánh đang chọn");
-        assertThat(html).contains("SIMPLE-PURIFY-150", "138.000 ₫");
-        assertThat(get("/products?q=SIMPLE-MICELLAR-150", "Cookie", storeCookie(goVap)).body()).contains("SIMPLE-MICELLAR-150");
+        assertThat(html).contains("id=\"catalog-store-scope\"");
+        // SIMPLE-PURIFY-150 is only on sale at Thủ Đức: Gò Vấp shows nothing for it, Thủ Đức shows it
+        assertThat(count(html, "<article class=\"retail-product-card\"")).isZero();
+        String atThuDuc = get("/products?q=SIMPLE-PURIFY-150", "Cookie", storeCookie(storeId("OS-THUDUC"))).body();
+        assertThat(count(atThuDuc, "<article class=\"retail-product-card\"")).isEqualTo(1);
+        assertThat(atThuDuc).contains("Còn hàng tại chi nhánh");
+        assertThat(get("/products?q=SIMPLE-PURIFY-150").body()).doesNotContain("id=\"catalog-store-scope\"");
     }
 
     @Test
     void searchAndFiltersIgnoreAStaleStoreCookie() throws Exception {
         String context = storeCookie(storeId("OS-QUAN10"));
-        // CERAVE-HYDRA-236 is not sold at Quận 10 but it is in the shared catalog
-        assertThat(get("/products?q=hydrating", "Cookie", context).body()).contains("CERAVE-HYDRA-236")
-                .doesNotContain("data-store-scope");
-        assertThat(get("/products?q=SIMPLE-REFRESH-150", "Cookie", context).body()).contains("SIMPLE-REFRESH-150");
+        // CERAVE-HYDRA-236 is not sold at Quận 10: hidden while that Store is chosen, present in the whole chain
+        assertThat(get("/products?q=hydrating", "Cookie", context).body()).doesNotContain("CERAVE-HYDRA-236")
+                .contains("id=\"catalog-store-scope\"");
+        assertThat(get("/products?q=hydrating").body()).contains("CERAVE-HYDRA-236");
     }
 
     @Test

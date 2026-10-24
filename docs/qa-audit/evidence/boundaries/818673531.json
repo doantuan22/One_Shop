@@ -1,7 +1,7 @@
 {
-  "actual" : 409,
   "expected" : "success/empty page or controlled 4xx; never 5xx",
   "request" : "/admin/staff-assignments?page=107374183",
-  "timestamp" : "2026-10-24T02:06:54.469932500Z",
-  "actor" : "admin@oneshop.vn"
+  "timestamp" : "2026-10-24T09:12:00.244966600Z",
+  "actor" : "admin@oneshop.vn",
+  "actual" : 400
 }

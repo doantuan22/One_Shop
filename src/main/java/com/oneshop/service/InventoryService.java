@@ -58,4 +58,13 @@ public interface InventoryService {
      */
     void restoreForUndeliverableFulfillment(Order lockedOrder, com.oneshop.entity.OrderFulfillment lockedFulfillment,
                                             String note);
+
+    /**
+     * Post-delivery return: Staff chose to put one returned line back on the shelf. Locks the StoreProduct, checks it
+     * belongs to {@code expectedStoreId} (the Store that delivered the line), adds {@code quantity} and records a
+     * {@code RETURN_ORDER} movement with the Order and the Staff. Runs inside the caller's transaction, which holds the
+     * Order lock and has just moved the returned line out of PENDING (what makes a second restoration impossible).
+     */
+    void restoreReturnedItem(Order lockedOrder, Long storeProductId, Long expectedStoreId, int quantity,
+                             com.oneshop.entity.User staff, String note);
 }

@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "retry",
+    "controller" : "com.oneshop.controller.admin.AdminImageCleanupController",
+    "path" : "/admin/images/cleanup/retry"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T09:12:15.397109500Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/admin/images/cleanup/retry",
+  "kind" : "anonymous guard/input probe"
+}

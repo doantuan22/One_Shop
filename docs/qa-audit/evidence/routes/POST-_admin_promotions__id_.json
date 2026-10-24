@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "update",
+    "controller" : "com.oneshop.controller.admin.AdminPromotionController",
+    "path" : "/admin/promotions/{id}"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T09:12:17.516563400Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/admin/promotions/999999999",
+  "kind" : "anonymous guard/input probe"
+}

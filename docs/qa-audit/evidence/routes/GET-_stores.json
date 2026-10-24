@@ -6,7 +6,7 @@
     "path" : "/stores"
   },
   "location" : "",
-  "executedAt" : "2026-10-24T02:07:18.073402900Z",
+  "executedAt" : "2026-10-24T09:12:24.123138700Z",
   "expected" : 200,
   "actual" : 200,
   "requestPath" : "/stores",

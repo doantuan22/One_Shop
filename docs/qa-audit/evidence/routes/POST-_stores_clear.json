@@ -6,7 +6,7 @@
     "path" : "/stores/clear"
   },
   "location" : "",
-  "executedAt" : "2026-10-24T02:07:18.041511Z",
+  "executedAt" : "2026-10-24T09:12:24.102776600Z",
   "expected" : 403,
   "actual" : 403,
   "requestPath" : "/stores/clear",

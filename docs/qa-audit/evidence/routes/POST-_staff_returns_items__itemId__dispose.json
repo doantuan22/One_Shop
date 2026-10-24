@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "dispose",
+    "controller" : "com.oneshop.controller.staff.StaffOrderReturnController",
+    "path" : "/staff/returns/items/{itemId}/dispose"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T09:12:23.272921100Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/staff/returns/items/999999999/dispose",
+  "kind" : "anonymous guard/input probe"
+}

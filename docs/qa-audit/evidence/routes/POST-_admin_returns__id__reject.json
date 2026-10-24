@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "reject",
+    "controller" : "com.oneshop.controller.admin.AdminOrderReturnController",
+    "path" : "/admin/returns/{id}/reject"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T09:12:17.936970200Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/admin/returns/999999999/reject",
+  "kind" : "anonymous guard/input probe"
+}

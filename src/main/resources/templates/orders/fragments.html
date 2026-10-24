@@ -63,6 +63,12 @@
             <td class="text-end"><span th:replace="~{fragments/components :: price(${item.unitPrice})}"></span></td>
             <td class="text-end" th:text="${item.quantity}"></td>
             <td class="text-end"><span th:replace="~{fragments/components :: price(${item.subtotal})}"></span></td></tr></tbody></table></div>
+    <div class="text-end small mb-1" id="order-money" th:if="${order.hasDiscount()}">
+        <div>Tiền hàng: <span th:replace="~{fragments/components :: price(${order.goodsAmount()})}"></span></div>
+        <div class="text-success" id="order-discount">Khuyến mãi <span class="font-monospace" th:text="${order.promotionCode}">MÃ</span>:
+            &minus;<span th:replace="~{fragments/components :: price(${order.discountAmount})}"></span></div>
+        <div>Phí giao hàng: <span th:replace="~{fragments/components :: price(${order.shippingFee})}"></span></div>
+    </div>
     <p class="fw-bold text-end">Tổng đơn: <span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></p>
 
     <section id="order-fulfillments" class="mb-4" th:if="${detail.fulfillments != null and !detail.fulfillments.isEmpty()}">

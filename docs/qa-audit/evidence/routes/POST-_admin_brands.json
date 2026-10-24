@@ -6,7 +6,7 @@
     "path" : "/admin/brands"
   },
   "location" : "",
-  "executedAt" : "2026-10-24T02:07:09.278980100Z",
+  "executedAt" : "2026-10-24T09:12:14.566594800Z",
   "expected" : 403,
   "actual" : 403,
   "requestPath" : "/admin/brands",

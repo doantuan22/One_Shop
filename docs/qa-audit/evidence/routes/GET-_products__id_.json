@@ -6,7 +6,7 @@
     "path" : "/products/{id}"
   },
   "location" : "",
-  "executedAt" : "2026-10-24T02:07:16.511407900Z",
+  "executedAt" : "2026-10-24T09:12:22.233086100Z",
   "expected" : 404,
   "actual" : 404,
   "requestPath" : "/products/999999999",

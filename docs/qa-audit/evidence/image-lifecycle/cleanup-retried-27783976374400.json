@@ -1,0 +1,7 @@
+{
+  "tasks" : [ ],
+  "files" : [ ],
+  "scenario" : "cleanup-retried",
+  "timestamp" : "2026-10-24T09:13:10.943975300Z",
+  "database" : "oneshop_returns_20261024_test"
+}

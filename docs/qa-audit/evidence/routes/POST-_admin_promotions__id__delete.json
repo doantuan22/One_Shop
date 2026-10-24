@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "delete",
+    "controller" : "com.oneshop.controller.admin.AdminPromotionController",
+    "path" : "/admin/promotions/{id}/delete"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T09:12:17.344728200Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/admin/promotions/999999999/delete",
+  "kind" : "anonymous guard/input probe"
+}

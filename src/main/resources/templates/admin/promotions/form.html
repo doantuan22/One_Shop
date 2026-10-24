@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head><title>Mã khuyến mãi</title></head>
+<body>
+<div th:replace="~{fragments/components :: pageHeader(${current == null} ? 'Thêm mã khuyến mãi' : 'Chỉnh sửa mã khuyến mãi', 'Giảm giá chỉ tính trên tiền hàng, không giảm phí giao hàng. Đơn đã đặt giữ nguyên số tiền đã giảm khi bạn sửa mã.')}"></div>
+
+<div class="alert alert-success" th:if="${param.success != null}">Đã tạo mã khuyến mãi.</div>
+
+<section class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form th:object="${form}" method="post" id="promotion-form" novalidate
+              th:action="${current == null} ? @{/admin/promotions} : @{/admin/promotions/{id}(id=${current.id})}">
+            <div class="alert alert-danger" th:each="message : ${#fields.globalErrors()}" th:text="${message}">Lỗi</div>
+            <div class="row g-3">
+                <div class="col-12 col-md-4">
+                    <label class="form-label" for="code">Mã <span class="text-danger">*</span></label>
+                    <input id="code" type="text" class="form-control font-monospace text-uppercase" th:field="*{code}" th:errorclass="is-invalid"
+                           maxlength="50" autocapitalize="characters" spellcheck="false" th:readonly="${current != null}" required>
+                    <div class="form-text" th:text="${current == null} ? 'Chữ không dấu, số, dấu _ và -, 3 đến 30 ký tự. Không đổi được sau khi tạo.' : 'Mã không đổi được sau khi tạo.'"></div>
+                    <div class="invalid-feedback" th:errors="*{code}">Lỗi</div>
+                </div>
+                <div class="col-12 col-md-8">
+                    <label class="form-label" for="name">Tên khuyến mãi <span class="text-danger">*</span></label>
+                    <input id="name" type="text" class="form-control" th:field="*{name}" th:errorclass="is-invalid" maxlength="150" required>
+                    <div class="invalid-feedback" th:errors="*{name}">Lỗi</div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label" for="description">Mô tả</label>
+                    <textarea id="description" class="form-control" rows="2" th:field="*{description}" th:errorclass="is-invalid" maxlength="500"></textarea>
+                    <div class="invalid-feedback" th:errors="*{description}">Lỗi</div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label class="form-label" for="discountType">Loại giảm giá</label>
+                    <select id="discountType" class="form-select" th:field="*{discountType}">
+                        <option th:each="t : ${types}" th:value="${t}"
+                                th:text="${t.name() == 'PERCENT'} ? 'Giảm theo phần trăm' : 'Giảm số tiền cố định'"></option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label class="form-label" for="discountValue">Mức giảm <span class="text-danger">*</span></label>
+                    <input id="discountValue" type="number" min="1" step="1" class="form-control" th:field="*{discountValue}" th:errorclass="is-invalid" required>
+                    <div class="form-text">Phần trăm (1 đến 100) hoặc số đồng, tùy loại.</div>
+                    <div class="invalid-feedback" th:errors="*{discountValue}">Lỗi</div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label class="form-label" for="maxDiscountAmount">Giảm tối đa (₫)</label>
+                    <input id="maxDiscountAmount" type="number" min="1" step="1" class="form-control" th:field="*{maxDiscountAmount}" th:errorclass="is-invalid">
+                    <div class="form-text">Chỉ cho loại phần trăm; để trống nếu không giới hạn.</div>
+                    <div class="invalid-feedback" th:errors="*{maxDiscountAmount}">Lỗi</div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label class="form-label" for="minOrderAmount">Tiền hàng tối thiểu (₫) <span class="text-danger">*</span></label>
+                    <input id="minOrderAmount" type="number" min="0" step="1" class="form-control" th:field="*{minOrderAmount}" th:errorclass="is-invalid" required>
+                    <div class="form-text">Điều kiện: tiền hàng (chưa gồm phí giao) phải từ mức này. 0 = không yêu cầu.</div>
+                    <div class="invalid-feedback" th:errors="*{minOrderAmount}">Lỗi</div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label class="form-label" for="usageLimit">Tổng số lượt sử dụng <span class="text-danger">*</span></label>
+                    <input id="usageLimit" type="number" min="1" step="1" class="form-control" th:field="*{usageLimit}" th:errorclass="is-invalid" required>
+                    <div class="form-text" th:if="${current != null}" th:text="'Đã dùng ' + ${current.usedCount} + ' lượt; không đặt thấp hơn số này.'"></div>
+                    <div class="invalid-feedback" th:errors="*{usageLimit}">Lỗi</div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label class="form-label" for="perUserLimit">Mỗi khách dùng tối đa (lần) <span class="text-danger">*</span></label>
+                    <input id="perUserLimit" type="number" min="1" step="1" class="form-control" th:field="*{perUserLimit}" th:errorclass="is-invalid" required>
+                    <div class="invalid-feedback" th:errors="*{perUserLimit}">Lỗi</div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label class="form-label" for="startAt">Bắt đầu</label>
+                    <input id="startAt" type="datetime-local" class="form-control" th:field="*{startAt}" th:errorclass="is-invalid">
+                    <div class="form-text">Để trống = có hiệu lực ngay.</div>
+                    <div class="invalid-feedback" th:errors="*{startAt}">Lỗi</div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label class="form-label" for="endAt">Kết thúc</label>
+                    <input id="endAt" type="datetime-local" class="form-control" th:field="*{endAt}" th:errorclass="is-invalid">
+                    <div class="form-text">Để trống = không giới hạn thời gian.</div>
+                    <div class="invalid-feedback" th:errors="*{endAt}">Lỗi</div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label class="form-label" for="status">Trạng thái</label>
+                    <select id="status" class="form-select" th:field="*{status}">
+                        <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.name() == 'ACTIVE'} ? 'Đang áp dụng' : 'Ngừng áp dụng'"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="d-flex gap-2 mt-4">
+                <button class="btn btn-primary" type="submit">Lưu</button>
+                <a class="btn btn-outline-secondary" th:href="@{/admin/promotions}">Quay lại</a>
+            </div>
+        </form>
+    </div>
+</section>
+
+<section class="card shadow-sm" th:if="${current != null}" id="promotion-usages">
+    <div class="card-header bg-white fw-semibold">Lượt sử dụng gần đây</div>
+    <div class="card-body">
+        <p class="text-secondary mb-0" th:if="${usages.isEmpty()}">Chưa có khách hàng nào dùng mã này.</p>
+        <div class="table-responsive" th:unless="${usages.isEmpty()}">
+            <table class="table table-sm align-middle mb-0">
+                <thead><tr><th>Khách hàng</th><th>Lần đặt hàng</th><th class="text-end">Đã giảm</th><th>Trạng thái</th><th>Lúc</th></tr></thead>
+                <tbody>
+                <tr th:each="u : ${usages}">
+                    <td th:text="${u.customer}">Khách</td>
+                    <td th:text="'#' + ${u.checkoutId}">#1</td>
+                    <td class="text-end"><span th:replace="~{fragments/components :: price(${u.discount})}"></span></td>
+                    <td th:text="${u.status == 'USED'} ? 'Đang dùng' : 'Đã hoàn lượt (đơn bị hủy)'">Trạng thái</td>
+                    <td th:text="${#temporals.format(u.usedAt, 'dd/MM/yyyy HH:mm')}">Lúc</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>

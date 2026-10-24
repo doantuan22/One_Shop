@@ -49,6 +49,10 @@ public class OrderItem {
     @Column(nullable = false, precision = 18, scale = 2)
     private BigDecimal subtotal;
 
+    /** This line's share of the Order's promotion discount (0 when there is none). */
+    @Column(name = "discount_amount", nullable = false, precision = 18, scale = 2)
+    private BigDecimal discountAmount = BigDecimal.ZERO;
+
     public Long getId() {
         return id;
     }
@@ -107,5 +111,22 @@ public class OrderItem {
 
     public void setSubtotal(BigDecimal subtotal) {
         this.subtotal = subtotal;
+    }
+
+    public BigDecimal getDiscountAmount() {
+        return discountAmount == null ? BigDecimal.ZERO : discountAmount;
+    }
+
+    public void setDiscountAmount(BigDecimal discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    /**
+     * What the line is really worth after the promotion: {@code subtotal - discountAmount}. Every refund of goods
+     * (undeliverable part, returned Order) is built from this, never from {@code subtotal}, so a refund can never
+     * give back more than the customer paid.
+     */
+    public BigDecimal getNetSubtotal() {
+        return subtotal.subtract(getDiscountAmount());
     }
 }

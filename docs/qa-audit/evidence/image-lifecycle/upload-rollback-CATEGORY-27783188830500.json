@@ -1,0 +1,7 @@
+{
+  "tasks" : [ ],
+  "files" : [ ],
+  "scenario" : "upload-rollback-CATEGORY",
+  "timestamp" : "2026-10-24T09:13:10.156895Z",
+  "database" : "oneshop_returns_20261024_test"
+}

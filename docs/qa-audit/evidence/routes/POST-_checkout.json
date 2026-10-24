@@ -6,7 +6,7 @@
     "path" : "/checkout"
   },
   "location" : "",
-  "executedAt" : "2026-10-24T02:07:15.339082400Z",
+  "executedAt" : "2026-10-24T09:12:20.951179700Z",
   "expected" : 403,
   "actual" : 403,
   "requestPath" : "/checkout",

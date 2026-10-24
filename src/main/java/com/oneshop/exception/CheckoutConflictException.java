@@ -13,6 +13,8 @@ public class CheckoutConflictException extends BadRequestException {
     public static final String CODE_DELIVERY_POLICY_PENDING = "DELIVERY_POLICY_PENDING";
     public static final String CODE_ONLINE_CHECKOUT_DISABLED = "ONLINE_CHECKOUT_DISABLED";
     public static final String CODE_NOT_ALLOCATABLE = "NOT_ALLOCATABLE";
+    /** the chosen promotion code cannot be used any more (unknown, inactive, expired, no uses left, condition not met) */
+    public static final String CODE_PROMOTION_UNAVAILABLE = "PROMOTION_UNAVAILABLE";
 
     private final String code;
 

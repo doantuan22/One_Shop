@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "request",
+    "controller" : "com.oneshop.controller.client.CustomerOrderReturnController",
+    "path" : "/orders/{orderId}/return"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T09:12:21.964716500Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/orders/999999999/return",
+  "kind" : "anonymous guard/input probe"
+}

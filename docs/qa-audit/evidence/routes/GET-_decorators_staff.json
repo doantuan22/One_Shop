@@ -5,8 +5,8 @@
     "controller" : "com.oneshop.controller.web.DecoratorController",
     "path" : "/decorators/staff"
   },
-  "location" : "http://localhost:56221/login",
-  "executedAt" : "2026-10-24T02:07:15.491347400Z",
+  "location" : "http://localhost:57296/login",
+  "executedAt" : "2026-10-24T09:12:21.067970800Z",
   "expected" : 302,
   "actual" : 302,
   "requestPath" : "/decorators/staff",

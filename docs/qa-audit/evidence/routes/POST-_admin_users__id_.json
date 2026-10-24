@@ -6,7 +6,7 @@
     "path" : "/admin/users/{id}"
   },
   "location" : "",
-  "executedAt" : "2026-10-24T02:07:14.333671Z",
+  "executedAt" : "2026-10-24T09:12:20.012786600Z",
   "expected" : 403,
   "actual" : 403,
   "requestPath" : "/admin/users/999999999",

@@ -6,7 +6,7 @@
     "path" : "/admin/stores"
   },
   "location" : "",
-  "executedAt" : "2026-10-24T02:07:14.032824500Z",
+  "executedAt" : "2026-10-24T09:12:19.757027100Z",
   "expected" : 403,
   "actual" : 403,
   "requestPath" : "/admin/stores",

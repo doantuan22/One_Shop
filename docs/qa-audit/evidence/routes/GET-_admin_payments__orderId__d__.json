@@ -5,8 +5,8 @@
     "controller" : "com.oneshop.controller.admin.AdminPaymentController",
     "path" : "/admin/payments/{orderId:\\d+}"
   },
-  "location" : "http://localhost:56221/login",
-  "executedAt" : "2026-10-24T02:07:11.291308900Z",
+  "location" : "http://localhost:57296/login",
+  "executedAt" : "2026-10-24T09:12:16.352696900Z",
   "expected" : 302,
   "actual" : 302,
   "requestPath" : "/admin/payments/999999999",

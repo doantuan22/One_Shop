@@ -1,12 +1,12 @@
 {
   "route" : {
     "verb" : "GET",
-    "method" : "errorHtml",
+    "method" : "error",
     "controller" : "org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController",
     "path" : "/error"
   },
   "location" : "",
-  "executedAt" : "2026-10-24T02:07:15.521255400Z",
+  "executedAt" : "2026-10-24T09:12:21.091600800Z",
   "expected" : 500,
   "actual" : 500,
   "requestPath" : "/error",

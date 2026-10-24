@@ -6,7 +6,7 @@
     "path" : "/logout"
   },
   "location" : "",
-  "executedAt" : "2026-10-24T02:07:15.578476700Z",
+  "executedAt" : "2026-10-24T09:12:21.124810500Z",
   "expected" : 403,
   "actual" : 403,
   "requestPath" : "/logout",

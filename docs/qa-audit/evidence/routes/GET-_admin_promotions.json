@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "GET",
+    "method" : "list",
+    "controller" : "com.oneshop.controller.admin.AdminPromotionController",
+    "path" : "/admin/promotions"
+  },
+  "location" : "http://localhost:57296/login",
+  "executedAt" : "2026-10-24T09:12:17.643019400Z",
+  "expected" : 302,
+  "actual" : 302,
+  "requestPath" : "/admin/promotions",
+  "kind" : "anonymous guard/input probe"
+}

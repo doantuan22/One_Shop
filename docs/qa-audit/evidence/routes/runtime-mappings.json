@@ -74,6 +74,11 @@
   "controller" : "com.oneshop.controller.admin.AdminCategoryController",
   "path" : "/admin/categories"
 }, {
+  "verb" : "POST",
+  "method" : "retry",
+  "controller" : "com.oneshop.controller.admin.AdminImageCleanupController",
+  "path" : "/admin/images/cleanup/retry"
+}, {
   "verb" : "GET",
   "method" : "list",
   "controller" : "com.oneshop.controller.admin.AdminInventoryController",
@@ -168,6 +173,56 @@
   "method" : "create",
   "controller" : "com.oneshop.controller.admin.AdminProductController",
   "path" : "/admin/products"
+}, {
+  "verb" : "GET",
+  "method" : "createForm",
+  "controller" : "com.oneshop.controller.admin.AdminPromotionController",
+  "path" : "/admin/promotions/new"
+}, {
+  "verb" : "POST",
+  "method" : "delete",
+  "controller" : "com.oneshop.controller.admin.AdminPromotionController",
+  "path" : "/admin/promotions/{id}/delete"
+}, {
+  "verb" : "GET",
+  "method" : "editForm",
+  "controller" : "com.oneshop.controller.admin.AdminPromotionController",
+  "path" : "/admin/promotions/{id}/edit"
+}, {
+  "verb" : "POST",
+  "method" : "update",
+  "controller" : "com.oneshop.controller.admin.AdminPromotionController",
+  "path" : "/admin/promotions/{id}"
+}, {
+  "verb" : "GET",
+  "method" : "list",
+  "controller" : "com.oneshop.controller.admin.AdminPromotionController",
+  "path" : "/admin/promotions"
+}, {
+  "verb" : "POST",
+  "method" : "create",
+  "controller" : "com.oneshop.controller.admin.AdminPromotionController",
+  "path" : "/admin/promotions"
+}, {
+  "verb" : "POST",
+  "method" : "approve",
+  "controller" : "com.oneshop.controller.admin.AdminOrderReturnController",
+  "path" : "/admin/returns/{id}/approve"
+}, {
+  "verb" : "POST",
+  "method" : "reject",
+  "controller" : "com.oneshop.controller.admin.AdminOrderReturnController",
+  "path" : "/admin/returns/{id}/reject"
+}, {
+  "verb" : "GET",
+  "method" : "detail",
+  "controller" : "com.oneshop.controller.admin.AdminOrderReturnController",
+  "path" : "/admin/returns/{id}"
+}, {
+  "verb" : "GET",
+  "method" : "list",
+  "controller" : "com.oneshop.controller.admin.AdminOrderReturnController",
+  "path" : "/admin/returns"
 }, {
   "verb" : "GET",
   "method" : "suggest",
@@ -365,12 +420,12 @@
   "path" : "/decorators/staff"
 }, {
   "verb" : "GET",
-  "method" : "error",
+  "method" : "errorHtml",
   "controller" : "org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController",
   "path" : "/error"
 }, {
   "verb" : "GET",
-  "method" : "errorHtml",
+  "method" : "error",
   "controller" : "org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController",
   "path" : "/error"
 }, {
@@ -428,6 +483,16 @@
   "method" : "view",
   "controller" : "com.oneshop.controller.client.PaymentController",
   "path" : "/orders/{orderId}/payments"
+}, {
+  "verb" : "GET",
+  "method" : "form",
+  "controller" : "com.oneshop.controller.client.CustomerOrderReturnController",
+  "path" : "/orders/{orderId}/return"
+}, {
+  "verb" : "POST",
+  "method" : "request",
+  "controller" : "com.oneshop.controller.client.CustomerOrderReturnController",
+  "path" : "/orders/{orderId}/return"
 }, {
   "verb" : "GET",
   "method" : "detail",
@@ -538,6 +603,21 @@
   "method" : "legacyPickup",
   "controller" : "com.oneshop.controller.staff.StaffFulfillmentController",
   "path" : "/staff/pickup"
+}, {
+  "verb" : "POST",
+  "method" : "dispose",
+  "controller" : "com.oneshop.controller.staff.StaffOrderReturnController",
+  "path" : "/staff/returns/items/{itemId}/dispose"
+}, {
+  "verb" : "POST",
+  "method" : "restock",
+  "controller" : "com.oneshop.controller.staff.StaffOrderReturnController",
+  "path" : "/staff/returns/items/{itemId}/restock"
+}, {
+  "verb" : "GET",
+  "method" : "list",
+  "controller" : "com.oneshop.controller.staff.StaffOrderReturnController",
+  "path" : "/staff/returns"
 }, {
   "verb" : "POST",
   "method" : "reply",

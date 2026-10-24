@@ -6,7 +6,7 @@
     "path" : "/admin/categories/{id}"
   },
   "location" : "",
-  "executedAt" : "2026-10-24T02:07:09.888237600Z",
+  "executedAt" : "2026-10-24T09:12:15.082364100Z",
   "expected" : 403,
   "actual" : 403,
   "requestPath" : "/admin/categories/999999999",

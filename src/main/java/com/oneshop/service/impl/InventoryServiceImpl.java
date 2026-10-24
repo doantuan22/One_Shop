@@ -123,6 +123,41 @@ public class InventoryServiceImpl implements InventoryService {
         restoreLines(order, orderItemRepository.findByFulfillmentIdInOrderByIdAsc(List.of(fulfillment.getId())), note);
     }
 
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void restoreReturnedItem(Order order, Long storeProductId, Long expectedStoreId, int quantity, User staff,
+                                    String note) {
+        if (quantity <= 0 || staff == null || order == null || order.getId() == null) {
+            throw new BadRequestException("Dòng hàng hoàn không hợp lệ để nhập lại kho.");
+        }
+        if (!StringUtils.hasText(note) || note.length() > 500) {
+            throw new BadRequestException("Ghi chú nhập kho cần có nội dung và tối đa 500 ký tự.");
+        }
+        StoreProduct stock = storeProductRepository.findByIdForUpdate(storeProductId)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm tại chi nhánh cần nhập lại kho."));
+        if (expectedStoreId == null || !stock.getStore().getId().equals(expectedStoreId)) {
+            throw new BadRequestException("Sản phẩm hoàn không thuộc chi nhánh đã giao hàng.");
+        }
+        int before = stock.getQuantity();
+        int after;
+        try {
+            after = Math.addExact(before, quantity);
+        } catch (ArithmeticException ex) {
+            throw new BadRequestException("Tồn kho sau khi nhập lại vượt giới hạn cho phép.");
+        }
+        stock.setQuantity(after);
+        InventoryMovement movement = new InventoryMovement();
+        movement.setStoreProduct(stock);
+        movement.setType(InventoryMovementType.RETURN_ORDER);
+        movement.setQuantityBefore(before);
+        movement.setQuantityChange(quantity);
+        movement.setQuantityAfter(after);
+        movement.setReferenceOrder(order);
+        movement.setStaff(staff);
+        movement.setNote(note);
+        movementRepository.save(movement);
+    }
+
     private void restoreLines(Order order, List<OrderItem> lines, String note) {
         if (!StringUtils.hasText(note) || note.length() > 500) {
             throw new BadRequestException("Ghi chú hoàn tồn cần có nội dung và tối đa 500 ký tự.");

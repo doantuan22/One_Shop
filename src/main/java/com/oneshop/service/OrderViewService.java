@@ -74,7 +74,8 @@ public class OrderViewService {
         return new OrderViewResponse(o.getId(), storeId, storeName, storeAddress,
                 o.getCreatedAt(), o.getFulfillmentType(), o.getPaymentMethod(), o.getPaymentStatus(), o.getOrderStatus(),
                 o.getReceiverName(), o.getReceiverPhone(), o.getShippingAddress(), o.getTotalAmount(), o.getReadyAt(),
-                o.getPickedUpAt(), visible ? o.getPickupCode() : null, action);
+                o.getPickedUpAt(), visible ? o.getPickupCode() : null, action, o.getShippingFee(), o.getDiscountAmount(),
+                o.getPromotionCode());
     }
 
     /** An Order supplied by several Stores has no single Store: name the number of Fulfillment Stores. */

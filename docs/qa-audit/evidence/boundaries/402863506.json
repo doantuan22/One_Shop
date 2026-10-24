@@ -1,7 +1,7 @@
 {
-  "actual" : 200,
   "expected" : "success/empty page or controlled 4xx; never 5xx",
   "request" : "/admin/store-products?page=0&q=qa-no-match-999",
-  "timestamp" : "2026-10-24T02:06:49.275373600Z",
-  "actor" : "admin@oneshop.vn"
+  "timestamp" : "2026-10-24T09:11:56.705189900Z",
+  "actor" : "admin@oneshop.vn",
+  "actual" : 200
 }

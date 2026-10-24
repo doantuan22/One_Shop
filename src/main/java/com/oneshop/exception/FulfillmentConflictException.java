@@ -16,6 +16,10 @@ public class FulfillmentConflictException extends BadRequestException {
     public static final String PICKUP_CODE_LOCKED = "PICKUP_CODE_LOCKED";
     public static final String COLLECTION_BLOCKED = "COLLECTION_BLOCKED";
     public static final String INCONSISTENT_FULFILLMENT = "INCONSISTENT_FULFILLMENT";
+    /** a return request was already approved or rejected */
+    public static final String RETURN_ALREADY_DECIDED = "RETURN_ALREADY_DECIDED";
+    /** a returned line was already restocked or disposed of */
+    public static final String RETURN_ALREADY_HANDLED = "RETURN_ALREADY_HANDLED";
 
     private final String code;
 

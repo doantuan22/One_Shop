@@ -295,6 +295,8 @@ CREATE TABLE dbo.orders (
     picked_up_at     DATETIME2(0)         NULL,      -- STORE_PICKUP
     total_amount     DECIMAL(18,2)        NOT NULL,
     shipping_fee     DECIMAL(18,2)        NOT NULL CONSTRAINT DF_orders_shipping_fee DEFAULT 0,
+    discount_amount  DECIMAL(18,2)        NOT NULL CONSTRAINT DF_orders_discount_amount DEFAULT 0,  -- promotion: taken off the goods, never the shipping fee
+    promotion_code   NVARCHAR(50)         NULL,      -- snapshot of the code used; total_amount = goods - discount_amount + shipping_fee
     created_at       DATETIME2(0)         NOT NULL CONSTRAINT DF_orders_created_at DEFAULT SYSDATETIME(),
     updated_at       DATETIME2(0)         NOT NULL CONSTRAINT DF_orders_updated_at DEFAULT SYSDATETIME(),
     CONSTRAINT PK_orders PRIMARY KEY (order_id),
@@ -309,6 +311,7 @@ CREATE TABLE dbo.orders (
         N'PARTIALLY_COMPLETED', N'COMPLETED', N'CANCELLED', N'NEEDS_ATTENTION')),
     CONSTRAINT CK_orders_total        CHECK (total_amount >= 0),
     CONSTRAINT CK_orders_shipping_fee CHECK (shipping_fee >= 0),
+    CONSTRAINT CK_orders_discount CHECK (discount_amount >= 0),
     CONSTRAINT CK_orders_delivery_address CHECK (fulfillment_type <> N'DELIVERY' OR shipping_address IS NOT NULL)
 );
 GO
@@ -382,13 +385,15 @@ CREATE TABLE dbo.order_items (
     unit_price       DECIMAL(18,2)        NOT NULL,
     quantity         INT                  NOT NULL,
     subtotal         DECIMAL(18,2)        NOT NULL,
+    discount_amount  DECIMAL(18,2)        NOT NULL CONSTRAINT DF_order_items_discount DEFAULT 0,  -- this line's share of the Order discount; what it is worth = subtotal - discount_amount
     CONSTRAINT PK_order_items PRIMARY KEY (order_item_id),
     CONSTRAINT FK_order_items_order         FOREIGN KEY (order_id)         REFERENCES dbo.orders (order_id),
     CONSTRAINT FK_order_items_fulfillment   FOREIGN KEY (fulfillment_id)   REFERENCES dbo.order_fulfillments (fulfillment_id),
     CONSTRAINT FK_order_items_store_product FOREIGN KEY (store_product_id) REFERENCES dbo.store_products (store_product_id),
     CONSTRAINT CK_order_items_quantity   CHECK (quantity > 0),
     CONSTRAINT CK_order_items_unit_price CHECK (unit_price >= 0),
-    CONSTRAINT CK_order_items_subtotal   CHECK (subtotal = unit_price * quantity)
+    CONSTRAINT CK_order_items_subtotal   CHECK (subtotal = unit_price * quantity),
+    CONSTRAINT CK_order_items_discount   CHECK (discount_amount >= 0 AND discount_amount <= subtotal)
 );
 GO
 
@@ -421,15 +426,102 @@ CREATE TABLE dbo.payments (
 GO
 
 /* ============================================================================
+   18a. order_returns / order_return_images / order_return_items  - Tra hang sau khi da nhan hang
+   Customer returns the WHOLE completed Order within 3 days of the latest Fulfillment completion, with a reason and
+   photos. Only an Administrator approves or rejects. After approval the simulated refund of the goods (never the
+   shipping fee) is recorded at once, and each returned line waits for Staff of its own Store to choose
+   RESTOCKED (stock += quantity, RETURN_ORDER movement) or DISPOSED (real-world handling, stock untouched).
+   The Order and Fulfillment statuses stay COMPLETED: a return is a layer above them.
+   ========================================================================== */
+CREATE TABLE dbo.order_returns (
+    return_id           BIGINT IDENTITY(1,1) NOT NULL,
+    order_id            BIGINT               NOT NULL,
+    user_id             BIGINT               NOT NULL,
+    reason              NVARCHAR(500)        NOT NULL,
+    status              NVARCHAR(20)         NOT NULL CONSTRAINT DF_order_returns_status DEFAULT N'REQUESTED',
+    received_at         DATETIME2(0)         NOT NULL,      -- latest Fulfillment completed_at: the 3-day window starts here
+    refund_amount       DECIMAL(18,2)        NOT NULL,      -- goods value of the returned lines; the shipping fee is kept
+    requested_at        DATETIME2(0)         NOT NULL CONSTRAINT DF_order_returns_requested_at DEFAULT SYSDATETIME(),
+    reviewed_by_user_id BIGINT               NULL,
+    reviewed_at         DATETIME2(0)         NULL,
+    review_note         NVARCHAR(500)        NULL,
+    completed_at        DATETIME2(0)         NULL,
+    CONSTRAINT PK_order_returns PRIMARY KEY (return_id),
+    CONSTRAINT UQ_order_returns_order UNIQUE (order_id),
+    CONSTRAINT FK_order_returns_order    FOREIGN KEY (order_id)            REFERENCES dbo.orders (order_id),
+    CONSTRAINT FK_order_returns_user     FOREIGN KEY (user_id)             REFERENCES dbo.users (user_id),
+    CONSTRAINT FK_order_returns_reviewer FOREIGN KEY (reviewed_by_user_id) REFERENCES dbo.users (user_id),
+    CONSTRAINT CK_order_returns_status CHECK (status IN (N'REQUESTED', N'APPROVED', N'REJECTED', N'COMPLETED')),
+    CONSTRAINT CK_order_returns_reason CHECK (LEN(LTRIM(RTRIM(reason))) > 0),
+    CONSTRAINT CK_order_returns_amount CHECK (refund_amount > 0),
+    CONSTRAINT CK_order_returns_review CHECK (
+        (status = N'REQUESTED' AND reviewed_by_user_id IS NULL AND reviewed_at IS NULL AND completed_at IS NULL)
+        OR (status = N'REJECTED' AND reviewed_by_user_id IS NOT NULL AND reviewed_at IS NOT NULL
+            AND review_note IS NOT NULL AND LEN(LTRIM(RTRIM(review_note))) > 0 AND completed_at IS NULL)
+        OR (status = N'APPROVED' AND reviewed_by_user_id IS NOT NULL AND reviewed_at IS NOT NULL AND completed_at IS NULL)
+        OR (status = N'COMPLETED' AND reviewed_by_user_id IS NOT NULL AND reviewed_at IS NOT NULL AND completed_at IS NOT NULL))
+);
+GO
+
+CREATE TABLE dbo.order_return_images (
+    image_id   BIGINT IDENTITY(1,1) NOT NULL,
+    return_id  BIGINT               NOT NULL,
+    image_url  NVARCHAR(500)        NOT NULL,
+    public_id  NVARCHAR(255)        NOT NULL,
+    sort_order INT                  NOT NULL CONSTRAINT DF_order_return_images_sort DEFAULT 0,
+    created_at DATETIME2(0)         NOT NULL CONSTRAINT DF_order_return_images_created DEFAULT SYSDATETIME(),
+    CONSTRAINT PK_order_return_images PRIMARY KEY (image_id),
+    CONSTRAINT FK_order_return_images_return FOREIGN KEY (return_id) REFERENCES dbo.order_returns (return_id)
+);
+GO
+
+CREATE TABLE dbo.order_return_items (
+    return_item_id     BIGINT IDENTITY(1,1) NOT NULL,
+    return_id          BIGINT               NOT NULL,
+    order_item_id      BIGINT               NOT NULL,
+    fulfillment_id     BIGINT               NOT NULL,
+    store_id           BIGINT               NOT NULL,      -- the Store that delivered the line: the only Staff scope that may handle it
+    store_product_id   BIGINT               NOT NULL,
+    product_name       NVARCHAR(255)        NOT NULL,
+    quantity           INT                  NOT NULL,
+    unit_price         DECIMAL(18,2)        NOT NULL,
+    subtotal           DECIMAL(18,2)        NOT NULL,
+    disposition        NVARCHAR(20)         NOT NULL CONSTRAINT DF_order_return_items_disposition DEFAULT N'PENDING',
+    handled_by_user_id BIGINT               NULL,
+    handled_at         DATETIME2(0)         NULL,
+    handle_note        NVARCHAR(500)        NULL,
+    CONSTRAINT PK_order_return_items PRIMARY KEY (return_item_id),
+    CONSTRAINT UQ_order_return_items_line UNIQUE (return_id, order_item_id),
+    CONSTRAINT FK_order_return_items_return        FOREIGN KEY (return_id)          REFERENCES dbo.order_returns (return_id),
+    CONSTRAINT FK_order_return_items_order_item    FOREIGN KEY (order_item_id)      REFERENCES dbo.order_items (order_item_id),
+    CONSTRAINT FK_order_return_items_fulfillment   FOREIGN KEY (fulfillment_id)     REFERENCES dbo.order_fulfillments (fulfillment_id),
+    CONSTRAINT FK_order_return_items_store         FOREIGN KEY (store_id)           REFERENCES dbo.stores (store_id),
+    CONSTRAINT FK_order_return_items_store_product FOREIGN KEY (store_product_id)   REFERENCES dbo.store_products (store_product_id),
+    CONSTRAINT FK_order_return_items_handler       FOREIGN KEY (handled_by_user_id) REFERENCES dbo.users (user_id),
+    CONSTRAINT CK_order_return_items_quantity CHECK (quantity > 0),
+    CONSTRAINT CK_order_return_items_subtotal CHECK (subtotal = unit_price * quantity),
+    CONSTRAINT CK_order_return_items_disposition CHECK (disposition IN (N'PENDING', N'RESTOCKED', N'DISPOSED')),
+    CONSTRAINT CK_order_return_items_handled CHECK (
+        (disposition = N'PENDING' AND handled_by_user_id IS NULL AND handled_at IS NULL)
+        OR (disposition <> N'PENDING' AND handled_by_user_id IS NOT NULL AND handled_at IS NOT NULL))
+);
+GO
+CREATE INDEX IX_order_returns_status_requested ON dbo.order_returns (status, requested_at);
+CREATE INDEX IX_order_return_images_return ON dbo.order_return_images (return_id, sort_order);
+CREATE INDEX IX_order_return_items_store_disposition ON dbo.order_return_items (store_id, disposition);
+GO
+
+/* ============================================================================
    18b. payment_refunds  - Lich su hoan tien MO PHONG theo Order / Fulfillment (OPEN-10.1)
    Ledger of simulated refunds. payments.refund_* keeps the whole-Order refund summary; this table is the history
-   (goods of one Fulfillment, the shipping fee, or a whole-Order refund) with who, why, how much and when.
+   (goods of one Fulfillment, the shipping fee, a whole-Order refund, or the goods of a returned Order) with who, why, how much and when.
    ========================================================================== */
 CREATE TABLE dbo.payment_refunds (
     refund_id            BIGINT IDENTITY(1,1) NOT NULL,
     payment_id           BIGINT               NOT NULL,
     order_id             BIGINT               NOT NULL,
     fulfillment_id       BIGINT               NULL,
+    return_id            BIGINT               NULL,      -- RETURN: the order_returns row this refund pays for
     component            NVARCHAR(20)         NOT NULL,
     amount               DECIMAL(18,2)        NOT NULL,
     status               NVARCHAR(30)         NOT NULL,
@@ -442,21 +534,84 @@ CREATE TABLE dbo.payment_refunds (
     CONSTRAINT FK_payment_refunds_order       FOREIGN KEY (order_id)             REFERENCES dbo.orders (order_id),
     CONSTRAINT FK_payment_refunds_fulfillment FOREIGN KEY (fulfillment_id)       REFERENCES dbo.order_fulfillments (fulfillment_id),
     CONSTRAINT FK_payment_refunds_user        FOREIGN KEY (requested_by_user_id) REFERENCES dbo.users (user_id),
-    CONSTRAINT CK_payment_refunds_component CHECK (component IN (N'GOODS', N'SHIPPING', N'WHOLE_ORDER')),
+    CONSTRAINT FK_payment_refunds_return      FOREIGN KEY (return_id)            REFERENCES dbo.order_returns (return_id),
+    CONSTRAINT CK_payment_refunds_component CHECK (component IN (N'GOODS', N'SHIPPING', N'WHOLE_ORDER', N'RETURN')),
     CONSTRAINT CK_payment_refunds_status CHECK (status IN (N'PENDING_SIMULATION', N'SIMULATED_REFUNDED', N'SIMULATION_FAILED')),
     CONSTRAINT CK_payment_refunds_amount CHECK (amount > 0),
     CONSTRAINT CK_payment_refunds_target CHECK (
-        (component = N'GOODS' AND fulfillment_id IS NOT NULL) OR (component <> N'GOODS' AND fulfillment_id IS NULL)),
+        (component = N'GOODS' AND fulfillment_id IS NOT NULL AND return_id IS NULL)
+        OR (component = N'RETURN' AND fulfillment_id IS NULL AND return_id IS NOT NULL)
+        OR (component IN (N'SHIPPING', N'WHOLE_ORDER') AND fulfillment_id IS NULL AND return_id IS NULL)),
     CONSTRAINT CK_payment_refunds_refunded_at CHECK (status <> N'SIMULATED_REFUNDED' OR refunded_at IS NOT NULL)
 );
 GO
-/* One goods refund per Fulfillment, one shipping refund per Order, one whole-Order refund per Payment: a repeated or
+/* One goods refund per Fulfillment, one shipping refund per Order, one whole-Order refund per Payment, one return refund per Return: a repeated or
    concurrent request can never refund the same thing twice, whatever the application does. */
 CREATE UNIQUE INDEX UX_payment_refunds_goods    ON dbo.payment_refunds (fulfillment_id) WHERE component = N'GOODS';
 CREATE UNIQUE INDEX UX_payment_refunds_shipping ON dbo.payment_refunds (order_id)       WHERE component = N'SHIPPING';
 CREATE UNIQUE INDEX UX_payment_refunds_whole    ON dbo.payment_refunds (payment_id)     WHERE component = N'WHOLE_ORDER';
+CREATE UNIQUE INDEX UX_payment_refunds_return   ON dbo.payment_refunds (return_id)      WHERE component = N'RETURN';
 CREATE INDEX IX_payment_refunds_order ON dbo.payment_refunds (order_id, requested_at);
 CREATE INDEX IX_payment_refunds_payment ON dbo.payment_refunds (payment_id);
+GO
+
+/* ============================================================================
+   18c. promotions / promotion_usages  - Ma khuyen mai
+   An Administrator manages the codes. At checkout a customer picks ONE code for the whole order: it takes a discount
+   off the GOODS (never the shipping fee) when the order reaches min_order_amount, the code is ACTIVE, inside its dates,
+   has uses left (used_count < usage_limit) and the customer has not used it per_user_limit times. One use is spent
+   per checkout (a COD order split over several Stores still costs ONE use; its discount is shared between the Orders).
+   A use is given back (RELEASED) only when every Order of that checkout was cancelled.
+   ========================================================================== */
+CREATE TABLE dbo.promotions (
+    promotion_id        BIGINT IDENTITY(1,1) NOT NULL,
+    code                NVARCHAR(50)         NOT NULL,
+    name                NVARCHAR(150)        NOT NULL,
+    description         NVARCHAR(500)        NULL,
+    discount_type       NVARCHAR(20)         NOT NULL,
+    discount_value      DECIMAL(18,2)        NOT NULL,   -- PERCENT: 1..100; FIXED: VND
+    max_discount_amount DECIMAL(18,2)        NULL,       -- PERCENT only: cap of the discount
+    min_order_amount    DECIMAL(18,2)        NOT NULL CONSTRAINT DF_promotions_min_order DEFAULT 0,  -- goods value needed
+    usage_limit         INT                  NOT NULL,   -- total uses
+    used_count          INT                  NOT NULL CONSTRAINT DF_promotions_used_count DEFAULT 0,
+    per_user_limit      INT                  NOT NULL CONSTRAINT DF_promotions_per_user DEFAULT 1,
+    start_at            DATETIME2(0)         NULL,
+    end_at              DATETIME2(0)         NULL,
+    status              NVARCHAR(20)         NOT NULL CONSTRAINT DF_promotions_status DEFAULT N'ACTIVE',
+    created_at          DATETIME2(0)         NOT NULL CONSTRAINT DF_promotions_created_at DEFAULT SYSDATETIME(),
+    updated_at          DATETIME2(0)         NOT NULL CONSTRAINT DF_promotions_updated_at DEFAULT SYSDATETIME(),
+    CONSTRAINT PK_promotions PRIMARY KEY (promotion_id),
+    CONSTRAINT UQ_promotions_code UNIQUE (code),
+    CONSTRAINT CK_promotions_type CHECK (discount_type IN (N'PERCENT', N'FIXED')),
+    CONSTRAINT CK_promotions_status CHECK (status IN (N'ACTIVE', N'INACTIVE')),
+    CONSTRAINT CK_promotions_value CHECK (discount_value > 0 AND (discount_type <> N'PERCENT' OR discount_value <= 100)),
+    CONSTRAINT CK_promotions_cap CHECK (max_discount_amount IS NULL OR (discount_type = N'PERCENT' AND max_discount_amount > 0)),
+    CONSTRAINT CK_promotions_min_order CHECK (min_order_amount >= 0),
+    CONSTRAINT CK_promotions_limits CHECK (usage_limit >= 1 AND per_user_limit >= 1 AND used_count >= 0 AND used_count <= usage_limit),
+    CONSTRAINT CK_promotions_dates CHECK (start_at IS NULL OR end_at IS NULL OR end_at > start_at)
+);
+GO
+
+CREATE TABLE dbo.promotion_usages (
+    usage_id        BIGINT IDENTITY(1,1) NOT NULL,
+    promotion_id    BIGINT               NOT NULL,
+    user_id         BIGINT               NOT NULL,
+    checkout_id     BIGINT               NOT NULL,
+    discount_amount DECIMAL(18,2)        NOT NULL,
+    status          NVARCHAR(20)         NOT NULL CONSTRAINT DF_promotion_usages_status DEFAULT N'USED',
+    used_at         DATETIME2(0)         NOT NULL CONSTRAINT DF_promotion_usages_used_at DEFAULT SYSDATETIME(),
+    released_at     DATETIME2(0)         NULL,
+    CONSTRAINT PK_promotion_usages PRIMARY KEY (usage_id),
+    CONSTRAINT UQ_promotion_usages_checkout UNIQUE (checkout_id),
+    CONSTRAINT FK_promotion_usages_promotion FOREIGN KEY (promotion_id) REFERENCES dbo.promotions (promotion_id),
+    CONSTRAINT FK_promotion_usages_user      FOREIGN KEY (user_id)      REFERENCES dbo.users (user_id),
+    CONSTRAINT FK_promotion_usages_checkout  FOREIGN KEY (checkout_id)  REFERENCES dbo.checkout_sessions (checkout_id),
+    CONSTRAINT CK_promotion_usages_status CHECK (status IN (N'USED', N'RELEASED')),
+    CONSTRAINT CK_promotion_usages_amount CHECK (discount_amount >= 0),
+    CONSTRAINT CK_promotion_usages_released CHECK ((status = N'USED' AND released_at IS NULL) OR (status = N'RELEASED' AND released_at IS NOT NULL))
+);
+GO
+CREATE INDEX IX_promotion_usages_user ON dbo.promotion_usages (promotion_id, user_id, status);
 GO
 
 /* ============================================================================
@@ -477,14 +632,15 @@ CREATE TABLE dbo.inventory_movements (
     CONSTRAINT FK_inventory_movements_store_product FOREIGN KEY (store_product_id)   REFERENCES dbo.store_products (store_product_id),
     CONSTRAINT FK_inventory_movements_order         FOREIGN KEY (reference_order_id) REFERENCES dbo.orders (order_id),
     CONSTRAINT FK_inventory_movements_staff         FOREIGN KEY (staff_id)           REFERENCES dbo.users (user_id),
-    CONSTRAINT CK_inventory_movements_type   CHECK (type IN (N'ORDER', N'CANCEL_ORDER', N'STOCK_ADJUST')),
+    CONSTRAINT CK_inventory_movements_type   CHECK (type IN (N'ORDER', N'CANCEL_ORDER', N'STOCK_ADJUST', N'RETURN_ORDER')),
     CONSTRAINT CK_inventory_movements_before CHECK (quantity_before >= 0),
     CONSTRAINT CK_inventory_movements_after  CHECK (quantity_after >= 0),
     CONSTRAINT CK_inventory_movements_math   CHECK (quantity_after = quantity_before + quantity_change),
     CONSTRAINT CK_inventory_movements_by_type CHECK (
         (type = N'ORDER'        AND quantity_change < 0 AND reference_order_id IS NOT NULL) OR
         (type = N'CANCEL_ORDER' AND quantity_change > 0 AND reference_order_id IS NOT NULL) OR
-        (type = N'STOCK_ADJUST' AND quantity_change <> 0 AND staff_id IS NOT NULL))
+        (type = N'STOCK_ADJUST' AND quantity_change <> 0 AND staff_id IS NOT NULL) OR
+        (type = N'RETURN_ORDER' AND quantity_change > 0 AND reference_order_id IS NOT NULL AND staff_id IS NOT NULL))
 );
 GO
 
@@ -586,14 +742,15 @@ GO
 
 /* Structural verification (read only). Any violation THROWs, so a broken install is never silent. */
 DECLARE @tables INT = (SELECT COUNT(*) FROM sys.tables WHERE is_ms_shipped = 0);
-IF @tables <> 24 THROW 50001, 'Expected exactly 24 tables (23 domain tables plus image cleanup journal).', 1;
+IF @tables <> 29 THROW 50001, 'Expected exactly 29 tables (28 domain tables plus image cleanup journal).', 1;
 DECLARE @expected TABLE (name SYSNAME PRIMARY KEY);
 INSERT INTO @expected VALUES
  (N'roles'),(N'users'),(N'customer_addresses'),(N'stores'),(N'staff_store_assignments'),
  (N'categories'),(N'brands'),(N'products'),(N'product_images'),(N'store_products'),
  (N'carts'),(N'cart_items'),(N'checkout_sessions'),(N'orders'),(N'order_fulfillments'),
  (N'order_fulfillment_status_history'),(N'order_items'),(N'payments'),(N'inventory_movements'),
-  (N'order_status_history'),(N'reviews'),(N'review_replies'),(N'payment_refunds'),(N'image_cleanup_tasks');
+  (N'order_status_history'),(N'reviews'),(N'review_replies'),(N'payment_refunds'),(N'image_cleanup_tasks'),
+ (N'order_returns'),(N'order_return_images'),(N'order_return_items'),(N'promotions'),(N'promotion_usages');
 IF EXISTS (SELECT 1 FROM @expected e WHERE NOT EXISTS (SELECT 1 FROM sys.tables t WHERE t.name = e.name))
    OR EXISTS (SELECT 1 FROM sys.tables t WHERE t.is_ms_shipped = 0 AND NOT EXISTS (SELECT 1 FROM @expected e WHERE e.name = t.name))
     THROW 50011, 'Table set differs from the OneShop V3 specification list.', 1;
@@ -610,15 +767,17 @@ INSERT INTO @required VALUES
  (N'IX_order_fulfillments_store_status'),(N'IX_order_fulfillments_order_status'),
  (N'IX_order_items_fulfillment'),(N'IX_order_items_store_product'),
  (N'IX_orders_user_created'),(N'IX_inventory_movements_sp_created'),
- (N'IX_order_status_history_order_changed'),(N'IX_ofsh_fulfillment_changed');
+ (N'IX_order_status_history_order_changed'),(N'IX_ofsh_fulfillment_changed'),
+ (N'UQ_order_returns_order'),(N'UQ_order_return_items_line'),(N'IX_order_return_items_store_disposition'),
+ (N'UQ_promotions_code'),(N'UQ_promotion_usages_checkout'),(N'CK_promotions_limits'),(N'CK_order_items_discount');
 IF EXISTS (SELECT 1 FROM @required r WHERE NOT EXISTS (SELECT 1 FROM sys.objects o WHERE o.name = r.name)
                                          AND NOT EXISTS (SELECT 1 FROM sys.indexes i WHERE i.name = r.name))
     THROW 50013, 'A required UNIQUE/CHECK/INDEX object is missing.', 1;
 IF (SELECT COUNT(*) FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.reviews') AND name IN (N'UX_reviews_order_item', N'UX_reviews_legacy_user_product')
      AND is_unique = 1 AND has_filter = 1 AND is_disabled = 0) <> 2
     THROW 50019, 'DEC-26 Review filtered unique indexes are missing.', 1;
-IF (SELECT COUNT(*) FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.payment_refunds') AND name IN (N'UX_payment_refunds_goods', N'UX_payment_refunds_shipping', N'UX_payment_refunds_whole')
-     AND is_unique = 1 AND has_filter = 1 AND is_disabled = 0) <> 3
+IF (SELECT COUNT(*) FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.payment_refunds') AND name IN (N'UX_payment_refunds_goods', N'UX_payment_refunds_shipping', N'UX_payment_refunds_whole', N'UX_payment_refunds_return')
+     AND is_unique = 1 AND has_filter = 1 AND is_disabled = 0) <> 4
     THROW 50023, 'OPEN-10.1 payment_refunds filtered unique indexes are missing.', 1;
 IF EXISTS (SELECT 1 FROM sys.key_constraints WHERE name = N'UQ_reviews_user_product' AND parent_object_id = OBJECT_ID(N'dbo.reviews'))
     THROW 50022, 'The obsolete UQ_reviews_user_product constraint must not exist.', 1;
@@ -629,5 +788,5 @@ IF EXISTS (SELECT 1 FROM sys.check_constraints WHERE is_not_trusted = 1) OR EXIS
     THROW 50090, 'Untrusted constraint found.', 1;
 GO
 
-PRINT 'OneShop V3 fresh-install schema created and verified: 24 tables including the image cleanup journal, primary image uniqueness, DEC-26 and OPEN-10.1.';
+PRINT 'OneShop V3 fresh-install schema created and verified: 29 tables including the image cleanup journal, the post-delivery return flow and promotions, primary image uniqueness, DEC-26 and OPEN-10.1.';
 GO

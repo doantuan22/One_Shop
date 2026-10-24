@@ -1,7 +1,7 @@
 {
-  "actual" : 200,
   "expected" : "success/empty page or controlled 4xx; never 5xx",
   "request" : "/staff/fulfillments?from=invalid&to=invalid",
-  "timestamp" : "2026-10-24T02:07:00.230812Z",
-  "actor" : "staff.thuduc@oneshop.vn"
+  "timestamp" : "2026-10-24T09:12:04.661096900Z",
+  "actor" : "staff.thuduc@oneshop.vn",
+  "actual" : 200
 }

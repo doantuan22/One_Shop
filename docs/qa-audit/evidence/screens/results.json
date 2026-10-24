@@ -14,7 +14,7 @@
         ],
         "buttons": 2
       },
-      "time": "2026-10-24T02:10:48.567Z"
+      "time": "2026-10-24T09:12:25.852Z"
     },
     {
       "id": "guest /login",
@@ -30,7 +30,7 @@
         ],
         "buttons": 2
       },
-      "time": "2026-10-24T02:10:49.372Z"
+      "time": "2026-10-24T09:12:26.587Z"
     },
     {
       "id": "guest /register",
@@ -46,14 +46,14 @@
         ],
         "buttons": 2
       },
-      "time": "2026-10-24T02:10:49.861Z"
+      "time": "2026-10-24T09:12:27.084Z"
     },
     {
       "id": "guest /products",
       "status": "PASS",
       "detail": {
         "url": "/products",
-        "title": "Mỹ phẩm &amp; Chăm sóc sắc đẹp - OneShop | OneShop",
+        "title": "Mỹ phẩm & Chăm sóc sắc đẹp - OneShop | OneShop",
         "forms": [
           {
             "action": "/products",
@@ -62,14 +62,14 @@
         ],
         "buttons": 2
       },
-      "time": "2026-10-24T02:10:50.441Z"
+      "time": "2026-10-24T09:12:27.617Z"
     },
     {
       "id": "guest /products?q=khongtimthayqa999",
       "status": "PASS",
       "detail": {
         "url": "/products?q=khongtimthayqa999",
-        "title": "Mỹ phẩm &amp; Chăm sóc sắc đẹp - OneShop | OneShop",
+        "title": "Mỹ phẩm & Chăm sóc sắc đẹp - OneShop | OneShop",
         "forms": [
           {
             "action": "/products",
@@ -78,14 +78,14 @@
         ],
         "buttons": 2
       },
-      "time": "2026-10-24T02:10:50.944Z"
+      "time": "2026-10-24T09:12:28.095Z"
     },
     {
       "id": "guest /products?page=1",
       "status": "PASS",
       "detail": {
         "url": "/products?page=1",
-        "title": "Mỹ phẩm &amp; Chăm sóc sắc đẹp - OneShop | OneShop",
+        "title": "Mỹ phẩm & Chăm sóc sắc đẹp - OneShop | OneShop",
         "forms": [
           {
             "action": "/products",
@@ -94,14 +94,14 @@
         ],
         "buttons": 2
       },
-      "time": "2026-10-24T02:10:51.548Z"
+      "time": "2026-10-24T09:12:28.611Z"
     },
     {
       "id": "guest /products?categoryId=1&brandId=1",
       "status": "PASS",
       "detail": {
         "url": "/products?categoryId=1&brandId=1",
-        "title": "Mỹ phẩm &amp; Chăm sóc sắc đẹp - OneShop | OneShop",
+        "title": "Mỹ phẩm & Chăm sóc sắc đẹp - OneShop | OneShop",
         "forms": [
           {
             "action": "/products",
@@ -110,18 +110,18 @@
         ],
         "buttons": 2
       },
-      "time": "2026-10-24T02:10:52.098Z"
+      "time": "2026-10-24T09:12:29.115Z"
     },
     {
       "id": "guest /products/1",
       "status": "PASS",
       "detail": {
         "url": "/products/1",
-        "title": "Kem dưỡng ẩm CeraVe Moisturising Cream 340g - OneShop | OneShop",
+        "title": "Kem dÆ°á»¡ng áº©m CeraVe Moisturising Cream 340g - OneShop | OneShop",
         "forms": [],
         "buttons": 1
       },
-      "time": "2026-10-24T02:10:52.692Z"
+      "time": "2026-10-24T09:12:29.751Z"
     },
     {
       "id": "guest /stores",
@@ -157,7 +157,7 @@
         ],
         "buttons": 7
       },
-      "time": "2026-10-24T02:10:53.205Z"
+      "time": "2026-10-24T09:12:30.393Z"
     },
     {
       "id": "guest /stores?provinceCity=invalid",
@@ -173,7 +173,7 @@
         ],
         "buttons": 2
       },
-      "time": "2026-10-24T02:10:53.698Z"
+      "time": "2026-10-24T09:12:30.860Z"
     },
     {
       "id": "guest /image-credits",
@@ -184,31 +184,31 @@
         "forms": [],
         "buttons": 1
       },
-      "time": "2026-10-24T02:10:54.191Z"
+      "time": "2026-10-24T09:12:31.370Z"
     },
     {
       "id": "catalog browser title decodes entities /products",
-      "status": "FAIL",
-      "error": "Error: Literal HTML entity in document.title: Mỹ phẩm &amp; Chăm sóc sắc đẹp - OneShop | OneShop\n    at file:///D:/One_Shop/scripts/qa-audit/screens.mjs:25:38\n    at async check (file:///D:/One_Shop/scripts/qa-audit/screens.mjs:11:46)\n    at async file:///D:/One_Shop/scripts/qa-audit/screens.mjs:23:55",
-      "time": "2026-10-24T02:10:54.562Z"
+      "status": "PASS",
+      "detail": "Mỹ phẩm & Chăm sóc sắc đẹp - OneShop | OneShop",
+      "time": "2026-10-24T09:12:31.756Z"
     },
     {
       "id": "catalog browser title decodes entities /products?q=CeraVe",
-      "status": "FAIL",
-      "error": "Error: Literal HTML entity in document.title: Mỹ phẩm &amp; Chăm sóc sắc đẹp - OneShop | OneShop\n    at file:///D:/One_Shop/scripts/qa-audit/screens.mjs:25:38\n    at async check (file:///D:/One_Shop/scripts/qa-audit/screens.mjs:11:46)\n    at async file:///D:/One_Shop/scripts/qa-audit/screens.mjs:23:55",
-      "time": "2026-10-24T02:10:54.917Z"
+      "status": "PASS",
+      "detail": "Mỹ phẩm & Chăm sóc sắc đẹp - OneShop | OneShop",
+      "time": "2026-10-24T09:12:32.115Z"
     },
     {
       "id": "guest search form native submission",
       "status": "PASS",
       "detail": "/products",
-      "time": "2026-10-24T02:10:55.662Z"
+      "time": "2026-10-24T09:12:32.878Z"
     },
     {
       "id": "customer login",
       "status": "PASS",
       "detail": "/",
-      "time": "2026-10-24T02:10:56.663Z"
+      "time": "2026-10-24T09:12:33.862Z"
     },
     {
       "id": "customer /account",
@@ -236,7 +236,7 @@
         ],
         "buttons": 7
       },
-      "time": "2026-10-24T02:10:57.211Z"
+      "time": "2026-10-24T09:12:34.434Z"
     },
     {
       "id": "customer /orders",
@@ -260,7 +260,7 @@
         ],
         "buttons": 6
       },
-      "time": "2026-10-24T02:10:57.734Z"
+      "time": "2026-10-24T09:12:34.975Z"
     },
     {
       "id": "customer /cart",
@@ -304,25 +304,25 @@
         ],
         "buttons": 13
       },
-      "time": "2026-10-24T02:10:58.289Z"
+      "time": "2026-10-24T09:12:35.569Z"
     },
     {
       "id": "profile blank name rejected without write",
       "status": "PASS",
       "detail": "server validation rendered",
-      "time": "2026-10-24T02:10:58.975Z"
+      "time": "2026-10-24T09:12:36.216Z"
     },
     {
       "id": "customer logout",
       "status": "PASS",
       "detail": "authenticated cookie cleared",
-      "time": "2026-10-24T02:10:59.966Z"
+      "time": "2026-10-24T09:12:37.189Z"
     },
     {
       "id": "staff login",
       "status": "PASS",
       "detail": "/staff",
-      "time": "2026-10-24T02:11:00.868Z"
+      "time": "2026-10-24T09:12:38.285Z"
     },
     {
       "id": "staff /account",
@@ -350,7 +350,7 @@
         ],
         "buttons": 7
       },
-      "time": "2026-10-24T02:11:01.377Z"
+      "time": "2026-10-24T09:12:38.827Z"
     },
     {
       "id": "staff /staff/dashboard",
@@ -366,7 +366,7 @@
         ],
         "buttons": 3
       },
-      "time": "2026-10-24T02:11:01.920Z"
+      "time": "2026-10-24T09:12:39.436Z"
     },
     {
       "id": "staff /staff/fulfillments",
@@ -386,7 +386,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T02:11:02.471Z"
+      "time": "2026-10-24T09:12:40.057Z"
     },
     {
       "id": "staff /staff/fulfillments/delivery",
@@ -406,7 +406,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T02:11:03.000Z"
+      "time": "2026-10-24T09:12:40.599Z"
     },
     {
       "id": "staff /staff/fulfillments/pickup",
@@ -426,7 +426,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T02:11:03.537Z"
+      "time": "2026-10-24T09:12:41.175Z"
     },
     {
       "id": "staff /staff/stock",
@@ -476,26 +476,6 @@
             "method": "post"
           },
           {
-            "action": "/staff/stock/2/adjust",
-            "method": "post"
-          },
-          {
-            "action": "/staff/stock/40/adjust",
-            "method": "post"
-          },
-          {
-            "action": "/staff/stock/35/adjust",
-            "method": "post"
-          },
-          {
-            "action": "/staff/stock/47/adjust",
-            "method": "post"
-          },
-          {
-            "action": "/staff/stock/29/adjust",
-            "method": "post"
-          },
-          {
             "action": "/staff/stock/11/adjust",
             "method": "post"
           },
@@ -514,11 +494,31 @@
           {
             "action": "/staff/stock/1/adjust",
             "method": "post"
+          },
+          {
+            "action": "/staff/stock/2/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/40/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/35/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/47/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/29/adjust",
+            "method": "post"
           }
         ],
         "buttons": 76
       },
-      "time": "2026-10-24T02:11:04.141Z"
+      "time": "2026-10-24T09:12:41.802Z"
     },
     {
       "id": "staff /staff/stock/1/adjust",
@@ -538,7 +538,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T02:11:04.660Z"
+      "time": "2026-10-24T09:12:42.377Z"
     },
     {
       "id": "staff /staff/inventory-history",
@@ -558,7 +558,7 @@
         ],
         "buttons": 6
       },
-      "time": "2026-10-24T02:11:05.225Z"
+      "time": "2026-10-24T09:12:43.013Z"
     },
     {
       "id": "staff /staff/inventory-history/1",
@@ -574,7 +574,7 @@
         ],
         "buttons": 3
       },
-      "time": "2026-10-24T02:11:05.737Z"
+      "time": "2026-10-24T09:12:43.579Z"
     },
     {
       "id": "staff /staff/reviews",
@@ -598,19 +598,19 @@
         ],
         "buttons": 5
       },
-      "time": "2026-10-24T02:11:06.283Z"
+      "time": "2026-10-24T09:12:44.353Z"
     },
     {
       "id": "staff logout",
       "status": "PASS",
       "detail": "authenticated cookie cleared",
-      "time": "2026-10-24T02:11:07.309Z"
+      "time": "2026-10-24T09:12:45.362Z"
     },
     {
       "id": "admin login",
       "status": "PASS",
       "detail": "/admin",
-      "time": "2026-10-24T02:11:08.252Z"
+      "time": "2026-10-24T09:12:46.395Z"
     },
     {
       "id": "admin /account",
@@ -638,7 +638,7 @@
         ],
         "buttons": 7
       },
-      "time": "2026-10-24T02:11:08.763Z"
+      "time": "2026-10-24T09:12:46.905Z"
     },
     {
       "id": "admin /admin",
@@ -658,7 +658,7 @@
         ],
         "buttons": 10
       },
-      "time": "2026-10-24T02:11:09.313Z"
+      "time": "2026-10-24T09:12:47.509Z"
     },
     {
       "id": "admin /admin/users",
@@ -678,7 +678,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T02:11:09.824Z"
+      "time": "2026-10-24T09:12:48.054Z"
     },
     {
       "id": "admin /admin/users/new",
@@ -698,7 +698,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T02:11:10.311Z"
+      "time": "2026-10-24T09:12:48.551Z"
     },
     {
       "id": "admin /admin/users/7/edit",
@@ -718,7 +718,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T02:11:10.794Z"
+      "time": "2026-10-24T09:12:49.061Z"
     },
     {
       "id": "admin /admin/stores",
@@ -738,7 +738,7 @@
         ],
         "buttons": 5
       },
-      "time": "2026-10-24T02:11:11.324Z"
+      "time": "2026-10-24T09:12:49.595Z"
     },
     {
       "id": "admin /admin/stores/new",
@@ -758,7 +758,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T02:11:11.806Z"
+      "time": "2026-10-24T09:12:50.091Z"
     },
     {
       "id": "admin /admin/stores/1/edit",
@@ -778,7 +778,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T02:11:12.300Z"
+      "time": "2026-10-24T09:12:50.595Z"
     },
     {
       "id": "admin /admin/products",
@@ -798,7 +798,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T02:11:12.885Z"
+      "time": "2026-10-24T09:12:51.187Z"
     },
     {
       "id": "admin /admin/products/new",
@@ -818,7 +818,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T02:11:13.380Z"
+      "time": "2026-10-24T09:12:51.699Z"
     },
     {
       "id": "admin /admin/products/1/edit",
@@ -846,7 +846,7 @@
         ],
         "buttons": 6
       },
-      "time": "2026-10-24T02:11:13.903Z"
+      "time": "2026-10-24T09:12:52.224Z"
     },
     {
       "id": "admin /admin/categories",
@@ -866,7 +866,7 @@
         ],
         "buttons": 7
       },
-      "time": "2026-10-24T02:11:14.928Z"
+      "time": "2026-10-24T09:12:52.833Z"
     },
     {
       "id": "admin /admin/categories/1/edit",
@@ -890,7 +890,7 @@
         ],
         "buttons": 8
       },
-      "time": "2026-10-24T02:11:15.445Z"
+      "time": "2026-10-24T09:12:53.347Z"
     },
     {
       "id": "admin /admin/brands",
@@ -910,7 +910,7 @@
         ],
         "buttons": 7
       },
-      "time": "2026-10-24T02:11:15.959Z"
+      "time": "2026-10-24T09:12:53.848Z"
     },
     {
       "id": "admin /admin/brands/1/edit",
@@ -934,7 +934,7 @@
         ],
         "buttons": 8
       },
-      "time": "2026-10-24T02:11:16.462Z"
+      "time": "2026-10-24T09:12:54.365Z"
     },
     {
       "id": "admin /admin/store-products",
@@ -954,7 +954,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T02:11:17.014Z"
+      "time": "2026-10-24T09:12:54.950Z"
     },
     {
       "id": "admin /admin/store-products/new",
@@ -974,7 +974,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T02:11:17.524Z"
+      "time": "2026-10-24T09:12:55.434Z"
     },
     {
       "id": "admin /admin/store-products/1/edit",
@@ -994,7 +994,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T02:11:18.019Z"
+      "time": "2026-10-24T09:12:55.937Z"
     },
     {
       "id": "admin /admin/staff-assignments",
@@ -1042,7 +1042,7 @@
         ],
         "buttons": 21
       },
-      "time": "2026-10-24T02:11:18.580Z"
+      "time": "2026-10-24T09:12:56.449Z"
     },
     {
       "id": "admin /admin/inventory",
@@ -1062,7 +1062,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T02:11:19.153Z"
+      "time": "2026-10-24T09:12:57.021Z"
     },
     {
       "id": "admin /admin/orders",
@@ -1082,7 +1082,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T02:11:19.749Z"
+      "time": "2026-10-24T09:12:57.590Z"
     },
     {
       "id": "admin /admin/orders/1",
@@ -1098,7 +1098,7 @@
         ],
         "buttons": 3
       },
-      "time": "2026-10-24T02:11:20.325Z"
+      "time": "2026-10-24T09:12:58.190Z"
     },
     {
       "id": "admin /admin/payments",
@@ -1118,7 +1118,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T02:11:20.881Z"
+      "time": "2026-10-24T09:12:58.775Z"
     },
     {
       "id": "admin /admin/reviews",
@@ -1150,83 +1150,47 @@
         ],
         "buttons": 7
       },
-      "time": "2026-10-24T02:11:21.419Z"
+      "time": "2026-10-24T09:12:59.323Z"
     },
     {
       "id": "category modal open/cancel/invalid submit/reopen",
       "status": "PASS",
       "detail": "cancel made no request; empty submit refused",
-      "time": "2026-10-24T02:11:23.647Z"
+      "time": "2026-10-24T09:13:01.497Z"
     },
     {
       "id": "brand modal open/cancel/invalid submit/reopen",
       "status": "PASS",
       "detail": "cancel made no request; empty submit refused",
-      "time": "2026-10-24T02:11:25.770Z"
+      "time": "2026-10-24T09:13:03.647Z"
     },
     {
       "id": "admin user filter and reset",
       "status": "PASS",
       "detail": "10",
-      "time": "2026-10-24T02:11:26.814Z"
+      "time": "2026-10-24T09:13:04.706Z"
     },
     {
       "id": "admin logout",
       "status": "PASS",
       "detail": "authenticated cookie cleared",
-      "time": "2026-10-24T02:11:27.798Z"
+      "time": "2026-10-24T09:13:05.678Z"
     },
     {
       "id": "seed category image resource resolves",
-      "status": "FAIL",
-      "error": "Error: Seed category image failed to load: [{\"url\":\"https://res.cloudinary.com/dfyfpuguj/image/upload/f_auto,q_auto,w_800/v1791803748/oneshop/seed/categories/trang-diem.webp\",\"status\":404,\"type\":\"Image\"},{\"url\":\"https://res.cloudinary.com/dfyfpuguj/image/upload/f_auto,q_auto,w_800/v1791803748/oneshop/seed/categories/trang-diem.webp\",\"status\":404,\"type\":\"Image\"},{\"url\":\"https://res.cloudinary.com/dfyfpuguj/image/upload/v1791803748/oneshop/seed/categories/trang-diem.webp\",\"status\":404,\"type\":\"Image\"},{\"url\":\"https://res.cloudinary.com/dfyfpuguj/image/upload/v1791803748/oneshop/seed/categories/trang-diem.webp\",\"status\":404,\"type\":\"Image\"},{\"url\":\"https://res.cloudinary.com/dfyfpuguj/image/upload/v1791803748/oneshop/seed/categories/trang-diem.webp\",\"status\":404,\"type\":\"Image\"},{\"url\":\"https://res.cloudinary.com/dfyfpuguj/image/upload/v1791803748/oneshop/seed/categories/trang-diem.webp\",\"status\":404,\"type\":\"Image\"}]\n    at file:///D:/One_Shop/scripts/qa-audit/screens.mjs:62:29\n    at check (file:///D:/One_Shop/scripts/qa-audit/screens.mjs:11:52)\n    at file:///D:/One_Shop/scripts/qa-audit/screens.mjs:60:9",
-      "time": "2026-10-24T02:11:27.798Z"
+      "status": "PASS",
+      "detail": "no failed requests for seeded category image",
+      "time": "2026-10-24T09:13:05.678Z"
     }
   ],
   "runtimeErrors": [
-    "Failed to load resource: the server responded with a status of 404 ()",
-    "Failed to load resource: the server responded with a status of 404 ()",
-    "Failed to load resource: the server responded with a status of 404 ()",
-    "Failed to load resource: the server responded with a status of 404 ()",
-    "Failed to load resource: the server responded with a status of 404 ()",
-    "Failed to load resource: the server responded with a status of 404 ()",
     "Failed to load resource: the server responded with a status of 404 ()"
   ],
   "networkFailures": [
     {
-      "url": "http://localhost:49704/favicon.ico",
+      "url": "http://localhost:57296/favicon.ico",
       "status": 404,
       "type": "Other"
-    },
-    {
-      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/f_auto,q_auto,w_800/v1791803748/oneshop/seed/categories/trang-diem.webp",
-      "status": 404,
-      "type": "Image"
-    },
-    {
-      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/f_auto,q_auto,w_800/v1791803748/oneshop/seed/categories/trang-diem.webp",
-      "status": 404,
-      "type": "Image"
-    },
-    {
-      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/v1791803748/oneshop/seed/categories/trang-diem.webp",
-      "status": 404,
-      "type": "Image"
-    },
-    {
-      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/v1791803748/oneshop/seed/categories/trang-diem.webp",
-      "status": 404,
-      "type": "Image"
-    },
-    {
-      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/v1791803748/oneshop/seed/categories/trang-diem.webp",
-      "status": 404,
-      "type": "Image"
-    },
-    {
-      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/v1791803748/oneshop/seed/categories/trang-diem.webp",
-      "status": 404,
-      "type": "Image"
     }
   ]
 }

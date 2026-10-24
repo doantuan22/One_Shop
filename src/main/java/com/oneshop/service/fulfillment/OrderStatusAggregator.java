@@ -114,6 +114,17 @@ public class OrderStatusAggregator {
         lockedOrder.setOrderStatus(target);
         orders.saveAndFlush(lockedOrder);
         histories.save(history);
+        if (target == OrderStatus.CANCELLED && promotionRelease != null) {
+            // every part was undeliverable: the Order is cancelled, so its promotion use goes back
+            promotionRelease.releaseIfCancelled(lockedOrder);
+        }
         return target;
+    }
+
+    private com.oneshop.service.promotion.PromotionReleaseService promotionRelease;
+
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    void setPromotionRelease(com.oneshop.service.promotion.PromotionReleaseService promotionRelease) {
+        this.promotionRelease = promotionRelease;
     }
 }

@@ -546,6 +546,17 @@ INSERT INTO dbo.review_replies (reply_id, review_id, staff_user_id, content, cre
  (3, 3, 3, N'[Dữ liệu mô phỏng] OneShop Gò Vấp xin cảm ơn bạn.', DATEADD(DAY, -1, SYSDATETIME()), DATEADD(DAY, -1, SYSDATETIME()));
 SET IDENTITY_INSERT dbo.review_replies OFF;
 /* ============================================================================
+   18c. promotions (ma khuyen mai mau - du lieu mo phong, chua co don nao dung ma)
+   ========================================================================== */
+INSERT INTO dbo.promotions (code, name, description, discount_type, discount_value, max_discount_amount, min_order_amount,
+                            usage_limit, used_count, per_user_limit, start_at, end_at, status) VALUES
+ (N'WELCOME10', N'Giảm 10% đơn đầu tiên', N'[Dữ liệu mô phỏng] Giảm 10% tiền hàng, tối đa 50.000 ₫, cho đơn từ 200.000 ₫.',
+  N'PERCENT', 10, 50000, 200000, 100, 0, 1, DATEADD(DAY, -7, SYSDATETIME()), DATEADD(DAY, 60, SYSDATETIME()), N'ACTIVE'),
+ (N'GIAM30K', N'Giảm 30.000 ₫', N'[Dữ liệu mô phỏng] Giảm 30.000 ₫ tiền hàng cho đơn từ 300.000 ₫.',
+  N'FIXED', 30000, NULL, 300000, 50, 0, 2, NULL, NULL, N'ACTIVE'),
+ (N'HETHAN20', N'Giảm 20% (đã hết hạn)', N'[Dữ liệu mô phỏng] Mã đã hết hạn, dùng để minh họa trạng thái trên trang quản trị.',
+  N'PERCENT', 20, 100000, 500000, 20, 0, 1, DATEADD(DAY, -60, SYSDATETIME()), DATEADD(DAY, -30, SYSDATETIME()), N'ACTIVE');
+/* ============================================================================
    18b. payment_refunds (OPEN-10.1): the refund ledger mirrors every refund recorded on payments.refund_*
    ========================================================================== */
 INSERT INTO dbo.payment_refunds (payment_id, order_id, fulfillment_id, component, amount, status, reason,
@@ -576,7 +587,8 @@ IF EXISTS (SELECT 1 FROM dbo.order_items oi JOIN dbo.order_fulfillments f ON f.f
 IF EXISTS (SELECT 1 FROM dbo.order_items oi JOIN dbo.order_fulfillments f ON f.fulfillment_id = oi.fulfillment_id WHERE f.order_id <> oi.order_id) THROW 50043, 'OrderItem order differs from its Fulfillment order.', 1;
 IF EXISTS (SELECT 1 FROM dbo.order_items oi JOIN dbo.store_products sp ON sp.store_product_id = oi.store_product_id JOIN dbo.products p ON p.product_id = sp.product_id WHERE oi.unit_price <> p.price) THROW 50044, 'OrderItem unit price differs from the Product price.', 1;
 IF EXISTS (SELECT 1 FROM dbo.order_items WHERE subtotal <> unit_price * quantity) THROW 50050, 'Order item subtotal mismatch.', 1;
-IF EXISTS (SELECT 1 FROM dbo.orders o WHERE o.total_amount <> (SELECT SUM(subtotal) FROM dbo.order_items WHERE order_id = o.order_id) + o.shipping_fee) THROW 50051, 'Order total mismatch.', 1;
+IF EXISTS (SELECT 1 FROM dbo.orders o WHERE o.total_amount <> (SELECT SUM(subtotal) FROM dbo.order_items WHERE order_id = o.order_id) - o.discount_amount + o.shipping_fee) THROW 50051, 'Order total mismatch.', 1;
+IF EXISTS (SELECT 1 FROM dbo.orders o WHERE o.discount_amount <> (SELECT SUM(discount_amount) FROM dbo.order_items WHERE order_id = o.order_id)) THROW 50055, 'Order discount differs from the sum of its item discounts.', 1;
 IF EXISTS (SELECT 1 FROM dbo.orders WHERE fulfillment_type = N'DELIVERY' AND shipping_fee <> 30000) OR EXISTS (SELECT 1 FROM dbo.orders WHERE fulfillment_type = N'STORE_PICKUP' AND shipping_fee <> 0) THROW 50053, 'Shipping fee rule violated (DELIVERY 30.000, pickup 0).', 1;
 IF EXISTS (SELECT 1 FROM dbo.payments p JOIN dbo.orders o ON o.order_id = p.order_id WHERE p.amount <> o.total_amount) THROW 50052, 'Payment amount differs from the order total.', 1;
 IF EXISTS (SELECT 1 FROM dbo.payment_refunds r JOIN dbo.payments p ON p.payment_id = r.payment_id WHERE r.status <> N'SIMULATION_FAILED' AND r.amount > p.amount) THROW 50054, 'Refund exceeds the collected amount.', 1;

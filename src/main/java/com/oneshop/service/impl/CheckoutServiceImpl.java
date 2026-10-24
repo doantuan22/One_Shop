@@ -59,6 +59,8 @@ import com.oneshop.service.allocation.LockedAllocation;
 import com.oneshop.service.allocation.ShippingAddressValidator;
 import com.oneshop.service.allocation.ShippingFeeCalculator;
 import com.oneshop.service.allocation.StoreAllocation;
+import com.oneshop.service.promotion.PromotionCalculator;
+import com.oneshop.service.promotion.PromotionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -116,6 +118,7 @@ public class CheckoutServiceImpl implements CheckoutService {
     private final CheckoutProperties checkoutProperties;
     private final PaymentProperties paymentProperties;
     private final PaymentDeadlinePolicy deadlines;
+    private final PromotionService promotionService;
 
     public CheckoutServiceImpl(CartService cartService, StoreAllocationService allocationService,
                                PaymentService paymentService, InventoryService inventoryService,
@@ -128,7 +131,7 @@ public class CheckoutServiceImpl implements CheckoutService {
                                StoreRepository storeRepository, ShippingFeeCalculator shippingFees,
                                DeliveryServiceAreaPolicy areaPolicy, CheckoutProperties checkoutProperties,
                                PaymentProperties paymentProperties, PaymentDeadlinePolicy deadlines,
-                               ShippingAddressValidator addressValidator) {
+                               ShippingAddressValidator addressValidator, PromotionService promotionService) {
         this.cartService = cartService;
         this.allocationService = allocationService;
         this.paymentService = paymentService;
@@ -150,6 +153,7 @@ public class CheckoutServiceImpl implements CheckoutService {
         this.checkoutProperties = checkoutProperties;
         this.paymentProperties = paymentProperties;
         this.deadlines = deadlines;
+        this.promotionService = promotionService;
     }
 
     // ------------------------------------------------------------------ checkout page
@@ -157,14 +161,14 @@ public class CheckoutServiceImpl implements CheckoutService {
     @Override
     @Transactional(readOnly = true)
     public CheckoutPreviewResponse prepare(String customerEmail, Collection<Long> cartItemIds) {
-        return preview(customerEmail, cartItemIds, FulfillmentType.DELIVERY, null, null, null);
+        return preview(customerEmail, cartItemIds, FulfillmentType.DELIVERY, null, null, null, null);
     }
 
     @Override
     @Transactional(readOnly = true)
     public CheckoutPreviewResponse preview(String customerEmail, Collection<Long> cartItemIds,
                                            FulfillmentType fulfillmentType, PaymentMethod paymentMethod,
-                                           Long pickupStoreId, String shippingAddress) {
+                                           Long pickupStoreId, String shippingAddress, String promotionCode) {
         CartResponse selection = cartService.getSelection(customerEmail, cartItemIds);
         User user = user(customerEmail);
         var address = addressRepository.findByUserEmailOrderByDefaultAddressDescCreatedAtDesc(customerEmail).stream()
@@ -191,6 +195,10 @@ public class CheckoutServiceImpl implements CheckoutService {
         int orderCount = 1;
         BigDecimal grandTotal = null;
         boolean splitConsent = false;
+        PromotionService.Applied applied = null;
+        String promotionProblem = null;
+        List<PromotionService.Option> promotionOptions = List.of();
+        BigDecimal discount = BigDecimal.ZERO;
 
         if (type == FulfillmentType.DELIVERY && deliveryBlocked != null) {
             problem = deliveryBlocked;
@@ -210,18 +218,26 @@ public class CheckoutServiceImpl implements CheckoutService {
                 splitConsent = method == PaymentMethod.COD && type == FulfillmentType.DELIVERY
                         && result.fulfillmentCount() > 1;
                 orderCount = splitConsent ? result.fulfillmentCount() : 1;
+                // the promotion takes off the goods only; the shipping fee of every Order is added after it
+                promotionOptions = promotionService.options(user.getId(), plan.itemsTotal());
+                PromotionService.Check check = promotionService.check(user.getId(), promotionCode, plan.itemsTotal());
+                applied = check.applied();
+                promotionProblem = check.problem();
+                discount = applied == null ? BigDecimal.ZERO : applied.discount();
                 if (fee != null) {
-                    grandTotal = plan.itemsTotal().add(fee.multiply(BigDecimal.valueOf(orderCount)));
+                    grandTotal = plan.itemsTotal().subtract(discount).add(fee.multiply(BigDecimal.valueOf(orderCount)));
                 }
                 // the fingerprint covers the whole plan the customer is shown: who, what, from where, how, how much
                 plan = new AllocationPlanResponse(contextSignature(user.getId(), type, method, pickupStoreId,
-                        suggestedAddress, demands, result, fee, orderCount, grandTotal),
+                        suggestedAddress, demands, result, fee, orderCount, grandTotal,
+                        applied == null ? null : applied.code(), discount),
                         plan.fulfillmentCount(), plan.itemsTotal(), plan.parts());
             }
         }
         return new CheckoutPreviewResponse(selection, receiverName, receiverPhone, suggestedAddress, type, method,
                 pickupStoreId, onlineEnabled, deliveryBlocked == null, deliveryBlocked, pickupStores, plan, problem,
-                fee, orderCount, grandTotal, splitConsent, paymentProperties.getPendingTimeoutMinutes());
+                fee, orderCount, grandTotal, splitConsent, paymentProperties.getPendingTimeoutMinutes(), applied,
+                promotionProblem, promotionOptions, discount);
     }
 
     private AllocationPlanResponse planOf(AllocationResult result, CartResponse selection) {
@@ -347,8 +363,7 @@ public class CheckoutServiceImpl implements CheckoutService {
         }
         Map<Long, BigDecimal> priceByProduct = lineByProduct.entrySet().stream().collect(Collectors.toMap(
                 Map.Entry::getKey, entry -> entry.getValue().getProduct().getPrice()));
-        List<BigDecimal> orderTotals = new ArrayList<>();
-        BigDecimal sessionTotal = BigDecimal.ZERO;
+        List<BigDecimal> orderGoods = new ArrayList<>();
         for (List<StoreAllocation> group : groups) {
             BigDecimal items = BigDecimal.ZERO;
             for (StoreAllocation store : group) {
@@ -356,7 +371,19 @@ public class CheckoutServiceImpl implements CheckoutService {
                     items = items.add(priceByProduct.get(line.productId()).multiply(BigDecimal.valueOf(line.quantity())));
                 }
             }
-            BigDecimal total = items.add(fee);
+            orderGoods.add(items);
+        }
+        BigDecimal goodsTotal = orderGoods.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // 4b. The ONE promotion code of this checkout (a COD split spends a single use): locked last, decided again
+        // with the goods of this very checkout. The discount comes off the goods, never off the shipping fee.
+        PromotionService.Evaluation promotion = promotionService.lockAndEvaluate(user, request.promotionCode(), goodsTotal);
+        BigDecimal discount = promotion == null ? BigDecimal.ZERO : promotion.discount();
+        List<BigDecimal> orderDiscounts = PromotionCalculator.allocate(discount, orderGoods);
+        List<BigDecimal> orderTotals = new ArrayList<>();
+        BigDecimal sessionTotal = BigDecimal.ZERO;
+        for (int i = 0; i < groups.size(); i++) {
+            BigDecimal total = orderGoods.get(i).subtract(orderDiscounts.get(i)).add(fee);
             orderTotals.add(total);
             sessionTotal = sessionTotal.add(total);
         }
@@ -366,7 +393,8 @@ public class CheckoutServiceImpl implements CheckoutService {
         }
         if (StringUtils.hasText(request.planSignature())) {
             String current = contextSignature(user.getId(), type, method, request.pickupStoreId(),
-                    request.shippingAddress(), demands, plan, fee, groups.size(), sessionTotal);
+                    request.shippingAddress(), demands, plan, fee, groups.size(), sessionTotal,
+                    promotion == null ? null : promotion.promotion().getCode(), discount);
             if (!current.equals(request.planSignature())) {
                 throw new CheckoutConflictException(CheckoutConflictException.CODE_PLAN_CHANGED,
                         "Nguồn hàng, phí hoặc cách nhận của đơn đã thay đổi so với lúc bạn xem. "
@@ -380,8 +408,12 @@ public class CheckoutServiceImpl implements CheckoutService {
         session.setTotalAmount(sessionTotal);
         checkoutSessionRepository.save(session);
 
+        if (promotion != null) {
+            promotionService.commitUse(promotion, user, session);
+        }
         for (int i = 0; i < groups.size(); i++) {
-            createOrder(session, user, request, groups.get(i), orderTotals.get(i), fee, lineByProduct, locked);
+            createOrder(session, user, request, groups.get(i), orderTotals.get(i), fee, lineByProduct, locked,
+                    orderDiscounts.get(i), promotion == null ? null : promotion.promotion().getCode());
         }
 
         // 6. Only the lines that were checked out leave the cart.
@@ -393,7 +425,8 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     private void createOrder(CheckoutSession session, User user, PlaceOrderRequest request,
                              List<StoreAllocation> stores, BigDecimal total, BigDecimal fee,
-                             Map<Long, CartItem> lineByProduct, LockedAllocation locked) {
+                             Map<Long, CartItem> lineByProduct, LockedAllocation locked, BigDecimal orderDiscount,
+                             String promotionCode) {
         PaymentMethod method = request.paymentMethod();
         boolean single = stores.size() == 1;
         Store onlyStore = single ? locked.lockedStoreProducts()
@@ -414,7 +447,16 @@ public class CheckoutServiceImpl implements CheckoutService {
                 ? request.shippingAddress().trim() : null);
         order.setTotalAmount(total);
         order.setShippingFee(fee);
+        order.setDiscountAmount(orderDiscount.setScale(2));
+        order.setPromotionCode(promotionCode);
         orderRepository.save(order);
+
+        // the Order discount is shared between its lines in proportion to their value, to the exact VND
+        List<AllocatedLine> allLines = stores.stream().flatMap(store -> store.lines().stream()).toList();
+        List<BigDecimal> lineDiscounts = PromotionCalculator.allocate(orderDiscount, allLines.stream()
+                .map(line -> lineByProduct.get(line.productId()).getProduct().getPrice()
+                        .multiply(BigDecimal.valueOf(line.quantity()))).toList());
+        int lineNo = 0;
 
         for (StoreAllocation allocation : stores) {
             Store store = locked.lockedStoreProducts().get(allocation.lines().get(0).storeProductId()).getStore();
@@ -436,6 +478,7 @@ public class CheckoutServiceImpl implements CheckoutService {
                 item.setUnitPrice(product.getPrice());
                 item.setQuantity(line.quantity());
                 item.setSubtotal(product.getPrice().multiply(BigDecimal.valueOf(line.quantity())));
+                item.setDiscountAmount(lineDiscounts.get(lineNo++));
                 orderItemRepository.save(item);
                 // stock leaves the StoreProduct now, with an ORDER movement; no reservation, no later deduction
                 inventoryService.deductForOrder(storeProduct, line.quantity(), order);
@@ -476,7 +519,8 @@ public class CheckoutServiceImpl implements CheckoutService {
      */
     private static String contextSignature(Long userId, FulfillmentType type, PaymentMethod method,
                                            Long pickupStoreId, String address, Collection<AllocationDemand> demands,
-                                           AllocationResult result, BigDecimal fee, int orderCount, BigDecimal total) {
+                                           AllocationResult result, BigDecimal fee, int orderCount, BigDecimal total,
+                                           String promotionCode, BigDecimal discount) {
         StringBuilder plain = new StringBuilder("v1|u=").append(userId)
                 .append("|f=").append(type).append("|m=").append(method)
                 .append("|p=").append(type == FulfillmentType.STORE_PICKUP ? String.valueOf(pickupStoreId) : "-")
@@ -485,7 +529,9 @@ public class CheckoutServiceImpl implements CheckoutService {
         demands.stream().sorted(Comparator.comparing(AllocationDemand::productId))
                 .forEach(d -> plain.append(d.productId()).append('x').append(d.quantity()).append(','));
         plain.append("|r=").append(result.signature())
-                .append("|fee=").append(money(fee)).append("|n=").append(orderCount).append("|t=").append(money(total));
+                .append("|fee=").append(money(fee)).append("|n=").append(orderCount).append("|t=").append(money(total))
+                .append("|promo=").append(promotionCode == null ? "-" : promotionCode)
+                .append("|disc=").append(money(discount == null ? BigDecimal.ZERO : discount));
         try {
             byte[] digest = MessageDigest.getInstance("SHA-256").digest(plain.toString().getBytes(StandardCharsets.UTF_8));
             return HexFormat.of().formatHex(digest, 0, 12);

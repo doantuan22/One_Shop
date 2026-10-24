@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "GET",
+    "method" : "form",
+    "controller" : "com.oneshop.controller.client.CustomerOrderReturnController",
+    "path" : "/orders/{orderId}/return"
+  },
+  "location" : "http://localhost:57296/login",
+  "executedAt" : "2026-10-24T09:12:21.883056900Z",
+  "expected" : 302,
+  "actual" : 302,
+  "requestPath" : "/orders/999999999/return",
+  "kind" : "anonymous guard/input probe"
+}
