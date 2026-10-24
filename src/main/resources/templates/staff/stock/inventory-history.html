@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Nhật ký biến động tồn</title>
+</head>
+<body>
+<div class="os-page-header mb-4">
+    <div>
+        <h1 class="h3 mb-1">Nhật ký biến động tồn</h1>
+        <p class="text-secondary mb-0">Biến động tồn kho của các chi nhánh được phân công: xuất bán, hoàn kho do hủy
+            đơn và điều chỉnh kiểm kê.</p>
+    </div>
+    <div class="os-page-header__actions">
+        <a class="btn btn-outline-primary btn-sm" th:href="@{/staff/stock}">Tồn kho chi nhánh</a>
+    </div>
+</div>
+
+<nav class="mb-4">
+    <ul class="nav nav-pills os-tabs" id="inventory-history-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" th:classappend="${!viewIsSelect} ? 'active'" type="button" role="tab"
+                    id="tab-log-button" data-bs-toggle="pill" data-bs-target="#tab-log"
+                    aria-controls="tab-log" th:attr="aria-selected=${!viewIsSelect}">
+                Nhật ký biến động <span class="badge os-soft-coral ms-1" th:text="${log.totalElements}">0</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" th:classappend="${viewIsSelect} ? 'active'" type="button" role="tab"
+                    id="tab-select-button" data-bs-toggle="pill" data-bs-target="#tab-select"
+                    aria-controls="tab-select" th:attr="aria-selected=${viewIsSelect}">
+                Chọn SKU xem theo sản phẩm
+            </button>
+        </li>
+    </ul>
+</nav>
+
+<div class="tab-content">
+    <!--/* ================= TAB 1: central movement log ================= */-->
+    <div class="tab-pane fade" th:classappend="${!viewIsSelect} ? 'show active'" id="tab-log" role="tabpanel">
+        <form method="get" th:action="@{/staff/inventory-history}" class="os-filter card mb-4" id="movement-log-filter">
+            <div class="card-body">
+                <div class="os-filter-grid os-filter-grid--compact">
+                    <div class="os-filter-field">
+                        <label class="form-label" for="log-q">Tìm kiếm</label>
+                        <input id="log-q" name="q" type="text" class="form-control form-control-sm" th:attr="data-suggest-url=@{/products/suggest}" th:value="${q}"
+                               placeholder="SKU, sản phẩm, chi nhánh, ghi chú hoặc mã Order">
+                    </div>
+                    <div class="os-filter-field">
+                        <label class="form-label" for="log-type">Loại biến động</label>
+                        <select id="log-type" name="type" class="form-select form-select-sm">
+                            <option value="">Tất cả</option>
+                            <option value="ORDER" th:selected="${type == 'ORDER'}">Xuất bán (từ đơn)</option>
+                            <option value="CANCEL_ORDER" th:selected="${type == 'CANCEL_ORDER'}">Hoàn kho (hủy đơn)</option>
+                            <option value="STOCK_ADJUST" th:selected="${type == 'STOCK_ADJUST'}">Điều chỉnh kiểm kê</option>
+                        </select>
+                    </div>
+                    <div class="os-filter-field">
+                        <label class="form-label" for="log-staff">Người thao tác</label>
+                        <select id="log-staff" name="staffId" class="form-select form-select-sm">
+                            <option value="">Tất cả</option>
+                            <option th:each="u : ${staffOptions}" th:value="${u.id}"
+                                    th:selected="${staffId != null and staffId == u.id}"
+                                    th:text="${u.fullName} + ' · ' + ${u.email}"></option>
+                        </select>
+                    </div>
+                    <div class="os-filter-field">
+                        <label class="form-label" for="log-from">Từ ngày</label>
+                        <input id="log-from" name="from" type="date" class="form-control form-control-sm" th:value="${from}">
+                    </div>
+                    <div class="os-filter-field">
+                        <label class="form-label" for="log-to">Đến ngày</label>
+                        <input id="log-to" name="to" type="date" class="form-control form-control-sm" th:value="${to}">
+                    </div>
+                    <div class="os-filter-field d-flex align-items-end gap-2 pb-1">
+                        <input type="hidden" name="view" value="log">
+                        <button type="submit" class="btn btn-primary btn-sm flex-shrink-0">Áp dụng</button>
+                        <a class="btn btn-outline-secondary btn-sm flex-shrink-0" data-filter-reset
+                           th:href="@{/staff/inventory-history}">Xóa lọc</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="card shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle os-table mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th scope="col" class="os-col-code">Thời điểm</th>
+                        <th scope="col">SKU / Sản phẩm</th>
+                        <th scope="col">Chi nhánh</th>
+                        <th scope="col">Loại</th>
+                        <th scope="col" class="os-col-num">Tăng / giảm</th>
+                        <th scope="col" class="os-col-num text-center">Tồn trước → sau</th>
+                        <th scope="col">Ghi chú</th>
+                        <th scope="col">Người thao tác</th>
+                        <th scope="col">Đơn liên quan</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="row : ${log.content}" th:attr="data-movement-id=${row.id},data-type=${row.type}">
+                        <td class="os-col-code text-nowrap">
+                            <span class="os-cell-main" th:text="${#temporals.format(row.createdAt, 'dd/MM/yyyy')}">23/10/2026</span>
+                            <span class="os-cell-sub" th:text="${#temporals.format(row.createdAt, 'HH:mm:ss')}">10:00:00</span>
+                        </td>
+                        <td>
+                            <span class="os-cell-main" th:text="${row.sku}">OS-SKU-001</span>
+                            <span class="os-cell-sub" th:text="${row.productName}">Tên sản phẩm</span>
+                        </td>
+                        <td class="text-nowrap"><span class="os-cell-main" th:text="${row.storeName}">OneShop Thủ Đức</span></td>
+                        <td>
+                            <span class="badge os-soft-info" th:if="${row.type.name() == 'ORDER'}">Xuất bán</span>
+                            <span class="badge os-soft-purple" th:if="${row.type.name() == 'CANCEL_ORDER'}">Hoàn kho</span>
+                            <span class="badge os-soft-coral" th:if="${row.type.name() == 'STOCK_ADJUST'}">Điều chỉnh</span>
+                        </td>
+                        <td class="os-col-num">
+                            <span class="os-delta-pos" th:if="${row.quantityChange > 0}"
+                                  th:text="'+' + ${row.quantityChange}">+2</span>
+                            <span class="os-delta-neg" th:if="${row.quantityChange < 0}"
+                                  th:text="${row.quantityChange}">-1</span>
+                            <span class="os-delta-neutral" th:if="${row.quantityChange == 0}">—</span>
+                        </td>
+                        <td class="os-col-num text-center">
+                            <span th:text="${row.quantityBefore}">20</span> →
+                            <strong th:text="${row.quantityAfter}">19</strong>
+                        </td>
+                        <td class="os-col-note">
+                            <span class="os-note-ellipsis" th:title="${row.note}" th:text="${row.note}">Ghi chú biến động</span>
+                        </td>
+                        <td class="text-nowrap">
+                            <span class="os-cell-main" th:text="${row.staffName}">Nhân viên Thủ Đức</span>
+                            <span class="small text-secondary" th:if="${row.staffId == null}">Tự động từ hệ thống</span>
+                        </td>
+                        <td>
+                            <a th:if="${row.orderId != null}"
+                               th:href="@{/staff/fulfillments(orderId=${row.orderId},open=false)}"
+                               th:text="'Đơn #' + ${row.orderId}">Đơn #101</a>
+                            <span class="text-secondary small" th:if="${row.orderId == null}">—</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${log.isEmpty()}">
+                        <td colspan="9" class="text-center text-secondary py-5">
+                            Không có biến động tồn kho nào khớp bộ lọc tại các chi nhánh được phân công.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <nav class="os-pagination" th:if="${log.totalPages > 1}" aria-label="Phân trang nhật ký biến động">
+                <span class="os-page-info">
+                    Trang <strong th:text="${log.number + 1}">1</strong> /
+                    <strong th:text="${log.totalPages}">2</strong> ·
+                    <span th:text="${log.totalElements}">0</span> biến động
+                </span>
+                <ul class="pagination mb-0">
+                    <li class="page-item" th:classappend="${log.first} ? 'disabled'"><a class="page-link"
+                        th:href="@{/staff/inventory-history(view='log', logPage=${log.number - 1}, q=${q}, type=${type == '' ? '' : type}, staffId=${staffId == null ? '' : staffId}, from=${from}, to=${to})}">Trước</a></li>
+                    <li class="page-item" th:classappend="${log.last} ? 'disabled'"><a class="page-link"
+                        th:href="@{/staff/inventory-history(view='log', logPage=${log.number + 1}, q=${q}, type=${type == '' ? '' : type}, staffId=${staffId == null ? '' : staffId}, from=${from}, to=${to})}">Sau</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <!--/* ================= TAB 2: pick a SKU for the per-product history ================= */-->
+    <div class="tab-pane fade" th:classappend="${viewIsSelect} ? 'show active'" id="tab-select" role="tabpanel">
+        <p class="text-secondary small os-stock-count-line">Số SKU tại chi nhánh:
+            <strong id="stock-count" th:text="${stock.totalElements}">0</strong></p>
+        <div class="card shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle os-table mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th scope="col" class="os-col-code">Chi nhánh</th>
+                        <th scope="col">SKU / Sản phẩm</th>
+                        <th scope="col" class="os-col-num">Giá online chung</th>
+                        <th scope="col">Trạng thái</th>
+                        <th scope="col" class="os-col-num">Tồn thực tế</th>
+                        <th scope="col" class="os-col-actions text-end">Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item : ${stock.content}"
+                        th:attr="data-store-product-id=${item.storeProductId},data-store-id=${item.storeId}">
+                        <td class="os-col-code"><span class="os-cell-main" th:text="${item.storeName}">OneShop Thủ Đức</span></td>
+                        <td>
+                            <span class="os-cell-main" th:text="${item.sku}">OS-SKU-001</span>
+                            <span class="os-cell-sub" th:text="${item.productName}">Tên sản phẩm</span>
+                        </td>
+                        <td class="os-col-num"><span th:replace="~{fragments/components :: price(${item.price})}"></span></td>
+                        <td>
+                            <span class="badge os-soft-success" th:if="${item.status.name() == 'ACTIVE'}">Đang kinh doanh</span>
+                            <span class="badge os-soft-neutral" th:if="${item.status.name() != 'ACTIVE'}">Ngừng kinh doanh</span>
+                            <span class="badge os-soft-danger" th:if="${item.quantity == 0}">Hết hàng</span>
+                            <span class="badge os-soft-warning" th:if="${item.quantity > 0 and item.quantity <= lowStockThreshold}">Sắp hết</span>
+                        </td>
+                        <td class="os-col-num" data-field="exact-quantity" th:text="${item.quantity}">40</td>
+                        <td class="os-col-actions text-end">
+                            <a class="btn btn-outline-primary btn-sm"
+                               th:href="@{/staff/inventory-history/{id}(id=${item.storeProductId})}">Lịch sử</a>
+                            <a class="btn btn-outline-secondary btn-sm"
+                               th:href="@{/staff/stock/{id}/adjust(id=${item.storeProductId})}">Điều chỉnh tồn</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${stock.isEmpty()}">
+                        <td colspan="6" class="text-center text-secondary py-5">Chưa có sản phẩm tại chi nhánh.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <nav class="os-pagination" th:if="${stock.totalPages > 1}" aria-label="Phân trang danh sách SKU">
+                <span class="os-page-info">
+                    Trang <strong th:text="${stock.number + 1}">1</strong> /
+                    <strong th:text="${stock.totalPages}">2</strong> ·
+                    <span th:text="${stock.totalElements}">0</span> SKU
+                </span>
+                <ul class="pagination mb-0">
+                    <li class="page-item" th:classappend="${stock.first} ? 'disabled'"><a class="page-link"
+                        th:href="@{/staff/inventory-history(page=${stock.number - 1}, view='select')}">Trước</a></li>
+                    <li class="page-item" th:classappend="${stock.last} ? 'disabled'"><a class="page-link"
+                        th:href="@{/staff/inventory-history(page=${stock.number + 1}, view='select')}">Sau</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+</body>
+</html>

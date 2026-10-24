@@ -1,0 +1,345 @@
+{
+  "phase": "qa003-004",
+  "total": 42,
+  "counts": {
+    "PASS": 42
+  },
+  "cases": [
+    {
+      "suite": "com.oneshop.QaAuditImageRollbackDatabaseIntegrationTest",
+      "test": "replacingBrandImageMustNotDeleteOldFileBeforeCommit()[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.733"
+    },
+    {
+      "suite": "com.oneshop.QaAuditImageRollbackDatabaseIntegrationTest",
+      "test": "replacingBrandImageMustNotDeleteOldFileBeforeCommit()[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.137"
+    },
+    {
+      "suite": "com.oneshop.QaAuditImageRollbackDatabaseIntegrationTest",
+      "test": "uploadedProductFileMustBeCompensatedWhenTransactionRollsBack()[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.231"
+    },
+    {
+      "suite": "com.oneshop.QaAuditImageRollbackDatabaseIntegrationTest",
+      "test": "uploadedProductFileMustBeCompensatedWhenTransactionRollsBack()[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.115"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "failedAfterCommitDeleteDoesNotUndoCommittedMetadata",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.201"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "deleteCommitDeletesAfterMetadataCommit(Target)[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.139"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "deleteCommitDeletesAfterMetadataCommit(Target)[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.106"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "deleteCommitDeletesAfterMetadataCommit(Target)[3]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.112"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "uploadRollbackCompensatesAfterSuccessfulFlush(Target)[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.103"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "uploadRollbackCompensatesAfterSuccessfulFlush(Target)[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.091"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "uploadRollbackCompensatesAfterSuccessfulFlush(Target)[3]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.098"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "replaceCommitDeletesOldOnlyAfterCommit(Target)[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.094"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "replaceCommitDeletesOldOnlyAfterCommit(Target)[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.092"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "deleteRollbackPreservesMetadataAndFile(Target)[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.113"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "deleteRollbackPreservesMetadataAndFile(Target)[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.089"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "deleteRollbackPreservesMetadataAndFile(Target)[3]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.088"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "sharedFileIsNeverDeletedWhileAnotherValidRecordReferencesIt",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.105"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "uploadCommitKeepsReferencedFile(Target)[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.101"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "uploadCommitKeepsReferencedFile(Target)[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.093"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "uploadCommitKeepsReferencedFile(Target)[3]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.09"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "failedRollbackCompensationIsJournaledAndRetryIsIdempotent",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.131"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "cleanupRetryEndpointRequiresAdminAndCsrf",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "2.055"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "replaceRollbackKeepsOldAndCleansNew(Target)[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.102"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "replaceRollbackKeepsOldAndCleansNew(Target)[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.085"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "failedMetadataSaveAfterUploadRollsBackAndCleansNew",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.105"
+    },
+    {
+      "suite": "com.oneshop.service.CategoryServiceTest",
+      "test": "createCategory_withImage_uploadFails_doesNotSaveCategory",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.589"
+    },
+    {
+      "suite": "com.oneshop.service.CategoryServiceTest",
+      "test": "createCategory_withImage_success",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.03"
+    },
+    {
+      "suite": "com.oneshop.service.CategoryServiceTest",
+      "test": "removeCategoryImage_whenPublicIdNotNull_deletesFromCloudinaryAndClearsDb",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.011"
+    },
+    {
+      "suite": "com.oneshop.service.CategoryServiceTest",
+      "test": "updateCategory_withNewImage_whenDbSaveFails_cleansUpNewImageAndKeepsOld",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.012"
+    },
+    {
+      "suite": "com.oneshop.service.CategoryServiceTest",
+      "test": "updateCategory_withoutNewImage_keepsExistingImage",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.007"
+    },
+    {
+      "suite": "com.oneshop.service.CategoryServiceTest",
+      "test": "updateCategory_withNewImage_whenOldImageHasNullPublicId_doesNotCallCloudinaryDelete",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.011"
+    },
+    {
+      "suite": "com.oneshop.service.CategoryServiceTest",
+      "test": "removeCategoryImage_whenPublicIdNull_clearsDbWithoutCallingCloudinary",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.007"
+    },
+    {
+      "suite": "com.oneshop.service.CategoryServiceTest",
+      "test": "createCategory_withoutImage",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.008"
+    },
+    {
+      "suite": "com.oneshop.service.CategoryServiceTest",
+      "test": "updateCategory_withNewImage_replacesAndDeletesOldOnCloudinary",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.008"
+    },
+    {
+      "suite": "com.oneshop.service.ProductServiceV3Test",
+      "test": "updateProduct_updatesPriceAndOriginalPrice",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.015"
+    },
+    {
+      "suite": "com.oneshop.service.ProductServiceV3Test",
+      "test": "catalogNeverFallsBackToLegacyStorePrice",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.003"
+    },
+    {
+      "suite": "com.oneshop.service.ProductServiceV3Test",
+      "test": "productCardResponse_unifiedPriceAndNoFromPrice",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.005"
+    },
+    {
+      "suite": "com.oneshop.service.ProductServiceV3Test",
+      "test": "storeProductMapperUsesOnlyProductPrice",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.004"
+    },
+    {
+      "suite": "com.oneshop.service.ProductServiceV3Test",
+      "test": "productDetailResponse_computesInStockAcrossStores",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.005"
+    },
+    {
+      "suite": "com.oneshop.service.ProductServiceV3Test",
+      "test": "productMapper_mapsPriceAndOriginalPrice",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.003"
+    },
+    {
+      "suite": "com.oneshop.service.ProductServiceV3Test",
+      "test": "createProduct_savesPriceAndOriginalPrice",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.007"
+    },
+    {
+      "suite": "com.oneshop.service.ProductServiceV3Test",
+      "test": "catalogItemResponse_usesProductPrice",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.004"
+    }
+  ]
+}

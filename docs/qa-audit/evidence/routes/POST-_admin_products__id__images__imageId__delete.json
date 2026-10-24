@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "deleteImage",
+    "controller" : "com.oneshop.controller.admin.AdminProductController",
+    "path" : "/admin/products/{id}/images/{imageId}/delete"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:11.581687Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/admin/products/999999999/images/999999999/delete",
+  "kind" : "anonymous guard/input probe"
+}

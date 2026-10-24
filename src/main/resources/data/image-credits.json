@@ -1,0 +1,198 @@
+{
+ "verifiedOn": "2026-10-20",
+ "license": "CC BY-SA 3.0",
+ "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+ "source": "Open Beauty Facts",
+ "sourceUrl": "https://world.openbeautyfacts.org/",
+ "items": [
+  {
+   "sku": "CERAVE-CREAM-340",
+   "name": "Kem dưỡng ẩm CeraVe Moisturising Cream 340g",
+   "author": "thaialagata",
+   "obfCode": "3606000537729",
+   "obfPage": "https://world.openbeautyfacts.org/product/3606000537729"
+  },
+  {
+   "sku": "CERAVE-CREAM-177",
+   "name": "Kem dưỡng ẩm CeraVe Moisturising Cream 177ml",
+   "author": "thaialagata",
+   "obfCode": "0065519924568",
+   "obfPage": "https://world.openbeautyfacts.org/product/0065519924568"
+  },
+  {
+   "sku": "CERAVE-FOAM-88",
+   "name": "Sữa rửa mặt CeraVe Foaming Cleanser 88ml",
+   "author": "thaialagata",
+   "obfCode": "3606000537194",
+   "obfPage": "https://world.openbeautyfacts.org/product/3606000537194"
+  },
+  {
+   "sku": "CERAVE-HYDRA-236",
+   "name": "Sữa rửa mặt CeraVe Hydrating Cleanser 236ml",
+   "author": "openfoodfacts-contributors",
+   "obfCode": "3606000537675",
+   "obfPage": "https://world.openbeautyfacts.org/product/3606000537675"
+  },
+  {
+   "sku": "CETAPHIL-CREAM-453",
+   "name": "Kem dưỡng ẩm Cetaphil Moisturising Cream 453g",
+   "author": "thaialagata",
+   "obfCode": "6009626121148",
+   "obfPage": "https://world.openbeautyfacts.org/product/6009626121148"
+  },
+  {
+   "sku": "CETAPHIL-GENTLE-473",
+   "name": "Sữa rửa mặt Cetaphil Gentle Skin Cleanser 473ml",
+   "author": "thaialagata",
+   "obfCode": "0302993921165",
+   "obfPage": "https://world.openbeautyfacts.org/product/0302993921165"
+  },
+  {
+   "sku": "BIODERMA-ATODERM-500",
+   "name": "Kem dưỡng ẩm Bioderma Atoderm Intensive Baume 500ml",
+   "author": "thaialagata",
+   "obfCode": "3701129802076",
+   "obfPage": "https://world.openbeautyfacts.org/product/3701129802076"
+  },
+  {
+   "sku": "BIODERMA-SEBIUM-PR-30",
+   "name": "Kem dưỡng Bioderma Sébium Pore Refiner 30ml",
+   "author": "thaialagata",
+   "obfCode": "3401361353625",
+   "obfPage": "https://world.openbeautyfacts.org/product/3401361353625"
+  },
+  {
+   "sku": "BIODERMA-SENSIBIO-250",
+   "name": "Nước tẩy trang Bioderma Sensibio H2O 250ml",
+   "author": "thaialagata",
+   "obfCode": "3401575390447",
+   "obfPage": "https://world.openbeautyfacts.org/product/3401575390447"
+  },
+  {
+   "sku": "LRP-EFFACLAR-MP-200",
+   "name": "Gel rửa mặt La Roche-Posay Effaclar Micro-Peeling Purifying Gel 200ml",
+   "author": "thaialagata",
+   "obfCode": "3337875708265",
+   "obfPage": "https://world.openbeautyfacts.org/product/3337875708265"
+  },
+  {
+   "sku": "SIMPLE-PURIFY-150",
+   "name": "Sữa rửa mặt Simple Purifying Gel Wash 150ml",
+   "author": "thaialagata",
+   "obfCode": "8710447474419",
+   "obfPage": "https://world.openbeautyfacts.org/product/8710447474419"
+  },
+  {
+   "sku": "SIMPLE-REFRESH-150",
+   "name": "Sữa rửa mặt Simple Kind To Skin Refreshing Facial Wash Gel 150ml",
+   "author": "thaialagata",
+   "obfCode": "5011451103863",
+   "obfPage": "https://world.openbeautyfacts.org/product/5011451103863"
+  },
+  {
+   "sku": "SIMPLE-MICELLAR-150",
+   "name": "Gel rửa mặt Simple Micellar Gel Wash Water Boost 150ml",
+   "author": "thaialagata",
+   "obfCode": "8710908710773",
+   "obfPage": "https://world.openbeautyfacts.org/product/8710908710773"
+  },
+  {
+   "sku": "MAYB-CONCEALER-15",
+   "name": "Kem che khuyết điểm Maybelline Fit Me Concealer 15 Fair 6.8ml",
+   "author": "openfoodfacts-contributors",
+   "obfCode": "30096592",
+   "obfPage": "https://world.openbeautyfacts.org/product/30096592"
+  },
+  {
+   "sku": "MAYB-LIFTER-003",
+   "name": "Son bóng Maybelline Lifter Gloss 003 Moon 5.4ml",
+   "author": "jaksel",
+   "obfCode": "3600531609771",
+   "obfPage": "https://world.openbeautyfacts.org/product/3600531609771"
+  },
+  {
+   "sku": "MAYB-MATTEINK-15",
+   "name": "Son kem lì Maybelline SuperStay Matte Ink 15 Lover 5ml",
+   "author": "mitxina",
+   "obfCode": "3600531411107",
+   "obfPage": "https://world.openbeautyfacts.org/product/3600531411107"
+  },
+  {
+   "sku": "MAYB-MATTEINK-20",
+   "name": "Son kem lì Maybelline SuperStay Matte Ink 20 Pioneer 5ml",
+   "author": "thaialagata",
+   "obfCode": "0041554496925",
+   "obfPage": "https://world.openbeautyfacts.org/product/0041554496925"
+  },
+  {
+   "sku": "MAYB-MATTEINK-65",
+   "name": "Son kem lì Maybelline SuperStay Matte Ink 65 Seductress 5ml",
+   "author": "openfoodfacts-contributors",
+   "obfCode": "3600531469498",
+   "obfPage": "https://world.openbeautyfacts.org/product/3600531469498"
+  },
+  {
+   "sku": "MAYB-SS30H-110",
+   "name": "Kem nền Maybelline SuperStay Active Wear 30H 110 Porcelain 30ml",
+   "author": "thaialagata",
+   "obfCode": "0041554541403",
+   "obfPage": "https://world.openbeautyfacts.org/product/0041554541403"
+  },
+  {
+   "sku": "VASELINE-LIP-ROSY-7",
+   "name": "Son dưỡng môi Vaseline Lip Therapy Rosy Lips 7g",
+   "author": "detrumpezvous",
+   "obfCode": "8801619052037",
+   "obfPage": "https://world.openbeautyfacts.org/product/8801619052037"
+  },
+  {
+   "sku": "VASELINE-LIP-ORIG-48",
+   "name": "Son dưỡng môi Vaseline Lip Therapy Original 4.8g",
+   "author": "zeynepozturk11",
+   "obfCode": "8683130085127",
+   "obfPage": "https://world.openbeautyfacts.org/product/8683130085127"
+  },
+  {
+   "sku": "VASELINE-LIP-ALOE-48",
+   "name": "Son dưỡng môi Vaseline Lip Therapy Aloe Vera 4.8g",
+   "author": "zeynepozturk11",
+   "obfCode": "8683130085066",
+   "obfPage": "https://world.openbeautyfacts.org/product/8683130085066"
+  },
+  {
+   "sku": "VASELINE-LIP-COCOA-48",
+   "name": "Son dưỡng môi Vaseline Lip Therapy Cocoa Butter 4.8g",
+   "author": "zeynepozturk11",
+   "obfCode": "8683130085080",
+   "obfPage": "https://world.openbeautyfacts.org/product/8683130085080"
+  },
+  {
+   "sku": "VASELINE-LIP-ROSY-48",
+   "name": "Son dưỡng môi Vaseline Lip Therapy Rosy Lips 4.8g",
+   "author": "zeynepozturk11",
+   "obfCode": "8683130085158",
+   "obfPage": "https://world.openbeautyfacts.org/product/8683130085158"
+  },
+  {
+   "sku": "VASELINE-JELLY-COCOA-100",
+   "name": "Sáp dưỡng ẩm Vaseline Cocoa Butter Moisturising Jelly 100ml",
+   "author": "jaksel",
+   "obfCode": "8710447485323",
+   "obfPage": "https://world.openbeautyfacts.org/product/8710447485323"
+  },
+  {
+   "sku": "VASELINE-JELLY-ORIG-100",
+   "name": "Sáp dưỡng ẩm Vaseline Pure Petroleum Jelly Original 100ml",
+   "author": "thaialagata",
+   "obfCode": "5000262128479",
+   "obfPage": "https://world.openbeautyfacts.org/product/5000262128479"
+  },
+  {
+   "sku": "NIVEA-CREME-150",
+   "name": "Kem dưỡng ẩm Nivea Creme 150ml",
+   "author": "smoothie-app",
+   "obfCode": "4005800001192",
+   "obfPage": "https://world.openbeautyfacts.org/product/4005800001192"
+  }
+ ]
+}

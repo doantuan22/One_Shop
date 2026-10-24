@@ -56,8 +56,32 @@ public interface StoreProductService {
     // ---- Admin (exact quantity, every status) ----
 
     /** @param storeId   optional filter
-     *  @param productId optional filter */
-    Page<StoreProductStockResponse> searchStoreProducts(Long storeId, Long productId, Pageable pageable);
+     *  @param productId optional filter
+     *  @param status    optional StoreProduct status filter */
+    Page<StoreProductStockResponse> searchStoreProducts(Long storeId, Long productId, com.oneshop.entity.ActiveStatus status, Pageable pageable);
+
+    /**
+     * Same list, plus a free-text filter: every word typed must appear in the SKU or the product name
+     * (case- and accent-insensitive, any order). A blank text behaves like the overload without it.
+     */
+    Page<StoreProductStockResponse> searchStoreProducts(Long storeId, Long productId, com.oneshop.entity.ActiveStatus status,
+                                                        String q, Pageable pageable);
+
+    /** Phase 6 overload kept for existing service callers: no status filter. */
+    default Page<StoreProductStockResponse> searchStoreProducts(Long storeId, Long productId, Pageable pageable) {
+        return searchStoreProducts(storeId, productId, null, pageable);
+    }
+
+    /**
+     * Inventory console of the whole chain (admin/inventory): every status, contains-filter over
+     * SKU / product / Store name, quantity level ("all", "out", "low", "ok") and quantity sort
+     * ("name", "qty_desc", "qty_asc") — anything else falls back to the stable defaults.
+     */
+    Page<StoreProductStockResponse> searchInventory(Long storeId, String q, String stockLevel, String sort,
+                                                    Pageable pageable);
+
+    /** Chips above the inventory table, computed for the chosen Store (or the whole chain when null). */
+    com.oneshop.dto.response.InventorySummaryResponse inventorySummary(Long storeId);
 
     StoreProductStockResponse getStoreProduct(Long id);
 
@@ -69,6 +93,6 @@ public interface StoreProductService {
      */
     StoreProductStockResponse createStoreProduct(StoreProductRequest request, String adminEmail);
 
-    /** Changes price, status and quantity. Store and Product of an existing StoreProduct never change. */
+    /** Changes Store-specific status and quantity. The Store and Product never change; online price is Product.price. */
     StoreProductStockResponse updateStoreProduct(Long id, StoreProductRequest request, String adminEmail);
 }

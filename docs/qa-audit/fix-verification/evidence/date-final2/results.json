@@ -1,0 +1,3401 @@
+{
+  "phase": "date-final2",
+  "total": 424,
+  "counts": {
+    "PASS": 424
+  },
+  "cases": [
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "1.79"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.096"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[3]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.15"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[4]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.07"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[5]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.129"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[6]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.06"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[7]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.052"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[8]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.058"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[9]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.056"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[10]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.05"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[11]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.049"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[12]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.055"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[13]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.046"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[14]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.049"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[15]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.047"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[16]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.052"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[17]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.031"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[18]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.025"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[19]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.025"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[20]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.025"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[21]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.023"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[22]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.021"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[23]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.048"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[24]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.026"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[25]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.025"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[26]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.023"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[27]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.025"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[28]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.023"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[29]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.505"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[30]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.092"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[31]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.168"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[32]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.09"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[33]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.103"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[34]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.082"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[35]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.083"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[36]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.079"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[37]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.066"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[38]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.063"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[39]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.046"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[40]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.041"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[41]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.038"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[42]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.048"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[43]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.044"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[44]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.045"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[45]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.045"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[46]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.042"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[47]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.047"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[48]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.045"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[49]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.044"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[50]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.046"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[51]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.031"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[52]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.031"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[53]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.026"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[54]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.033"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[55]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.032"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[56]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.031"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[57]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.125"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[58]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.048"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[59]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.077"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[60]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.045"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[61]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.04"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[62]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.043"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[63]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.038"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[64]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.045"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[65]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.041"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[66]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.047"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[67]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.037"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[68]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.041"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[69]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.036"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[70]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.04"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[71]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.037"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[72]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.038"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[73]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.034"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[74]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.036"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[75]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.034"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[76]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.038"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[77]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.036"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[78]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.033"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[79]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.035"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[80]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.026"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[81]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.027"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[82]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.028"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[83]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.024"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[84]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.026"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[85]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.069"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[86]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.052"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[87]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.064"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[88]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.043"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[89]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.045"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[90]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.043"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[91]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.043"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[92]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.045"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[93]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.044"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[94]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.048"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[95]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.063"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[96]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.034"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[97]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.074"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[98]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.04"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[99]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.042"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[100]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.038"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[101]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.041"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[102]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.043"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[103]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.042"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[104]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.035"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[105]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.033"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[106]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.035"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[107]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.027"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[108]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.02"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[109]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.02"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[110]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.022"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[111]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.029"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[112]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.022"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[113]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.117"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[114]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.058"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[115]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.087"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[116]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.048"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[117]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.086"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[118]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.051"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[119]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.056"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[120]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.05"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[121]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.053"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[122]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.051"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[123]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.034"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[124]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.04"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[125]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.036"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[126]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.041"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[127]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.034"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[128]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.046"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[129]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.03"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[130]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.047"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[131]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.039"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[132]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.035"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[133]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.035"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[134]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.035"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[135]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.022"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[136]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.021"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[137]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.021"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[138]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.017"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[139]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.02"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[140]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.02"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[141]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.102"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[142]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.047"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[143]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.087"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[144]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.043"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[145]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.081"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[146]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.045"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[147]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.046"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[148]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.048"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[149]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.042"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[150]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.04"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[151]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.03"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[152]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.029"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[153]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.029"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[154]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.028"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[155]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.032"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[156]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.038"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[157]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.03"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[158]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.033"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[159]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.033"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[160]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.033"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[161]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.033"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[162]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.03"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[163]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.019"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[164]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.02"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[165]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.022"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[166]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.022"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[167]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.02"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[168]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.022"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[169]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.179"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[170]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.043"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[171]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.086"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[172]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.037"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[173]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.035"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[174]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.033"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[175]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.052"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[176]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.043"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[177]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.042"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[178]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.043"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[179]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.028"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[180]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.038"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[181]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.032"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[182]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.033"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[183]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.041"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[184]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.039"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[185]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.036"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[186]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.043"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[187]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.037"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[188]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.037"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[189]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.03"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[190]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.035"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[191]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.022"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[192]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.022"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[193]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.017"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[194]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.027"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[195]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.022"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[196]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.02"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[197]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.082"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[198]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.045"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[199]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.054"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[200]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.048"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[201]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.046"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[202]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.042"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[203]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.045"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[204]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.047"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[205]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.042"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[206]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.046"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[207]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.031"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[208]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.037"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[209]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.032"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[210]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.032"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[211]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.034"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[212]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.036"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[213]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.033"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[214]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.035"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[215]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.036"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[216]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.028"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[217]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.032"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[218]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.036"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[219]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.027"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[220]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.027"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[221]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.029"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[222]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.031"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[223]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.024"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[224]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.026"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[225]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.106"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[226]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.051"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[227]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.077"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[228]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.079"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[229]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.067"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[230]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.051"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[231]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.045"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[232]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.044"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[233]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.049"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[234]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.042"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[235]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.029"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[236]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.036"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[237]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.031"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[238]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.033"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[239]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.031"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[240]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.035"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[241]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.028"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[242]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.03"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[243]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.031"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[244]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.034"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[245]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.03"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[246]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.036"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[247]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.019"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[248]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.022"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[249]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.023"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[250]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.02"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[251]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.023"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[252]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.023"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[253]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.09"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[254]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.058"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[255]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.055"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[256]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.059"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[257]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.061"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[258]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.047"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[259]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.039"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[260]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.037"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[261]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.038"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[262]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.038"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[263]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.026"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[264]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.035"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[265]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.03"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[266]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.036"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[267]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.028"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[268]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.048"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[269]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.035"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[270]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.058"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[271]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.044"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[272]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.061"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[273]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.037"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[274]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.037"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[275]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.022"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[276]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.023"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[277]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.019"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[278]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.022"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[279]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.023"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[280]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.022"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[281]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.114"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[282]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.045"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[283]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.082"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[284]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.04"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[285]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.044"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[286]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.038"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[287]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.037"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[288]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.035"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[289]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.034"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[290]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.039"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[291]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.028"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[292]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.029"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[293]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.027"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[294]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.033"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[295]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.029"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[296]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.033"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[297]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.027"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[298]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.025"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[299]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.025"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[300]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.029"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[301]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.026"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[302]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.03"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[303]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.017"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[304]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.02"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[305]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.018"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[306]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.019"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[307]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.023"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[308]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.026"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[309]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.124"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[310]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.07"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[311]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.072"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[312]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.07"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[313]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.064"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[314]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.051"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[315]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.052"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[316]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.06"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[317]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.067"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[318]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.056"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[319]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.034"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[320]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.038"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[321]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.038"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[322]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.033"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[323]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.034"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[324]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.031"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[325]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.032"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[326]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.03"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[327]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.034"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[328]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.034"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[329]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.028"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[330]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.027"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[331]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.019"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[332]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.02"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[333]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.02"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[334]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.019"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[335]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.022"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[336]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.022"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[337]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.077"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[338]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.077"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[339]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.078"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[340]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.038"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[341]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.081"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[342]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.085"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[343]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.085"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[344]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.078"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[345]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.119"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[346]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.086"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[347]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.064"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[348]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.114"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[349]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.033"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[350]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.03"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[351]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.031"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[352]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.084"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[353]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.06"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[354]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.066"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[355]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.03"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[356]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.082"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[357]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.053"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[358]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.052"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[359]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.02"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[360]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.022"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[361]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.024"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[362]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.046"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[363]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.045"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[364]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.049"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[365]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.151"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[366]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.169"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[367]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.068"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[368]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.164"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[369]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.192"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[370]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.196"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[371]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.189"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[372]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.099"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[373]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.211"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[374]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.209"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[375]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.083"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[376]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.066"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[377]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.057"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[378]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.036"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[379]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.05"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[380]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.071"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[381]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.063"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[382]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.034"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[383]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.034"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[384]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.059"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[385]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.082"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[386]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.064"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[387]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.031"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[388]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.025"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[389]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.025"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[390]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.026"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[391]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.026"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[392]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.024"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[393]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.086"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[394]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.055"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[395]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.057"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[396]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.034"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[397]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.025"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[398]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.025"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[399]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.136"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[400]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.024"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[401]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.024"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[402]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.032"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[403]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.091"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[404]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.086"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[405]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.152"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[406]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.02"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[407]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.021"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[408]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.048"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[409]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.115"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[410]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.025"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[411]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.138"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[412]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.023"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[413]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.024"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[414]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.034"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[415]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.043"
+    },
+    {
+      "suite": "com.oneshop.QaAuditBoundaryDatabaseIntegrationTest",
+      "test": "readerParameterBoundaries()[416]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.053"
+    },
+    {
+      "suite": "com.oneshop.QaFixDateRangeDatabaseIntegrationTest",
+      "test": "ordersAndPaymentsIncludeActualEndOfDayRows(String)[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "1.131"
+    },
+    {
+      "suite": "com.oneshop.QaFixDateRangeDatabaseIntegrationTest",
+      "test": "ordersAndPaymentsIncludeActualEndOfDayRows(String)[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.311"
+    },
+    {
+      "suite": "com.oneshop.QaFixDateRangeDatabaseIntegrationTest",
+      "test": "ordersAndPaymentsIncludeActualEndOfDayRows(String)[3]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.52"
+    },
+    {
+      "suite": "com.oneshop.QaFixDateRangeDatabaseIntegrationTest",
+      "test": "httpDateRangeValidationIsConsistent",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "1.018"
+    },
+    {
+      "suite": "com.oneshop.QaFixSqlDayRangeTest",
+      "test": "optionalBoundsAndLeapDays",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.009"
+    },
+    {
+      "suite": "com.oneshop.QaFixSqlDayRangeTest",
+      "test": "ordinaryEndDateIsInclusiveByExclusiveNextDay",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.0"
+    },
+    {
+      "suite": "com.oneshop.QaFixSqlDayRangeTest",
+      "test": "maximumSqlDateNeverCreatesYear10000",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.001"
+    },
+    {
+      "suite": "com.oneshop.QaFixSqlDayRangeTest",
+      "test": "invertedAndUnsupportedYearsAreRejectedNotSilentlyEmptied",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.004"
+    }
+  ]
+}

@@ -12,11 +12,12 @@
       OneShop
     </title>
     <th:block th:utext="${pageHead}"></th:block>
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
 
     <link rel="stylesheet" th:href="@{/css/oneshop.css}" />
+    <link rel="stylesheet" th:href="@{/css/ui-system.css}" />
   </head>
   <body class="d-flex flex-column min-vh-100" data-layout="client">
+    <a class="visually-hidden-focusable os-skip-link" href="#main-content">Bỏ qua đến nội dung chính</a>
     <div th:replace="~{fragments/header :: header}"></div>
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
@@ -26,5 +27,6 @@
 
     <div th:replace="~{fragments/footer :: footer}"></div>
     <th:block th:replace="~{fragments/assets :: scripts}"></th:block>
+    <script th:src="@{/js/os-suggest.js}" defer></script>
   </body>
 </html>

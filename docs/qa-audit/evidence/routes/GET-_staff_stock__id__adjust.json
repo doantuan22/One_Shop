@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "GET",
+    "method" : "adjustForm",
+    "controller" : "com.oneshop.controller.staff.StaffStockController",
+    "path" : "/staff/stock/{id}/adjust"
+  },
+  "location" : "http://localhost:56221/login",
+  "executedAt" : "2026-10-24T02:07:17.777763800Z",
+  "expected" : 302,
+  "actual" : 302,
+  "requestPath" : "/staff/stock/999999999/adjust",
+  "kind" : "anonymous guard/input probe"
+}

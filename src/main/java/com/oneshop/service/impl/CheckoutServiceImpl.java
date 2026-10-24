@@ -1,99 +1,155 @@
 package com.oneshop.service.impl;
 
-import com.oneshop.dto.request.CheckoutRequest;
-import com.oneshop.dto.request.StoreGroupCheckoutRequest;
+import com.oneshop.config.CheckoutProperties;
+import com.oneshop.config.PaymentProperties;
+import com.oneshop.dto.request.PlaceOrderRequest;
+import com.oneshop.dto.response.AllocationPlanResponse;
+import com.oneshop.dto.response.CartItemResponse;
 import com.oneshop.dto.response.CartResponse;
 import com.oneshop.dto.response.CheckoutPreviewResponse;
 import com.oneshop.dto.response.CheckoutResultResponse;
+import com.oneshop.dto.response.FulfillmentSummaryResponse;
 import com.oneshop.dto.response.OrderItemResponse;
 import com.oneshop.dto.response.OrderSummaryResponse;
+import com.oneshop.dto.response.PickupStoreOption;
 import com.oneshop.entity.Cart;
 import com.oneshop.entity.CartItem;
 import com.oneshop.entity.CheckoutSession;
 import com.oneshop.entity.CheckoutStatus;
 import com.oneshop.entity.FulfillmentType;
 import com.oneshop.entity.Order;
+import com.oneshop.entity.OrderFulfillment;
+import com.oneshop.entity.OrderFulfillmentStatus;
+import com.oneshop.entity.OrderFulfillmentStatusHistory;
 import com.oneshop.entity.OrderItem;
 import com.oneshop.entity.OrderPaymentStatus;
 import com.oneshop.entity.OrderStatus;
 import com.oneshop.entity.OrderStatusHistory;
 import com.oneshop.entity.PaymentMethod;
+import com.oneshop.entity.Product;
+import com.oneshop.entity.ProductStatus;
 import com.oneshop.entity.Store;
 import com.oneshop.entity.StoreProduct;
 import com.oneshop.entity.User;
 import com.oneshop.exception.BadRequestException;
+import com.oneshop.exception.CheckoutConflictException;
 import com.oneshop.exception.ResourceNotFoundException;
 import com.oneshop.repository.CartItemRepository;
 import com.oneshop.repository.CartRepository;
 import com.oneshop.repository.CheckoutSessionRepository;
 import com.oneshop.repository.CustomerAddressRepository;
+import com.oneshop.repository.OrderFulfillmentRepository;
+import com.oneshop.repository.OrderFulfillmentStatusHistoryRepository;
 import com.oneshop.repository.OrderItemRepository;
 import com.oneshop.repository.OrderRepository;
 import com.oneshop.repository.OrderStatusHistoryRepository;
-import com.oneshop.repository.StoreProductRepository;
+import com.oneshop.repository.StoreRepository;
 import com.oneshop.repository.UserRepository;
 import com.oneshop.service.CartService;
 import com.oneshop.service.CheckoutService;
 import com.oneshop.service.InventoryService;
+import com.oneshop.service.PaymentDeadlinePolicy;
+import com.oneshop.service.PaymentService;
+import com.oneshop.service.StoreAllocationService;
+import com.oneshop.service.allocation.AllocatedLine;
+import com.oneshop.service.allocation.AllocationDemand;
+import com.oneshop.service.allocation.AllocationResult;
+import com.oneshop.service.allocation.DeliveryServiceAreaPolicy;
+import com.oneshop.service.allocation.LockedAllocation;
+import com.oneshop.service.allocation.ShippingAddressValidator;
+import com.oneshop.service.allocation.ShippingFeeCalculator;
+import com.oneshop.service.allocation.StoreAllocation;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * V3 checkout. See {@link CheckoutService} for the business rules; this class is the one transaction that applies
+ * them. Lock order inside {@link #placeOrder}: the customer's Cart row, then every candidate StoreProduct of the
+ * demanded SKUs in ascending id. Nothing is read from a Store, a price or a stock figure supplied by the request.
+ */
 @Service
 @Transactional
 public class CheckoutServiceImpl implements CheckoutService {
 
     private static final String CART_CHANGED =
             "Có sản phẩm đã chọn không còn trong giỏ hàng của bạn. Vui lòng kiểm tra lại giỏ hàng.";
-    private static final String GROUPS_MISMATCH =
-            "Thông tin nhận hàng không khớp với các chi nhánh của sản phẩm đã chọn. Vui lòng thực hiện lại từ giỏ hàng.";
     private static final String NOTE_CONFIRMED = "Hệ thống tự xác nhận đơn hợp lệ";
-    private static final String NOTE_PENDING_PAYMENT = "Tạo đơn ONLINE";
+    private static final String NOTE_FULFILLMENT = "Phân bổ phần hàng cho chi nhánh khi tạo đơn";
     private static final String PHONE_PATTERN = "^[0-9+ ]{8,20}$";
 
     private final CartService cartService;
+    private final StoreAllocationService allocationService;
+    private final PaymentService paymentService;
     private final InventoryService inventoryService;
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
-    private final StoreProductRepository storeProductRepository;
     private final UserRepository userRepository;
     private final CustomerAddressRepository addressRepository;
     private final CheckoutSessionRepository checkoutSessionRepository;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final OrderStatusHistoryRepository historyRepository;
+    private final OrderFulfillmentRepository fulfillmentRepository;
+    private final OrderFulfillmentStatusHistoryRepository fulfillmentHistoryRepository;
+    private final StoreRepository storeRepository;
+    private final ShippingFeeCalculator shippingFees;
+    private final DeliveryServiceAreaPolicy areaPolicy;
+    private final ShippingAddressValidator addressValidator;
+    private final CheckoutProperties checkoutProperties;
+    private final PaymentProperties paymentProperties;
+    private final PaymentDeadlinePolicy deadlines;
 
-    public CheckoutServiceImpl(CartService cartService, InventoryService inventoryService,
+    public CheckoutServiceImpl(CartService cartService, StoreAllocationService allocationService,
+                               PaymentService paymentService, InventoryService inventoryService,
                                CartRepository cartRepository, CartItemRepository cartItemRepository,
-                               StoreProductRepository storeProductRepository, UserRepository userRepository,
-                               CustomerAddressRepository addressRepository,
+                               UserRepository userRepository, CustomerAddressRepository addressRepository,
                                CheckoutSessionRepository checkoutSessionRepository, OrderRepository orderRepository,
-                               OrderItemRepository orderItemRepository,
-                               OrderStatusHistoryRepository historyRepository) {
+                               OrderItemRepository orderItemRepository, OrderStatusHistoryRepository historyRepository,
+                               OrderFulfillmentRepository fulfillmentRepository,
+                               OrderFulfillmentStatusHistoryRepository fulfillmentHistoryRepository,
+                               StoreRepository storeRepository, ShippingFeeCalculator shippingFees,
+                               DeliveryServiceAreaPolicy areaPolicy, CheckoutProperties checkoutProperties,
+                               PaymentProperties paymentProperties, PaymentDeadlinePolicy deadlines,
+                               ShippingAddressValidator addressValidator) {
         this.cartService = cartService;
+        this.allocationService = allocationService;
+        this.paymentService = paymentService;
         this.inventoryService = inventoryService;
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
-        this.storeProductRepository = storeProductRepository;
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.checkoutSessionRepository = checkoutSessionRepository;
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.historyRepository = historyRepository;
+        this.fulfillmentRepository = fulfillmentRepository;
+        this.fulfillmentHistoryRepository = fulfillmentHistoryRepository;
+        this.storeRepository = storeRepository;
+        this.shippingFees = shippingFees;
+        this.areaPolicy = areaPolicy;
+        this.addressValidator = addressValidator;
+        this.checkoutProperties = checkoutProperties;
+        this.paymentProperties = paymentProperties;
+        this.deadlines = deadlines;
     }
 
     // ------------------------------------------------------------------ checkout page
@@ -101,81 +157,232 @@ public class CheckoutServiceImpl implements CheckoutService {
     @Override
     @Transactional(readOnly = true)
     public CheckoutPreviewResponse prepare(String customerEmail, Collection<Long> cartItemIds) {
+        return preview(customerEmail, cartItemIds, FulfillmentType.DELIVERY, null, null, null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CheckoutPreviewResponse preview(String customerEmail, Collection<Long> cartItemIds,
+                                           FulfillmentType fulfillmentType, PaymentMethod paymentMethod,
+                                           Long pickupStoreId, String shippingAddress) {
         CartResponse selection = cartService.getSelection(customerEmail, cartItemIds);
         User user = user(customerEmail);
-        // only a suggestion for the form: what is ordered is what the customer submits
-        return addressRepository.findByUserEmailOrderByDefaultAddressDescCreatedAtDesc(customerEmail).stream().findFirst()
-                .map(address -> new CheckoutPreviewResponse(selection, address.getReceiverName(),
-                        address.getReceiverPhone(), address.getAddressLine()))
-                .orElseGet(() -> new CheckoutPreviewResponse(selection, user.getFullName(), user.getPhone(), null));
+        var address = addressRepository.findByUserEmailOrderByDefaultAddressDescCreatedAtDesc(customerEmail).stream()
+                .findFirst();
+        String receiverName = address.map(a -> a.getReceiverName()).orElse(user.getFullName());
+        String receiverPhone = address.map(a -> a.getReceiverPhone()).orElse(user.getPhone());
+        String suggestedAddress = StringUtils.hasText(shippingAddress) ? shippingAddress.trim()
+                : address.map(a -> a.getAddressLine()).orElse(null);
+
+        FulfillmentType type = fulfillmentType == null ? FulfillmentType.DELIVERY : fulfillmentType;
+        PaymentMethod method = paymentMethod != null ? paymentMethod
+                : type == FulfillmentType.DELIVERY ? PaymentMethod.COD : PaymentMethod.PAY_AT_STORE;
+
+        List<AllocationDemand> demands = selection.items().stream()
+                .map(item -> new AllocationDemand(item.productId(), item.quantity())).toList();
+        boolean onlineEnabled = checkoutProperties.isOnlineEnabled();
+        String deliveryBlocked = deliveryBlockedReason();
+        List<PickupStoreOption> pickupStores = allocationService.pickupStoresCovering(demands).stream()
+                .map(store -> new PickupStoreOption(store.getId(), store.getName(), store.getAddress())).toList();
+
+        AllocationPlanResponse plan = null;
+        String problem = null;
+        BigDecimal fee = shippingFees.feePerOrder(type).orElse(null);
+        int orderCount = 1;
+        BigDecimal grandTotal = null;
+        boolean splitConsent = false;
+
+        if (type == FulfillmentType.DELIVERY && deliveryBlocked != null) {
+            problem = deliveryBlocked;
+        } else if (type == FulfillmentType.DELIVERY && StringUtils.hasText(suggestedAddress)
+                && addressProblem(suggestedAddress) != null) {
+            problem = addressProblem(suggestedAddress);
+        } else if (type == FulfillmentType.STORE_PICKUP && pickupStoreId == null) {
+            problem = pickupStores.isEmpty()
+                    ? "Hiện chưa có chi nhánh nào đủ toàn bộ sản phẩm để nhận tại cửa hàng."
+                    : "Vui lòng chọn chi nhánh nhận hàng.";
+        } else {
+            AllocationResult result = allocationService.preview(demands, type, pickupStoreId, suggestedAddress);
+            if (!result.success()) {
+                problem = failureMessage(result, productNames(selection));
+            } else {
+                plan = planOf(result, selection);
+                splitConsent = method == PaymentMethod.COD && type == FulfillmentType.DELIVERY
+                        && result.fulfillmentCount() > 1;
+                orderCount = splitConsent ? result.fulfillmentCount() : 1;
+                if (fee != null) {
+                    grandTotal = plan.itemsTotal().add(fee.multiply(BigDecimal.valueOf(orderCount)));
+                }
+                // the fingerprint covers the whole plan the customer is shown: who, what, from where, how, how much
+                plan = new AllocationPlanResponse(contextSignature(user.getId(), type, method, pickupStoreId,
+                        suggestedAddress, demands, result, fee, orderCount, grandTotal),
+                        plan.fulfillmentCount(), plan.itemsTotal(), plan.parts());
+            }
+        }
+        return new CheckoutPreviewResponse(selection, receiverName, receiverPhone, suggestedAddress, type, method,
+                pickupStoreId, onlineEnabled, deliveryBlocked == null, deliveryBlocked, pickupStores, plan, problem,
+                fee, orderCount, grandTotal, splitConsent, paymentProperties.getPendingTimeoutMinutes());
+    }
+
+    private AllocationPlanResponse planOf(AllocationResult result, CartResponse selection) {
+        Map<Long, CartItemResponse> items = selection.items().stream()
+                .collect(Collectors.toMap(CartItemResponse::productId, Function.identity(), (a, b) -> a));
+        Map<Long, Store> stores = storeRepository.findAllById(result.stores().stream().map(StoreAllocation::storeId).toList())
+                .stream().collect(Collectors.toMap(Store::getId, Function.identity()));
+        BigDecimal total = BigDecimal.ZERO;
+        List<AllocationPlanResponse.Part> parts = new ArrayList<>();
+        for (StoreAllocation allocation : result.stores()) {
+            BigDecimal subtotal = BigDecimal.ZERO;
+            List<AllocationPlanResponse.Line> lines = new ArrayList<>();
+            for (AllocatedLine line : allocation.lines()) {
+                CartItemResponse item = items.get(line.productId());
+                BigDecimal lineTotal = item.unitPrice().multiply(BigDecimal.valueOf(line.quantity()));
+                subtotal = subtotal.add(lineTotal);
+                lines.add(new AllocationPlanResponse.Line(line.productId(), item.productName(), line.quantity(),
+                        item.unitPrice(), lineTotal));
+            }
+            Store store = stores.get(allocation.storeId());
+            parts.add(new AllocationPlanResponse.Part(allocation.storeId(), store.getName(), store.getAddress(),
+                    subtotal, lines));
+            total = total.add(subtotal);
+        }
+        return new AllocationPlanResponse(result.signature(), result.fulfillmentCount(), total, parts);
+    }
+
+    /** Why DELIVERY is closed right now, or {@code null} when it is open. */
+    private String deliveryBlockedReason() {
+        if (!areaPolicy.isDecided()) {
+            return "Giao hàng tận nơi tạm thời chưa mở (đang được tắt trong cấu hình hệ thống).";
+        }
+        if (shippingFees.feePerOrder(FulfillmentType.DELIVERY).isEmpty()) {
+            return "Giao hàng tận nơi tạm thời chưa mở (phí giao hàng đang được tắt trong cấu hình hệ thống).";
+        }
+        return null;
+    }
+
+    private static Map<Long, String> productNames(CartResponse selection) {
+        return selection.items().stream().collect(Collectors.toMap(CartItemResponse::productId,
+                CartItemResponse::productName, (a, b) -> a));
+    }
+
+    private static String failureMessage(AllocationResult result, Map<Long, String> names) {
+        String which = result.unfulfilledProductIds().stream().map(id -> "\"" + names.getOrDefault(id, "#" + id) + "\"")
+                .collect(Collectors.joining(", "));
+        return switch (result.failure()) {
+            case OUT_OF_STOCK -> "Hiện không đủ hàng (tổng các chi nhánh có thể giao) cho: " + which
+                    + ". Vui lòng giảm số lượng hoặc bỏ sản phẩm này khỏi lựa chọn.";
+            case INSUFFICIENT_AT_PICKUP_STORE -> "Chi nhánh nhận hàng đã chọn không đủ: " + which
+                    + ". Vui lòng chọn chi nhánh khác, điều chỉnh giỏ hàng hoặc chuyển sang giao hàng.";
+            case NO_ELIGIBLE_STORE -> "Hiện chưa có chi nhánh phù hợp để phục vụ đơn này.";
+            case NO_DEMAND -> "Vui lòng chọn ít nhất một sản phẩm để đặt hàng.";
+        };
     }
 
     // ------------------------------------------------------------------ place the order
 
     @Override
-    public CheckoutResultResponse placeOrder(String customerEmail, CheckoutRequest request) {
+    public CheckoutResultResponse placeOrder(String customerEmail, PlaceOrderRequest request) {
         Set<Long> wantedIds = new LinkedHashSet<>(request.cartItemIds() == null ? List.<Long>of() : request.cartItemIds());
         wantedIds.remove(null);
         if (wantedIds.isEmpty()) {
             throw new BadRequestException("cartItemIds", "Vui lòng chọn ít nhất một sản phẩm để đặt hàng.");
         }
+        requireValidChoice(request);
+        requireOpenFlow(request);
+        FulfillmentType type = request.fulfillmentType();
+        PaymentMethod method = request.paymentMethod();
         User user = user(customerEmail);
 
-        // 1. The customer's own cart, locked: a second click or tab of the same customer waits here and then finds
-        //    these lines already gone.
+        // 1. The customer's own cart, locked: a second click or tab finds these lines already gone.
         Cart cart = cartRepository.findByUserIdForUpdate(user.getId())
                 .orElseThrow(() -> new BadRequestException("cartItemIds", CART_CHANGED));
         List<CartItem> lines = cartItemRepository.findByCartId(cart.getId()).stream()
                 .filter(line -> wantedIds.contains(line.getId()))
                 .toList();
         if (lines.size() != wantedIds.size()) {
-            // an id that is not a line of this cart (deleted, never existed, or someone else's): refuse everything
             throw new BadRequestException("cartItemIds", CART_CHANGED);
         }
 
-        // 2. Lock the StoreProducts, always in ascending id order, and read price / stock / status under the lock.
-        Map<Long, StoreProduct> locked = storeProductRepository.findAllByIdForUpdate(
-                        lines.stream().map(line -> line.getStoreProduct().getId()).sorted().toList())
-                .stream().collect(Collectors.toMap(StoreProduct::getId, Function.identity()));
-        Set<Long> onSale = new HashSet<>(storeProductRepository.findSellableIdsIn(locked.keySet()));
-
-        // 3. Check every line, then group by the Store of its StoreProduct (ordered by Store id).
-        Map<Long, List<CartItem>> linesByStore = new TreeMap<>();
+        // 2. SKUs and the single online price. The StoreProduct of a cart line, if any, is deliberately not read.
+        Map<Long, CartItem> lineByProduct = new LinkedHashMap<>();
         for (CartItem line : lines) {
-            StoreProduct storeProduct = locked.get(line.getStoreProduct().getId());
-            requireBuyable(line, storeProduct, onSale);
-            linesByStore.computeIfAbsent(storeProduct.getStore().getId(), id -> new ArrayList<>()).add(line);
+            Product product = line.getProduct();
+            if (product.getStatus() != ProductStatus.ACTIVE || product.getPrice() == null
+                    || product.getPrice().signum() <= 0) {
+                throw new BadRequestException("cartItemIds", "\"" + product.getName() + "\" hiện không còn bán. "
+                        + "Vui lòng bỏ sản phẩm này khỏi lựa chọn.");
+            }
+            lineByProduct.put(product.getId(), line);
+        }
+        List<AllocationDemand> demands = lineByProduct.entrySet().stream()
+                .map(entry -> new AllocationDemand(entry.getKey(), entry.getValue().getQuantity())).toList();
+
+        // 3. Allocation on StoreProduct rows locked in ascending id order, read under that lock.
+        LockedAllocation locked = allocationService.allocateForUpdate(demands, type, request.pickupStoreId(),
+                request.shippingAddress());
+        AllocationResult plan = locked.result();
+        if (!plan.success()) {
+            Map<Long, String> names = lineByProduct.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
+                    entry -> entry.getValue().getProduct().getName()));
+            throw new CheckoutConflictException(CheckoutConflictException.CODE_NOT_ALLOCATABLE,
+                    failureMessage(plan, names));
         }
 
-        // 4. The choices of the request, matched to those Stores and checked.
-        Map<Long, StoreGroupCheckoutRequest> choices = choicesByStore(request, linesByStore.keySet());
-        linesByStore.forEach((storeId, storeLines) ->
-                requireValidChoice(locked.get(storeLines.get(0).getStoreProduct().getId()).getStore(), choices.get(storeId)));
+        // 4. What the customer confirmed must still be what will be created.
+        boolean split = method == PaymentMethod.COD && type == FulfillmentType.DELIVERY && plan.fulfillmentCount() > 1;
+        if (split && (!request.consentsToSplit() || !StringUtils.hasText(request.planSignature()))) {
+            throw new CheckoutConflictException(CheckoutConflictException.CODE_COD_SPLIT_CONSENT_REQUIRED,
+                    "Đơn thanh toán khi nhận hàng cần lấy từ " + plan.fulfillmentCount()
+                            + " chi nhánh. Bạn có thể chuyển sang thanh toán trực tuyến (một đơn), hoặc đồng ý tách "
+                            + "thành " + plan.fulfillmentCount() + " đơn độc lập, mỗi đơn thu tiền riêng.");
+        }
+        BigDecimal fee = shippingFees.feePerOrder(type).orElseThrow(this::deliveryPolicyPending);
 
-        // 5. Everything is valid: create the session, one Order per Store, snapshots, stock movements.
-        Map<Long, BigDecimal> totalByStore = new LinkedHashMap<>();
-        linesByStore.forEach((storeId, storeLines) -> totalByStore.put(storeId, storeLines.stream()
-                .map(line -> subtotal(locked.get(line.getStoreProduct().getId()), line))
-                .reduce(BigDecimal.ZERO, BigDecimal::add)));
+        // 5. Orders: one for everything, or (consented COD split) one per Store.
+        List<List<StoreAllocation>> groups = new ArrayList<>();
+        if (split) {
+            plan.stores().forEach(store -> groups.add(List.of(store)));
+        } else {
+            groups.add(plan.stores());
+        }
+        Map<Long, BigDecimal> priceByProduct = lineByProduct.entrySet().stream().collect(Collectors.toMap(
+                Map.Entry::getKey, entry -> entry.getValue().getProduct().getPrice()));
+        List<BigDecimal> orderTotals = new ArrayList<>();
+        BigDecimal sessionTotal = BigDecimal.ZERO;
+        for (List<StoreAllocation> group : groups) {
+            BigDecimal items = BigDecimal.ZERO;
+            for (StoreAllocation store : group) {
+                for (AllocatedLine line : store.lines()) {
+                    items = items.add(priceByProduct.get(line.productId()).multiply(BigDecimal.valueOf(line.quantity())));
+                }
+            }
+            BigDecimal total = items.add(fee);
+            orderTotals.add(total);
+            sessionTotal = sessionTotal.add(total);
+        }
+        if (request.expectedTotal() != null && request.expectedTotal().compareTo(sessionTotal) != 0) {
+            throw new CheckoutConflictException(CheckoutConflictException.CODE_TOTAL_CHANGED,
+                    "Tổng tiền đã thay đổi so với lúc bạn xem (giá hoặc phí cập nhật). Vui lòng kiểm tra và xác nhận lại.");
+        }
+        if (StringUtils.hasText(request.planSignature())) {
+            String current = contextSignature(user.getId(), type, method, request.pickupStoreId(),
+                    request.shippingAddress(), demands, plan, fee, groups.size(), sessionTotal);
+            if (!current.equals(request.planSignature())) {
+                throw new CheckoutConflictException(CheckoutConflictException.CODE_PLAN_CHANGED,
+                        "Nguồn hàng, phí hoặc cách nhận của đơn đã thay đổi so với lúc bạn xem. "
+                                + "Vui lòng kiểm tra và xác nhận lại.");
+            }
+        }
 
         CheckoutSession session = new CheckoutSession();
         session.setUser(user);
         session.setStatus(CheckoutStatus.CREATED);
-        session.setTotalAmount(totalByStore.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add));
+        session.setTotalAmount(sessionTotal);
         checkoutSessionRepository.save(session);
 
-        linesByStore.forEach((storeId, storeLines) -> {
-            StoreGroupCheckoutRequest choice = choices.get(storeId);
-            Store store = locked.get(storeLines.get(0).getStoreProduct().getId()).getStore();
-            Order order = orderRepository.save(newOrder(session, user, store, choice, totalByStore.get(storeId)));
-
-            for (CartItem line : storeLines) {
-                StoreProduct storeProduct = locked.get(line.getStoreProduct().getId());
-                orderItemRepository.save(snapshot(order, storeProduct, line));
-                inventoryService.deductForOrder(storeProduct, line.getQuantity(), order);
-            }
-            historyRepository.save(createdEntry(order));
-        });
+        for (int i = 0; i < groups.size(); i++) {
+            createOrder(session, user, request, groups.get(i), orderTotals.get(i), fee, lineByProduct, locked);
+        }
 
         // 6. Only the lines that were checked out leave the cart.
         cartItemRepository.deleteAll(lines);
@@ -184,127 +391,176 @@ public class CheckoutServiceImpl implements CheckoutService {
         return toResult(session);
     }
 
-    private static void requireBuyable(CartItem line, StoreProduct storeProduct, Set<Long> onSale) {
-        if (storeProduct == null || !onSale.contains(storeProduct.getId())) {
-            throw new BadRequestException("cartItemIds", describe(line, storeProduct) + " hiện không còn bán. "
-                    + "Vui lòng bỏ sản phẩm này khỏi lựa chọn.");
-        }
-        if (storeProduct.getQuantity() <= 0) {
-            throw new BadRequestException("cartItemIds", describe(line, storeProduct) + " đã hết hàng. "
-                    + "Vui lòng bỏ sản phẩm này khỏi lựa chọn.");
-        }
-        if (line.getQuantity() > storeProduct.getQuantity()) {
-            throw new BadRequestException("cartItemIds", describe(line, storeProduct)
-                    + " không còn đủ số lượng bạn chọn. Vui lòng giảm số lượng trong giỏ hàng.");
-        }
-    }
+    private void createOrder(CheckoutSession session, User user, PlaceOrderRequest request,
+                             List<StoreAllocation> stores, BigDecimal total, BigDecimal fee,
+                             Map<Long, CartItem> lineByProduct, LockedAllocation locked) {
+        PaymentMethod method = request.paymentMethod();
+        boolean single = stores.size() == 1;
+        Store onlyStore = single ? locked.lockedStoreProducts()
+                .get(stores.get(0).lines().get(0).storeProductId()).getStore() : null;
 
-    private static String describe(CartItem line, StoreProduct storeProduct) {
-        return storeProduct == null
-                ? "Một sản phẩm đã chọn"
-                : "\"" + storeProduct.getProduct().getName() + "\" tại " + storeProduct.getStore().getName();
-    }
+        Order order = new Order();
+        order.setCheckoutSession(session);
+        order.setUser(user);
+        // legacy column: kept for the single-Store case so V2 readers keep working; never an authorization source
+        order.setStore(onlyStore);
+        order.setFulfillmentType(request.fulfillmentType());
+        order.setPaymentMethod(method);
+        order.setPaymentStatus(OrderPaymentStatus.UNPAID);
+        order.setOrderStatus(method == PaymentMethod.ONLINE ? OrderStatus.PENDING_PAYMENT : OrderStatus.CONFIRMED);
+        order.setReceiverName(request.receiverName().trim());
+        order.setReceiverPhone(request.receiverPhone().trim());
+        order.setShippingAddress(request.fulfillmentType() == FulfillmentType.DELIVERY
+                ? request.shippingAddress().trim() : null);
+        order.setTotalAmount(total);
+        order.setShippingFee(fee);
+        orderRepository.save(order);
 
-    /** One choice per Store that really has chosen lines; the storeId of the request is only the key to match them. */
-    private static Map<Long, StoreGroupCheckoutRequest> choicesByStore(CheckoutRequest request, Set<Long> storeIds) {
-        Map<Long, StoreGroupCheckoutRequest> choices = new LinkedHashMap<>();
-        for (StoreGroupCheckoutRequest group : request.groups() == null ? List.<StoreGroupCheckoutRequest>of() : request.groups()) {
-            if (group == null || group.storeId() == null || choices.put(group.storeId(), group) != null) {
-                throw new BadRequestException("groups", GROUPS_MISMATCH);
+        for (StoreAllocation allocation : stores) {
+            Store store = locked.lockedStoreProducts().get(allocation.lines().get(0).storeProductId()).getStore();
+            OrderFulfillment fulfillment = new OrderFulfillment();
+            fulfillment.setOrder(order);
+            fulfillment.setStore(store);
+            fulfillment.setFulfillmentType(request.fulfillmentType());
+            fulfillment.setStatus(OrderFulfillmentStatus.CONFIRMED);
+            fulfillmentRepository.save(fulfillment);
+
+            for (AllocatedLine line : allocation.lines()) {
+                StoreProduct storeProduct = locked.lockedStoreProducts().get(line.storeProductId());
+                Product product = lineByProduct.get(line.productId()).getProduct();
+                OrderItem item = new OrderItem();
+                item.setOrder(order);
+                item.setFulfillment(fulfillment);
+                item.setStoreProduct(storeProduct);
+                item.setProductName(product.getName());
+                item.setUnitPrice(product.getPrice());
+                item.setQuantity(line.quantity());
+                item.setSubtotal(product.getPrice().multiply(BigDecimal.valueOf(line.quantity())));
+                orderItemRepository.save(item);
+                // stock leaves the StoreProduct now, with an ORDER movement; no reservation, no later deduction
+                inventoryService.deductForOrder(storeProduct, line.quantity(), order);
             }
+
+            OrderFulfillmentStatusHistory fulfillmentEntry = new OrderFulfillmentStatusHistory();
+            fulfillmentEntry.setFulfillment(fulfillment);
+            fulfillmentEntry.setOldStatus(null);
+            fulfillmentEntry.setNewStatus(OrderFulfillmentStatus.CONFIRMED);
+            fulfillmentEntry.setChangedBy(null);
+            fulfillmentEntry.setNote(NOTE_FULFILLMENT);
+            fulfillmentHistoryRepository.save(fulfillmentEntry);
         }
-        if (!choices.keySet().equals(storeIds)) {
-            throw new BadRequestException("groups", GROUPS_MISMATCH);
+
+        OrderStatusHistory entry = new OrderStatusHistory();
+        entry.setOrder(order);
+        entry.setOldStatus(null);
+        entry.setNewStatus(order.getOrderStatus());
+        entry.setChangedBy(null);
+        entry.setNote(method == PaymentMethod.ONLINE
+                ? "Tạo đơn ONLINE; chờ thanh toán trong " + paymentProperties.getPendingTimeoutMinutes() + " phút"
+                : NOTE_CONFIRMED);
+        historyRepository.save(entry);
+
+        if (method == PaymentMethod.ONLINE) {
+            paymentService.initializeOnlineAttempt(order);
         }
-        return choices;
     }
 
-    private static void requireValidChoice(Store store, StoreGroupCheckoutRequest choice) {
-        String at = " (" + store.getName() + ")";
-        FulfillmentType fulfillment = choice.fulfillmentType();
-        PaymentMethod payment = choice.paymentMethod();
+    // ------------------------------------------------------------------ plan fingerprint
+
+    /**
+     * Fingerprint of everything the customer confirms: who (user), what (SKUs and quantities), from where (the
+     * allocation, StoreProduct by StoreProduct), how (fulfillment type, payment method, pickup Store or delivery
+     * address), how many Orders and how much (shipping fee per Order, total). The same method builds it for the
+     * preview and for placing the order, so a change of any of them between the two is detected; it is recomputed
+     * from the database and never taken from the browser.
+     */
+    private static String contextSignature(Long userId, FulfillmentType type, PaymentMethod method,
+                                           Long pickupStoreId, String address, Collection<AllocationDemand> demands,
+                                           AllocationResult result, BigDecimal fee, int orderCount, BigDecimal total) {
+        StringBuilder plain = new StringBuilder("v1|u=").append(userId)
+                .append("|f=").append(type).append("|m=").append(method)
+                .append("|p=").append(type == FulfillmentType.STORE_PICKUP ? String.valueOf(pickupStoreId) : "-")
+                .append("|a=").append(type == FulfillmentType.DELIVERY ? normalizedAddress(address) : "-")
+                .append("|d=");
+        demands.stream().sorted(Comparator.comparing(AllocationDemand::productId))
+                .forEach(d -> plain.append(d.productId()).append('x').append(d.quantity()).append(','));
+        plain.append("|r=").append(result.signature())
+                .append("|fee=").append(money(fee)).append("|n=").append(orderCount).append("|t=").append(money(total));
+        try {
+            byte[] digest = MessageDigest.getInstance("SHA-256").digest(plain.toString().getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(digest, 0, 12);
+        } catch (NoSuchAlgorithmException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    private static String money(BigDecimal value) {
+        return value == null ? "-" : value.setScale(2, RoundingMode.HALF_UP).toPlainString();
+    }
+
+    private static String normalizedAddress(String address) {
+        return address == null ? "" : address.trim().replaceAll("\\s+", " ");
+    }
+
+    /** The reason a typed address cannot be used, or {@code null}. */
+    private String addressProblem(String address) {
+        try {
+            addressValidator.requireValid(address);
+            return null;
+        } catch (BadRequestException ex) {
+            return ex.getMessage();
+        }
+    }
+
+    // ------------------------------------------------------------------ checks
+
+    private void requireValidChoice(PlaceOrderRequest request) {
+        FulfillmentType fulfillment = request.fulfillmentType();
+        PaymentMethod payment = request.paymentMethod();
         if (fulfillment == null) {
-            throw new BadRequestException("groups", "Vui lòng chọn cách nhận hàng" + at + ".");
+            throw new BadRequestException("fulfillmentType", "Vui lòng chọn cách nhận hàng.");
         }
         if (payment == null) {
-            throw new BadRequestException("groups", "Vui lòng chọn phương thức thanh toán" + at + ".");
+            throw new BadRequestException("paymentMethod", "Vui lòng chọn phương thức thanh toán.");
         }
         // Roadmap V2 6.4: DELIVERY pays by COD or ONLINE, STORE_PICKUP by PAY_AT_STORE or ONLINE
         boolean allowed = fulfillment == FulfillmentType.DELIVERY
                 ? payment == PaymentMethod.COD || payment == PaymentMethod.ONLINE
                 : payment == PaymentMethod.PAY_AT_STORE || payment == PaymentMethod.ONLINE;
         if (!allowed) {
-            throw new BadRequestException("groups", (fulfillment == FulfillmentType.DELIVERY
-                    ? "Đơn giao hàng chỉ thanh toán khi nhận hàng (COD) hoặc trực tuyến"
-                    : "Đơn nhận tại cửa hàng chỉ thanh toán tại cửa hàng hoặc trực tuyến") + at + ".");
+            throw new BadRequestException("paymentMethod", fulfillment == FulfillmentType.DELIVERY
+                    ? "Đơn giao hàng chỉ thanh toán khi nhận hàng (COD) hoặc trực tuyến."
+                    : "Đơn nhận tại cửa hàng chỉ thanh toán tại cửa hàng hoặc trực tuyến.");
         }
-        if (fulfillment == FulfillmentType.DELIVERY && !store.isDeliveryEnabled()) {
-            throw new BadRequestException("groups", "Chi nhánh " + store.getName() + " không hỗ trợ giao hàng.");
+        if (!StringUtils.hasText(request.receiverName()) || request.receiverName().trim().length() > 150) {
+            throw new BadRequestException("receiverName", "Vui lòng nhập tên người nhận (tối đa 150 ký tự).");
         }
-        if (fulfillment == FulfillmentType.STORE_PICKUP && !store.isPickupEnabled()) {
-            throw new BadRequestException("groups", "Chi nhánh " + store.getName() + " không hỗ trợ nhận tại cửa hàng.");
+        if (request.receiverPhone() == null || !request.receiverPhone().trim().matches(PHONE_PATTERN)) {
+            throw new BadRequestException("receiverPhone", "Số điện thoại người nhận không hợp lệ.");
         }
-        if (!StringUtils.hasText(choice.receiverName()) || choice.receiverName().trim().length() > 150) {
-            throw new BadRequestException("groups", "Vui lòng nhập tên người nhận (tối đa 150 ký tự)" + at + ".");
+        if (fulfillment == FulfillmentType.DELIVERY) {
+            addressValidator.requireValid(request.shippingAddress());
         }
-        if (choice.receiverPhone() == null || !choice.receiverPhone().trim().matches(PHONE_PATTERN)) {
-            throw new BadRequestException("groups", "Số điện thoại người nhận không hợp lệ" + at + ".");
-        }
-        if (fulfillment == FulfillmentType.DELIVERY
-                && (!StringUtils.hasText(choice.shippingAddress()) || choice.shippingAddress().trim().length() > 500)) {
-            throw new BadRequestException("groups", "Vui lòng nhập địa chỉ giao hàng (tối đa 500 ký tự)" + at + ".");
+        if (fulfillment == FulfillmentType.STORE_PICKUP && request.pickupStoreId() == null) {
+            throw new BadRequestException("pickupStoreId", "Vui lòng chọn chi nhánh nhận hàng.");
         }
     }
 
-    private static Order newOrder(CheckoutSession session, User user, Store store, StoreGroupCheckoutRequest choice,
-                                  BigDecimal total) {
-        Order order = new Order();
-        order.setCheckoutSession(session);
-        order.setUser(user);
-        order.setStore(store);
-        order.setFulfillmentType(choice.fulfillmentType());
-        order.setPaymentMethod(choice.paymentMethod());
-        order.setPaymentStatus(OrderPaymentStatus.UNPAID);
-        // Roadmap V2 6.4: an ONLINE order waits for its payment; COD and PAY_AT_STORE are confirmed by the system
-        // straight away because stock has just been checked and taken. No Staff approval (BR-10).
-        order.setOrderStatus(choice.paymentMethod() == PaymentMethod.ONLINE
-                ? OrderStatus.PENDING_PAYMENT
-                : OrderStatus.CONFIRMED);
-        order.setReceiverName(choice.receiverName().trim());
-        order.setReceiverPhone(choice.receiverPhone().trim());
-        // a pickup order has no shipping address: it is collected at its own Store
-        order.setShippingAddress(choice.fulfillmentType() == FulfillmentType.DELIVERY
-                ? choice.shippingAddress().trim()
-                : null);
-        order.setTotalAmount(total);
-        return order;
+    /** Flows that stay closed until their business decision / dependency exists (fail closed). */
+    private void requireOpenFlow(PlaceOrderRequest request) {
+        if (request.paymentMethod() == PaymentMethod.ONLINE && !checkoutProperties.isOnlineEnabled()) {
+            throw new CheckoutConflictException(CheckoutConflictException.CODE_ONLINE_CHECKOUT_DISABLED,
+                    "Thanh toán trực tuyến tạm thời chưa mở. Vui lòng chọn phương thức thanh toán khác.");
+        }
+        if (request.fulfillmentType() == FulfillmentType.DELIVERY && deliveryBlockedReason() != null) {
+            throw deliveryPolicyPending();
+        }
     }
 
-    private static BigDecimal subtotal(StoreProduct storeProduct, CartItem line) {
-        return storeProduct.getPrice().multiply(BigDecimal.valueOf(line.getQuantity()));
-    }
-
-    /** Freezes what is bought: name, unit price (from the locked StoreProduct), quantity, subtotal. */
-    private static OrderItem snapshot(Order order, StoreProduct storeProduct, CartItem line) {
-        OrderItem item = new OrderItem();
-        item.setOrder(order);
-        item.setStoreProduct(storeProduct);
-        item.setProductName(storeProduct.getProduct().getName());
-        item.setUnitPrice(storeProduct.getPrice());
-        item.setQuantity(line.getQuantity());
-        item.setSubtotal(subtotal(storeProduct, line));
-        return item;
-    }
-
-    /** First timeline entry of an Order: created by the system, no previous status. */
-    private static OrderStatusHistory createdEntry(Order order) {
-        OrderStatusHistory entry = new OrderStatusHistory();
-        entry.setOrder(order);
-        entry.setOldStatus(null);
-        entry.setNewStatus(order.getOrderStatus());
-        entry.setChangedBy(null);
-        entry.setNote(order.getOrderStatus() == OrderStatus.PENDING_PAYMENT ? NOTE_PENDING_PAYMENT : NOTE_CONFIRMED);
-        return entry;
+    private CheckoutConflictException deliveryPolicyPending() {
+        return new CheckoutConflictException(CheckoutConflictException.CODE_DELIVERY_POLICY_PENDING,
+                deliveryBlockedReason() != null ? deliveryBlockedReason()
+                        : "Giao hàng tận nơi tạm thời chưa mở.");
     }
 
     // ------------------------------------------------------------------ read a checkout
@@ -318,19 +574,39 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     private CheckoutResultResponse toResult(CheckoutSession session) {
         List<Order> orders = orderRepository.findByCheckoutSessionIdOrderByIdAsc(session.getId());
-        Map<Long, List<OrderItemResponse>> itemsByOrder = orders.isEmpty()
-                ? Map.of()
-                : orderItemRepository.findByOrderIdInOrderByIdAsc(orders.stream().map(Order::getId).toList()).stream()
-                        .collect(Collectors.groupingBy(item -> item.getOrder().getId(), Collectors.mapping(
-                                item -> new OrderItemResponse(item.getProductName(), item.getUnitPrice(),
-                                        item.getQuantity(), item.getSubtotal()), Collectors.toList())));
+        List<Long> orderIds = orders.stream().map(Order::getId).toList();
+        List<OrderItem> allItems = orders.isEmpty() ? List.of()
+                : orderItemRepository.findByOrderIdInOrderByIdAsc(orderIds);
+        List<OrderFulfillment> allFulfillments = orders.isEmpty() ? List.of()
+                : fulfillmentRepository.findByOrderIdInOrderByIdAsc(orderIds);
+
+        List<OrderSummaryResponse> summaries = new ArrayList<>();
+        for (Order order : orders) {
+            List<OrderItemResponse> items = allItems.stream()
+                    .filter(item -> item.getOrder().getId().equals(order.getId()))
+                    .map(CheckoutServiceImpl::itemOf).toList();
+            List<OrderFulfillment> fulfillments = allFulfillments.stream()
+                    .filter(f -> f.getOrder().getId().equals(order.getId())).toList();
+            List<FulfillmentSummaryResponse> parts = fulfillments.stream().map(f -> new FulfillmentSummaryResponse(
+                    f.getId(), f.getStore().getId(), f.getStore().getName(), f.getStore().getAddress(),
+                    f.getFulfillmentType(), f.getStatus(),
+                    allItems.stream().filter(item -> item.getFulfillment().getId().equals(f.getId()))
+                            .map(CheckoutServiceImpl::itemOf).toList())).toList();
+            Store single = fulfillments.size() == 1 ? fulfillments.get(0).getStore() : null;
+            summaries.add(new OrderSummaryResponse(order.getId(), single == null ? null : single.getId(),
+                    single != null ? single.getName() : "Nhiều chi nhánh (" + fulfillments.size() + ")",
+                    single == null ? null : single.getAddress(), order.getFulfillmentType(), order.getPaymentMethod(),
+                    order.getPaymentStatus(), order.getOrderStatus(), order.getReceiverName(),
+                    order.getReceiverPhone(), order.getShippingAddress(), order.getTotalAmount(), items, parts,
+                    deadlines.paymentDeadline(order), order.getShippingFee()));
+        }
         return new CheckoutResultResponse(session.getId(), session.getStatus(), session.getTotalAmount(),
-                session.getCreatedAt(), orders.stream().map(order -> new OrderSummaryResponse(order.getId(),
-                        order.getStore().getId(), order.getStore().getName(), order.getStore().getAddress(),
-                        order.getFulfillmentType(), order.getPaymentMethod(), order.getPaymentStatus(),
-                        order.getOrderStatus(), order.getReceiverName(), order.getReceiverPhone(),
-                        order.getShippingAddress(), order.getTotalAmount(),
-                        itemsByOrder.getOrDefault(order.getId(), List.of()))).toList());
+                session.getCreatedAt(), summaries);
+    }
+
+    private static OrderItemResponse itemOf(OrderItem item) {
+        return new OrderItemResponse(item.getProductName(), item.getUnitPrice(), item.getQuantity(),
+                item.getSubtotal());
     }
 
     private User user(String customerEmail) {

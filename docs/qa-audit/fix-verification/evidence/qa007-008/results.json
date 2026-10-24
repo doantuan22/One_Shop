@@ -1,0 +1,34 @@
+{
+  "phase": "qa007-008",
+  "total": 3,
+  "counts": {
+    "FAIL": 2,
+    "PASS": 1
+  },
+  "cases": [
+    {
+      "suite": "com.oneshop.QaAuditScreenBrowserDatabaseIntegrationTest",
+      "test": "roleScreensAndSmallUiActions",
+      "status": "FAIL",
+      "message": "[see docs/qa-audit/evidence/screens/results.json and node.log] \nexpected: 0\n but was: 1",
+      "timestamp": null,
+      "seconds": "45.343"
+    },
+    {
+      "suite": "com.oneshop.QaFixUiBrowserDatabaseIntegrationTest",
+      "test": "seedResourcesAndFallback",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "3.578"
+    },
+    {
+      "suite": "com.oneshop.QaFixUiBrowserDatabaseIntegrationTest",
+      "test": "realFormsPrimaryFallbackProfileAndSafeTitles",
+      "status": "FAIL",
+      "message": "[see D:\\One_Shop\\docs\\qa-audit\\fix-verification\\evidence\\qa007-008\\ui-forms-titles/results.json] \nexpected: 0\n but was: 1",
+      "timestamp": null,
+      "seconds": "9.318"
+    }
+  ]
+}

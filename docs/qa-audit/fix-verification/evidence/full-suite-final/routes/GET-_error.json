@@ -1,0 +1,14 @@
+{
+  "executedAt" : "2026-10-24T03:23:59.123232800Z",
+  "location" : "",
+  "route" : {
+    "method" : "error",
+    "verb" : "GET",
+    "path" : "/error",
+    "controller" : "org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/error",
+  "actual" : 500,
+  "expected" : 500
+}

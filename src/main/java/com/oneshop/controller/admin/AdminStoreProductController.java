@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.security.Principal;
 
 /**
- * Admin: StoreProduct, a SKU put on sale at one Store with that Store's price, quantity and status (BR-02). The Admin
+ * Admin: StoreProduct, a SKU put on sale at one Store with that Store's quantity and status; the online price is Product.price and read-only here. The Admin
  * sees the exact quantity. A (Store, Product) pair exists once; it is taken off sale with status INACTIVE.
  */
 @Controller
@@ -30,6 +30,8 @@ public class AdminStoreProductController {
 
     private static final String FORM_VIEW = "admin/store-product-form";
     private static final int PAGE_SIZE = 20;
+    private static final com.oneshop.entity.ActiveStatus[] STATUS_FILTERS =
+            com.oneshop.entity.ActiveStatus.values();
 
     private final StoreProductService storeProductService;
     private final StoreService storeService;
@@ -44,13 +46,25 @@ public class AdminStoreProductController {
 
     @GetMapping
     public String list(@RequestParam(required = false) Long storeId, @RequestParam(required = false) Long productId,
+                       @RequestParam(required = false) com.oneshop.entity.ActiveStatus status,
+                       @RequestParam(required = false) String q,
                        @RequestParam(defaultValue = "0") int page, Model model) {
-        model.addAttribute("storeProducts", storeProductService.searchStoreProducts(storeId, productId,
-                PageRequest.of(Math.max(page, 0), PAGE_SIZE)));
+        var products = productService.getAssignableProducts();
+        // a product picked from the suggestions (or a deep link with productId) shows as its label in the search box
+        String text = q == null ? "" : q.trim();
+        if (text.isEmpty() && productId != null) {
+            text = products.stream().filter(p -> productId.equals(p.id())).findFirst()
+                    .map(p -> p.sku() + " - " + p.name()).orElse("");
+        }
+        model.addAttribute("storeProducts", storeProductService.searchStoreProducts(storeId, productId, status,
+                productId != null ? null : text, com.oneshop.service.query.Paging.page(page, PAGE_SIZE)));
         model.addAttribute("stores", storeService.getAllStores());
-        model.addAttribute("products", productService.getAssignableProducts());
+        model.addAttribute("products", products);
+        model.addAttribute("q", text);
         model.addAttribute("storeId", storeId);
         model.addAttribute("productId", productId);
+        model.addAttribute("status", status);
+        model.addAttribute("statusFilters", STATUS_FILTERS);
         return "admin/store-products";
     }
 
@@ -68,7 +82,6 @@ public class AdminStoreProductController {
         StoreProductRequest form = new StoreProductRequest();
         form.setStoreId(current.storeId());
         form.setProductId(current.productId());
-        form.setPrice(current.price());
         form.setQuantity(current.quantity());
         form.setStatus(current.status());
         model.addAttribute("form", form);
@@ -96,8 +109,15 @@ public class AdminStoreProductController {
         // Store and Product of an existing StoreProduct are fixed, whatever the form posts
         form.setStoreId(current.storeId());
         form.setProductId(current.productId());
-        if (!bindingResult.hasFieldErrors("price") && !bindingResult.hasFieldErrors("quantity")
-                && !bindingResult.hasFieldErrors("status") && !bindingResult.hasFieldErrors("note")) {
+        // The legacy property is retained for trusted service callers only. Reject a forged MVC price rather than
+        // silently redirecting as though an unsupported per-Store price had been accepted.
+        if (bindingResult.hasFieldErrors("price")) {
+            bindingResult.reject("storeProduct.price.notAllowed",
+                    bindingResult.getFieldError("price").getDefaultMessage());
+        }
+        if (!bindingResult.hasFieldErrors("quantity")
+                && !bindingResult.hasFieldErrors("status") && !bindingResult.hasFieldErrors("note")
+                && !bindingResult.hasFieldErrors("price")) {
             try {
                 storeProductService.updateStoreProduct(id, form, principal.getName());
                 return "redirect:/admin/store-products?success=updated&storeId=" + current.storeId();

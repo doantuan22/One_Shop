@@ -4,10 +4,20 @@
     <title>Danh mục</title>
 </head>
 <body>
-<div th:replace="~{fragments/components :: pageHeader('Danh mục', 'Danh mục dùng chung toàn chuỗi. Danh mục đang ẩn sẽ không hiển thị cho khách cùng các sản phẩm của nó.')}"></div>
+<div class="os-page-header mb-4">
+    <div>
+        <h1 class="h3 mb-1">Danh mục</h1>
+        <p class="os-muted-text mb-0">Quản lý danh mục sản phẩm trong hệ thống OneShop.</p>
+    </div>
+    <div class="os-page-header__actions">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#category-form-modal">
+            <span aria-hidden="true">+</span> Thêm danh mục
+        </button>
+    </div>
+</div>
 
 <div class="alert alert-success" th:if="${param.success}" th:switch="${param.success[0]}">
-    <span th:case="'created'">Đã thêm danh mục. Bạn có thể tải ảnh lên ngay bên dưới.</span>
+    <span th:case="'created'">Đã thêm danh mục.</span>
     <span th:case="'image-uploaded'">Đã tải ảnh lên.</span>
     <span th:case="'image-removed'">Đã xóa ảnh.</span>
     <span th:case="*">Đã cập nhật danh mục.</span>
@@ -15,20 +25,29 @@
 <div class="alert alert-danger" th:if="${param.error != null or error != null}" th:switch="${param.error != null ? param.error[0] : error}">
     <span th:case="'image-size'" th:text="${errorMessage != null ? errorMessage : 'Ảnh vượt quá ' + (maxFileSize != null ? maxFileSize : '5MB') + '. Vui lòng chọn tệp nhỏ hơn.'}">Ảnh vượt quá dung lượng cho phép.</span>
     <span th:case="'image-invalid'">Tệp không hợp lệ. Vui lòng chọn một tệp hình ảnh (JPEG, PNG, WebP tối đa 5MB).</span>
-    <span th:case="*">Không thể làm việc với Cloudinary. Kiểm tra cấu hình CLOUDINARY_* rồi thử lại.</span>
+    <span th:case="*">Không thể tải ảnh. Vui lòng thử lại hoặc liên hệ quản trị viên.</span>
 </div>
 
-<div class="row g-4">
-    <div class="col-12 col-xl-4 order-xl-2">
-        <section class="card shadow-sm mb-4">
-            <div class="card-header bg-white fw-semibold" th:text="${editId == null} ? 'Thêm danh mục' : 'Sửa danh mục'">Thêm danh mục</div>
-            <div class="card-body">
+<div class="os-catalog-table">
+    <div th:replace="~{fragments/components :: dataTable(~{::#category-head}, ~{::#category-body})}"></div>
+</div>
+
+<div class="modal fade" id="category-form-modal" tabindex="-1" aria-labelledby="category-form-modal-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable os-admin-form-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title h5" id="category-form-modal-title"
+                    th:text="${editId == null} ? 'Thêm danh mục' : 'Chỉnh sửa danh mục'">Thêm danh mục</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
                 <form method="post" enctype="multipart/form-data" th:object="${form}" id="category-form" novalidate
+                      data-os-save-form th:attr="data-os-open-modal=${#fields.hasErrors()} ? 'category-form-modal' : null"
                       th:action="${editId == null} ? @{/admin/categories} : @{/admin/categories/{id}(id=${editId})}">
                     <div class="alert alert-danger" th:each="message : ${#fields.globalErrors()}" th:text="${message}">Lỗi</div>
                     <div class="mb-3">
                         <label class="form-label" for="name">Tên danh mục <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" th:field="*{name}" th:errorclass="is-invalid" maxlength="150">
+                        <input type="text" class="form-control" th:field="*{name}" th:errorclass="is-invalid" maxlength="150" required>
                         <div class="invalid-feedback" th:errors="*{name}">Lỗi</div>
                     </div>
                     <div class="mb-3">
@@ -40,77 +59,64 @@
                         <label class="form-label" for="status">Trạng thái</label>
                         <select class="form-select" th:field="*{status}">
                             <option value="ACTIVE">Đang hoạt động</option>
-                            <option value="HIDDEN">Đang ẩn</option>
+                            <option value="HIDDEN">Tạm ẩn</option>
                         </select>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-0">
                         <label class="form-label" for="file">Ảnh minh họa</label>
+                        <img th:if="${editCategory != null and editCategory.imageUrl != null and !#strings.trim(editCategory.imageUrl).isEmpty()}"
+                             th:src="${editCategory.imageUrl}" th:alt="${editCategory.name}" class="os-admin-form-image mb-2" data-image-preview>
+                        <img class="os-admin-form-image mb-2 d-none" alt="Xem trước ảnh đã chọn" data-image-preview>
                         <input type="file" class="form-control" id="file" name="file" accept="image/jpeg,image/png,image/webp"
+                               data-image-preview-input
                                th:attr="data-max-bytes=5242880,data-max-size=${maxFileSize != null ? maxFileSize : '5MB'}">
                         <div class="upload-file-error text-danger small mt-1" style="display:none;"></div>
-                        <div class="form-text" th:text="'Định dạng hỗ trợ: JPEG, PNG, WebP. Dung lượng tối đa: ' + (${maxFileSize != null ? maxFileSize : '5MB'}) + '.'">Định dạng hỗ trợ: JPEG, PNG, WebP. Dung lượng tối đa: 5MB.</div>
+                        <div class="form-text" th:text="'JPEG, PNG hoặc WebP · tối đa ' + (${maxFileSize != null ? maxFileSize : '5MB'}) + '.'">JPEG, PNG hoặc WebP · tối đa 5MB.</div>
                     </div>
-                    <button type="submit" class="btn btn-primary" th:text="${editId == null} ? 'Thêm' : 'Lưu thay đổi'">Lưu</button>
-                    <a class="btn btn-outline-secondary" th:href="@{/admin/categories}" th:if="${editId != null}">Hủy</a>
                 </form>
+
+                <section class="os-modal-image-tools mt-3 pt-3"
+                         th:if="${editCategory != null and editCategory.imageUrl != null and !#strings.trim(editCategory.imageUrl).isEmpty()}">
+                    <form method="post" th:action="@{/admin/categories/{id}/image/delete(id=${editId})}">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Xóa ảnh hiện tại</button>
+                    </form>
+                </section>
             </div>
-        </section>
-
-        <section class="card shadow-sm" id="category-image" th:if="${editCategory != null}">
-            <div class="card-header bg-white fw-semibold">Ảnh minh họa</div>
-            <div class="card-body">
-                <img th:if="${editCategory.imageUrl != null and !#strings.trim(editCategory.imageUrl).isEmpty()}"
-                     th:src="${editCategory.imageUrl}" th:alt="${editCategory.name}"
-                     class="rounded border mb-3 d-block" style="max-height: 140px; max-width: 100%; object-fit: cover;">
-                <p class="text-secondary small" th:unless="${editCategory.imageUrl != null and !#strings.trim(editCategory.imageUrl).isEmpty()}">Chưa có ảnh.</p>
-
-                <form method="post" enctype="multipart/form-data" class="mb-2"
-                      th:action="@{/admin/categories/{id}/image(id=${editId})}">
-                    <div class="input-group">
-                        <input type="file" class="form-control" name="file" accept="image/jpeg,image/png,image/webp" required aria-label="Tệp ảnh"
-                               th:attr="data-max-bytes=${maxFileSizeBytes},data-max-size=${maxFileSize}">
-                        <button type="submit" class="btn btn-outline-primary">Tải lên</button>
-                    </div>
-                    <div class="upload-file-error text-danger small mt-1" style="display:none;"></div>
-                    <div class="form-text">Định dạng: JPEG, PNG, WebP. Tối đa <span th:text="${maxFileSize != null ? maxFileSize : '5MB'}">5MB</span>.</div>
-                </form>
-                <form method="post" th:action="@{/admin/categories/{id}/image/delete(id=${editId})}"
-                      th:if="${editCategory.imageUrl != null and !#strings.trim(editCategory.imageUrl).isEmpty()}">
-                    <button type="submit" class="btn btn-outline-danger btn-sm">Xóa ảnh</button>
-                </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-primary" form="category-form"
+                        th:text="${editId == null} ? 'Lưu danh mục' : 'Lưu thay đổi'">Lưu danh mục</button>
             </div>
-        </section>
-    </div>
-
-    <div class="col-12 col-xl-8 order-xl-1">
-        <div th:replace="~{fragments/components :: dataTable(~{::#category-head}, ~{::#category-body})}"></div>
+        </div>
     </div>
 </div>
+
+<div class="d-none" th:if="${editId != null}" data-os-open-modal="category-form-modal"></div>
 
 <th:block th:remove="all">
     <thead id="category-head">
     <tr>
-        <th scope="col">Ảnh</th>
-        <th scope="col">Tên</th>
-        <th scope="col">Mô tả</th>
-        <th scope="col">Trạng thái</th>
-        <th scope="col" class="text-end">Thao tác</th>
+        <th scope="col" class="os-col-thumb">Ảnh</th>
+        <th scope="col" class="os-col-name">Tên</th>
+        <th scope="col" class="os-col-desc">Mô tả</th>
+        <th scope="col" class="os-col-status">Trạng thái</th>
+        <th scope="col" class="os-col-actions text-end">Thao tác</th>
     </tr>
     </thead>
     <tbody id="category-body">
     <tr th:each="category : ${categories}" th:classappend="${category.id == editId} ? 'table-active'">
-        <td>
+        <td class="os-col-thumb">
             <img th:if="${category.imageUrl != null and !#strings.trim(category.imageUrl).isEmpty()}"
-                 th:src="${category.imageUrl}" th:alt="${category.name}"
-                 class="rounded border" style="width: 44px; height: 44px; object-fit: cover;">
+                 th:src="${category.imageUrl}" th:alt="${category.name}" class="os-thumb">
             <div th:unless="${category.imageUrl != null and !#strings.trim(category.imageUrl).isEmpty()}"
-                 class="rounded border d-inline-flex align-items-center justify-content-center bg-light text-secondary small"
-                 style="width: 44px; height: 44px;">&mdash;</div>
+                 class="rounded border d-inline-flex align-items-center justify-content-center bg-light text-secondary small os-thumb-ph">&mdash;</div>
         </td>
-        <td class="fw-semibold" th:text="${category.name}">Chăm sóc da</td>
-        <td class="text-secondary" th:text="${category.description}">Mô tả</td>
-        <td><span th:replace="~{fragments/components :: statusBadge(${category.status})}"></span></td>
-        <td class="text-end">
+        <td class="os-col-name fw-semibold" th:text="${category.name}">Chăm sóc da</td>
+        <td class="os-col-desc text-secondary">
+            <span class="os-table-description" th:text="${category.description}" th:title="${category.description}">Mô tả</span>
+        </td>
+        <td class="os-col-status"><span th:replace="~{fragments/components :: statusBadge(${category.status})}"></span></td>
+        <td class="os-col-actions text-end">
             <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/categories/{id}/edit(id=${category.id})}">Sửa</a>
         </td>
     </tr>
@@ -120,5 +126,6 @@
     </tbody>
 </th:block>
 <script th:src="@{/js/upload-validator.js}"></script>
+<script th:src="@{/js/admin-form-modal.js}"></script>
 </body>
 </html>

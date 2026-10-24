@@ -1,0 +1,7 @@
+{
+  "actual" : 500,
+  "expected" : "success/empty page or controlled 4xx; never 5xx",
+  "request" : "/admin/payments?from=0001-01-01&to=9999-12-31",
+  "timestamp" : "2026-10-24T02:07:00.826825300Z",
+  "actor" : "admin@oneshop.vn"
+}

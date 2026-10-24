@@ -2,6 +2,7 @@ package com.oneshop.controller.admin;
 
 import com.oneshop.dto.request.ProductRequest;
 import com.oneshop.dto.response.AdminProductResponse;
+import com.oneshop.entity.ProductStatus;
 import com.oneshop.exception.BadRequestException;
 import com.oneshop.exception.ImageStorageException;
 import com.oneshop.service.ProductService;
@@ -16,11 +17,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Admin: Products. One Product is one sellable SKU of the whole chain (BR-01): no price or quantity here, those are
- * set per Store in {@link AdminStoreProductController}. Images go to Cloudinary. A Product is retired with a status,
+ * Admin: Products. Product holds the chain-wide online price; inventory is managed per Store.
+ * Images go to Cloudinary. A Product is retired with a status,
  * never deleted (BR-17).
  */
 @Controller
@@ -36,12 +38,34 @@ public class AdminProductController {
         this.productService = productService;
     }
 
+    /** SKU and name of every assignable product for the admin search-box suggestions. */
+    @GetMapping("/suggest")
+    @ResponseBody
+    public java.util.List<java.util.Map<String, String>> suggest() {
+        return productService.getAssignableProducts().stream()
+                .map(p -> java.util.Map.of("sku", p.sku(), "name", p.name()))
+                .toList();
+    }
+
     @GetMapping
     public String list(@RequestParam(name = "q", required = false) String keyword,
+                       @RequestParam(required = false) Long categoryId,
+                       @RequestParam(required = false) Long brandId,
+                       @RequestParam(required = false) ProductStatus status,
                        @RequestParam(defaultValue = "0") int page, Model model) {
-        model.addAttribute("products",
-                productService.searchAllProducts(keyword, PageRequest.of(Math.max(page, 0), PAGE_SIZE)));
+        var products = productService.searchAllProducts(keyword, categoryId, brandId, status,
+                com.oneshop.service.query.Paging.page(page, PAGE_SIZE));
+        // one batched Cloudinary lookup for the thumbnails of the page
+        model.addAttribute("products", products);
+        model.addAttribute("images", productService.getPrimaryImageUrls(
+                products.getContent().stream().map(AdminProductResponse::id).toList()));
         model.addAttribute("q", keyword);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("brandId", brandId);
+        model.addAttribute("status", status);
+        model.addAttribute("categories", productService.getAllCategories());
+        model.addAttribute("brands", productService.getAllBrands());
+        model.addAttribute("statuses", ProductStatus.values());
         return "admin/products";
     }
 
@@ -64,6 +88,8 @@ public class AdminProductController {
             form.setCategoryId(product.categoryId());
             form.setBrandId(product.brandId());
             form.setStatus(product.status());
+            form.setPrice(product.price());
+            form.setOriginalPrice(product.originalPrice());
             model.addAttribute("form", form);
         }
         return form(model, id);

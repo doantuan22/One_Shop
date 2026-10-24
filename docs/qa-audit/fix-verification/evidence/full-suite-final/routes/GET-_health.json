@@ -1,0 +1,14 @@
+{
+  "executedAt" : "2026-10-24T03:23:59.125422300Z",
+  "location" : "",
+  "route" : {
+    "method" : "health",
+    "verb" : "GET",
+    "path" : "/health",
+    "controller" : "com.oneshop.controller.api.HealthController"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/health",
+  "actual" : 200,
+  "expected" : 200
+}

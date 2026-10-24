@@ -1,0 +1,14 @@
+{
+  "executedAt" : "2026-10-24T03:23:58.893551800Z",
+  "location" : "http://localhost:50550/login",
+  "route" : {
+    "method" : "result",
+    "verb" : "GET",
+    "path" : "/checkout/{checkoutId}",
+    "controller" : "com.oneshop.controller.client.CheckoutController"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/checkout/999999999",
+  "actual" : 302,
+  "expected" : 302
+}

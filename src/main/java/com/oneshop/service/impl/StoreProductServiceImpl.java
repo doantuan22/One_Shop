@@ -19,6 +19,7 @@ import com.oneshop.repository.StoreProductRepository;
 import com.oneshop.repository.StoreRepository;
 import com.oneshop.service.InventoryService;
 import com.oneshop.service.ProductService;
+import com.oneshop.service.StaffOperationsService;
 import com.oneshop.service.StoreProductService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -71,6 +72,7 @@ public class StoreProductServiceImpl implements StoreProductService {
 
     @Override
     public Page<CatalogItemResponse> getChainCatalog(ProductSearchCriteria criteria, Pageable pageable) {
+        com.oneshop.service.query.Paging.validate(pageable);
         Page<ProductResponse> products = productService.searchProducts(criteria, pageable);
         List<Long> productIds = products.getContent().stream().map(ProductResponse::id).toList();
 
@@ -133,6 +135,7 @@ public class StoreProductServiceImpl implements StoreProductService {
 
     @Override
     public Page<CatalogItemResponse> getStoreCatalog(Long storeId, ProductSearchCriteria criteria, Pageable pageable) {
+        com.oneshop.service.query.Paging.validate(pageable);
         Page<StoreProduct> page = storeProductRepository.searchSellableInStore(storeId, criteria.likePattern(),
                 criteria.categoryId(), criteria.brandId(), pageable);
         Map<Long, String> primaryImages = productService.getPrimaryImageUrls(
@@ -164,8 +167,73 @@ public class StoreProductServiceImpl implements StoreProductService {
     // ------------------------------------------------------------------ Admin
 
     @Override
-    public Page<StoreProductStockResponse> searchStoreProducts(Long storeId, Long productId, Pageable pageable) {
-        return storeProductRepository.searchForAdmin(storeId, productId, pageable).map(storeProductMapper::toStockView);
+    public Page<StoreProductStockResponse> searchStoreProducts(Long storeId, Long productId,
+                                                               com.oneshop.entity.ActiveStatus status,
+                                                               Pageable pageable) {
+        com.oneshop.service.query.Paging.validate(pageable);
+        return storeProductRepository.searchForAdmin(storeId, productId, status, pageable)
+                .map(storeProductMapper::toStockView);
+    }
+
+    @Override
+    public Page<StoreProductStockResponse> searchStoreProducts(Long storeId, Long productId,
+                                                               com.oneshop.entity.ActiveStatus status, String q,
+                                                               Pageable pageable) {
+        com.oneshop.service.query.Paging.validate(pageable);
+        List<String> words = com.oneshop.service.search.TextSearch.words(q);
+        if (words.isEmpty()) {
+            return searchStoreProducts(storeId, productId, status, pageable);
+        }
+        List<StoreProductStockResponse> matched = storeProductRepository
+                .searchForAdmin(storeId, productId, status, Pageable.unpaged())
+                .map(storeProductMapper::toStockView).getContent().stream()
+                .filter(row -> com.oneshop.service.search.TextSearch.matchesAll(words, row.sku(), row.productName()))
+                .toList();
+        return com.oneshop.service.search.TextSearch.slice(matched, pageable);
+    }
+
+    private static final List<String> INVENTORY_LEVELS = List.of("all", "out", "low", "ok");
+    private static final List<String> INVENTORY_SORTS = List.of("name", "qty_desc", "qty_asc");
+
+    @Override
+    public Page<StoreProductStockResponse> searchInventory(Long storeId, String q, String stockLevel, String sort,
+                                                            Pageable pageable) {
+        com.oneshop.service.query.Paging.validate(pageable);
+        var words = com.oneshop.service.search.TextSearch.words(q);
+        var like = "";
+        var level = stockLevel != null && INVENTORY_LEVELS.contains(stockLevel) ? stockLevel : "all";
+        var order = sort != null && INVENTORY_SORTS.contains(sort) ? sort : "name";
+        if (!words.isEmpty()) {
+            var all = storeProductRepository
+                    .searchInventory(storeId, like, level, StaffOperationsService.LOW_STOCK_THRESHOLD, order,
+                            Pageable.unpaged(pageable.getSort()))
+                    .map(storeProductMapper::toStockView).getContent().stream()
+                    .filter(row -> com.oneshop.service.search.TextSearch.matchesAll(words, row.sku(), row.productName(), row.storeName()))
+                    .toList();
+            return com.oneshop.service.search.TextSearch.slice(all, pageable);
+        }
+        return storeProductRepository
+                .searchInventory(storeId, like, level, StaffOperationsService.LOW_STOCK_THRESHOLD, order, pageable)
+                .map(storeProductMapper::toStockView);
+    }
+
+    @Override
+    public com.oneshop.dto.response.InventorySummaryResponse inventorySummary(Long storeId) {
+        var threshold = StaffOperationsService.LOW_STOCK_THRESHOLD;
+        // "all" rows count every status (StoreProduct is the source of truth even when taken off sale)
+        var total = storeId == null ? storeProductRepository.count() : storeProductRepository.countByStoreId(storeId);
+        var low = storeProductRepository.countLowByStoreId(storeId, threshold);
+        var out = storeProductRepository.countOutByStoreId(storeId);
+        return new com.oneshop.dto.response.InventorySummaryResponse(total, low, out, threshold);
+    }
+
+    /** lower-case contains pattern with ! as the escape character (same rule as the catalog search). */
+    private static String containsLike(String q) {
+        var text = q == null ? "" : q.trim().toLowerCase();
+        if (text.isEmpty()) {
+            return "";
+        }
+        return "%" + text.replace("!", "!!").replace("%", "!%").replace("_", "!_") + "%";
     }
 
     @Override
@@ -187,7 +255,7 @@ public class StoreProductServiceImpl implements StoreProductService {
         StoreProduct storeProduct = new StoreProduct();
         storeProduct.setStore(store);
         storeProduct.setProduct(product);
-        storeProduct.setPrice(request.getPrice());
+        // no Store price: the online price is Product.price (the legacy column stays NULL)
         storeProduct.setStatus(request.getStatus());
         // starts empty: the opening quantity is booked below as an InventoryMovement, like every later change
         storeProduct.setQuantity(0);
@@ -210,7 +278,6 @@ public class StoreProductServiceImpl implements StoreProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm tại chi nhánh #" + id));
         inventoryService.adjustStock(id, request.getQuantity(), adminEmail,
                 noteOr(request.getNote(), ADMIN_ADJUST_NOTE));
-        storeProduct.setPrice(request.getPrice());
         storeProduct.setStatus(request.getStatus());
         return storeProductMapper.toStockView(storeProduct);
     }

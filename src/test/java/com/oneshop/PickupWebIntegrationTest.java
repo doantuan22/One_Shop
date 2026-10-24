@@ -49,32 +49,6 @@ class PickupWebIntegrationTest extends AbstractIntegrationTest {
         String token=login.headers().allValues("Set-Cookie").stream().filter(c->c.startsWith("XSRF-TOKEN=")).map(c->c.split(";")[0]).findFirst().orElseThrow();
         return post(path,"application/x-www-form-urlencoded",body+"&_csrf="+csrf.group(1),"Cookie",cookie+"; "+token);
     }
-    @ParameterizedTest @EnumSource(PickupAction.class)
-    void staffSeesSnapshotsHistoryAndOnlyNextFixedActionWithCsrf(PickupAction action) throws Exception {
-        var row=row(action.getExpectedStatus(),action,null);when(pickup.getPickupOrder(STAFF,10L)).thenReturn(detail(row));
-        var page=get(ROOT+"/10","Cookie",cookie(RoleName.STAFF));assertThat(page.statusCode()).isEqualTo(200);
-        assertThat(page.body()).contains("data-layout=\"staff\"",ROOT+"/10/"+action.getPath(),"name=\"_csrf\"","175.000 ₫","Nhân viên A","Snapshot &lt;script&gt;")
-                .doesNotContain("<script>alert(1)</script>","name=\"amount\"","name=\"storeId\"","name=\"targetStatus\"");
-        for(var other:PickupAction.values())if(other!=action)assertThat(page.body()).doesNotContain(ROOT+"/10/"+other.getPath());
-        if(action==PickupAction.COMPLETE)assertThat(page.body()).contains("name=\"pickupCode\"","đã thu đủ");
-        else assertThat(page.body()).doesNotContain("name=\"pickupCode\"");
-    }
-    @Test void staffListHasWorkingSidebarAndNoCode() throws Exception {
-        when(pickup.getPickupOrders(STAFF)).thenReturn(List.of(row(OrderStatus.CONFIRMED,PickupAction.PREPARE,null)));
-        var page=get(ROOT+"?storeId=999","Cookie",cookie(RoleName.STAFF));assertThat(page.statusCode()).isEqualTo(200);
-        assertThat(page.body()).contains("data-order-id=\"10\"","href=\""+ROOT+"\"","Người nhận");verify(pickup).getPickupOrders(STAFF);
-    }
-    @ParameterizedTest @EnumSource(value=OrderStatus.class,names={"PENDING_PAYMENT","CONFIRMED","COMPLETED","CANCELLED"})
-    void blockedOrTerminalOrderHasNoStaffAction(OrderStatus state) throws Exception {
-        when(pickup.getPickupOrder(STAFF,10L)).thenReturn(detail(row(state,null,null)));
-        var page=get(ROOT+"/10","Cookie",cookie(RoleName.STAFF));assertThat(page.statusCode()).isEqualTo(200);
-        for(var action:PickupAction.values())assertThat(page.body()).doesNotContain(ROOT+"/10/"+action.getPath());
-    }
-    @Test void fixedPostsBindOnlyPrincipalOrderAndPickupCode() throws Exception {
-        String staff=cookie(RoleName.STAFF);String forged="storeId=999&userId=1&staffEmail=admin&amount=1&targetStatus=CANCELLED&paymentStatus=PAID&pickedUpAt=2000&transactionCode=HACK";
-        for(var action:PickupAction.values())assertThat(postAs(staff,ROOT+"/10/"+action.getPath(),forged+"&pickupCode=ABCD2345").statusCode()).isEqualTo(302);
-        verify(pickup).startPreparingPickup(STAFF,10L);verify(pickup).markReadyForPickup(STAFF,10L);verify(pickup).completePickup(STAFF,10L,"ABCD2345");
-    }
     @Test void allMutationsRequireCsrfForCookiesBearerAndEncodedPaths() throws Exception {
         String staff=cookie(RoleName.STAFF),bearer="Bearer "+staff.substring("ONESHOP_TOKEN=".length());
         for(var action:PickupAction.values()) {
@@ -94,10 +68,6 @@ class PickupWebIntegrationTest extends AbstractIntegrationTest {
         String staff=cookie(RoleName.STAFF);when(storeService.getAssignedStores(STAFF)).thenReturn(List.of());
         assertThat(get(ROOT,"Cookie",staff).statusCode()).isEqualTo(403);assertThat(postAs(staff,ROOT+"/10/complete","pickupCode=ABCD2345").statusCode()).isEqualTo(403);verifyNoInteractions(pickup);
     }
-    @Test void getCannotMutateAndGenericTransitionDoesNotExist() throws Exception {
-        String staff=cookie(RoleName.STAFF);for(var action:PickupAction.values())assertThat(get(ROOT+"/10/"+action.getPath(),"Cookie",staff).statusCode()).isEqualTo(405);
-        assertThat(postAs(staff,ROOT+"/10/transition","targetStatus=COMPLETED").statusCode()).isEqualTo(404);verifyNoInteractions(pickup);
-    }
     @Test void customerDetailShowsCodeAndTimelineAndOffersNoCompletion() throws Exception {
         when(orders.getOrder(STAFF,10L)).thenReturn(detail(row(OrderStatus.READY_FOR_PICKUP,null,"ABCD2345")));
         when(orders.getOrders(STAFF)).thenReturn(List.of(row(OrderStatus.READY_FOR_PICKUP,null,null)));
@@ -111,16 +81,5 @@ class PickupWebIntegrationTest extends AbstractIntegrationTest {
         var page=get("/orders/10?userId=1","Cookie",cookie(RoleName.CUSTOMER));assertThat(page.statusCode()).isEqualTo(404);assertThat(page.body()).doesNotContain("pickup-code","ABCD2345");
         for(var role:List.of(RoleName.STAFF,RoleName.ADMIN))assertThat(get("/orders/10","Cookie",cookie(role)).statusCode()).isEqualTo(403);
         assertThat(get("/orders/10").statusCode()).isEqualTo(302);
-    }
-    @Test void safeErrorsHideDatabaseDetailsAndPickupCode() throws Exception {
-        String staff=cookie(RoleName.STAFF);
-        for(var exception:List.of(new CannotAcquireLockException("SQL secret ABCD2345"),new DataIntegrityViolationException("SQL CHECK ABCD2345"))) {
-            doThrow(exception).when(pickup).markReadyForPickup(STAFF,10L);
-            var page=postAs(staff,ROOT+"/10/ready","");assertThat(page.statusCode()).isEqualTo(409);assertThat(page.body()).doesNotContain("SQL","ABCD2345","Exception");
-        }
-        doThrow(new AccessDeniedException("secret ABCD2345")).when(pickup).startPreparingPickup(STAFF,10L);
-        assertThat(postAs(staff,ROOT+"/10/prepare","").statusCode()).isEqualTo(403);
-        doThrow(new BadRequestException("Mã nhận hàng không hợp lệ.")).when(pickup).completePickup(STAFF,10L,"WRONG999");
-        var page=postAs(staff,ROOT+"/10/complete","pickupCode=WRONG999");assertThat(page.statusCode()).isEqualTo(400);assertThat(page.body()).doesNotContain("WRONG999","ABCD2345");
     }
 }

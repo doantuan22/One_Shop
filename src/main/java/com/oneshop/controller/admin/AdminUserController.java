@@ -17,9 +17,23 @@ public class AdminUserController {
     public AdminUserController(AdminUserService users) { this.users = users; }
     @ModelAttribute("roles") public RoleName[] roles() { return RoleName.values(); }
     @ModelAttribute("statuses") public ActiveStatus[] statuses() { return ActiveStatus.values(); }
+    /** Full name and e-mail for the search-box suggestions (os-suggest.js shows "sku" first). */
+    @GetMapping("/suggest")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public java.util.List<java.util.Map<String, String>> suggest(@RequestParam(required = false) RoleName role) {
+        return users.suggestions(role);
+    }
+
     @GetMapping
-    public String list(@RequestParam(required = false) RoleName role, @RequestParam(defaultValue = "0") int page, Model model) {
-        model.addAttribute("users", users.getUsers(role, page)); model.addAttribute("role", role); return "admin/users";
+    public String list(@RequestParam(required = false) RoleName role,
+                       @RequestParam(required = false) ActiveStatus status,
+                       @RequestParam(required = false) String q,
+                       @RequestParam(defaultValue = "0") int page, Model model) {
+        model.addAttribute("users", users.searchUsers(role, status, q, page));
+        model.addAttribute("role", role);
+        model.addAttribute("status", status);
+        model.addAttribute("q", q);
+        return "admin/users";
     }
     @GetMapping("/new")
     public String createForm(Model model) {

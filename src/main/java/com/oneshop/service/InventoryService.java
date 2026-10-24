@@ -49,4 +49,13 @@ public interface InventoryService {
 
     /** Same restoration/audit primitive with a server-supplied cancellation reason. */
     void restoreForCancelledOrder(Order lockedOrder, String note);
+
+    /**
+     * OPEN-10: puts back ONLY the lines of one Fulfillment that an Administrator confirmed as undeliverable, and whose
+     * goods are verified to be back at its Store (ascending StoreProduct locks, {@code CANCEL_ORDER} movements). The
+     * caller holds the Order lock and has just moved that Fulfillment out of FAILED, which is what makes a second
+     * restoration impossible; this method never decides whether goods came back.
+     */
+    void restoreForUndeliverableFulfillment(Order lockedOrder, com.oneshop.entity.OrderFulfillment lockedFulfillment,
+                                            String note);
 }

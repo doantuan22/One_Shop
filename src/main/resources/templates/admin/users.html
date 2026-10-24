@@ -1,19 +1,85 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Người dùng</title></head><body>
-<div th:replace="~{fragments/components :: pageHeader('Người dùng', 'Quản lý tài khoản, vai trò và trạng thái hoạt động.')}"></div>
-<a class="btn btn-primary mb-3" th:href="@{/admin/users/new}">Tạo tài khoản / Staff</a>
+<div class="os-page-header mb-4">
+    <div>
+        <h1 class="h3 mb-1">Người dùng</h1>
+        <p class="os-muted-text mb-0">Quản lý tài khoản, vai trò và trạng thái hoạt động.</p>
+    </div>
+    <div class="os-page-header__actions">
+        <a class="btn btn-primary" th:href="@{/admin/users/new}">Tạo tài khoản / Staff</a>
+    </div>
+</div>
 <div class="alert alert-success" th:if="${param.success}">Đã lưu người dùng.</div>
-<form method="get" th:action="@{/admin/users}" class="d-flex gap-2 mb-3">
-    <select name="role" class="form-select w-auto" aria-label="Vai trò"><option value="">Tất cả vai trò</option>
-        <option th:each="r : ${roles}" th:value="${r}" th:text="${r}" th:selected="${r == role}"></option></select>
-    <button class="btn btn-outline-primary">Lọc</button>
+
+<form method="get" th:action="@{/admin/users}" class="os-filter card mb-4" id="user-filter">
+    <div class="card-body">
+        <div class="os-filter-grid">
+            <div class="os-filter-field">
+                <label class="form-label" for="user-q">Tìm kiếm</label>
+                <input id="user-q" name="q" type="text" class="form-control form-control-sm" th:attr="data-suggest-url=@{/admin/users/suggest}" th:value="${q}"
+                       placeholder="Họ tên, e-mail, tên đăng nhập">
+            </div>
+            <div class="os-filter-field">
+                <label class="form-label" for="user-role">Vai trò</label>
+                <select id="user-role" name="role" class="form-select form-select-sm">
+                    <option value="">Tất cả vai trò</option>
+                    <option th:each="r : ${roles}" th:value="${r}" th:selected="${r == role}"
+                            th:text="${r.name() == 'ADMIN'} ? 'Quản trị viên' : (${r.name() == 'STAFF'} ? 'Nhân viên' : 'Khách hàng')"></option>
+                </select>
+            </div>
+            <div class="os-filter-field">
+                <label class="form-label" for="user-status">Trạng thái</label>
+                <select id="user-status" name="status" class="form-select form-select-sm">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="ACTIVE" th:selected="${status != null and status.name() == 'ACTIVE'}">Đang hoạt động</option>
+                    <option value="INACTIVE" th:selected="${status != null and status.name() == 'INACTIVE'}">Ngừng hoạt động</option>
+                </select>
+            </div>
+            <div class="os-filter-field d-flex align-items-end gap-2 pb-1">
+                <button type="submit" class="btn btn-primary btn-sm flex-shrink-0">Áp dụng</button>
+                <a class="btn btn-outline-secondary btn-sm flex-shrink-0" th:href="@{/admin/users}">Xóa lọc</a>
+            </div>
+        </div>
+    </div>
 </form>
-<div class="table-responsive"><table class="table table-hover"><thead><tr><th>Họ tên</th><th>Email</th><th>Tên đăng nhập</th><th>Điện thoại</th><th>Vai trò</th><th>Trạng thái</th><th></th></tr></thead>
-<tbody><tr th:each="u : ${users.content}" th:attr="data-user-id=${u.id}">
-    <td th:text="${u.fullName}"></td><td th:text="${u.email}"></td><td th:text="${u.userName}"></td><td th:text="${u.phone}"></td><td th:text="${u.role}"></td>
-    <td><span th:replace="~{fragments/components :: statusBadge(${u.status})}"></span></td>
-    <td><a class="btn btn-sm btn-outline-primary" th:href="@{/admin/users/{id}/edit(id=${u.id})}">Sửa</a></td>
-</tr><tr th:if="${users.empty}"><td colspan="7">Chưa có người dùng.</td></tr></tbody></table></div>
-<p>Tổng số: <strong id="user-count" th:text="${users.totalElements}"></strong></p>
-<nav th:replace="~{admin/fragments :: pagination(${users}, '/admin/users', 'role', ${role})}"></nav>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle os-table mb-0">
+            <thead class="table-light"><tr>
+                <th scope="col">Họ tên</th><th scope="col">Email</th><th scope="col">Tên đăng nhập</th>
+                <th scope="col">Điện thoại</th><th scope="col">Vai trò</th><th scope="col">Trạng thái</th>
+                <th scope="col" class="os-col-actions text-end">Thao tác</th>
+            </tr></thead>
+            <tbody>
+            <tr th:each="u : ${users.content}" th:attr="data-user-id=${u.id}">
+                <td><span class="os-cell-main" th:text="${u.fullName}">Nguyễn Văn A</span></td>
+                <td><span class="os-cell-main" th:text="${u.email}">a@oneshop.vn</span></td>
+                <td th:text="${u.userName}">van_a</td>
+                <td th:text="${u.phone}">090…</td>
+                <td><span th:replace="~{fragments/components :: roleBadge(${u.role})}"></span></td>
+                <td><span th:replace="~{fragments/components :: statusBadge(${u.status})}"></span></td>
+                <td class="os-col-actions text-end">
+                    <div class="table-actions">
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/admin/users/{id}/edit(id=${u.id})}">Sửa</a>
+                    </div>
+                </td>
+            </tr>
+            <tr th:if="${users.empty}"><td colspan="7" class="text-center text-secondary py-4">Không có người dùng nào khớp bộ lọc.</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="os-muted-text small px-3 py-2 mb-0">Tổng số: <strong id="user-count" th:text="${users.totalElements}">0</strong></p>
+    <nav class="os-pagination" th:if="${users.totalPages > 1}" aria-label="Phân trang người dùng">
+        <span class="os-page-info">
+            Trang <strong th:text="${users.number + 1}">1</strong> / <strong th:text="${users.totalPages}">3</strong>
+        </span>
+        <ul class="pagination mb-0">
+            <li class="page-item" th:classappend="${users.first} ? 'disabled'"><a class="page-link"
+                th:href="@{/admin/users(role=${role == null ? '' : role}, status=${status == null ? '' : status}, q=${q == null ? '' : q}, page=${users.number - 1})}">Trước</a></li>
+            <li class="page-item" th:classappend="${users.last} ? 'disabled'"><a class="page-link"
+                th:href="@{/admin/users(role=${role == null ? '' : role}, status=${status == null ? '' : status}, q=${q == null ? '' : q}, page=${users.number + 1})}">Sau</a></li>
+        </ul>
+    </nav>
+</div>
 </body></html>

@@ -1,0 +1,20 @@
+{
+  "afterAdmin" : {
+    "role_id" : 2,
+    "status" : "INACTIVE"
+  },
+  "afterProfile" : {
+    "role_id" : 2,
+    "status" : "INACTIVE"
+  },
+  "nextStaffHttpStatus" : 302,
+  "before" : {
+    "user_id" : 2,
+    "role_id" : 2,
+    "status" : "ACTIVE",
+    "full_name" : "Nguyễn Văn An (Thủ Đức)",
+    "phone" : "0900000002",
+    "updated_at" : 1792809451000
+  },
+  "httpStatus" : 403
+}

@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "GET",
+    "method" : "suggest",
+    "controller" : "com.oneshop.controller.admin.AdminProductController",
+    "path" : "/admin/products/suggest"
+  },
+  "location" : "http://localhost:56221/login",
+  "executedAt" : "2026-10-24T02:07:11.459497500Z",
+  "expected" : 302,
+  "actual" : 302,
+  "requestPath" : "/admin/products/suggest",
+  "kind" : "anonymous guard/input probe"
+}

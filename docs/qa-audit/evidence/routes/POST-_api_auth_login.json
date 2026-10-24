@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "login",
+    "controller" : "com.oneshop.controller.api.AuthApiController",
+    "path" : "/api/auth/login"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:14.772246500Z",
+  "expected" : 400,
+  "actual" : 400,
+  "requestPath" : "/api/auth/login",
+  "kind" : "anonymous guard/input probe"
+}

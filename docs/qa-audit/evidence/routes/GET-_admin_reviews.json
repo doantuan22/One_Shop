@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "GET",
+    "method" : "list",
+    "controller" : "com.oneshop.controller.admin.AdminReviewController",
+    "path" : "/admin/reviews"
+  },
+  "location" : "http://localhost:56221/login",
+  "executedAt" : "2026-10-24T02:07:12.656912400Z",
+  "expected" : 302,
+  "actual" : 302,
+  "requestPath" : "/admin/reviews",
+  "kind" : "anonymous guard/input probe"
+}

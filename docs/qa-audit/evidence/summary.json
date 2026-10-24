@@ -1,0 +1,82 @@
+{
+  "primaryRuns": [
+    {
+      "phase": "baseline",
+      "counts": {
+        "PASS": 1656,
+        "FAIL": 5,
+        "ERROR": 10,
+        "SKIPPED": 3
+      },
+      "total": 1674,
+      "suites": 97
+    },
+    {
+      "phase": "additional",
+      "counts": {
+        "PASS": 484,
+        "FAIL": 67
+      },
+      "total": 551,
+      "suites": 6
+    }
+  ],
+  "primaryCounts": {
+    "PASS": 2140,
+    "FAIL": 72,
+    "ERROR": 10,
+    "SKIPPED": 3
+  },
+  "primaryTotal": 2225,
+  "runtimeMappingRecords": 118,
+  "uniqueRoutePairs": 117,
+  "httpProbeRequests": 307,
+  "httpProbesPass": 307,
+  "screenCheckpoints": {
+    "PASS": 59,
+    "FAIL": 3
+  },
+  "reproduction": {
+    "phase": "reproduce",
+    "counts": {
+      "FAIL": 14
+    },
+    "total": 14,
+    "suites": 3
+  },
+  "coverage": {
+    "INSTRUCTION": {
+      "covered": 29767,
+      "total": 33183,
+      "percent": 89.71
+    },
+    "BRANCH": {
+      "covered": 2329,
+      "total": 3128,
+      "percent": 74.46
+    },
+    "LINE": {
+      "covered": 5642,
+      "total": 6206,
+      "percent": 90.91
+    },
+    "COMPLEXITY": {
+      "covered": 2505,
+      "total": 3353,
+      "percent": 74.71
+    },
+    "METHOD": {
+      "covered": 1621,
+      "total": 1775,
+      "percent": 91.32
+    },
+    "CLASS": {
+      "covered": 286,
+      "total": 290,
+      "percent": 98.62
+    }
+  },
+  "semanticFunctionCoverage": null,
+  "semanticFlowCoverage": null,
+  "semanticDecisionCoverage": null
+}

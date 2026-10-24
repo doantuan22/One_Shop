@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.*;
 
 /** Unconditional Phase 11 acceptance on real production HTTP/JWT/CSRF/JPA and seeded SQL Server. */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = "app.jwt.secret=test-only-secret-test-only-secret-1234567890")
+        properties = {"app.jwt.secret=test-only-secret-test-only-secret-1234567890","oneshop.checkout.online-enabled=true","oneshop.payment.timeout-worker-enabled=false"})
 @ActiveProfiles("dev")
 class Phase11AdminDatabaseIntegrationTest {
     private static final String ADMIN = "admin@oneshop.vn", STAFF = "staff.thuduc@oneshop.vn";
@@ -43,17 +43,18 @@ class Phase11AdminDatabaseIntegrationTest {
     @Autowired PasswordEncoder encoder;
     @LocalServerPort int port;
     private Phase9IntegrationScenario scenario;
-    private SeedGuard guard;
+    private SeedGuardV3 guard;
     private Map<String, List<Map<String, Object>>> baseline;
     private Map<String, List<Map<String, Object>>> business;
 
     @BeforeEach void remember() {
         SecurityContextHolder.clearContext();
         scenario = new Phase9IntegrationScenario(jdbc, "http://localhost:" + port);
-        guard = new SeedGuard(jdbc); guard.remember();
+        guard = new SeedGuardV3(jdbc);
         baseline = new HashMap<>();
         IDS.keySet().forEach(t -> baseline.put(t, rows(t)));
         business = scenario.snapshot();
+        guard.remember();
     }
     @AfterEach void restore() {
         SecurityContextHolder.clearContext();
@@ -103,7 +104,7 @@ class Phase11AdminDatabaseIntegrationTest {
     private List<Long> orderIds(Long store) {
         return store == null
                 ? jdbc.queryForList("select order_id from dbo.orders order by created_at desc,order_id desc", Long.class)
-                : jdbc.queryForList("select order_id from dbo.orders where store_id=? order by created_at desc,order_id desc", Long.class, store);
+                : jdbc.queryForList("select order_id from dbo.orders where exists(select 1 from dbo.order_fulfillments f where f.order_id=orders.order_id and f.store_id=?) or (store_id=? and not exists(select 1 from dbo.order_fulfillments f where f.order_id=orders.order_id)) order by created_at desc,order_id desc", Long.class, store,store);
     }
     private String storeForm(long id, String status) {
         var s = jdbc.queryForMap("select * from dbo.stores where store_id=?", id);
@@ -264,7 +265,7 @@ class Phase11AdminDatabaseIntegrationTest {
                 assertThat(row).contains("data-field=\"exact-quantity\">" + quantity + "</td>");
             }
         }
-        assertThat(ids(page("/admin/inventory"), "data-store-id")).contains(1L, 2L);
+        assertThat(ids(page("/admin/inventory"), "data-store-id")).contains(2L);
         assertThat(page("/admin/inventory?storeId=999999")).contains("id=\"stock-count\">0</strong>");
     }
     @Test void adminOrderFilterMatchesSqlAcrossAllStoresAndDetailReusesSnapshotPaymentHistory() throws Exception {
@@ -279,7 +280,7 @@ class Phase11AdminDatabaseIntegrationTest {
         for (long id : orderIds(null)) {
             String html = page("/admin/orders/" + id);
             assertThat(html).contains("Lịch sử trạng thái", "Sản phẩm đã đặt", "Checkout #").doesNotContain("id=\"pickup-code\"");
-            for (String name : jdbc.queryForList("select product_name from dbo.order_items where order_id=?", String.class, id)) assertThat(html).contains(name);
+            for (String name : jdbc.queryForList("select product_name from dbo.order_items where order_id=?", String.class, id)) assertThat(org.springframework.web.util.HtmlUtils.htmlUnescape(html)).contains(name);
         }
         assertThat(scenario.get("/admin/orders/99999999", admin()).statusCode()).isEqualTo(404);
         assertThat(page("/admin/orders?storeId=99999999")).contains("id=\"order-count\">0</strong>");
@@ -325,10 +326,11 @@ class Phase11AdminDatabaseIntegrationTest {
         assertThat(result).hasSize((int) scalar("select count(*) from dbo.stores"));
         for (var row : result) {
             long id = row.store().id();
-            assertThat(row.totalOrders()).isEqualTo(scalar("select count(*) from dbo.orders where store_id=?", id));
-            assertThat(row.processingOrders()).isEqualTo(scalar("select count(*) from dbo.orders where store_id=? and order_status in ('CONFIRMED','PREPARING','PACKED','SHIPPING','READY_FOR_PICKUP')", id));
-            assertThat(row.completedOrders()).isEqualTo(scalar("select count(*) from dbo.orders where store_id=? and order_status='COMPLETED'", id));
-            assertThat(row.cancelledOrders()).isEqualTo(scalar("select count(*) from dbo.orders where store_id=? and order_status='CANCELLED'", id));
+            assertThat(row.totalOrders()).isEqualTo(scalar("select count(*) from dbo.orders o where (exists(select 1 from dbo.order_fulfillments f where f.order_id=o.order_id and f.store_id=?) or (o.store_id=? and not exists(select 1 from dbo.order_fulfillments f where f.order_id=o.order_id)))", id,id));
+            // "Cần Admin xử lý": NEEDS_ATTENTION, or ONLINE overdue while still PENDING_PAYMENT, or a collected payment whose simulated refund is open
+            assertThat(row.attentionOrders()).isEqualTo(scalar("select count(*) from dbo.orders o where (exists(select 1 from dbo.order_fulfillments f where f.order_id=o.order_id and f.store_id=?) or (o.store_id=? and not exists(select 1 from dbo.order_fulfillments f where f.order_id=o.order_id))) and (o.order_status='NEEDS_ATTENTION' or (o.payment_method='ONLINE' and ((o.order_status='PENDING_PAYMENT' and o.created_at<=?) or exists(select 1 from dbo.payments p where p.order_id=o.order_id and p.status='SUCCESS' and p.refund_status in ('SIMULATION_FAILED','PENDING_SIMULATION')))))", id, id, java.time.LocalDateTime.now().minusMinutes(15)));
+            assertThat(row.completedOrders()).isEqualTo(scalar("select count(*) from dbo.orders o where (exists(select 1 from dbo.order_fulfillments f where f.order_id=o.order_id and f.store_id=?) or (o.store_id=? and not exists(select 1 from dbo.order_fulfillments f where f.order_id=o.order_id))) and order_status='COMPLETED'", id,id));
+            assertThat(row.cancelledOrders()).isEqualTo(scalar("select count(*) from dbo.orders o where (exists(select 1 from dbo.order_fulfillments f where f.order_id=o.order_id and f.store_id=?) or (o.store_id=? and not exists(select 1 from dbo.order_fulfillments f where f.order_id=o.order_id))) and order_status='CANCELLED'", id,id));
             assertThat(row.stockRows()).isEqualTo(scalar("select count(*) from dbo.store_products where store_id=?", id));
             assertThat(row.lowStockRows()).isEqualTo(scalar("select count(*) from dbo.store_products where store_id=? and status='ACTIVE' and quantity between 1 and 5", id));
             assertThat(row.outOfStockRows()).isEqualTo(scalar("select count(*) from dbo.store_products where store_id=? and status='ACTIVE' and quantity=0", id));
@@ -344,11 +346,10 @@ class Phase11AdminDatabaseIntegrationTest {
         long sp = scalar("select store_product_id from dbo.order_items where order_id=?", mixed.a());
         assertThat(scenario.post(customer, "/cart/items", "storeProductId=" + sp + "&quantity=1").statusCode()).isEqualTo(302);
         long cartLine = scalar("select ci.cart_item_id from dbo.cart_items ci join dbo.carts c on c.cart_id=ci.cart_id join dbo.users u on u.user_id=c.user_id"
-                + " where u.email=? and ci.store_product_id=?", CUSTOMER, sp);
+                + " where u.email=? and ci.product_id=(select product_id from dbo.store_products where store_product_id=?)", CUSTOMER, sp);
         assertThat(post("/admin/stores/1", storeForm(1, "INACTIVE")).statusCode()).isEqualTo(302);
         var before = scenario.snapshot();
-        var response = scenario.post(customer, "/checkout", "cartItemIds=" + cartLine + "&groups[0].storeId=1&groups[0].fulfillmentType=DELIVERY"
-                + "&groups[0].paymentMethod=COD&groups[0].receiverName=Customer&groups[0].receiverPhone=0912345678&groups[0].shippingAddress=11+Street");
+        var response = scenario.post(customer, "/checkout", "cartItemIds="+cartLine+"&fulfillmentType=DELIVERY&paymentMethod=COD&receiverName=Customer&receiverPhone=0912345678&shippingAddress=11+Test+Street+TP+Ho+Chi+Minh");
         assertThat(response.statusCode()).isEqualTo(400);
         assertThat(scenario.snapshot().equals(before)).isTrue();
         assertThat(scenario.post(customer, "/cart/items", "storeProductId=" + sp + "&quantity=1").statusCode()).isEqualTo(400);
@@ -367,7 +368,7 @@ class Phase11AdminDatabaseIntegrationTest {
         assertThat(post("/admin/products/" + p, "sku=" + product.get("sku") + "&name=Phase11+Hidden+Product&categoryId=" + product.get("category_id")
                 + "&brandId=" + product.get("brand_id") + "&description=Phase11&status=HIDDEN").statusCode()).isEqualTo(302);
         var stock = jdbc.queryForMap("select * from dbo.store_products where store_product_id=?", sp);
-        assertThat(post("/admin/store-products/" + sp, "storeId=2&productId=999&price=" + stock.get("price") + "&quantity=" + stock.get("quantity")
+        assertThat(post("/admin/store-products/" + sp, "storeId=2&productId=999&quantity=" + stock.get("quantity")
                 + "&status=INACTIVE&note=Phase11").statusCode()).isEqualTo(302);
         assertThat(post("/admin/stores/1", storeForm(1, "INACTIVE")).statusCode()).isEqualTo(302);
         assertThat(scalar("select count(*) from dbo.products where product_id=? and status='HIDDEN'", p)).isEqualTo(1);

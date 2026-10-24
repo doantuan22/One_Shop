@@ -11,13 +11,19 @@ import java.util.Set;
 
 import static com.oneshop.entity.OrderStatus.*;
 
-/** Transition rules: pure checks without persistence, authorization or payment/fulfillment side effects. */
+/** Transition rules: pure checks without persistence, authorization or payment/fulfillment side effects.
+ * Customer cancellation of a CONFIRMED Order (COD/PAY_AT_STORE unpaid, or paid ONLINE before PREPARING)
+ * is a payment-domain transition owned by {@link com.oneshop.service.payment.OrderStatusWriter}
+ * (CONFIRMED -&gt; CANCELLED with stock restore/refund), not a fulfillment-progress edge of this graph. */
 @Component
 public class OrderTransitionPolicy {
     /** Customer-only cancellation: before preparation and before collection; no refund workflow exists. */
     public boolean canCustomerCancel(OrderStatus status, FulfillmentType type, PaymentMethod method,
                                      OrderPaymentStatus payment) {
-        if (payment != OrderPaymentStatus.UNPAID || type == null || method == null) return false;
+        if (type == null || method == null) return false;
+        // V3-BE-05: a paid ONLINE Order may be cancelled until a Store starts preparing (full simulated refund)
+        if (method == PaymentMethod.ONLINE && payment == OrderPaymentStatus.PAID) return status == OrderStatus.CONFIRMED;
+        if (payment != OrderPaymentStatus.UNPAID) return false;
         boolean validMethod = type == FulfillmentType.DELIVERY
                 ? method == PaymentMethod.COD || method == PaymentMethod.ONLINE
                 : method == PaymentMethod.PAY_AT_STORE || method == PaymentMethod.ONLINE;

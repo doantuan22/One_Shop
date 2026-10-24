@@ -222,9 +222,15 @@
         }
 
         .btn-order-online:hover {
-            background-color: #e86738;
-            border-color: #e86738;
+            background-color: #922f1c;
+            border-color: #922f1c;
             color: #ffffff;
+        }
+
+        :focus-visible {
+            outline: 3px solid #1f2937;
+            outline-offset: 2px;
+            box-shadow: 0 0 0 5px #ffffff;
         }
 
         .order-card-footer {
@@ -316,8 +322,13 @@
         </div>
 
         <h1 class="success-title">Đặt hàng thành công!</h1>
-        <p class="text-secondary small mb-3" th:if="${param.success}">
-            Hệ thống đã tự động tạo <strong class="text-dark" th:text="${checkout.orders.size()}">3</strong> đơn hàng riêng biệt theo từng chi nhánh cung cấp.
+        <p class="text-secondary small mb-3" id="checkout-note" th:if="${param.success != null and checkout.orders.size() == 1}">
+            Hệ thống đã tạo <strong class="text-dark">một đơn hàng</strong>. Hàng được lấy từ chi nhánh còn hàng và
+            có thể được giao thành nhiều phần; bạn chỉ có một mã đơn và một lần thanh toán.
+        </p>
+        <p class="text-secondary small mb-3" id="checkout-note-split" th:if="${param.success != null and checkout.orders.size() > 1}">
+            Theo xác nhận của bạn, hệ thống đã tạo <strong class="text-dark" th:text="${checkout.orders.size()}">2</strong>
+            đơn hàng độc lập; mỗi đơn do một chi nhánh giao và thu tiền riêng khi nhận hàng.
         </p>
 
         <div class="success-meta-bar">
@@ -378,6 +389,29 @@
             </div>
         </div>
 
+        <div class="p-3 border-top os-fulfillments" th:if="${!order.fulfillments.isEmpty()}">
+            <div class="fw-semibold small mb-2">
+                Phần giao hàng (<span th:text="${order.fulfillments.size()}">2</span>)
+            </div>
+            <div class="small mb-2 os-fulfillment" th:each="part : ${order.fulfillments}"
+                 th:attr="data-fulfillment-id=${part.fulfillmentId}, data-store-id=${part.storeId}">
+                <strong th:text="${part.storeName}">OneShop Thủ Đức</strong>
+                <span class="badge text-bg-light ms-1" th:text="${part.status}">CONFIRMED</span>
+                <ul class="mb-0 ps-3">
+                    <li th:each="line : ${part.items}">
+                        <span th:text="${line.productName}">Sản phẩm</span> &times; <span th:text="${line.quantity}">1</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="p-3 border-top small os-payment-deadline"
+             th:if="${order.paymentDeadline != null and order.orderStatus.name() == 'PENDING_PAYMENT'}">
+            Đơn ONLINE chờ thanh toán. Hạn thanh toán:
+            <strong th:text="${#temporals.format(order.paymentDeadline, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:15</strong>.
+            Quá hạn, đơn sẽ bị hủy và hàng được hoàn lại kho.
+        </div>
+
         <div class="order-info-grid">
             <dl class="info-dl">
                 <dt class="info-dt">Cách nhận hàng</dt>
@@ -419,13 +453,17 @@
                 </a>
                 <a th:if="${order.paymentMethod.name() == 'ONLINE'}" class="btn btn-order-action btn-order-online"
                    th:href="@{/orders/{id}/payments(id=${order.orderId})}">
-                    Tiến hành thanh toán trực tuyến
+                    Tiến hành thanh toán trực tuyến (mô phỏng, không thu tiền thật)
                 </a>
             </div>
         </div>
 
         <div class="order-card-footer">
-            <span class="text-secondary">Tổng đơn tại chi nhánh</span>
+            <span class="text-secondary os-order-fee" th:if="${order.shippingFee != null}">
+                Phí giao hàng: <span th:replace="~{fragments/components :: price(${order.shippingFee})}"></span>
+                &middot;
+            </span>
+            <span class="text-secondary">Tổng đơn</span>
             <strong class="os-order-total"><span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></strong>
         </div>
     </section>

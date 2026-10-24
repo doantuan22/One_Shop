@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "success",
+    "controller" : "com.oneshop.controller.client.PaymentController",
+    "path" : "/orders/{orderId}/payments/{paymentId}/success"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:16.173502200Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/orders/999999999/payments/999999999/success",
+  "kind" : "anonymous guard/input probe"
+}

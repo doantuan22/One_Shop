@@ -32,6 +32,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,9 +45,10 @@ class HomePageWebIntegrationTest extends AbstractIntegrationTest {
             "TP. Hồ Chí Minh", "Gò Vấp", "02811110002", "08:00 - 22:00", true, false, ActiveStatus.ACTIVE);
     private static final StoreResponse THU_DUC = new StoreResponse(1L, "OS-THUDUC", "OneShop Thủ Đức", "101 Võ Văn Ngân",
             "TP. Hồ Chí Minh", "Thủ Đức", "02811110001", "08:00 - 22:00", true, true, ActiveStatus.ACTIVE);
-    private static final ProductResponse SERUM = new ProductResponse(3L, "COCOON-SERUM-30", "Cocoon Serum Bí Đao 30ml",
-            "Mô tả", "Chăm sóc da", "Cocoon", "https://res.cloudinary.com/demo/serum.jpg");
-    private static final ProductResponse TONER = new ProductResponse(4L, "INNI-TONER-200", "Innisfree Toner", "Mô tả",
+    private static final ProductResponse SERUM = new ProductResponse(3L, "SIMPLE-PURIFY-150", "Cocoon Serum Bí Đao 30ml",
+            "Mô tả", "Chăm sóc da", "Cocoon", "https://res.cloudinary.com/demo/serum.jpg",
+            new BigDecimal("138000.00"), new BigDecimal("159000.00"));
+    private static final ProductResponse TONER = new ProductResponse(4L, "CERAVE-HYDRA-236", "Innisfree Toner", "Mô tả",
             "Chăm sóc da", "Innisfree", null);
     private static final StoreAvailabilityResponse SERUM_GO_VAP =
             new StoreAvailabilityResponse(2L, 2L, "OneShop Gò Vấp", new BigDecimal("135000.00"), true);
@@ -113,17 +115,17 @@ class HomePageWebIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void suggestionChipsAreRealCategoriesAndBrandsAndTheScopeLineFollowsTheStore() throws Exception {
+    void suggestionChipsAreRealCategoriesAndBrandsAndThereIsNoStoreScopeLine() throws Exception {
         String chain = get("/").body();
 
         assertThat(chain).contains("href=\"/products?categoryId=1\"", "href=\"/products?categoryId=3\"",
                 "href=\"/products?brandId=2\"", "href=\"/products?brandId=3\"");
         // a brand with no product is not suggested
         assertThat(chain).doesNotContain("brandId=4");
-        assertThat(chain).containsPattern("Đang tìm trong:\\s*<strong>Toàn chuỗi</strong>\\s*&middot;\\s*<a href=\"/stores\">Đổi</a>");
-
+        // V3: the search is never scoped to a Store, not even with a stale Store cookie
+        assertThat(chain).doesNotContain("Đang tìm trong:", "Toàn chuỗi");
         String store = get("/", "Cookie", STORE_COOKIE + "=2").body();
-        assertThat(store).containsPattern("Đang tìm trong:\\s*<strong>OneShop Gò Vấp</strong>\\s*&middot;\\s*<a href=\"/stores\">Đổi</a>");
+        assertThat(store).doesNotContain("Đang tìm trong:", "OneShop Gò Vấp</strong>");
     }
 
     @Test
@@ -156,50 +158,49 @@ class HomePageWebIntegrationTest extends AbstractIntegrationTest {
     // ------------------------------------------------------------------ products
 
     @Test
-    void wholeChainCardsAreOneLinkWithLowestPriceAndStoreCountAndNoAddToCart() throws Exception {
+    void cardsAreOneLinkWithTheSharedPriceAndAChainWideStockFlag() throws Exception {
         String html = get("/").body();
 
-        assertThat(html).contains("data-store-scope=\"chain\"", "Khám phá sản phẩm", "Cocoon Serum Bí Đao 30ml", "Từ ",
-                "129.000 ₫", "Còn hàng ở 2 chi nhánh", "Hết hàng", "stretched-link", "href=\"/products\"");
-        assertThat(html).doesNotContain("action=\"/cart/items\"", "Thêm vào giỏ", "Sản phẩm mới", "Xem chi tiết");
+        assertThat(html).contains("Khám phá sản phẩm", "Cocoon Serum Bí Đao 30ml", "Còn hàng toàn hệ thống",
+                "Hết hàng", "stretched-link", "href=\"/products\"");
+        assertThat(html).doesNotContain("data-store-scope", "Còn hàng ở 2 chi nhánh", "Chọn chi nhánh",
+                "Sản phẩm mới", "Xem chi tiết");
+        // a guest cannot add to the cart from a card: login instead
+        assertThat(html).doesNotContain("action=\"/cart/items\"").contains("Đăng nhập để mua");
         assertThat(count(html, "data-reveal")).isEqualTo(2);
         verify(storeProductService, atLeastOnce()).getRandomSellable(isNull(), eq(8), anyLong());
     }
 
     @Test
-    void selectedStoreShowsItsOwnPriceAndACsrfProtectedAddToCartForm() throws Exception {
+    void aCustomerAddsFromACardByProductIdWithoutAnyStore() throws Exception {
+        // even with a stale Store cookie the home is the whole chain and the form carries the product, never a Store
         String html = get("/", "Cookie", STORE_COOKIE + "=2; " + customerCookie()).body();
 
-        assertThat(html).contains("data-store-scope=\"store\"", "OneShop Gò Vấp", "135.000 ₫", "Còn hàng",
-                "action=\"/cart/items\"", "name=\"storeProductId\" value=\"2\"", "name=\"quantity\" value=\"1\"",
-                "Thêm vào giỏ");
-        assertThat(html).doesNotContain("Từ ");
+        assertThat(html).contains("action=\"/cart/items\"", "name=\"productId\" value=\"3\"",
+                "name=\"quantity\" value=\"1\"", "Thêm vào giỏ");
+        assertThat(html).doesNotContain("name=\"storeProductId\"", "data-store-scope");
         Matcher form = Pattern.compile("action=\"/cart/items\".*?</form>", Pattern.DOTALL).matcher(html);
         assertThat(form.find()).isTrue();
         assertThat(form.group()).contains("name=\"_csrf\"");
+        verify(storeProductService, never()).getRandomSellable(eq(2L), eq(8), anyLong());
     }
 
     @Test
-    void theSeedIsStableForTheSameStoreAndCarriesTheStoreId() throws Exception {
+    void theSeedIsStableWithinTheHour() throws Exception {
         get("/");
         get("/");
-        get("/", "Cookie", STORE_COOKIE + "=2");
 
         ArgumentCaptor<Long> chainSeed = ArgumentCaptor.forClass(Long.class);
         verify(storeProductService, atLeastOnce()).getRandomSellable(isNull(), eq(8), chainSeed.capture());
         assertThat(chainSeed.getAllValues()).as("same hour, same seed: a refresh keeps the products").hasSizeGreaterThan(1);
         assertThat(chainSeed.getAllValues().get(0)).isEqualTo(chainSeed.getAllValues().get(1));
-
-        ArgumentCaptor<Long> storeSeed = ArgumentCaptor.forClass(Long.class);
-        verify(storeProductService).getRandomSellable(eq(2L), eq(8), storeSeed.capture());
-        assertThat(Math.floorMod(storeSeed.getValue(), 31L)).as("the Store id is part of the seed").isEqualTo(2L);
     }
 
     @Test
     void aGuestIsSentToLoginInsteadOfGettingAnAddToCartForm() throws Exception {
         String html = get("/", "Cookie", STORE_COOKIE + "=2").body();
 
-        assertThat(html).contains("Đăng nhập để thêm vào giỏ").doesNotContain("action=\"/cart/items\"");
+        assertThat(html).contains("Đăng nhập để mua").doesNotContain("action=\"/cart/items\"");
     }
 
     @Test
@@ -305,11 +306,11 @@ class HomePageWebIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void storesSectionStillLinksToTheExistingSelectEndpoint() throws Exception {
+    void storesSectionIsALookupWithoutAnyStorePicker() throws Exception {
         String html = get("/").body();
 
-        assertThat(html).contains("action=\"/stores/select\"", "name=\"storeId\" value=\"1\"", "Giao tận nơi",
-                "Nhận tại cửa hàng", "Xem tất cả chi nhánh");
+        assertThat(html).contains("OneShop Thủ Đức", "Giao tận nơi", "Nhận tại cửa hàng", "Xem tất cả cửa hàng");
+        assertThat(html).doesNotContain("action=\"/stores/select\"", "Chọn chi nhánh", "Đang chọn chi nhánh này");
     }
 
     // ------------------------------------------------------------------ page-wide
@@ -353,7 +354,9 @@ class HomePageWebIntegrationTest extends AbstractIntegrationTest {
         String html = get("/").body();
 
         assertThat(html).doesNotContain("Hotline", "1900 0000", "Miễn phí vận chuyển");
-        assertThat(html).contains("Chi nhánh đang chọn:", "id=\"store-context\"", "hotro@oneshop.vn");
+        // V3: the header no longer asks for a Store; it only points to the Store lookup
+        assertThat(html).doesNotContain("Chi nhánh đang chọn", "id=\"store-context\"");
+        assertThat(html).contains("id=\"site-topbar\"", "href=\"/stores\"", "hotro@oneshop.vn");
     }
 
     @Test

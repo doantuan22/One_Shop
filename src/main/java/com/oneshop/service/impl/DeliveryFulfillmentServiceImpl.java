@@ -33,6 +33,20 @@ public class DeliveryFulfillmentServiceImpl implements DeliveryFulfillmentServic
     private final OrderService stateMachine;
     private final PaymentService payments;
 
+    private com.oneshop.repository.OrderFulfillmentRepository fulfillmentRepository;
+
+    /** V3: an Order with Fulfillments is handled per Fulfillment (BE-04), never by this order-level path. */
+    @org.springframework.beans.factory.annotation.Autowired
+    void setFulfillmentRepository(com.oneshop.repository.OrderFulfillmentRepository fulfillmentRepository) {
+        this.fulfillmentRepository = fulfillmentRepository;
+    }
+
+    private void refuseWhenFulfillmentsExist(Long orderId) {
+        if (fulfillmentRepository != null && orderId != null && fulfillmentRepository.countByOrderId(orderId) > 0) {
+            throw new BadRequestException("Đơn hàng được xử lý theo từng phần giao của chi nhánh; không thể thao tác theo cả đơn. Vui lòng dùng màn hình phần giao hàng.");
+        }
+    }
+
     public DeliveryFulfillmentServiceImpl(OrderRepository orders, OrderItemRepository items,
                                          OrderStatusHistoryRepository histories, PaymentRepository paymentRepository,
                                          UserRepository users, StoreService stores, OrderService stateMachine,
@@ -92,6 +106,11 @@ public class DeliveryFulfillmentServiceImpl implements DeliveryFulfillmentServic
         // PK-only lock first, consistent with PaymentService. Never trust a browser storeId for authorization.
         Order order = orders.findByIdForUpdate(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đơn hàng."));
+        if (order.getStore() == null) {
+            // V3 multi-store Order: no single Store owns it; its Fulfillments are handled per Store (BE-04)
+            throw new BadRequestException("Đơn hàng được cấp từ nhiều chi nhánh và xử lý theo từng phần giao; chưa thể thao tác theo cả đơn.");
+        }
+        refuseWhenFulfillmentsExist(order.getId());
         stores.requireAssignedStore(staffEmail, order.getStore().getId());
         User actor = users.findByEmail(staffEmail)
                 .filter(user -> user.isActive() && user.getRole().getName() == RoleName.STAFF)

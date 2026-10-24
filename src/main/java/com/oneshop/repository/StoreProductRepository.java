@@ -42,8 +42,8 @@ public interface StoreProductRepository extends JpaRepository<StoreProduct, Long
      * is decided by the product query that produced the ids.
      */
     @Query("""
-            select sp from StoreProduct sp join fetch sp.store s
-            where sp.product.id in :productIds
+            select sp from StoreProduct sp join fetch sp.store s join fetch sp.product p
+            where p.id in :productIds
               and sp.status = com.oneshop.entity.ActiveStatus.ACTIVE
               and s.status = com.oneshop.entity.ActiveStatus.ACTIVE
             order by s.name, s.id""")
@@ -92,7 +92,7 @@ public interface StoreProductRepository extends JpaRepository<StoreProduct, Long
             where s.id = :storeId
               and s.status = com.oneshop.entity.ActiveStatus.ACTIVE
               and sp.status = com.oneshop.entity.ActiveStatus.ACTIVE
-              and sp.quantity > 0
+              and (sp.quantity - sp.reservedQuantity) > 0
               and p.status = com.oneshop.entity.ProductStatus.ACTIVE
               and c.status = com.oneshop.entity.VisibilityStatus.ACTIVE
               and b.status = com.oneshop.entity.VisibilityStatus.ACTIVE
@@ -132,19 +132,119 @@ public interface StoreProductRepository extends JpaRepository<StoreProduct, Long
               and b.status = com.oneshop.entity.VisibilityStatus.ACTIVE""")
     List<Long> findSellableIdsIn(@Param("ids") Collection<Long> ids);
 
+    /**
+     * V3 checkout candidates, ids only: every StoreProduct of the given SKUs that may supply an order right now
+     * (StoreProduct, Store, Product, Category and Brand ACTIVE). Scalar ids on purpose: no entity is loaded, so the
+     * locking read that follows in the same transaction returns the row as it is at that moment, not an older copy.
+     */
+    @Query("""
+            select sp.id from StoreProduct sp join sp.store s join sp.product p join p.category c join p.brand b
+            where p.id in :productIds
+              and sp.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and s.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and p.status = com.oneshop.entity.ProductStatus.ACTIVE
+              and c.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+              and b.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+            order by sp.id""")
+    List<Long> findCheckoutCandidateIdsByProductIds(@Param("productIds") Collection<Long> productIds);
+
+    /** Same candidates as entities (Store and Product fetched) for the read-only checkout preview. */
+    @Query("""
+            select sp from StoreProduct sp join fetch sp.store s join fetch sp.product p
+              join p.category c join p.brand b
+            where p.id in :productIds
+              and sp.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and s.status = com.oneshop.entity.ActiveStatus.ACTIVE
+              and p.status = com.oneshop.entity.ProductStatus.ACTIVE
+              and c.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+              and b.status = com.oneshop.entity.VisibilityStatus.ACTIVE
+            order by sp.id""")
+    List<StoreProduct> findCheckoutCandidatesByProductIds(@Param("productIds") Collection<Long> productIds);
+
     // ---- Admin: every status, exact quantity. ----
 
+    /**
+     * Admin product-per-Store assignment list: every status, optional Store, optional SKU, and an optional
+     * StoreProduct status (all three null/empty = unfiltered).
+     */
     @Query(value = """
             select sp from StoreProduct sp join fetch sp.store s join fetch sp.product p
             where (:storeId is null or s.id = :storeId)
               and (:productId is null or p.id = :productId)
+              and (:status is null or sp.status = :status)
             order by s.name, p.name, sp.id""",
             countQuery = """
             select count(sp) from StoreProduct sp
             where (:storeId is null or sp.store.id = :storeId)
-              and (:productId is null or sp.product.id = :productId)""")
+              and (:productId is null or sp.product.id = :productId)
+              and (:status is null or sp.status = :status)""")
     Page<StoreProduct> searchForAdmin(@Param("storeId") Long storeId, @Param("productId") Long productId,
-                                      Pageable pageable);
+                                      @Param("status") ActiveStatus status, Pageable pageable);
+
+    /**
+     * Chain-wide inventory console (admin/inventory): same breadth as {@link #searchForAdmin} (all statuses)
+     * plus a contains-filter over SKU / product name / Store name and a quantity level
+     * (all / out = 0 / low = 1..threshold / ok = above threshold). Ordering is chosen by the {@code sort}
+     * parameter (name, qty_desc, qty_asc); the stable Phase 6 ordering stays the fallback.
+     */
+    @Query(value = """
+            select sp from StoreProduct sp join fetch sp.store s join fetch sp.product p
+            where (:storeId is null or s.id = :storeId)
+              and (:like = '' or lower(p.sku) like :like escape '!' or lower(p.name) like :like escape '!'
+                or lower(s.name) like :like escape '!')
+              and (:level = 'all' or (:level = 'out' and sp.quantity = 0)
+                or (:level = 'low' and sp.quantity between 1 and :threshold)
+                or (:level = 'ok' and sp.quantity > :threshold))
+            order by (case when :sort = 'qty_desc' then sp.quantity end) desc,
+                     (case when :sort = 'qty_asc' then sp.quantity end) asc,
+                     s.name, p.name, sp.id""",
+            countQuery = """
+            select count(sp) from StoreProduct sp join sp.store s join sp.product p
+            where (:storeId is null or s.id = :storeId)
+              and (:like = '' or lower(p.sku) like :like escape '!' or lower(p.name) like :like escape '!'
+                or lower(s.name) like :like escape '!')
+              and (:level = 'all' or (:level = 'out' and sp.quantity = 0)
+                or (:level = 'low' and sp.quantity between 1 and :threshold)
+                or (:level = 'ok' and sp.quantity > :threshold))""")
+    Page<StoreProduct> searchInventory(@Param("storeId") Long storeId, @Param("like") String like,
+                                       @Param("level") String level, @Param("threshold") int threshold,
+                                       @Param("sort") String sort, Pageable pageable);
+
+    /** Same console breadth for the Staff Store scope: {@code storeIds} replaces the single Store filter. */
+    @Query(value = """
+            select sp from StoreProduct sp join fetch sp.store s join fetch sp.product p
+            where s.id in :storeIds
+              and (:like = '' or lower(p.sku) like :like escape '!' or lower(p.name) like :like escape '!'
+                or lower(s.name) like :like escape '!')
+              and (:level = 'all' or (:level = 'out' and sp.quantity = 0)
+                or (:level = 'low' and sp.quantity between 1 and :threshold)
+                or (:level = 'ok' and sp.quantity > :threshold))
+            order by (case when :sort = 'qty_desc' then sp.quantity end) desc,
+                     (case when :sort = 'qty_asc' then sp.quantity end) asc,
+                     s.name, p.name, sp.id""",
+            countQuery = """
+            select count(sp) from StoreProduct sp join sp.store s join sp.product p
+            where s.id in :storeIds
+              and (:like = '' or lower(p.sku) like :like escape '!' or lower(p.name) like :like escape '!'
+                or lower(s.name) like :like escape '!')
+              and (:level = 'all' or (:level = 'out' and sp.quantity = 0)
+                or (:level = 'low' and sp.quantity between 1 and :threshold)
+                or (:level = 'ok' and sp.quantity > :threshold))""")
+    Page<StoreProduct> searchForStaffStores(@Param("storeIds") Collection<Long> storeIds, @Param("like") String like,
+                                            @Param("level") String level, @Param("threshold") int threshold,
+                                            @Param("sort") String sort, Pageable pageable);
+
+    /** Low rows of the inventory summary: ACTIVE StoreProducts at the chosen breadth with 1..threshold quantity. */
+    @Query("select count(sp) from StoreProduct sp where (:storeId is null or sp.store.id = :storeId)"
+            + " and sp.status = com.oneshop.entity.ActiveStatus.ACTIVE and sp.quantity between 1 and :threshold")
+    long countLowByStoreId(@Param("storeId") Long storeId, @Param("threshold") int threshold);
+
+    /** Out rows of the inventory summary: ACTIVE StoreProducts with quantity 0 at the chosen breadth. */
+    @Query("select count(sp) from StoreProduct sp where (:storeId is null or sp.store.id = :storeId)"
+            + " and sp.status = com.oneshop.entity.ActiveStatus.ACTIVE and sp.quantity = 0")
+    long countOutByStoreId(@Param("storeId") Long storeId);
+
+    long countByStoreIdIn(Collection<Long> storeIds);
 
     @EntityGraph(attributePaths = {"store", "product"})
     Optional<StoreProduct> findWithStoreAndProductById(Long id);

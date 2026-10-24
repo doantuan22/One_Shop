@@ -51,6 +51,9 @@ public class InventoryServiceImpl implements InventoryService {
         }
         StoreProduct storeProduct = storeProductRepository.findByIdForUpdate(storeProductId)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm tại chi nhánh #" + storeProductId));
+        if (newQuantity < storeProduct.getReservedQuantity()) {
+            throw new BadRequestException("quantity", "Tồn kho không được thấp hơn số lượng đang được giữ.");
+        }
         int before = storeProduct.getQuantity();
         if (before == newQuantity) {
             return;
@@ -77,8 +80,10 @@ public class InventoryServiceImpl implements InventoryService {
         if (quantity <= 0) {
             throw new BadRequestException("quantity", "Số lượng đặt hàng không hợp lệ.");
         }
-        if (quantity > before) {
-            // last line of defence in the application; CK_store_products_quantity is the one in the database
+        // available = quantity - reserved_quantity: a legacy reservation is never eaten by an order, and the stock
+        // after the deduction still satisfies reserved_quantity <= quantity (CK_store_products_reserved).
+        // Last line of defence in the application; the CHECK constraints are the ones in the database.
+        if (quantity > before || quantity > lockedStoreProduct.getAvailableQuantity()) {
             throw new BadRequestException("quantity", "Chi nhánh không đủ hàng cho số lượng đã chọn.");
         }
         int after = before - quantity;
@@ -104,10 +109,25 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
     public void restoreForCancelledOrder(Order order, String note) {
+        restoreLines(order, orderItemRepository.findByOrderId(order.getId()), note);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void restoreForUndeliverableFulfillment(Order order, com.oneshop.entity.OrderFulfillment fulfillment,
+                                                   String note) {
+        if (fulfillment == null || fulfillment.getId() == null || fulfillment.getOrder() == null
+                || !fulfillment.getOrder().getId().equals(order.getId())) {
+            throw new BadRequestException("Phần giao không thuộc đơn hàng cần hoàn tồn.");
+        }
+        restoreLines(order, orderItemRepository.findByFulfillmentIdInOrderByIdAsc(List.of(fulfillment.getId())), note);
+    }
+
+    private void restoreLines(Order order, List<OrderItem> lines, String note) {
         if (!StringUtils.hasText(note) || note.length() > 500) {
             throw new BadRequestException("Ghi chú hoàn tồn cần có nội dung và tối đa 500 ký tự.");
         }
-        List<OrderItem> items = orderItemRepository.findByOrderId(order.getId()).stream()
+        List<OrderItem> items = lines.stream()
                 .sorted(Comparator.comparing((OrderItem item) -> item.getStoreProduct().getId())
                         .thenComparing(OrderItem::getId)).toList();
         if (items.isEmpty()) {
@@ -121,7 +141,11 @@ public class InventoryServiceImpl implements InventoryService {
         }
         for (OrderItem item : items) {
             StoreProduct stock = locked.get(item.getStoreProduct().getId());
-            if (item.getQuantity() <= 0 || !stock.getStore().getId().equals(order.getStore().getId())) {
+            // V3: the Store of a line is the Store of its Fulfillment (an Order may have several, or no orders.store_id)
+            Long expectedStoreId = item.getFulfillment() != null ? item.getFulfillment().getStore().getId()
+                    : order.getStore() != null ? order.getStore().getId() : null;
+            if (item.getQuantity() <= 0 || expectedStoreId == null
+                    || !stock.getStore().getId().equals(expectedStoreId)) {
                 throw new BadRequestException("Sản phẩm hoàn tồn không hợp lệ với chi nhánh của đơn hàng.");
             }
             int before = stock.getQuantity();

@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "status",
+    "controller" : "com.oneshop.controller.admin.AdminReviewController",
+    "path" : "/admin/reviews/{id}/status"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:12.524636200Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/admin/reviews/999999999/status",
+  "kind" : "anonymous guard/input probe"
+}

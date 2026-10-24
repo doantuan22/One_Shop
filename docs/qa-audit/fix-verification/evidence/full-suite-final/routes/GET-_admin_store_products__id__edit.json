@@ -1,0 +1,14 @@
+{
+  "executedAt" : "2026-10-24T03:23:57.436504700Z",
+  "location" : "http://localhost:50550/login",
+  "route" : {
+    "method" : "editForm",
+    "verb" : "GET",
+    "path" : "/admin/store-products/{id}/edit",
+    "controller" : "com.oneshop.controller.admin.AdminStoreProductController"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/admin/store-products/999999999/edit",
+  "actual" : 302,
+  "expected" : 302
+}

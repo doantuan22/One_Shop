@@ -1,0 +1,14 @@
+{
+  "executedAt" : "2026-10-24T03:23:57.253549300Z",
+  "location" : "http://localhost:50550/login",
+  "route" : {
+    "method" : "list",
+    "verb" : "GET",
+    "path" : "/admin/staff-assignments",
+    "controller" : "com.oneshop.controller.admin.AdminStaffAssignmentController"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/admin/staff-assignments",
+  "actual" : 302,
+  "expected" : 302
+}

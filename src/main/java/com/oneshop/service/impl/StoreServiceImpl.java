@@ -98,6 +98,37 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
+    public org.springframework.data.domain.Page<StoreResponse> searchStores(String q, String area,
+                                                                            ActiveStatus status, int page) {
+        var words = com.oneshop.service.search.TextSearch.words(q);
+        var areaText = area == null ? "" : area.trim();
+        var pageable = com.oneshop.service.query.Paging.page(page, 20);
+        if (!words.isEmpty()) {
+            var matched = storeRepository
+                    .searchAdmin("", areaText, status, org.springframework.data.domain.Pageable.unpaged())
+                    .getContent().stream()
+                    .filter(s -> com.oneshop.service.search.TextSearch.matchesAll(words, s.getCode(), s.getName(), s.getAddress(), s.getArea(),
+                            s.getProvinceCity()))
+                    .toList();
+            return com.oneshop.service.search.TextSearch.slice(matched, pageable)
+                    .map(storeMapper::toResponse);
+        }
+        var like = containsLike(q);
+        return storeRepository
+                .searchAdmin(like, areaText, status, pageable)
+                .map(storeMapper::toResponse);
+    }
+
+    /** lower-case contains pattern with ! as the escape character (same rule as the other admin searches). */
+    private static String containsLike(String q) {
+        var text = q == null ? "" : q.trim().toLowerCase();
+        if (text.isEmpty()) {
+            return "";
+        }
+        return "%" + text.replace("!", "!!").replace("%", "!%").replace("_", "!_") + "%";
+    }
+
+    @Override
     @Transactional
     public StoreResponse createStore(StoreRequest request) {
         String code = request.getCode().trim();

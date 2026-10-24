@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "GET",
+    "method" : "detail",
+    "controller" : "com.oneshop.controller.client.ProductController",
+    "path" : "/products/{id}"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:16.511407900Z",
+  "expected" : 404,
+  "actual" : 404,
+  "requestPath" : "/products/999999999",
+  "kind" : "anonymous guard/input probe"
+}

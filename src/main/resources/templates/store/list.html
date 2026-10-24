@@ -16,7 +16,7 @@
 
         .store-hero {
             background: linear-gradient(135deg, #fff5f2 0%, #fffbf9 60%, #ffede6 100%);
-            border: 1px solid rgba(255, 111, 97, 0.2);
+            border: 1px solid rgba(255, 127, 80, 0.2);
             border-radius: 24px;
             padding: 1.75rem 2rem;
             margin-bottom: 2rem;
@@ -122,7 +122,7 @@
         }
 
         .modern-store-card:hover {
-            border-color: rgba(255, 111, 97, 0.4);
+            border-color: rgba(255, 127, 80, 0.4);
             box-shadow: 0 12px 30px rgba(255, 127, 80, 0.1);
         }
 
@@ -136,7 +136,7 @@
             position: absolute;
             top: -12px;
             right: 20px;
-            background: linear-gradient(135deg, #ff7f50, #e95b50);
+            background: linear-gradient(135deg, #ff7f50, #e86738);
             color: #ffffff;
             font-size: 0.75rem;
             font-weight: 750;
@@ -197,7 +197,7 @@
         }
 
         .store-location-text {
-            color: #bf360c;
+            color: #d65426;
             font-size: 0.825rem;
             font-weight: 700;
             margin-bottom: 1.15rem;
@@ -264,7 +264,7 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            background: linear-gradient(135deg, #ff7f50, #e95b50);
+            background: linear-gradient(135deg, #ff7f50, #e86738);
             border: none;
             color: #ffffff;
             box-shadow: 0 6px 18px rgba(233, 91, 80, 0.2);
@@ -274,7 +274,7 @@
         }
 
         .btn-select-store:hover {
-            background: linear-gradient(135deg, #e86738, #d84a3f);
+            background: linear-gradient(135deg, #e86738, #d65426);
             color: #ffffff;
             box-shadow: 0 8px 22px rgba(233, 91, 80, 0.3);
         }
@@ -289,8 +289,8 @@
             justify-content: center;
             gap: 6px;
             background-color: #fff0ed;
-            color: var(--os-coral-dark, #e95b50);
-            border: 1px dashed var(--os-coral-dark, #e95b50);
+            color: var(--os-coral-dark, #e86738);
+            border: 1px dashed var(--os-coral-dark, #e86738);
             width: 100%;
             cursor: default;
         }
@@ -299,13 +299,9 @@
 <body class="os-home">
 <div class="store-finder-container">
     <div class="store-hero">
-        <div class="os-eyebrow mb-2">
-            <span class="os-eyebrow-dot"></span>
-            HỆ THỐNG PHÂN PHỐI · TOÀN QUỐC
-        </div>
-        <div th:replace="~{fragments/components :: pageHeader('Hệ thống cửa hàng', 'Chọn một chi nhánh để xem sản phẩm, giá và tình trạng hàng tại chi nhánh đó.')}">
-            <h1>Hệ thống cửa hàng</h1>
-            <p>Chọn một chi nhánh để xem sản phẩm, giá và tình trạng hàng tại chi nhánh đó.</p>
+        <div th:replace="~{fragments/components :: pageHeader('Hệ thống cửa hàng OneShop', 'Tra cứu địa chỉ, giờ mở cửa và dịch vụ tại từng chi nhánh.')}">
+            <h1>Hệ thống cửa hàng OneShop</h1>
+            <p>Tra cứu địa chỉ, giờ mở cửa và dịch vụ của từng cửa hàng.</p>
         </div>
     </div>
 
@@ -315,7 +311,7 @@
             <line x1="12" y1="8" x2="12" y2="12"></line>
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
         </svg>
-        <div>Chi nhánh này không tồn tại hoặc đang tạm ngừng hoạt động. Vui lòng chọn chi nhánh khác.</div>
+        <div>Chi nhánh này không tồn tại hoặc đang tạm ngừng hoạt động. Vui lòng xem cửa hàng khác.</div>
     </div>
 
     <form method="get" th:action="@{/stores}" class="filter-panel" id="store-filter">
@@ -345,6 +341,9 @@
                     Tìm cửa hàng
                 </button>
             </div>
+            <div class="col-12" th:if="${!#strings.isEmpty(provinceCity) or !#strings.isEmpty(area)}">
+                <a class="small text-coral fw-semibold text-decoration-none" th:href="@{/stores}">Xóa bộ lọc</a>
+            </div>
         </div>
     </form>
 
@@ -355,15 +354,7 @@
     <div class="row g-4" th:unless="${stores.isEmpty()}">
         <div class="col-12 col-md-6 col-xl-4" th:each="store : ${stores}">
             <article class="modern-store-card os-store-card"
-                     th:with="active=${store.status.name() == 'ACTIVE'}"
-                     th:classappend="${selectedStore != null and selectedStore.id == store.id} ? 'selected-active-store' : ''">
-
-                <div class="current-selection-badge" th:if="${selectedStore != null and selectedStore.id == store.id}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                    Đang mua sắm tại đây
-                </div>
+                     th:with="active=${store.status.name() == 'ACTIVE'}">
 
                 <div class="store-card-header">
                     <h2 class="store-card-title" th:text="${store.name}">OneShop Thủ Đức</h2>
@@ -430,32 +421,14 @@
                     </span>
                 </div>
 
-                <div class="mt-auto pt-2">
-                    <div class="btn-already-selected"
-                         th:if="${selectedStore != null and selectedStore.id == store.id}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                        <span>Đang chọn chi nhánh này</span>
-                    </div>
-
-                    <form th:action="@{/stores/select}" method="post"
-                          th:if="${active and (selectedStore == null or selectedStore.id != store.id)}">
-                        <input type="hidden" name="storeId" th:value="${store.id}">
-                        <button type="submit" class="btn btn-select-store">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 16 16 12 12 8"></polyline>
-                                <line x1="8" y1="12" x2="16" y2="12"></line>
-                            </svg>
-                            <span>Chọn chi nhánh này</span>
-                        </button>
-                    </form>
-
-                    <div class="text-secondary small text-center py-2" th:unless="${active}">
-                        Chi nhánh tạm ngừng, chưa thể chọn để mua hàng.
-                    </div>
-                </div>
+                <form class="mt-auto pt-2" method="post" th:action="@{/stores/select}" th:if="${active}">
+                    <input type="hidden" name="storeId" th:value="${store.id}">
+                    <input type="hidden" name="returnTo" value="/products">
+                    <button type="submit" class="btn-select-store" th:disabled="${selectedStore != null and selectedStore.id == store.id}">
+                        <span th:text="${selectedStore != null and selectedStore.id == store.id} ? 'Đang xem cửa hàng này' : 'Xem sản phẩm tại cửa hàng'">Xem sản phẩm tại cửa hàng</span>
+                    </button>
+                </form>
+                <div class="text-secondary small pt-2 mt-auto" th:unless="${active}">Cửa hàng đang tạm ngừng hoạt động.</div>
             </article>
         </div>
     </div>

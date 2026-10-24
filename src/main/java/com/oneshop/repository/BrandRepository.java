@@ -8,6 +8,10 @@ import java.util.List;
 
 public interface BrandRepository extends JpaRepository<Brand, Long> {
 
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @org.springframework.data.jpa.repository.Query("select b from Brand b where b.id=:id")
+    java.util.Optional<Brand> findByIdForUpdate(@org.springframework.data.repository.query.Param("id") Long id);
+
     List<Brand> findByStatusOrderByName(VisibilityStatus status);
 
     List<Brand> findAllByOrderByName();

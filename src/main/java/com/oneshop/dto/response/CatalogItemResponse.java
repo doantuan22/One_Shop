@@ -12,13 +12,12 @@ import java.util.List;
 public record CatalogItemResponse(ProductResponse product, StoreAvailabilityResponse atSelectedStore,
                                   List<StoreAvailabilityResponse> stores) {
 
-    /** Lowest price among the Stores selling the SKU, or {@code null} when no Store sells it. */
+    /** Single online price of the SKU in V3. Never substitute a StoreProduct's legacy price. */
     public BigDecimal lowestPrice() {
-        return stores.stream().map(StoreAvailabilityResponse::price).min(BigDecimal::compareTo).orElse(null);
+        return product == null ? null : product.price();
     }
 
     public boolean samePriceEverywhere() {
-        return stores.stream().map(StoreAvailabilityResponse::price).map(BigDecimal::stripTrailingZeros).distinct()
-                .count() <= 1;
+        return true;
     }
 }

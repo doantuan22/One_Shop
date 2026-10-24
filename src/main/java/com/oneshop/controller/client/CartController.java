@@ -43,7 +43,7 @@ public class CartController {
     @PostMapping("/items")
     public String add(@Valid @ModelAttribute AddCartItemRequest request, BindingResult bindingResult,
                       Principal principal, Model model, HttpServletResponse response) {
-        if (bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors() || (request.productId() == null && request.storeProductId() == null)) {
             return rejected(principal, model, response, "Không thể thêm vào giỏ: thiếu sản phẩm hoặc số lượng không hợp lệ.");
         }
         try {

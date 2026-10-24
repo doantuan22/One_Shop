@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
 
 /** Real Tomcat/JWT/CSRF, services, transactions and SQL Server; repository spy only injects write failures. */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = "app.jwt.secret=test-only-secret-test-only-secret-1234567890")
+        properties = {"app.jwt.secret=test-only-secret-test-only-secret-1234567890","oneshop.checkout.online-enabled=true","oneshop.payment.timeout-worker-enabled=false"})
 @ActiveProfiles("dev")
 @EnabledIf("com.oneshop.DatabaseFoundationIntegrationTest#databaseConfigured")
 class StaffInventoryDatabaseIntegrationTest {
@@ -100,7 +100,7 @@ class StaffInventoryDatabaseIntegrationTest {
             for (var item : page.getContent()) {
                 String row = response.body().substring(response.body().indexOf("data-store-product-id=\"" + item.storeProductId() + "\""));
                 row = row.substring(0, row.indexOf("</tr>"));
-                assertThat(row).contains(item.sku(), item.productName(), "data-field=\"exact-quantity\">" + item.quantity() + "</td>");
+                assertThat(org.springframework.web.util.HtmlUtils.htmlUnescape(row)).contains(item.sku(), item.productName(), "data-field=\"exact-quantity\">" + item.quantity() + "</td>");
             }
         }
         assertThat(as(STAFF, () -> inventory.getStock(-1)).getContent()).isEqualTo(page.getContent());
@@ -119,12 +119,12 @@ class StaffInventoryDatabaseIntegrationTest {
         var ids = stockIds(1); var first = as(STAFF, () -> inventory.getStock(0));
         assertThat(first.getTotalElements()).isEqualTo(ids.size()); assertThat(first.getContent()).hasSize(20);
         assertThat(first.getContent().stream().map(s -> s.storeProductId())).containsExactlyElementsOf(ids.subList(0, 20));
-        assertThat(as(STAFF, () -> inventory.getStock(1)).getContent().stream().map(s -> s.storeProductId())).containsExactlyElementsOf(ids.subList(20, ids.size()));
+        assertThat(as(STAFF, () -> inventory.getStock(1)).getContent().stream().map(s -> s.storeProductId())).containsExactlyElementsOf(ids.subList(20, Math.min(40,ids.size())));
         String cookie = scenario.account(STAFF);
         var html = scenario.get("/staff/stock?store_id=2", cookie).body();
         assertThat(htmlIds(html, "data-store-product-id")).containsExactlyElementsOf(ids.subList(0, 20));
         assertThat(html).contains("/staff/stock?page=1").doesNotContain("data-store-id=\"2\"");
-        assertThat(htmlIds(scenario.get("/staff/stock?page=1", cookie).body(), "data-store-product-id")).containsExactlyElementsOf(ids.subList(20, ids.size()));
+        assertThat(htmlIds(scenario.get("/staff/stock?page=1", cookie).body(), "data-store-product-id")).containsExactlyElementsOf(ids.subList(20, Math.min(40,ids.size())));
         assertThat(scenario.get("/staff/inventory-history", cookie).body()).contains("/staff/inventory-history?page=1");
     }
     @ParameterizedTest @ValueSource(ints = {0, 3, Integer.MAX_VALUE})
@@ -219,7 +219,7 @@ class StaffInventoryDatabaseIntegrationTest {
         String cookie = scenario.account(STAFF); var response = scenario.get(historyPath(id) + "?store_id=2", cookie);
         assertThat(htmlIds(response.body(), "data-movement-id")).containsExactlyElementsOf(ids.subList(0, 20));
         assertThat(response.body()).contains(historyPath(id) + "?page=1").doesNotContain("Peer only");
-        assertThat(htmlIds(scenario.get(historyPath(id) + "?page=1", cookie).body(), "data-movement-id")).containsExactlyElementsOf(ids.subList(20, ids.size()));
+        assertThat(htmlIds(scenario.get(historyPath(id) + "?page=1", cookie).body(), "data-movement-id")).containsExactlyElementsOf(ids.subList(20, Math.min(40,ids.size())));
         assertThat(as(STAFF, () -> inventory.getHistory(id, 999)).movements().getContent()).isEmpty();
     }
     @Test void noActiveAssignmentDeniesStockHistoryAndAdjustmentWithTheSameJwt() throws Exception {

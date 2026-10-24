@@ -1,0 +1,42 @@
+{
+  "browser": "Chrome/155.0.8059.85",
+  "mode": "PICKUP",
+  "orderIds": [
+    840
+  ],
+  "fulfillmentIds": [
+    977
+  ],
+  "trace": [
+    {
+      "step": "00-login-filled",
+      "url": "/login",
+      "title": "Đăng nhập - OneShop | OneShop"
+    },
+    {
+      "step": "01-checkout",
+      "url": "/checkout?cartItemIds=1020&fulfillmentType=STORE_PICKUP&paymentMethod=PAY_AT_STORE&pickupStoreId=1",
+      "title": "Đặt hàng - OneShop | OneShop"
+    },
+    {
+      "step": "02-created",
+      "url": "/checkout/730?success=placed",
+      "title": "Đặt hàng thành công - OneShop | OneShop"
+    },
+    {
+      "step": "00-login-filled",
+      "url": "/login",
+      "title": "Đăng nhập - OneShop | OneShop"
+    },
+    {
+      "step": "04-staff-completed",
+      "url": "/staff/fulfillments/977",
+      "title": "Chi tiết phần giao hàng | OneShop Staff"
+    },
+    {
+      "step": "07-customer-final",
+      "url": "/orders/840",
+      "title": "Chi tiết đơn hàng | OneShop"
+    }
+  ]
+}

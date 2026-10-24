@@ -1,0 +1,7 @@
+{
+  "database" : "oneshop_fix_20261024_test",
+  "timestamp" : "2026-10-24T02:47:29.406782900Z",
+  "scenario" : "upload-commit-BRAND",
+  "files" : [ "qa-fix/4a98405d-152b-4d4c-8e64-fc6a3267d110" ],
+  "tasks" : [ ]
+}

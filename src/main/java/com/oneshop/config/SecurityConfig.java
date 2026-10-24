@@ -39,7 +39,7 @@ public class SecurityConfig {
 
     private static final String[] PUBLIC_PATHS = {
             // catalog, Store Finder and the choice of the Store being browsed are open to guests (Roadmap V2 5)
-            "/", "/login", "/register", "/products/**", "/stores/**", "/health", "/error",
+            "/", "/login", "/register", "/products/**", "/stores/**", "/image-credits", "/health", "/error",
             "/css/**", "/js/**", "/images/**", "/vendor/**", "/favicon.ico",
             "/api/auth/**"
     };
@@ -63,8 +63,13 @@ public class SecurityConfig {
         RequestMatcher deliveryForms = paths.matcher("/staff/orders/delivery/**");
         RequestMatcher pickupForms = paths.matcher("/staff/orders/pickup/**");
         RequestMatcher staffOrderForms = paths.matcher("/staff/orders/**");
+        RequestMatcher staffFulfillmentForms = paths.matcher("/staff/fulfillments/**");
+        RequestMatcher adminPaymentForms = paths.matcher("/admin/payments/**");
         RequestMatcher staffStockForms = paths.matcher("/staff/stock/**");
         RequestMatcher staffReviewForms = paths.matcher("/staff/reviews/**");
+        RequestMatcher customerReviewForms = paths.matcher("/reviews/**");
+        RequestMatcher adminReviewForms = paths.matcher("/admin/reviews/**");
+        RequestMatcher adminOrderForms = paths.matcher("/admin/orders/**");
         // Bearer API requests need no CSRF token. Payment and Staff fulfillment forms always require it.
         RequestMatcher bearerRequest = request -> {
             String header = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -72,7 +77,8 @@ public class SecurityConfig {
             // Match parsed paths like Spring MVC, including percent-encoded segment characters.
             return header != null && header.startsWith("Bearer ") && !paymentForms.matches(request)
                     && !deliveryForms.matches(request) && !pickupForms.matches(request) && !staffOrderForms.matches(request)
-                    && !staffStockForms.matches(request) && !staffReviewForms.matches(request);
+                    && !staffFulfillmentForms.matches(request) && !adminPaymentForms.matches(request) && !staffStockForms.matches(request) && !staffReviewForms.matches(request)
+                    && !customerReviewForms.matches(request) && !adminReviewForms.matches(request) && !adminOrderForms.matches(request);
         };
 
         http
@@ -102,6 +108,7 @@ public class SecurityConfig {
                         // Staff: STAFF only, because every page is scoped to the Store(s) the account is assigned
                         // to (StaffStoreScopeInterceptor). Admin works chain-wide in /admin instead.
                         .requestMatchers("/staff/**", "/api/staff/**").hasRole("STAFF")
+                        .requestMatchers("/account/**").authenticated()
                         // Client: the cart belongs to a customer account (USER 1--1 CART), and only a customer
                         // can turn it into orders or review what was delivered
                         .requestMatchers("/cart/**", "/checkout/**", "/orders/**", "/reviews/**").hasRole("CUSTOMER")

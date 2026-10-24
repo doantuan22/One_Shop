@@ -24,7 +24,7 @@ import com.oneshop.repository.BrandRepository;
 import com.oneshop.repository.CategoryRepository;
 import com.oneshop.repository.ProductImageRepository;
 import com.oneshop.repository.ProductRepository;
-import com.oneshop.service.CloudinaryService;
+import com.oneshop.service.image.ImageTransactionCoordinator;
 import com.oneshop.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,19 +55,19 @@ public class ProductServiceImpl implements ProductService {
     private final ProductImageRepository productImageRepository;
     private final CategoryRepository categoryRepository;
     private final BrandRepository brandRepository;
-    private final CloudinaryService cloudinaryService;
+    private final ImageTransactionCoordinator images;
     private final ProductMapper productMapper;
     private final CatalogMapper catalogMapper;
 
     public ProductServiceImpl(ProductRepository productRepository, ProductImageRepository productImageRepository,
                               CategoryRepository categoryRepository, BrandRepository brandRepository,
-                              CloudinaryService cloudinaryService, ProductMapper productMapper,
+                              ImageTransactionCoordinator images, ProductMapper productMapper,
                               CatalogMapper catalogMapper) {
         this.productRepository = productRepository;
         this.productImageRepository = productImageRepository;
         this.categoryRepository = categoryRepository;
         this.brandRepository = brandRepository;
-        this.cloudinaryService = cloudinaryService;
+        this.images = images;
         this.productMapper = productMapper;
         this.catalogMapper = catalogMapper;
     }
@@ -76,8 +76,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductResponse> searchProducts(ProductSearchCriteria criteria, Pageable pageable) {
-        Page<Product> page = productRepository.searchVisible(criteria.likePattern(), criteria.categoryId(),
-                criteria.brandId(), pageable);
+        com.oneshop.service.query.Paging.validate(pageable);
+        var words = com.oneshop.service.search.TextSearch.words(criteria.keyword());
+        Page<Product> page = words.isEmpty()
+                ? productRepository.searchVisible(criteria.likePattern(), criteria.categoryId(),
+                        criteria.brandId(), pageable)
+                : com.oneshop.service.search.TextSearch.slice(
+                        productRepository.searchVisible("%", criteria.categoryId(), criteria.brandId(),
+                                        Pageable.unpaged(pageable.getSort())).getContent().stream()
+                                .filter(p -> com.oneshop.service.search.TextSearch.matchesAll(words, p.getSku(), p.getName()))
+                                .toList(), pageable);
         Map<Long, String> primaryImages = getPrimaryImageUrls(page.getContent().stream().map(Product::getId).toList());
         return page.map(product -> productMapper.toResponse(product, primaryImages.get(product.getId())));
     }
@@ -161,15 +169,9 @@ public class ProductServiceImpl implements ProductService {
         apply(category, name, request);
 
         if (file != null && !file.isEmpty()) {
-            ImageUploadResult uploaded = cloudinaryService.uploadImage(file, CATEGORY_FOLDER);
-            try {
-                category.setImageUrl(uploaded.url());
-                category.setImagePublicId(uploaded.publicId());
-                return catalogMapper.toResponse(categoryRepository.save(category));
-            } catch (RuntimeException ex) {
-                deleteQuietly(uploaded.publicId());
-                throw ex;
-            }
+            ImageUploadResult uploaded = images.upload(file, CATEGORY_FOLDER);
+            category.setImageUrl(uploaded.url());
+            category.setImagePublicId(uploaded.publicId());
         }
         return catalogMapper.toResponse(categoryRepository.save(category));
     }
@@ -183,7 +185,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public CategoryResponse updateCategory(Long id, CategoryRequest request, MultipartFile file) {
-        Category category = category(id);
+        Category category = categoryForUpdate(id);
         String name = request.getName().trim();
         if (categoryRepository.existsByNameAndIdNot(name, id)) {
             throw new BadRequestException("name", "Tên danh mục đã tồn tại");
@@ -192,18 +194,11 @@ public class ProductServiceImpl implements ProductService {
 
         if (file != null && !file.isEmpty()) {
             String previousPublicId = category.getImagePublicId();
-            ImageUploadResult uploaded = cloudinaryService.uploadImage(file, CATEGORY_FOLDER);
-            try {
-                category.setImageUrl(uploaded.url());
-                category.setImagePublicId(uploaded.publicId());
-                categoryRepository.saveAndFlush(category);
-            } catch (RuntimeException ex) {
-                deleteQuietly(uploaded.publicId());
-                throw ex;
-            }
-            if (StringUtils.hasText(previousPublicId)) {
-                deleteQuietly(previousPublicId);
-            }
+            ImageUploadResult uploaded = images.upload(file, CATEGORY_FOLDER);
+            category.setImageUrl(uploaded.url());
+            category.setImagePublicId(uploaded.publicId());
+            categoryRepository.saveAndFlush(category);
+            images.deleteAfterCommit(previousPublicId);
         }
         return catalogMapper.toResponse(category);
     }
@@ -211,35 +206,26 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public CategoryResponse uploadCategoryImage(Long id, MultipartFile file) {
-        Category category = category(id);
+        Category category = categoryForUpdate(id);
         String previousPublicId = category.getImagePublicId();
 
-        ImageUploadResult uploaded = cloudinaryService.uploadImage(file, CATEGORY_FOLDER);
-        try {
-            category.setImageUrl(uploaded.url());
-            category.setImagePublicId(uploaded.publicId());
-            categoryRepository.saveAndFlush(category);
-        } catch (RuntimeException ex) {
-            deleteQuietly(uploaded.publicId());
-            throw ex;
-        }
-        if (StringUtils.hasText(previousPublicId)) {
-            deleteQuietly(previousPublicId);
-        }
+        ImageUploadResult uploaded = images.upload(file, CATEGORY_FOLDER);
+        category.setImageUrl(uploaded.url());
+        category.setImagePublicId(uploaded.publicId());
+        categoryRepository.saveAndFlush(category);
+        images.deleteAfterCommit(previousPublicId);
         return catalogMapper.toResponse(category);
     }
 
     @Override
     @Transactional
     public CategoryResponse removeCategoryImage(Long id) {
-        Category category = category(id);
+        Category category = categoryForUpdate(id);
         String publicId = category.getImagePublicId();
         category.setImageUrl(null);
         category.setImagePublicId(null);
         categoryRepository.saveAndFlush(category);
-        if (StringUtils.hasText(publicId)) {
-            cloudinaryService.deleteImage(publicId);
-        }
+        images.deleteAfterCommit(publicId);
         return catalogMapper.toResponse(category);
     }
 
@@ -276,7 +262,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public BrandResponse updateBrand(Long id, BrandRequest request) {
-        Brand brand = brand(id);
+        Brand brand = brandForUpdate(id);
         String name = request.getName().trim();
         if (brandRepository.existsByNameAndIdNot(name, id)) {
             throw new BadRequestException("name", "Tên thương hiệu đã tồn tại");
@@ -294,32 +280,26 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public BrandResponse uploadBrandLogo(Long id, MultipartFile file) {
-        Brand brand = brand(id);
+        Brand brand = brandForUpdate(id);
         String previousPublicId = brand.getLogoPublicId();
 
-        ImageUploadResult uploaded = cloudinaryService.uploadImage(file, BRAND_FOLDER);
-        try {
-            brand.setLogoUrl(uploaded.url());
-            brand.setLogoPublicId(uploaded.publicId());
-            brandRepository.saveAndFlush(brand);
-        } catch (RuntimeException ex) {
-            deleteQuietly(uploaded.publicId());
-            throw ex;
-        }
-        // the new logo is stored; a leftover old file must not undo that
-        deleteQuietly(previousPublicId);
+        ImageUploadResult uploaded = images.upload(file, BRAND_FOLDER);
+        brand.setLogoUrl(uploaded.url());
+        brand.setLogoPublicId(uploaded.publicId());
+        brandRepository.saveAndFlush(brand);
+        images.deleteAfterCommit(previousPublicId);
         return catalogMapper.toResponse(brand);
     }
 
     @Override
     @Transactional
     public BrandResponse removeBrandLogo(Long id) {
-        Brand brand = brand(id);
+        Brand brand = brandForUpdate(id);
         String publicId = brand.getLogoPublicId();
         brand.setLogoUrl(null);
         brand.setLogoPublicId(null);
         brandRepository.saveAndFlush(brand);
-        cloudinaryService.deleteImage(publicId);
+        images.deleteAfterCommit(publicId);
         return catalogMapper.toResponse(brand);
     }
 
@@ -327,8 +307,33 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<AdminProductResponse> searchAllProducts(String keyword, Pageable pageable) {
-        return productRepository.searchAll(ProductSearchCriteria.ofKeyword(keyword).likePattern(), pageable)
-                .map(catalogMapper::toAdminResponse);
+        com.oneshop.service.query.Paging.validate(pageable);
+        var words = com.oneshop.service.search.TextSearch.words(keyword);
+        if (words.isEmpty()) {
+            return productRepository.searchAll(ProductSearchCriteria.ofKeyword(keyword).likePattern(), pageable)
+                    .map(catalogMapper::toAdminResponse);
+        }
+        var matched = productRepository.searchAll("%", Pageable.unpaged(pageable.getSort())).getContent().stream()
+                .filter(p -> com.oneshop.service.search.TextSearch.matchesAll(words, p.getSku(), p.getName()))
+                .toList();
+        return com.oneshop.service.search.TextSearch.slice(matched, pageable).map(catalogMapper::toAdminResponse);
+    }
+
+    @Override
+    public Page<AdminProductResponse> searchAllProducts(String keyword, Long categoryId, Long brandId,
+                                                        ProductStatus status, Pageable pageable) {
+        com.oneshop.service.query.Paging.validate(pageable);
+        var words = com.oneshop.service.search.TextSearch.words(keyword);
+        if (words.isEmpty()) {
+            return productRepository.searchAdminProducts(ProductSearchCriteria.ofKeyword(keyword).likePattern(),
+                            categoryId, brandId, status, pageable)
+                    .map(catalogMapper::toAdminResponse);
+        }
+        var matched = productRepository.searchAdminProducts("%", categoryId, brandId, status,
+                        Pageable.unpaged(pageable.getSort())).getContent().stream()
+                .filter(p -> com.oneshop.service.search.TextSearch.matchesAll(words, p.getSku(), p.getName()))
+                .toList();
+        return com.oneshop.service.search.TextSearch.slice(matched, pageable).map(catalogMapper::toAdminResponse);
     }
 
     @Override
@@ -367,10 +372,25 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private void apply(Product product, String sku, ProductRequest request) {
+        var price = request.getPrice();
+        var original = request.getOriginalPrice();
+        if (price == null || price.signum() < 0 || price.stripTrailingZeros().scale() > 2
+                || price.compareTo(new java.math.BigDecimal("9999999999999999.99")) > 0) {
+            throw new BadRequestException("price", "Giá bán online không hợp lệ.");
+        }
+        if (request.getStatus() == com.oneshop.entity.ProductStatus.ACTIVE && price.signum() == 0) {
+            throw new BadRequestException("price", "Giá bán online phải lớn hơn 0 khi sản phẩm đang bán.");
+        }
+        if (original != null && (original.compareTo(price) < 0 || original.stripTrailingZeros().scale() > 2
+                || original.compareTo(new java.math.BigDecimal("9999999999999999.99")) > 0)) {
+            throw new BadRequestException("originalPrice", "Giá gốc phải hợp lệ và không thấp hơn giá bán online.");
+        }
         product.setSku(sku);
         product.setName(request.getName().trim());
         product.setDescription(trimToNull(request.getDescription()));
         product.setStatus(request.getStatus());
+        product.setPrice(price);
+        product.setOriginalPrice(original);
         product.setCategory(categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new BadRequestException("categoryId", "Danh mục không tồn tại")));
         product.setBrand(brandRepository.findById(request.getBrandId())
@@ -387,11 +407,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductImageResponse addProductImage(Long productId, MultipartFile file) {
-        Product product = product(productId);
+        Product product = productForUpdate(productId);
         List<ProductImage> existing = productImageRepository.findByProductIdOrderBySortOrderAsc(productId);
 
-        ImageUploadResult uploaded = cloudinaryService.uploadImage(file, PRODUCT_FOLDER);
-        try {
+        ImageUploadResult uploaded = images.upload(file, PRODUCT_FOLDER);
             ProductImage image = new ProductImage();
             image.setProduct(product);
             image.setImageUrl(uploaded.url());
@@ -399,24 +418,25 @@ public class ProductServiceImpl implements ProductService {
             image.setPrimary(existing.stream().noneMatch(ProductImage::isPrimary));
             image.setSortOrder(existing.stream().mapToInt(ProductImage::getSortOrder).max().orElse(-1) + 1);
             return catalogMapper.toResponse(productImageRepository.saveAndFlush(image));
-        } catch (RuntimeException ex) {
-            // do not leave a file on Cloudinary that the database does not know about
-            deleteQuietly(uploaded.publicId());
-            throw ex;
-        }
     }
 
     @Override
     @Transactional
     public void setPrimaryProductImage(Long productId, Long imageId) {
+        productForUpdate(productId); // every image mutator serializes on this Product, even across app instances
         ProductImage chosen = image(productId, imageId);
         productImageRepository.findByProductIdOrderBySortOrderAsc(productId)
-                .forEach(image -> image.setPrimary(image.getId().equals(chosen.getId())));
+                .forEach(image -> image.setPrimary(false));
+        // SQL Server's filtered unique index is immediate: remove the old key before inserting the new one.
+        productImageRepository.flush();
+        chosen.setPrimary(true);
+        productImageRepository.flush();
     }
 
     @Override
     @Transactional
     public void deleteProductImage(Long productId, Long imageId) {
+        productForUpdate(productId);
         ProductImage image = image(productId, imageId);
         String publicId = image.getPublicId();
         boolean wasPrimary = image.isPrimary();
@@ -427,8 +447,7 @@ public class ProductServiceImpl implements ProductService {
             productImageRepository.findByProductIdOrderBySortOrderAsc(productId).stream().findFirst()
                     .ifPresent(next -> next.setPrimary(true));
         }
-        // last step: if Cloudinary refuses, the transaction rolls back and the row is kept with its file
-        cloudinaryService.deleteImage(publicId);
+        images.deleteAfterCommit(publicId);
     }
 
     // ------------------------------------------------------------------ helpers
@@ -436,6 +455,16 @@ public class ProductServiceImpl implements ProductService {
     private Category category(Long id) {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy danh mục #" + id));
+    }
+
+    private Category categoryForUpdate(Long id) {
+        return categoryRepository.findByIdForUpdate(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy danh mục #" + id));
+    }
+
+    private Brand brandForUpdate(Long id) {
+        return brandRepository.findByIdForUpdate(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy thương hiệu #" + id));
     }
 
     private Brand brand(Long id) {
@@ -448,17 +477,14 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm #" + id));
     }
 
+    private Product productForUpdate(Long id) {
+        return productRepository.findByIdForUpdate(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm #" + id));
+    }
+
     private ProductImage image(Long productId, Long imageId) {
         return productImageRepository.findByIdAndProductId(imageId, productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy ảnh #" + imageId));
-    }
-
-    private void deleteQuietly(String publicId) {
-        try {
-            cloudinaryService.deleteImage(publicId);
-        } catch (RuntimeException ex) {
-            log.warn("Could not delete Cloudinary image {}: {}", publicId, ex.getMessage());
-        }
     }
 
     private static String trimToNull(String value) {

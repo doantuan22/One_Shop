@@ -9,9 +9,9 @@
     <link rel="stylesheet" th:href="@{/css/home.css}">
     <style>
         :root {
-            --cart-primary: #FF7F50;
-            --cart-primary-hover: #E86738;
-            --cart-primary-active: #D9572B;
+            --cart-primary: #d65426;
+            --cart-primary-hover: #922f1c;
+            --cart-primary-active: #762514;
             --cart-primary-light: #FFF3ED;
             --cart-primary-border: #FFD2BF;
             --cart-bg: #F8FAFC;
@@ -99,6 +99,8 @@
         .cart-checkbox:focus {
             border-color: var(--cart-primary);
             box-shadow: 0 0 0 .2rem rgba(255, 127, 80, .18);
+            outline: 3px solid #1f2937;
+            outline-offset: 2px;
         }
 
         .cart-store-name {
@@ -569,9 +571,7 @@
         <div>
             <h1 class="cart-header-title">Giỏ hàng</h1>
             <p class="cart-header-description" th:unless="${cart.isEmpty()}">
-                Có sản phẩm từ
-                <strong class="text-dark" th:text="${cart.groups.size()}">3</strong>
-                chi nhánh. Mỗi chi nhánh là một đơn hàng riêng.
+                Có <strong class="text-dark" th:text="${cart.itemCount}">3</strong> sản phẩm trong giỏ hàng tập trung.
             </p>
         </div>
     </div>
@@ -608,40 +608,27 @@
 
     <div class="row g-4" th:unless="${cart.isEmpty()}">
         <div class="col-12 col-lg-8">
-            <section class="cart-store-group os-cart-group"
-                     th:each="group : ${cart.groups}"
-                     th:attr="data-store-id=${group.storeId}">
+            <section class="cart-store-group os-cart-group">
                 <div class="cart-group-header">
                     <div class="form-check d-flex align-items-center gap-2 mb-0">
                         <input type="checkbox"
                                class="form-check-input cart-checkbox os-cart-group-toggle"
-                               th:id="'group-' + ${group.storeId}"
-                               th:attr="data-store-id=${group.storeId}"
-                               th:disabled="${!group.hasSelectableItems()}">
+                               id="select-all-items"
+                               th:disabled="${!cart.hasSelectableItems()}">
                         <label class="form-check-label small text-secondary fw-semibold"
-                               th:for="'group-' + ${group.storeId}">
-                            Chọn chi nhánh
+                               for="select-all-items">
+                            Chọn tất cả sản phẩm hợp lệ
                         </label>
                     </div>
-
-                    <div class="ms-sm-2">
-                        <div class="cart-store-name os-cart-store-name"
-                             th:text="${group.storeName}">OneShop Thủ Đức</div>
-                        <div class="cart-store-address"
-                             th:text="${group.storeAddress}">101 Võ Văn Ngân</div>
-                    </div>
-
-                    <span class="cart-store-badge" th:unless="${group.storeActive}">
-                        <span aria-hidden="true">●</span> Chi nhánh tạm ngừng
-                    </span>
                 </div>
 
                 <div class="cart-items-list">
                     <div class="cart-item-row os-cart-item"
-                         th:each="item : ${group.items}"
+                         th:each="item : ${cart.items}"
                          th:attr="data-cart-item-id=${item.cartItemId},
-                                  data-store-product-id=${item.storeProductId},
-                                  data-status=${item.status}">
+                                  data-product-id=${item.productId},
+                                  data-status=${item.status},
+                                  data-subtotal=${item.subtotal}">
                         <div class="d-flex flex-wrap align-items-start gap-3">
                             <div class="pt-2">
                                 <input type="checkbox"
@@ -649,8 +636,7 @@
                                        name="cartItemIds"
                                        form="cart-selection-form"
                                        th:value="${item.cartItemId}"
-                                       th:attr="data-store-id=${group.storeId},
-                                                aria-label='Chọn ' + ${item.productName}"
+                                       th:attr="aria-label='Chọn ' + ${item.productName}"
                                        th:disabled="${!item.selectable()}">
                             </div>
 
@@ -684,20 +670,23 @@
                                 <div class="cart-unit-price">
                                     Đơn giá:
                                     <span th:replace="~{fragments/components :: price(${item.unitPrice})}"></span>
+                                    <span class="text-decoration-line-through text-muted small ms-2"
+                                          th:if="${item.originalPrice != null and item.originalPrice > item.unitPrice}"
+                                          th:text="${#numbers.formatDecimal(item.originalPrice, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></span>
                                 </div>
 
                                 <div class="small mt-1" th:switch="${item.status.name()}">
                                     <span class="text-warning-emphasis os-cart-item-problem"
                                           th:case="'INSUFFICIENT_STOCK'">
-                                        Chi nhánh không còn đủ số lượng này. Vui lòng giảm số lượng.
+                                        Hệ thống không đủ hàng cho số lượng bạn chọn. Vui lòng giảm số lượng.
                                     </span>
                                     <span class="text-danger os-cart-item-problem"
                                           th:case="'OUT_OF_STOCK'">
-                                        Đã hết hàng tại chi nhánh này.
+                                        Sản phẩm đã hết hàng trên toàn hệ thống.
                                     </span>
                                     <span class="text-secondary os-cart-item-problem"
                                           th:case="'UNAVAILABLE'">
-                                        Không còn bán tại chi nhánh này.
+                                        Sản phẩm hiện không còn bán.
                                     </span>
                                 </div>
                             </div>
@@ -763,13 +752,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="cart-group-footer">
-                    <span>Tạm tính tại chi nhánh</span>
-                    <strong>
-                        <span th:replace="~{fragments/components :: price(${group.subtotal})}"></span>
-                    </strong>
-                </div>
             </section>
         </div>
 
@@ -782,15 +764,20 @@
                     <span class="fw-semibold text-dark" th:text="${cart.itemCount}">3</span>
                 </div>
 
+                <div class="summary-row" aria-live="polite">
+                    <span>Đã chọn để đặt hàng</span>
+                    <span class="fw-semibold text-dark"><span id="selected-count">0</span> sản phẩm &middot; <span id="selected-total">0 ₫</span></span>
+                </div>
+
                 <div class="pt-3 mb-3 border-top">
-                    <div class="small text-secondary mb-1">Tạm tính</div>
+                    <div class="small text-secondary mb-1">Tạm tính cả giỏ hàng</div>
                     <div class="summary-total-price" id="cart-total">
                         <span th:replace="~{fragments/components :: price(${cart.total})}"></span>
                     </div>
                 </div>
 
                 <form method="get" th:action="@{/checkout}" id="cart-selection-form">
-                    <button type="submit" class="btn-checkout-submit"
+                    <button type="submit" class="btn-checkout-submit" id="checkout-submit"
                             th:disabled="${!cart.hasSelectableItems()}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17"
                              viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -803,9 +790,11 @@
                     </button>
                 </form>
 
+                <p class="small text-secondary mt-2 mb-0" id="checkout-hint" th:if="${cart.hasSelectableItems()}">
+                    Chọn ít nhất một sản phẩm ở danh sách bên trái để đặt hàng.
+                </p>
                 <p class="cart-summary-note mt-3 mb-0">
-                    Chọn chi nhánh hoặc từng sản phẩm để thanh toán.
-                    Tồn kho sẽ được xác thực khi gửi đơn hàng.
+                    Chọn sản phẩm để thanh toán. Hệ thống sẽ tự động phân bổ chi nhánh xử lý đơn hàng.
                 </p>
 
                 <div class="text-center mt-3 pt-3 border-top">
@@ -882,41 +871,42 @@
         });
     });
 
-    document.querySelectorAll('[data-confirm]').forEach(form => {
-        form.addEventListener('submit', event => {
-            const message = form.getAttribute('data-confirm');
-            if (message && !confirm(message)) event.preventDefault();
+    const selectAll = document.getElementById('select-all-items');
+    if (selectAll) {
+        selectAll.addEventListener('change', () => {
+            const itemCheckboxes = document.querySelectorAll('.os-cart-item-toggle:not(:disabled)');
+            itemCheckboxes.forEach(cb => { cb.checked = selectAll.checked; });
         });
-    });
+    }
 
-    document.querySelectorAll('.os-cart-group-toggle').forEach(groupToggle => {
-        groupToggle.addEventListener('change', () => {
-            const storeId = groupToggle.getAttribute('data-store-id');
-            const itemCheckboxes = document.querySelectorAll(
-                '.os-cart-item-toggle[data-store-id="' + CSS.escape(storeId) + '"]:not(:disabled)'
-            );
-            itemCheckboxes.forEach(checkbox => {
-                checkbox.checked = groupToggle.checked;
-            });
+    // Selected count / total and the checkout button follow the ticked lines (the server re-checks everything).
+    const submitButton = document.getElementById('checkout-submit');
+    const hint = document.getElementById('checkout-hint');
+    const hadSelectable = submitButton && !submitButton.disabled;
+    function refreshSelection() {
+        let count = 0, total = 0;
+        document.querySelectorAll('.os-cart-item-toggle:checked').forEach(cb => {
+            const row = cb.closest('.os-cart-item');
+            count += 1;
+            total += parseFloat(row && row.getAttribute('data-subtotal')) || 0;
         });
-    });
+        const countEl = document.getElementById('selected-count');
+        const totalEl = document.getElementById('selected-total');
+        if (countEl) countEl.textContent = String(count);
+        if (totalEl) totalEl.textContent = Math.round(total).toLocaleString('vi-VN') + ' ₫';
+        if (submitButton && hadSelectable) submitButton.disabled = count === 0;
+        if (hint) hint.hidden = count > 0;
+    }
+    document.querySelectorAll('.os-cart-item-toggle, #select-all-items').forEach(el => el.addEventListener('change', refreshSelection));
+    refreshSelection();
 
     document.querySelectorAll('.os-cart-item-toggle').forEach(itemToggle => {
         itemToggle.addEventListener('change', () => {
-            const storeId = itemToggle.getAttribute('data-store-id');
-            const groupToggle = document.querySelector(
-                '.os-cart-group-toggle[data-store-id="' + CSS.escape(storeId) + '"]'
-            );
-            if (!groupToggle) return;
-
-            const selectableItems = document.querySelectorAll(
-                '.os-cart-item-toggle[data-store-id="' + CSS.escape(storeId) + '"]:not(:disabled)'
-            );
-            const checkedItems = Array.from(selectableItems).filter(checkbox => checkbox.checked);
-            groupToggle.checked = selectableItems.length > 0 &&
-                                  checkedItems.length === selectableItems.length;
-            groupToggle.indeterminate = checkedItems.length > 0 &&
-                                        checkedItems.length < selectableItems.length;
+            if (!selectAll) return;
+            const selectable = document.querySelectorAll('.os-cart-item-toggle:not(:disabled)');
+            const checked = Array.from(selectable).filter(cb => cb.checked);
+            selectAll.checked = selectable.length > 0 && checked.length === selectable.length;
+            selectAll.indeterminate = checked.length > 0 && checked.length < selectable.length;
         });
     });
 </script>

@@ -1,0 +1,1 @@
+{"actual":400,"request":"/admin/stores?page=2147483647&q=qa-no-match-999","expected":400,"timestamp":"2026-10-24T02:54:25.808681600Z"}

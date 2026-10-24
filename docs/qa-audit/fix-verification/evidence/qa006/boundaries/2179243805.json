@@ -1,0 +1,7 @@
+{
+  "timestamp" : "2026-10-24T02:58:53.149339900Z",
+  "request" : "/staff/inventory-history?from=999999999-12-31&to=999999999-12-31",
+  "expected" : "success/empty page or controlled 4xx; never 5xx",
+  "actual" : 400,
+  "actor" : "staff.thuduc@oneshop.vn"
+}

@@ -53,15 +53,15 @@ class CategoryServiceTest {
 
     @BeforeEach
     void setUp() {
-        productService = new ProductServiceImpl(
+        productService = com.oneshop.UnitImageTransactions.transactional(new ProductServiceImpl(
                 productRepository,
                 productImageRepository,
                 categoryRepository,
                 brandRepository,
-                cloudinaryService,
+                com.oneshop.UnitImageTransactions.coordinator(cloudinaryService),
                 new ProductMapper(),
                 new CatalogMapper()
-        );
+        ));
     }
 
     private CategoryRequest createRequest(String name, String desc, VisibilityStatus status) {
@@ -151,7 +151,7 @@ class CategoryServiceTest {
     void updateCategory_withoutNewImage_keepsExistingImage() {
         Category category = createCategoryEntity(5L, "Makeup", "https://res.cloudinary.com/demo/image/upload/v1/makeup.png", "makeup_pub_1");
 
-        when(categoryRepository.findById(5L)).thenReturn(Optional.of(category));
+        when(categoryRepository.findByIdForUpdate(5L)).thenReturn(Optional.of(category));
         when(categoryRepository.existsByNameAndIdNot("Makeup Pro", 5L)).thenReturn(false);
 
         CategoryRequest request = createRequest("Makeup Pro", "Updated", VisibilityStatus.ACTIVE);
@@ -169,7 +169,7 @@ class CategoryServiceTest {
         Category category = createCategoryEntity(5L, "Makeup", "https://res.cloudinary.com/demo/image/upload/v1/old.png", "old_pub_id");
         MockMultipartFile newFile = new MockMultipartFile("file", "new.jpg", "image/jpeg", new byte[]{1, 2, 3});
 
-        when(categoryRepository.findById(5L)).thenReturn(Optional.of(category));
+        when(categoryRepository.findByIdForUpdate(5L)).thenReturn(Optional.of(category));
         when(categoryRepository.existsByNameAndIdNot("Makeup", 5L)).thenReturn(false);
         when(cloudinaryService.uploadImage(newFile, "categories"))
                 .thenReturn(new ImageUploadResult("https://res.cloudinary.com/demo/image/upload/v2/new.jpg", "new_pub_id"));
@@ -190,7 +190,7 @@ class CategoryServiceTest {
         Category category = createCategoryEntity(1L, "Skincare", "/images/site/categories/category-skincare.webp", null);
         MockMultipartFile newFile = new MockMultipartFile("file", "new.jpg", "image/jpeg", new byte[]{1, 2, 3});
 
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+        when(categoryRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(category));
         when(categoryRepository.existsByNameAndIdNot("Skincare", 1L)).thenReturn(false);
         when(cloudinaryService.uploadImage(newFile, "categories"))
                 .thenReturn(new ImageUploadResult("https://res.cloudinary.com/demo/image/upload/v2/new.jpg", "new_pub_id"));
@@ -209,7 +209,7 @@ class CategoryServiceTest {
         Category category = createCategoryEntity(5L, "Makeup", "https://res.cloudinary.com/demo/image/upload/v1/old.png", "old_pub_id");
         MockMultipartFile newFile = new MockMultipartFile("file", "new.jpg", "image/jpeg", new byte[]{1, 2, 3});
 
-        when(categoryRepository.findById(5L)).thenReturn(Optional.of(category));
+        when(categoryRepository.findByIdForUpdate(5L)).thenReturn(Optional.of(category));
         when(categoryRepository.existsByNameAndIdNot("Makeup", 5L)).thenReturn(false);
         when(cloudinaryService.uploadImage(newFile, "categories"))
                 .thenReturn(new ImageUploadResult("https://res.cloudinary.com/demo/image/upload/v2/new.jpg", "new_pub_id"));
@@ -231,7 +231,7 @@ class CategoryServiceTest {
     void removeCategoryImage_whenPublicIdNotNull_deletesFromCloudinaryAndClearsDb() {
         Category category = createCategoryEntity(7L, "Bodycare", "https://res.cloudinary.com/demo/image/upload/v1/body.png", "body_pub_123");
 
-        when(categoryRepository.findById(7L)).thenReturn(Optional.of(category));
+        when(categoryRepository.findByIdForUpdate(7L)).thenReturn(Optional.of(category));
         when(categoryRepository.saveAndFlush(any(Category.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         productService.removeCategoryImage(7L);
@@ -246,7 +246,7 @@ class CategoryServiceTest {
     void removeCategoryImage_whenPublicIdNull_clearsDbWithoutCallingCloudinary() {
         Category category = createCategoryEntity(7L, "Bodycare", "/images/site/categories/category-bodycare.webp", null);
 
-        when(categoryRepository.findById(7L)).thenReturn(Optional.of(category));
+        when(categoryRepository.findByIdForUpdate(7L)).thenReturn(Optional.of(category));
         when(categoryRepository.saveAndFlush(any(Category.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         productService.removeCategoryImage(7L);

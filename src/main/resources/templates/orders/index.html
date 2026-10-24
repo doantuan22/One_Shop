@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<<<<<<< HEAD
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -547,3 +548,30 @@
 </div>
 </body>
 </html>
+=======
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Đơn hàng của tôi</title></head><body>
+<div th:replace="~{fragments/components :: pageHeader('Đơn hàng của tôi', 'Theo dõi trạng thái, thanh toán và các phần giao của từng đơn.')}"></div>
+<div th:if="${customerOrders.isEmpty()}">
+    <div th:replace="~{fragments/components :: emptyState('Bạn chưa có đơn hàng nào.')}"></div>
+    <div class="text-center mt-3"><a class="btn btn-primary" th:href="@{/products}">Bắt đầu mua sắm</a></div>
+</div>
+<div class="card shadow-sm mb-3" th:each="order : ${customerOrders}" th:attr="data-order-id=${order.orderId}"><div class="card-body">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+        <div>
+            <h2 class="h5 mb-1"><a class="text-decoration-none" th:href="@{/orders/{id}(id=${order.orderId})}" th:text="'Đơn #' + ${order.orderId}"></a></h2>
+            <div class="small text-secondary">
+                <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                &middot; <span th:replace="~{fragments/components :: fulfillmentType(${order.fulfillmentType})}"></span>
+                &middot; <span th:text="${order.storeName}"></span>
+            </div>
+        </div>
+        <div class="fs-5 fw-bold"><span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></div>
+    </div>
+    <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+        <span th:replace="~{staff/delivery/fragments :: state(${order.orderStatus})}"></span>
+        <span class="small text-secondary"><span th:replace="~{staff/delivery/fragments :: payment(${order.paymentStatus})}"></span></span>
+        <a class="btn btn-outline-primary btn-sm ms-auto" th:href="@{/orders/{id}(id=${order.orderId})}">Xem chi tiết</a>
+    </div>
+</div></div>
+</body></html>
+>>>>>>> 986bd39383b9ed7d4f582667875d648811b0b707

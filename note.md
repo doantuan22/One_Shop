@@ -1,58 +1,189 @@
-# Ghi chú lỗi
+# Danh Sách Tài Khoản Test & Đọc Hiểu Cơ Sở Dữ Liệu OneShop V3
 
-## Báo cáo từ tester
+Tài liệu này tổng hợp kiến trúc CSDL và toàn bộ danh sách tài khoản thử nghiệm (Seed Data) của hệ thống thương mại điện tử chuỗi cửa hàng mỹ phẩm **OneShop V3**.
 
-- Khi nhân viên đổi trạng thái / chuẩn bị hàng của đơn thì bị đẩy sang trang 500.
-  - Trạng thái: **chưa tái hiện được** (xem mục "Đã kiểm tra" bên dưới).
-  - Cần thêm: mã đơn, trạng thái đơn trước khi bấm, nút đã bấm, tài khoản nhân viên, đường dẫn trang 500, và log server tại thời điểm đó (tìm dòng `threw exception` hoặc `Unexpected error`).
+---
 
-## Lỗi đã tái hiện
+## 1. Tổng Quan Về Cơ Sở Dữ Liệu OneShop V3
 
-### BUG-01: Upload file không phải ảnh nhưng khai báo `image/*` gây HTTP 500 (mức: cao) — ĐÃ SỬA
+- **Hệ quản trị CSDL:** Microsoft SQL Server (Collation: `Vietnamese_100_CI_AI`).
+- **Mô hình kinh doanh:** Chuỗi bán lẻ mỹ phẩm đa chi nhánh (Omnichannel):
+  - **Product:** Danh mục sản phẩm đồng nhất với một mức giá niêm yết online toàn chuỗi.
+  - **Store & StoreProduct:** Quản lý tồn kho theo từng chi nhánh vật lý (`OS-THUDUC`, `OS-GOVAP`, `OS-QUAN7`, `OS-QUAN10`, `OS-HAICHAU`, `OS-HOANKIEM`).
+  - **Fulfillment:** Đơn hàng giao tận nơi (DELIVERY) có thể tách thành nhiều kiện hàng (Fulfillments) xuất từ nhiều cửa hàng khác nhau; đơn nhận tại quầy (STORE_PICKUP) gom tại 1 chi nhánh có đủ tồn kho.
+  - **Reviews & Phản hồi:** Đánh giá gắn liền với sản phẩm trong đơn đã giao thành công; nhân viên chỉ được trả lời đánh giá xuất phát từ chi nhánh của mình; Admin có quyền kiểm duyệt.
 
-- **Đã sửa:** `CloudinaryServiceImpl.uploadImage` nay bắt cả `RuntimeException`. Lỗi nội dung ảnh ("Invalid image file", unsupported, empty file, file size too large) → `BadRequestException` ("Tệp tải lên không phải hình ảnh hợp lệ"), người dùng được chuyển về form với `error=image-invalid`. Lỗi khác của provider (sai khóa, quota...) → `ImageStorageException` (`error=image-storage`), thông báo không lộ chi tiết từ provider.
-- **Nâng cấp bảo mật bổ sung (Phiên V2.1):** Thêm phương thức `validateImageFile` kiểm tra: (1) Dung lượng <= 5MB ở tầng Service; (2) Content-Type chỉ chấp nhận `image/jpeg`, `image/png`, `image/webp`; (3) Kiểm tra chữ ký tệp thực tế (Magic bytes: JPEG `FF D8 FF`, PNG `89 50 4E 47 0D 0A 1A 0A`, WebP `RIFF....WEBP`), từ chối dứt khoát SVG và các tệp đổi đuôi/nội dung độc hại ngay tại Service trước khi gọi Cloudinary SDK.
-- **Kiểm thử:** `CloudinaryServiceTest` bao phủ toàn diện 13 test (ảnh vượt 5MB, file rỗng, file SVG, file giả dạng PNG, ảnh WebP/JPEG hợp lệ, provider lỗi khi xóa/tải, biến đổi URL tối ưu hóa `transformUrl`).
+### Cơ chế đăng nhập & Xác thực
+- **Đường dẫn đăng nhập web:** `/login`
+- **API Endpoint:** `POST /api/auth/login` (JSON body: `{"identifier": "<username hoặc email>", "password": "<mật khẩu>"}`)
+- **Định danh đăng nhập:** Người dùng có thể đăng nhập linh hoạt bằng **Username** hoặc **Email**.
+- **Mật khẩu mặc định cho TẤT CẢ tài khoản test:**
+  ```text
+  OneShop@123
+  ```
+  *(Chuỗi mã hóa BCrypt lưu trong CSDL: `$2a$10$xEjHDcYoM7aBZJf/2Hm.ZO3NPCKEr93cG2fro4NH5CrMY2NP6ScvW`)*
 
-- **Tái hiện:**
-  - `POST /admin/products/{id}/images` với file nội dung không phải ảnh, `Content-Type: image/png` → **500**.
-  - `POST /admin/brands/{id}/logo` với cùng loại file → **500**.
-  - Cùng file với `Content-Type: text/plain` → 302 kèm `error=image-invalid` (đúng).
-- **Nguyên nhân:** `CloudinaryServiceImpl.uploadImage` (dòng ~43–52) chỉ bắt `IOException`. Khi Cloudinary từ chối nội dung ảnh, SDK ném `RuntimeException: Invalid image file`, lọt ra ngoài. Controller `AdminProductController.uploadImage` và `AdminBrandController.uploadLogo` chỉ bắt `BadRequestException` và `ImageStorageException`, nên thành 500.
-- **Ghi chú:** request đã được gửi tới tài khoản Cloudinary thật trong `.env`. Cloudinary đã từ chối, không tạo ảnh.
-- **Hướng sửa:** trong `uploadImage`, bắt `RuntimeException` ngoài `IOException`; lỗi "Invalid image file" đổi thành `BadRequestException`, lỗi khác đổi thành `ImageStorageException`.
+---
 
-## Lỗi nghi ngờ (đọc code, chưa tái hiện)
+## 2. Bảng Tra Cứu Nhanh Các Tài Khoản Test
 
-### CODE-01: Xóa ảnh trên Cloudinary có thể gây 500 (mức: trung bình) — ĐÃ SỬA
+| Vai trò (Role) | Username | Email | Mật khẩu | Họ và tên | Chi nhánh / Ghi chú |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **ADMIN** | `admin` | `admin@oneshop.vn` | `OneShop@123` | Quản Trị Viên OneShop | Toàn hệ thống (`/admin/**`) |
+| **STAFF** | `staff_thuduc` | `staff.thuduc@oneshop.vn` | `OneShop@123` | Nguyễn Văn An | Chi nhánh Thủ Đức (`OS-THUDUC`) |
+| **STAFF** | `staff_govap` | `staff.govap@oneshop.vn` | `OneShop@123` | Trần Thị Bình | Chi nhánh Gò Vấp (`OS-GOVAP`) |
+| **STAFF** | `staff_quan7` | `staff.quan7@oneshop.vn` | `OneShop@123` | Lê Minh Châu | Chi nhánh Quận 7 (`OS-QUAN7`) |
+| **STAFF** | `staff_quan10` | `staff.quan10@oneshop.vn` | `OneShop@123` | Võ Hoài Dung | Chi nhánh Quận 10 *(Chỉ nhận tại quầy - Pickup Only)* |
+| **STAFF** | `staff_hoankiem` | `staff.hoankiem@oneshop.vn` | `OneShop@123` | Hoàng Tuấn Kiệt | Chi nhánh Hoàn Kiếm *(Chỉ giao hàng - Delivery Only)* |
+| **CUSTOMER** | `khachhang1` | `khachhang1@example.com` | `OneShop@123` | Phạm Thu Hà | Có sẵn giỏ hàng + Đơn hàng #1, #2 |
+| **CUSTOMER** | `khachhang2` | `khachhang2@example.com` | `OneShop@123` | Đặng Quốc Khánh | Đơn hàng #3 (3 kiện), Đơn #4 (Pickup chờ nhận) |
+| **CUSTOMER** | `khachhang3` | `khachhang3@example.com` | `OneShop@123` | Lê Hoàng Nam | Đơn hàng #5 (Pickup xong), Đơn #6 (COD) |
+| **CUSTOMER** | `khachhang4` | `khachhang4@example.com` | `OneShop@123` | Trần Thị Mai | Đơn #7 (Hủy & hoàn tiền), Đơn #8 (Chờ thanh toán) |
 
-- **Đã sửa:** `CloudinaryServiceImpl.deleteImage` nay bắt `RuntimeException` và đổi thành `ImageStorageException`; các controller đã bắt loại này nên hiển thị `error=image-storage` thay vì 500. Có test `providerFailureOnDeleteBecomesImageStorageException`.
+---
 
-- `CloudinaryServiceImpl.deleteImage` gọi `cloudinary.uploader().destroy(...)` và chỉ bắt `IOException`. Khi Cloudinary báo lỗi API (sai khóa, bị giới hạn...), SDK ném `RuntimeException`.
-- Các nơi gọi không bắt loại này: `ProductServiceImpl.deleteProductImage` (dòng ~345), `ProductServiceImpl.removeBrandLogo` (dòng ~236). Controller `deleteImage` và `removeLogo` chỉ bắt `ImageStorageException` → 500.
-- Chưa tái hiện vì cần Cloudinary trả lỗi.
-- Hướng sửa: giống BUG-01, bắt `RuntimeException` và đổi thành `ImageStorageException` trong `deleteImage`.
+## 3. Chi Tiết Từng Nhóm Tài Khoản Thử Nghiệm
 
-### UX-01: Upload vượt quá giới hạn file hiện trang lỗi mặc định của Spring (mức: thấp) — ĐÃ SỬA
+### 3.1. Quản Trị Viên Hệ Thống (ADMIN - Role ID: 3)
 
-- **Đã sửa:** `WebExceptionHandler` đã bổ sung xử lý `MaxUploadSizeExceededException`. Tự động nhận diện form upload đang dùng (ảnh sản phẩm `/admin/products/{id}/images`, logo thương hiệu `/admin/brands/{id}/logo`, ảnh danh mục `/admin/categories/{id}/image` hoặc form danh mục `/admin/categories`), chuyển hướng người dùng về đúng form với `error=image-size` kèm Flash attribute mang thông báo tiếng Việt: "Ảnh vượt quá [giới hạn]. Vui lòng chọn tệp nhỏ hơn.". Giới hạn dung lượng lấy động từ cấu hình `spring.servlet.multipart.max-file-size` (mặc định 5MB). Dữ liệu form được bảo toàn nguyên vẹn, không chuyển sang trang 500 hay trang lỗi mặc định của Spring.
-- **Kiểm thử:** Đã bổ sung `MaxUploadSizeExceededIntegrationTest` bao phủ toàn diện 7 test case: kiểm tra điều hướng, thông báo tiếng Việt và giữ nguyên dữ liệu form trên cả 3 giao diện quản trị (sản phẩm, thương hiệu, danh mục).
+- **Quyền hạn truy cập:** Khu vực `/admin/**`
+  - Quản lý danh mục sản phẩm (`categories`), thương hiệu (`brands`), sản phẩm (`products`), cấu hình ảnh Cloudinary.
+  - Quản lý mạng lưới chi nhánh cửa hàng (`stores`) và phân công nhân viên (`staff_store_assignments`).
+  - Quản lý người dùng, khóa/mở tài khoản (`users`).
+  - Xem báo cáo đơn hàng toàn chuỗi, đối soát cổng thanh toán Mock, xử lý các đơn thanh toán quá hạn (Payment Timeout).
+  - Kiểm duyệt phản hồi và đánh giá sản phẩm.
 
-## Đã kiểm tra, không phát hiện lỗi 500
+- **Thông tin tài khoản:**
+  - **Username:** `admin`
+  - **Email:** `admin@oneshop.vn`
+  - **Mật khẩu:** `OneShop@123`
+  - **Số điện thoại:** `0900000001`
+  - **Trạng thái:** `ACTIVE`
 
-Các kiểm tra thực hiện trên app local với database seed và bản sao database:
+---
 
-- Crawl GET các trang theo link, 4 vai trò (khách, khách hàng, staff, admin): không có 500.
-- Gọi các route có id sai (0, -1, 999999, abc) và tham số query sai: không có 500.
-- Duyệt tổ hợp id 0–25 trên 497 đường dẫn, 4 vai trò: không có 500.
-- Chọn từng chi nhánh (kể cả INACTIVE) trên trang sản phẩm và trang chủ: không có 500.
-- Submit form với dữ liệu hợp lệ (bản sao DB, khoảng 260 trang): không có 500.
-- Đường đi đầy đủ của đơn giao hàng và nhận tại cửa hàng (COD, ONLINE, PAY_AT_STORE), gồm mọi thao tác sai trạng thái: không có 500, các thao tác sai trả 400.
-- Mã nhận hàng sai/thiếu, nhân viên khác chi nhánh, đơn thanh toán online thất bại, nhân viên nhiều chi nhánh, nhân viên chưa phân công: không có 500.
-- Trang chi tiết đơn (khách, admin, staff) trên 13 đơn ở nhiều trạng thái, 114 request: không có 500.
-- Upload file rỗng và file không phải ảnh có `Content-Type: text/plain`: xử lý đúng.
+### 3.2. Nhân Viên Chi Nhánh (STAFF - Role ID: 2)
 
-## Đã sửa trong phiên này (tham khảo)
+- **Quyền hạn truy cập:** Khu vực `/staff/**`
+  - Xử lý điều phối kiện hàng gán về chi nhánh (`/staff/fulfillments/**`): Chuẩn bị hàng (`PREPARING`), Đóng gói (`PACKED`), Bàn giao vận chuyển (`SHIPPING`), Sẵn sàng nhận tại quầy (`READY_FOR_PICKUP`), Xác nhận khách nhận quầy (`COMPLETED`).
+  - Quản lý kiểm kê tồn kho chi nhánh (`/staff/stock/**`) và tra cứu sổ cái biến động kho (`/staff/inventory-history/**`).
+  - Trả lời đánh giá khách hàng đối với các sản phẩm do chi nhánh mình xuất kho (`/staff/reviews/**`).
 
-- FSA-02: mật khẩu Unicode vượt 72 byte gây 500 → nay trả 400 (kiểm tra UTF-8 byte ở DTO và service).
-- FSA-01: bổ sung chức năng đánh giá sản phẩm của khách sau khi đơn hoàn tất (+ migration `migration_002`).
+- **Danh sách chi tiết theo cửa hàng:**
+
+1. **Nhân viên OneShop Thủ Đức (Store ID: 1 - Code: `OS-THUDUC`)**
+   - **Username:** `staff_thuduc`
+   - **Email:** `staff.thuduc@oneshop.vn`
+   - **Họ và tên:** Nguyễn Văn An
+   - **Số điện thoại:** `0900000002`
+   - **Cửa hàng:** 101 Võ Văn Ngân, P. Linh Chiểu, TP. Thủ Đức, TP.HCM
+   - **Đặc điểm:** Hỗ trợ cả Giao hàng (Delivery) và Nhận tại quầy (Pickup). Đang quản lý các kiện hàng thuộc Đơn #1, #2, #3, #4, #6.
+
+2. **Nhân viên OneShop Gò Vấp (Store ID: 2 - Code: `OS-GOVAP`)**
+   - **Username:** `staff_govap`
+   - **Email:** `staff.govap@oneshop.vn`
+   - **Họ và tên:** Trần Thị Bình
+   - **Số điện thoại:** `0900000003`
+   - **Cửa hàng:** 202 Quang Trung, P.10, Q. Gò Vấp, TP.HCM
+   - **Đặc điểm:** Hỗ trợ cả Giao hàng và Nhận tại quầy. Đang xử lý các kiện hàng thuộc Đơn #2, #3, #5.
+
+3. **Nhân viên OneShop Quận 7 (Store ID: 3 - Code: `OS-QUAN7`)**
+   - **Username:** `staff_quan7`
+   - **Email:** `staff.quan7@oneshop.vn`
+   - **Họ và tên:** Lê Minh Châu
+   - **Số điện thoại:** `0900000004`
+   - **Cửa hàng:** 303 Nguyễn Thị Thập, P. Tân Phong, Quận 7, TP.HCM
+   - **Đặc điểm:** Hỗ trợ cả Giao hàng và Nhận tại quầy. Đang xử lý kiện hàng thuộc Đơn #3.
+
+4. **Nhân viên OneShop Quận 10 (Store ID: 4 - Code: `OS-QUAN10`)**
+   - **Username:** `staff_quan10`
+   - **Email:** `staff.quan10@oneshop.vn`
+   - **Họ và tên:** Võ Hoài Dung
+   - **Số điện thoại:** `0900000005`
+   - **Cửa hàng:** 404 Ba Tháng Hai, P.12, Q.10, TP.HCM
+   - **Đặc điểm:** **Chỉ nhận tại cửa hàng (Pickup Only)**, `delivery_enabled = 0`. Dùng để kiểm thử kịch bản hạn chế hình thức vận chuyển (Kịch bản H).
+
+5. **Nhân viên OneShop Hoàn Kiếm (Store ID: 6 - Code: `OS-HOANKIEM`)**
+   - **Username:** `staff_hoankiem`
+   - **Email:** `staff.hoankiem@oneshop.vn`
+   - **Họ và tên:** Hoàng Tuấn Kiệt
+   - **Số điện thoại:** `0900000006`
+   - **Cửa hàng:** 606 Tràng Tiền, Q. Hoàn Kiếm, Hà Nội
+   - **Đặc điểm:** **Chỉ giao hàng tận nơi (Delivery Only)**, `pickup_enabled = 0`.
+
+*(Ghi chú: Cửa hàng Store ID 5 `OS-HAICHAU` tại Đà Nẵng đang ở trạng thái `INACTIVE` để thử nghiệm kịch bản chi nhánh tạm ngưng kinh doanh, chưa gán nhân viên).*
+
+---
+
+### 3.3. Khách Hàng Thử Nghiệm (CUSTOMER - Role ID: 1)
+
+- **Quyền hạn truy cập:** Khu vực mua sắm khách hàng
+  - Xem sản phẩm, tìm kiếm, lọc theo thương hiệu/danh mục.
+  - Quản lý giỏ hàng (`/cart/**`), đặt hàng (`/checkout/**`).
+  - Theo dõi trạng thái đơn hàng cá nhân (`/orders/**`).
+  - Viết đánh giá sản phẩm sau khi đơn hoàn tất (`/reviews/**`).
+  - Quản lý sổ địa chỉ giao hàng (`/account/addresses` hoặc `customer_addresses`).
+
+- **Dữ liệu có sẵn theo từng khách hàng:**
+
+#### 1. Khách hàng 1: Phạm Thu Hà (User ID: 7)
+- **Username:** `khachhang1`
+- **Email:** `khachhang1@example.com`
+- **Mật khẩu:** `OneShop@123`
+- **Số điện thoại:** `0911111111`
+- **Sổ địa chỉ:**
+  - *Mặc định:* 12 Võ Văn Ngân, P. Linh Chiểu, TP. Thủ Đức, TP.HCM
+  - *Phụ:* 88 Nguyễn Đình Chiểu, P. Đa Kao, Quận 1, TP.HCM
+- **Dữ liệu test có sẵn:**
+  - **Giỏ hàng:** Có sẵn 2 món (Nước tẩy trang Bioderma Sensibio H2O + Kem dưỡng CeraVe Moisturising Cream 340g).
+  - **Đơn hàng #1:** Giao hàng online 1 chi nhánh (Thủ Đức) -> Đã hoàn tất (`COMPLETED`).
+  - **Đơn hàng #2:** Giao hàng online tách 2 chi nhánh (Thủ Đức & Gò Vấp) -> Trạng thái giao một phần (`PARTIALLY_COMPLETED`).
+  - **Đánh giá:** Đã có 2 đánh giá sản phẩm có phản hồi từ nhân viên.
+
+#### 2. Khách hàng 2: Đặng Quốc Khánh (User ID: 8)
+- **Username:** `khachhang2`
+- **Email:** `khachhang2@example.com`
+- **Mật khẩu:** `OneShop@123`
+- **Số điện thoại:** `0922222222`
+- **Địa chỉ:** 45 Quang Trung, P.10, Q. Gò Vấp, TP.HCM
+- **Dữ liệu test có sẵn:**
+  - **Giỏ hàng:** Có sẵn 2 món (Son kem lì Maybelline Matte Ink 15 + Kem dưỡng Nivea Creme 150ml).
+  - **Đơn hàng #3:** Đơn giao hàng tách **3 chi nhánh** (Thủ Đức, Gò Vấp, Quận 7) -> Trạng thái `PROCESSING` (các kiện đang Đóng gói, Chuẩn bị, Tiếp nhận).
+  - **Đơn hàng #4:** Đơn nhận tại cửa hàng Thủ Đức (`STORE_PICKUP`) đã thanh toán online -> Trạng thái `READY_FOR_PICKUP` với **mã nhận hàng tại quầy: `PK8391`**.
+
+#### 3. Khách hàng 3: Lê Hoàng Nam (User ID: 9)
+- **Username:** `khachhang3`
+- **Email:** `khachhang3@example.com`
+- **Mật khẩu:** `OneShop@123`
+- **Số điện thoại:** `0933333333`
+- **Địa chỉ:** 303 Nguyễn Thị Thập, P. Tân Phong, Quận 7, TP.HCM
+- **Dữ liệu test có sẵn:**
+  - **Đơn hàng #5:** Đơn nhận tại cửa hàng Gò Vấp, thanh toán tiền mặt tại quầy (`PAY_AT_STORE`) -> Đã hoàn tất (`COMPLETED`, mã nhận `PK2746`).
+  - **Đơn hàng #6:** Đơn giao hàng thanh toán khi nhận (`COD`) xuất từ chi nhánh Thủ Đức -> Trạng thái `CONFIRMED`.
+  - **Đánh giá:** Đã có 1 đánh giá khen ngợi dịch vụ nhận tại quầy Gò Vấp.
+
+#### 4. Khách hàng 4: Trần Thị Mai (User ID: 10)
+- **Username:** `khachhang4`
+- **Email:** `khachhang4@example.com`
+- **Mật khẩu:** `OneShop@123`
+- **Số điện thoại:** `0944444444`
+- **Địa chỉ:** 15 Hàng Khay, P. Tràng Tiền, Q. Hoàn Kiếm, Hà Nội
+- **Dữ liệu test có sẵn:**
+  - **Đơn hàng #7:** Đơn hàng thanh toán online bị hủy trước khi chuẩn bị hàng -> Trạng thái `CANCELLED` & `SIMULATED_REFUNDED` (đã hoàn tiền mô phỏng 388.000đ và hoàn trả tồn kho).
+  - **Đơn hàng #8:** Đơn hàng thanh toán online mới tạo -> Trạng thái chờ thanh toán (`PENDING_PAYMENT` / `UNPAID`). Thích hợp để test luồng cổng thanh toán Mock hoặc kiểm tra cơ chế worker hủy đơn quá hạn 15 phút.
+
+---
+
+## 4. Bảng Tra Cứu Dữ Liệu Đơn Hàng Mẫu (Orders & Fulfillments)
+
+| Mã Đơn (#) | Khách hàng | Hình thức (Fulfillment) | Thanh toán | Tổng tiền | Trạng thái Đơn | Tình trạng Kiện hàng (Fulfillment) |
+| :---: | :--- | :--- | :--- | :---: | :--- | :--- |
+| **#1** | `khachhang1` | DELIVERY (Thủ Đức) | ONLINE (Paid) | 524.000đ | `COMPLETED` | Kiện #1: `COMPLETED` (Giao thành công) |
+| **#2** | `khachhang1` | DELIVERY (Thủ Đức + Gò Vấp) | ONLINE (Paid) | 1.076.000đ | `PARTIALLY_COMPLETED` | Kiện #2 (Thủ Đức): `COMPLETED`<br>Kiện #3 (Gò Vấp): `SHIPPING` |
+| **#3** | `khachhang2` | DELIVERY (Thủ Đức + Gò Vấp + Q7)| ONLINE (Paid) | 1.745.000đ | `PROCESSING` | Kiện #4 (Thủ Đức): `PACKED`<br>Kiện #5 (Gò Vấp): `PREPARING`<br>Kiện #6 (Quận 7): `CONFIRMED` |
+| **#4** | `khachhang2` | STORE_PICKUP (Thủ Đức) | ONLINE (Paid) | 340.000đ | `PROCESSING` | Kiện #7: `READY_FOR_PICKUP`<br>*(Mã nhận: `PK8391`)* |
+| **#5** | `khachhang3` | STORE_PICKUP (Gò Vấp) | PAY_AT_STORE (Paid) | 142.000đ | `COMPLETED` | Kiện #8: `COMPLETED`<br>*(Mã nhận: `PK2746`)* |
+| **#6** | `khachhang3` | DELIVERY (Thủ Đức) | COD (Unpaid) | 306.000đ | `CONFIRMED` | Kiện #9: `CONFIRMED` |
+| **#7** | `khachhang4` | DELIVERY (Thủ Đức + Gò Vấp) | ONLINE (Refunded) | 388.000đ | `CANCELLED` | Kiện #10, #11: `CANCELLED`<br>*(Đã hoàn tồn kho & hoàn tiền mô phỏng)* |
+| **#8** | `khachhang4` | DELIVERY (Thủ Đức) | ONLINE (Unpaid) | 400.000đ | `PENDING_PAYMENT` | Kiện #12: `CONFIRMED`<br>*(Chờ thanh toán)* |
+

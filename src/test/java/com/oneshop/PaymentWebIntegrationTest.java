@@ -50,15 +50,18 @@ class PaymentWebIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void viewHasOrderStoreTotalAndPendingControls() throws Exception {
+    void viewHasOrderStoreTotalDeadlineAndNoBrowserPaymentResult() throws Exception {
+        LocalDateTime deadline = LocalDateTime.of(2026, 10, 13, 10, 15);
         when(payments.getOrderPayments(EMAIL, 10L)).thenReturn(new OrderPaymentResponse(10L, 3L, "OneShop Thủ Đức",
                 new BigDecimal("200000"), PaymentMethod.ONLINE, OrderPaymentStatus.UNPAID, OrderStatus.PENDING_PAYMENT,
                 List.of(new PaymentResponse(20L, 10L, PaymentMethod.ONLINE, new BigDecimal("200000"), PaymentStatus.PENDING,
-                        null, null, LocalDateTime.now()))));
+                        "MOCK-1", null, LocalDateTime.now())), deadline, false));
         var response = get(PATH, "Cookie", cookie(RoleName.CUSTOMER));
         assertThat(response.statusCode()).isEqualTo(200);
-        assertThat(response.body()).contains("OneShop Thủ Đức", "200.000 ₫", "Mô phỏng thành công", "Mô phỏng thất bại",
-                "/orders/10/payments/20/success", "/orders/10/payments/20/failure", "name=\"_csrf\"");
+        assertThat(response.body()).contains("OneShop Thủ Đức", "200.000 ₫", "id=\"payment-deadline\"", "13/10/2026 10:15");
+        // DEC-21: the page offers no button that reports a payment result
+        assertThat(response.body()).doesNotContain("Mô phỏng thành công", "Mô phỏng thất bại",
+                "/orders/10/payments/20/success", "/orders/10/payments/20/failure");
     }
 
     @Test

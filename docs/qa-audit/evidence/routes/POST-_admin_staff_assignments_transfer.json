@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "transfer",
+    "controller" : "com.oneshop.controller.admin.AdminStaffAssignmentController",
+    "path" : "/admin/staff-assignments/transfer"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:12.772574500Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/admin/staff-assignments/transfer",
+  "kind" : "anonymous guard/input probe"
+}

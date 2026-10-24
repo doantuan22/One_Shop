@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thông tin cá nhân</title>
+    <style>
+        .profile-avatar-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff7f50 0%, #e86738 100%);
+            color: #ffffff;
+            font-size: 2rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.25);
+            border: 3px solid #ffffff;
+        }
+
+        .profile-card {
+            border: 1px solid #f0e6e3;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        .profile-card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+            background-color: #ffffff;
+        }
+
+        .btn-coral-save {
+            background: linear-gradient(135deg, #ff7f50 0%, #e86738 100%);
+            color: #ffffff !important;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 1.5rem;
+            box-shadow: 0 2px 8px rgba(255, 127, 80, 0.25);
+            transition: all 0.2s ease;
+        }
+
+        .btn-coral-save:hover {
+            background: linear-gradient(135deg, #e86738 0%, #d65426 100%);
+            box-shadow: 0 4px 14px rgba(255, 127, 80, 0.35);
+            color: #ffffff !important;
+        }
+
+        .profile-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            color: #475569;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+
+        .profile-nav-link:hover {
+            background-color: #fffaf8;
+            color: #ff7f50;
+        }
+
+        .profile-nav-link.active {
+            background-color: #fffaf8;
+            color: #ff7f50;
+            font-weight: 600;
+        }
+
+        .badge-coral-subtle {
+            background-color: #fff0ea;
+            color: #ff7f50;
+            border: 1px solid #ffdcd1;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none text-secondary">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/account}" class="text-decoration-none text-secondary">Tài khoản</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Thông tin cá nhân</li>
+    </ol>
+</nav>
+
+<div th:replace="~{fragments/components :: pageHeader('Thông tin cá nhân', 'Quản lý thông tin tài khoản và cập nhật hồ sơ cá nhân của bạn.')}"></div>
+
+<!-- Alert thông báo cập nhật thành công -->
+<div th:if="${param.success}" class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 mb-4" role="alert">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-success flex-shrink-0">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+    <div>
+        <strong>Thành công!</strong> Thông tin cá nhân của bạn đã được cập nhật thành công.
+    </div>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+</div>
+
+<div class="row g-4">
+    <!-- CỘT TRÁI: Thẻ hồ sơ tổng quan & điều hướng nhanh -->
+    <div class="col-lg-4">
+        <div class="profile-card text-center p-4 mb-4">
+            <div class="d-flex justify-content-center mb-3">
+                <div class="profile-avatar-circle"
+                     th:text="${accountUser.fullName != null and !accountUser.fullName.isBlank() ? #strings.substring(accountUser.fullName, 0, 1).toUpperCase() : 'U'}">
+                    U
+                </div>
+            </div>
+
+            <h2 class="h5 fw-bold mb-1" th:text="${accountUser.fullName != null and !accountUser.fullName.isBlank() ? accountUser.fullName : 'Chưa đặt tên'}">
+                Nguyễn Văn A
+            </h2>
+
+            <div class="text-muted small mb-2" th:text="${accountUser.email}">
+                email@example.com
+            </div>
+
+            <div class="d-flex justify-content-center gap-2 mb-3">
+                <span class="badge badge-coral-subtle px-2 py-1 rounded-pill"
+                      th:text="${accountUser.role != null ? accountUser.role.name : 'Khách hàng'}">
+                    CUSTOMER
+                </span>
+                <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill"
+                      th:if="${accountUser.isActive()}">
+                    Hoạt động
+                </span>
+            </div>
+
+            <hr class="my-3 text-secondary opacity-25">
+
+            <div class="text-start small text-muted">
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Tên đăng nhập:</span>
+                    <strong class="text-dark" th:text="${accountUser.userName != null ? accountUser.userName : 'Chưa thiết lập'}">user123</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Số điện thoại:</span>
+                    <strong class="text-dark" th:text="${accountUser.phone != null and !accountUser.phone.isBlank() ? accountUser.phone : 'Chưa cập nhật'}">0901234567</strong>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>Ngày tham gia:</span>
+                    <strong class="text-dark" th:text="${accountUser.createdAt != null ? #temporals.format(accountUser.createdAt, 'dd/MM/yyyy') : '---'}">01/01/2026</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu liên kết nhanh -->
+        <div class="profile-card p-3">
+            <div class="fw-semibold text-dark px-2 mb-2 small text-uppercase tracking-wider">Danh mục tài khoản</div>
+            <a th:href="@{/account}" class="profile-nav-link active">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Thông tin cá nhân</span>
+            </a>
+            <a th:href="@{/orders}" class="profile-nav-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                </svg>
+                <span>Đơn hàng của tôi</span>
+            </a>
+            <a th:href="@{/cart}" class="profile-nav-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                <span>Giỏ hàng</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- CỘT PHẢI: Form cập nhật thông tin -->
+    <div class="col-lg-8">
+        <div class="profile-card mb-4">
+            <div class="profile-card-header">
+                <h3 class="h5 fw-bold mb-1 text-dark">Chỉnh sửa thông tin</h3>
+                <p class="text-muted small mb-0">Cập nhật họ tên và số điện thoại liên hệ của bạn.</p>
+            </div>
+
+            <div class="p-4">
+                <form th:action="@{/account}" th:object="${updateAccountRequest}" method="post">
+                    <!-- Thông tin định danh cố định (Chỉ xem) -->
+                    <div class="row g-3 mb-3">
+                        <!-- Email (Cố định - Chỉ xem) -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-dark">Địa chỉ Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                        <polyline points="22,6 12,13 2,6"></polyline>
+                                    </svg>
+                                </span>
+                                <input type="text" class="form-control bg-light" aria-label="Email" th:value="${accountUser.email}" readonly disabled>
+                                <span class="input-group-text bg-light text-muted small">Cố định</span>
+                            </div>
+                        </div>
+
+                        <!-- Tên đăng nhập (Cố định - Chỉ xem) -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-dark">Tên đăng nhập (Username)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted">@</span>
+                                <input type="text" class="form-control bg-light" aria-label="Tên đăng nhập"
+                                       th:value="${accountUser.userName != null and !accountUser.userName.isBlank() ? accountUser.userName : 'Chưa thiết lập'}"
+                                       readonly disabled>
+                                <span class="input-group-text bg-light text-muted small">Cố định</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-text text-muted mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1 text-secondary">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        Email và Tên đăng nhập là các thông tin định danh bất biến của tài khoản, được khóa cố định và không thể thay đổi.
+                    </div>
+
+                    <hr class="my-3 text-secondary opacity-25">
+
+                    <!-- Các trường thông tin cho phép chỉnh sửa -->
+                    <div class="row g-3 mb-4">
+                        <!-- Họ và tên (Cho phép sửa) -->
+                        <div class="col-md-6">
+                            <label for="fullNameInput" class="form-label fw-semibold text-dark">
+                                Họ và tên <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" id="fullNameInput" class="form-control"
+                                   th:field="*{fullName}"
+                                   th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid' : ''"
+                                   placeholder="Nhập họ và tên đầy đủ của bạn" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">
+                                Họ và tên không hợp lệ
+                            </div>
+                        </div>
+
+                        <!-- Số điện thoại (Cho phép sửa) -->
+                        <div class="col-md-6">
+                            <label for="phoneInput" class="form-label fw-semibold text-dark">Số điện thoại</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white text-muted">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                    </svg>
+                                </span>
+                                <input type="text" id="phoneInput" class="form-control"
+                                       th:field="*{phone}"
+                                       th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid' : ''"
+                                       placeholder="Ví dụ: 0901234567">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}">
+                                    Số điện thoại không hợp lệ
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+                        <button type="submit" class="btn btn-coral-save d-inline-flex align-items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                <polyline points="7 3 7 8 15 8"></polyline>
+                            </svg>
+                            <span>Lưu thay đổi</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Sổ địa chỉ giao hàng (Nếu có) -->
+        <div class="profile-card" th:if="${addresses != null and !addresses.isEmpty()}">
+            <div class="profile-card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="h6 fw-bold mb-0 text-dark">Địa chỉ giao hàng đã lưu</h3>
+                    <small class="text-muted">Các địa chỉ dùng khi đặt hàng giao tận nơi</small>
+                </div>
+                <span class="badge bg-light text-secondary border" th:text="${#lists.size(addresses)} + ' địa chỉ'">1 địa chỉ</span>
+            </div>
+            <div class="p-3">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item px-2 py-3" th:each="addr : ${addresses}">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <div class="fw-semibold text-dark">
+                                <span th:text="${addr.receiverName}">Nguyễn Văn A</span>
+                                <span class="badge badge-coral-subtle ms-2" th:if="${addr.defaultAddress}">Mặc định</span>
+                            </div>
+                            <span class="small text-muted" th:text="${addr.receiverPhone}">0901234567</span>
+                        </div>
+                        <div class="small text-secondary" th:text="${addr.addressLine}">
+                            123 Đường ABC, Phường 1, Quận 1, TP. Hồ Chí Minh
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

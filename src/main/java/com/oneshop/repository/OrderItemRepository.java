@@ -3,15 +3,48 @@ package com.oneshop.repository;
 import com.oneshop.entity.OrderItem;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
+    /** Scalar lookup before taking the Order lock; never loads a stale Order into the persistence context. */
+    @Query("select oi.order.id as orderId, oi.order.user.id as userId from OrderItem oi where oi.id = :id")
+    Optional<ReviewKey> findReviewKey(@Param("id") Long id);
+
+    interface ReviewKey {
+        Long getOrderId();
+        Long getUserId();
+    }
+
+    @EntityGraph(attributePaths = {"order.user", "fulfillment.order", "fulfillment.store", "storeProduct.product", "storeProduct.store"})
+    @Query("select oi from OrderItem oi where oi.id = :id")
+    Optional<OrderItem> findForReview(@Param("id") Long id);
+
+    String RECEIVED = " from OrderItem oi join oi.order o join oi.fulfillment f join oi.storeProduct sp"
+            + " where o.user.id = :userId and f.order.id = o.id and f.store.id = sp.store.id"
+            + " and f.status = com.oneshop.entity.OrderFulfillmentStatus.COMPLETED"
+            + " and o.orderStatus <> com.oneshop.entity.OrderStatus.CANCELLED"
+            + " and o.paymentStatus = com.oneshop.entity.OrderPaymentStatus.PAID";
+
+    @EntityGraph(attributePaths = {"order.user", "fulfillment.order", "fulfillment.store", "storeProduct.product", "storeProduct.store"})
+    @Query("select oi" + RECEIVED + " and o.id = :orderId order by oi.id")
+    List<OrderItem> findReceivedReviewItems(@Param("userId") Long userId, @Param("orderId") Long orderId);
+
+    @EntityGraph(attributePaths = {"order.user", "fulfillment.order", "fulfillment.store", "storeProduct.product", "storeProduct.store"})
+    @Query("select oi" + RECEIVED + " and sp.product.id = :productId order by oi.id desc")
+    List<OrderItem> findReceivedReviewItemsForProduct(@Param("userId") Long userId,
+                                                    @Param("productId") Long productId, Pageable pageable);
+
     List<OrderItem> findByOrderId(Long orderId);
+
+    /** Item snapshots of Fulfillments (Staff queue/detail, customer detail), one query. */
+    List<OrderItem> findByFulfillmentIdInOrderByIdAsc(Collection<Long> fulfillmentIds);
 
     /** Item snapshots of several Orders in one query. */
     List<OrderItem> findByOrderIdInOrderByIdAsc(Collection<Long> orderIds);

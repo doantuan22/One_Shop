@@ -85,7 +85,7 @@ public class AuthServiceImpl implements AuthService {
         if (userRepository.existsByUserNameIgnoreCase(userName)) {
             throw new BadRequestException("userName", "Tên đăng nhập đã được sử dụng");
         }
-        // roles is a fixed lookup table seeded by database/04_seed_data.sql (CHECK limits it to 3 names)
+        // roles is a fixed lookup table seeded by database/02_seed.sql (CHECK limits it to 3 names)
         Role customerRole = roleRepository.findByName(RoleName.CUSTOMER)
                 .orElseThrow(() -> new IllegalStateException("Role CUSTOMER is missing: run the database scripts"));
 

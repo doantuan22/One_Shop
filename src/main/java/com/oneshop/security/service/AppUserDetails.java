@@ -12,14 +12,25 @@ import java.util.Collection;
 public class AppUserDetails extends User {
 
     private final Long userId;
+    private final String fullName;
 
     public AppUserDetails(Long userId, String email, String passwordHash, boolean enabled,
                           Collection<? extends GrantedAuthority> authorities) {
+        this(userId, email, null, passwordHash, enabled, authorities);
+    }
+
+    public AppUserDetails(Long userId, String email, String fullName, String passwordHash, boolean enabled,
+                          Collection<? extends GrantedAuthority> authorities) {
         super(email, passwordHash, enabled, true, true, true, authorities);
         this.userId = userId;
+        this.fullName = fullName;
     }
 
     public Long getUserId() {
         return userId;
+    }
+
+    public String getFullName() {
+        return fullName;
     }
 }

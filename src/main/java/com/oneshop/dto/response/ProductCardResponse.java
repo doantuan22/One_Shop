@@ -5,10 +5,9 @@ import java.math.BigDecimal;
 /**
  * A product card of the Client (home page, reusable by listings). Never carries an exact quantity (BR-15).
  *
- * @param storeProductId   the StoreProduct the "add to cart" button posts; {@code null} when no Store is selected
- *                         (whole-chain card: the customer opens the detail page to pick a Store)
- * @param price            price at the selected Store, or the lowest price among the Stores selling the SKU
- * @param fromPrice        {@code true} when {@code price} is the lowest of several Stores ("Từ X")
+ * @param storeProductId   null; adding to cart names the shared Product and never a StoreProduct
+ * @param price            one shared online price from Product.price
+ * @param fromPrice        always false in V3: there is no per-Store online price
  * @param inStock          in stock at the selected Store, or at at least one Store of the chain
  * @param inStockStoreCount Stores of the chain that have the SKU in stock (whole chain only, otherwise 0)
  */
@@ -19,13 +18,13 @@ public record ProductCardResponse(Long productId, Long storeProductId, String na
     public static ProductCardResponse from(CatalogItemResponse item) {
         ProductResponse product = item.product();
         StoreAvailabilityResponse atStore = item.atSelectedStore();
-        if (atStore != null) {
-            return new ProductCardResponse(product.id(), atStore.storeProductId(), product.name(), product.brandName(),
-                    product.categoryName(), product.imageUrl(), atStore.price(), false, atStore.inStock(), 0);
-        }
+        BigDecimal price = product.price();
         int inStockStores = (int) item.stores().stream().filter(StoreAvailabilityResponse::inStock).count();
-        return new ProductCardResponse(product.id(), null, product.name(), product.brandName(),
-                product.categoryName(), product.imageUrl(), item.lowestPrice(), !item.samePriceEverywhere(),
-                inStockStores > 0, inStockStores);
+        boolean inStock = atStore != null ? atStore.inStock() : (inStockStores > 0);
+        Long storeProductId = atStore != null ? atStore.storeProductId() : null;
+        int storeCount = atStore != null ? 0 : inStockStores;
+
+        return new ProductCardResponse(product.id(), storeProductId, product.name(), product.brandName(),
+                product.categoryName(), product.imageUrl(), price, false, inStock, storeCount);
     }
 }

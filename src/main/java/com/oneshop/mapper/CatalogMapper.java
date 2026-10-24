@@ -28,7 +28,7 @@ public class CatalogMapper {
     public AdminProductResponse toAdminResponse(Product product) {
         return new AdminProductResponse(product.getId(), product.getSku(), product.getName(), product.getDescription(),
                 product.getCategory().getId(), product.getCategory().getName(), product.getBrand().getId(),
-                product.getBrand().getName(), product.getStatus());
+                product.getBrand().getName(), product.getStatus(), product.getPrice(), product.getOriginalPrice());
     }
 
     public ProductImageResponse toResponse(ProductImage image) {

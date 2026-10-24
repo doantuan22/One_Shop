@@ -1,0 +1,14 @@
+{
+  "executedAt" : "2026-10-24T03:23:59.153235400Z",
+  "location" : "",
+  "route" : {
+    "method" : "login",
+    "verb" : "POST",
+    "path" : "/login",
+    "controller" : "com.oneshop.controller.client.AuthController"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/login",
+  "actual" : 403,
+  "expected" : 403
+}

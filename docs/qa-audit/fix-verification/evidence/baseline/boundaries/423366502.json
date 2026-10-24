@@ -1,0 +1,7 @@
+{
+  "request" : "/admin/inventory?page=abc",
+  "timestamp" : "2026-10-24T02:38:25.769677100Z",
+  "actor" : "admin@oneshop.vn",
+  "actual" : 400,
+  "expected" : "success/empty page or controlled 4xx; never 5xx"
+}

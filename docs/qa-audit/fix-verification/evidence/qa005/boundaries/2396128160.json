@@ -1,0 +1,7 @@
+{
+  "actor" : "guest",
+  "actual" : 200,
+  "expected" : "success/empty page or controlled 4xx; never 5xx",
+  "request" : "/products?page=107374181&q=qa-no-match-999",
+  "timestamp" : "2026-10-24T02:54:10.242115600Z"
+}

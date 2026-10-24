@@ -1,0 +1,321 @@
+{
+  "phase": "qa002",
+  "total": 39,
+  "counts": {
+    "PASS": 39
+  },
+  "cases": [
+    {
+      "suite": "com.oneshop.QaAuditRaceDatabaseIntegrationTest",
+      "test": "profileMustNotReactivateAnAccountDisabledDuringRequest()[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "3.139"
+    },
+    {
+      "suite": "com.oneshop.QaAuditRaceDatabaseIntegrationTest",
+      "test": "profileMustNotReactivateAnAccountDisabledDuringRequest()[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.41"
+    },
+    {
+      "suite": "com.oneshop.QaAuditRaceDatabaseIntegrationTest",
+      "test": "profileMustNotReactivateAnAccountDisabledDuringRequest()[3]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.337"
+    },
+    {
+      "suite": "com.oneshop.QaAuditRaceDatabaseIntegrationTest",
+      "test": "parallelPrimaryImageSelectionMustLeaveExactlyOnePrimary()[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.183"
+    },
+    {
+      "suite": "com.oneshop.QaAuditRaceDatabaseIntegrationTest",
+      "test": "parallelPrimaryImageSelectionMustLeaveExactlyOnePrimary()[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.128"
+    },
+    {
+      "suite": "com.oneshop.QaAuditRaceDatabaseIntegrationTest",
+      "test": "parallelPrimaryImageSelectionMustLeaveExactlyOnePrimary()[3]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.118"
+    },
+    {
+      "suite": "com.oneshop.QaAuditRaceDatabaseIntegrationTest",
+      "test": "profileMustNotRestoreAStaffRoleRevokedDuringRequest()[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.328"
+    },
+    {
+      "suite": "com.oneshop.QaAuditRaceDatabaseIntegrationTest",
+      "test": "profileMustNotRestoreAStaffRoleRevokedDuringRequest()[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.347"
+    },
+    {
+      "suite": "com.oneshop.QaAuditRaceDatabaseIntegrationTest",
+      "test": "profileMustNotRestoreAStaffRoleRevokedDuringRequest()[3]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.262"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "failedAfterCommitDeleteDoesNotUndoCommittedMetadata",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.178"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "deleteCommitDeletesAfterMetadataCommit(Target)[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.144"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "deleteCommitDeletesAfterMetadataCommit(Target)[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.101"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "deleteCommitDeletesAfterMetadataCommit(Target)[3]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.119"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "uploadRollbackCompensatesAfterSuccessfulFlush(Target)[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.123"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "uploadRollbackCompensatesAfterSuccessfulFlush(Target)[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.087"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "uploadRollbackCompensatesAfterSuccessfulFlush(Target)[3]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.089"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "replaceCommitDeletesOldOnlyAfterCommit(Target)[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.089"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "replaceCommitDeletesOldOnlyAfterCommit(Target)[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.091"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "deleteRollbackPreservesMetadataAndFile(Target)[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.093"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "deleteRollbackPreservesMetadataAndFile(Target)[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.083"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "deleteRollbackPreservesMetadataAndFile(Target)[3]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.084"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "sharedFileIsNeverDeletedWhileAnotherValidRecordReferencesIt",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.103"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "uploadCommitKeepsReferencedFile(Target)[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.095"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "uploadCommitKeepsReferencedFile(Target)[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.08"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "uploadCommitKeepsReferencedFile(Target)[3]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.084"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "failedRollbackCompensationIsJournaledAndRetryIsIdempotent",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.101"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "cleanupRetryEndpointRequiresAdminAndCsrf",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.601"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "replaceRollbackKeepsOldAndCleansNew(Target)[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.081"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "replaceRollbackKeepsOldAndCleansNew(Target)[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.086"
+    },
+    {
+      "suite": "com.oneshop.QaFixImageLifecycleDatabaseIntegrationTest",
+      "test": "failedMetadataSaveAfterUploadRollsBackAndCleansNew",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.082"
+    },
+    {
+      "suite": "com.oneshop.QaFixPrimaryImageDatabaseIntegrationTest",
+      "test": "filteredUniqueIndexRejectsDuplicateEvenOutsideService",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.104"
+    },
+    {
+      "suite": "com.oneshop.QaFixPrimaryImageDatabaseIntegrationTest",
+      "test": "actualAdminHttpActionChecksOwnershipAndSelectsPrimary",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.357"
+    },
+    {
+      "suite": "com.oneshop.QaFixPrimaryImageDatabaseIntegrationTest",
+      "test": "otherProductsAndMissingImagesCannotBeSelected",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.085"
+    },
+    {
+      "suite": "com.oneshop.QaFixPrimaryImageDatabaseIntegrationTest",
+      "test": "repeatedSelectionAndDeletePrimaryPromoteOneRemainingImage",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.115"
+    },
+    {
+      "suite": "com.oneshop.QaFixPrimaryImageDatabaseIntegrationTest",
+      "test": "sixIndependentTransactionsSelectPrimaryWithoutDeadlockOrDuplicate()[1]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.165"
+    },
+    {
+      "suite": "com.oneshop.QaFixPrimaryImageDatabaseIntegrationTest",
+      "test": "sixIndependentTransactionsSelectPrimaryWithoutDeadlockOrDuplicate()[2]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.143"
+    },
+    {
+      "suite": "com.oneshop.QaFixPrimaryImageDatabaseIntegrationTest",
+      "test": "sixIndependentTransactionsSelectPrimaryWithoutDeadlockOrDuplicate()[3]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.14"
+    },
+    {
+      "suite": "com.oneshop.QaFixPrimaryImageDatabaseIntegrationTest",
+      "test": "sixIndependentTransactionsSelectPrimaryWithoutDeadlockOrDuplicate()[4]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.175"
+    },
+    {
+      "suite": "com.oneshop.QaFixPrimaryImageDatabaseIntegrationTest",
+      "test": "sixIndependentTransactionsSelectPrimaryWithoutDeadlockOrDuplicate()[5]",
+      "status": "PASS",
+      "message": "",
+      "timestamp": null,
+      "seconds": "0.158"
+    }
+  ]
+}

@@ -5,5 +5,11 @@ import java.time.LocalDateTime;
 /** A review of a Store the Staff is assigned to, with the Order it came from and the current reply, if any. */
 public record StaffReviewResponse(Long id, String customerName, Long productId, String sku, String productName,
                                   int rating, String comment, LocalDateTime createdAt, Long orderId, String storeName,
-                                  String reply, LocalDateTime repliedAt) {
+                                  String reply, LocalDateTime repliedAt, Long orderItemId, Long fulfillmentId) {
+    public StaffReviewResponse(Long id, String customerName, Long productId, String sku, String productName,
+                               int rating, String comment, LocalDateTime createdAt, Long orderId, String storeName,
+                               String reply, LocalDateTime repliedAt) {
+        this(id, customerName, productId, sku, productName, rating, comment, createdAt, orderId, storeName,
+                reply, repliedAt, null, null);
+    }
 }

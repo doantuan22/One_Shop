@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "uploadLogo",
+    "controller" : "com.oneshop.controller.admin.AdminBrandController",
+    "path" : "/admin/brands/{id}/logo"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:08.815544400Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/admin/brands/999999999/logo",
+  "kind" : "anonymous guard/input probe"
+}

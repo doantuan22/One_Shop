@@ -90,6 +90,10 @@ public interface ProductService {
 
     Page<AdminProductResponse> searchAllProducts(String keyword, Pageable pageable);
 
+    /** Admin product console search: text + optional Category / Brand / status (null = no filter). */
+    Page<AdminProductResponse> searchAllProducts(String keyword, Long categoryId, Long brandId,
+            com.oneshop.entity.ProductStatus status, Pageable pageable);
+
     /** Products that can be put on sale at a Store (everything except INACTIVE), for the StoreProduct form. */
     List<AdminProductResponse> getAssignableProducts();
 

@@ -1,5 +1,12 @@
 package com.oneshop.service.impl;
 
+import java.time.LocalDateTime;
+import com.oneshop.repository.OrderFulfillmentStatusHistoryRepository;
+import com.oneshop.repository.OrderFulfillmentRepository;
+import com.oneshop.entity.OrderFulfillmentStatusHistory;
+import com.oneshop.entity.OrderFulfillmentStatus;
+import com.oneshop.entity.OrderFulfillment;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.oneshop.entity.Order;
 import com.oneshop.entity.OrderStatus;
 import com.oneshop.entity.OrderStatusHistory;
@@ -76,7 +83,53 @@ public class OrderServiceImpl implements OrderService {
         writeStatusAndHistory(order, OrderStatus.CANCELLED, customer, "Khách hàng hủy đơn trước khi chuẩn bị hàng");
     }
 
+    /**
+     * Setter injection so the 3-argument constructor stays usable. A cancelled Order must not leave live
+     * Fulfillments behind: they are cancelled in the same transaction. The complete cancellation workflow
+     * (races, refund simulation, timeout) is BE-05; this keeps the existing primitives consistent meanwhile.
+     */
+    private OrderFulfillmentRepository fulfillmentRepository;
+    private OrderFulfillmentStatusHistoryRepository fulfillmentHistoryRepository;
+
+    @Autowired
+    void setFulfillmentRepositories(OrderFulfillmentRepository fulfillmentRepository,
+                                    OrderFulfillmentStatusHistoryRepository fulfillmentHistoryRepository) {
+        this.fulfillmentRepository = fulfillmentRepository;
+        this.fulfillmentHistoryRepository = fulfillmentHistoryRepository;
+    }
+
+    private void cancelFulfillments(Order order, User actor, String note) {
+        if (fulfillmentRepository == null || fulfillmentHistoryRepository == null || order.getId() == null) {
+            return;
+        }
+        for (OrderFulfillment fulfillment : fulfillmentRepository.findByOrderId(order.getId())) {
+            if (fulfillment.getStatus() == OrderFulfillmentStatus.CANCELLED) {
+                continue;
+            }
+            if (fulfillment.getStatus() != OrderFulfillmentStatus.CONFIRMED) {
+                // preparation has begun in some Store: the whole-Order cancellation must not go through
+                throw new BadRequestException("Có phần hàng đã bắt đầu được chuẩn bị; không thể hủy đơn.");
+            }
+            OrderFulfillmentStatusHistory entry = new OrderFulfillmentStatusHistory();
+            entry.setFulfillment(fulfillment);
+            entry.setOldStatus(fulfillment.getStatus());
+            entry.setNewStatus(OrderFulfillmentStatus.CANCELLED);
+            entry.setChangedBy(actor);
+            entry.setNote(note);
+            fulfillment.setStatus(OrderFulfillmentStatus.CANCELLED);
+            fulfillment.setCancelledAt(LocalDateTime.now().withNano(0));
+            fulfillment.setCancelReason(note);
+            fulfillmentHistoryRepository.save(entry);
+        }
+    }
+
     private void writeStatusAndHistory(Order order, OrderStatus target, User actor, String note) {
+        // BE-07: the retained V2 primitive must never bypass the V3 Fulfillment/payment orchestration.
+        // Spring always injects this repository; constructor-only legacy unit fixtures remain compilable.
+        if (fulfillmentRepository != null && order.getId() != null
+                && fulfillmentRepository.countByOrderId(order.getId()) > 0) {
+            throw new BadRequestException("Đơn V3 phải được xử lý qua phần giao hoặc luồng thanh toán/hủy đã xác thực.");
+        }
         if (note != null && note.length() > 500) {
             throw new BadRequestException("Ghi chú lịch sử không được vượt quá 500 ký tự.");
         }
@@ -89,6 +142,9 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderStatus(target);
         orderRepository.saveAndFlush(order);
         historyRepository.save(history); // Auditing supplies changed_at; commit/rollback is shared with the Order.
+        if (target == OrderStatus.CANCELLED) {
+            cancelFulfillments(order, actor, note);
+        }
     }
 
     private static void requireOnline(Order order) {

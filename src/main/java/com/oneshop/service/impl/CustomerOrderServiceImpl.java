@@ -5,9 +5,11 @@ import com.oneshop.entity.RoleName;
 import com.oneshop.entity.User;
 import com.oneshop.entity.OrderStatus;
 import com.oneshop.exception.BadRequestException;
+import com.oneshop.exception.FulfillmentConflictException;
 import com.oneshop.exception.ResourceNotFoundException;
 import com.oneshop.repository.*;
 import com.oneshop.service.*;
+import com.oneshop.service.payment.CustomerOrderCancellationService;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -44,17 +46,41 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return views.detail(order, true, null);
     }
 
+    private CustomerOrderCancellationService cancellationService;
+
+    /** V3-BE-05: the shared cancel-and-restore, refund simulation and payment-race handling. */
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    void setCancellationService(CustomerOrderCancellationService cancellationService) {
+        this.cancellationService = cancellationService;
+    }
+
     @Override
     @Transactional
     @PreAuthorize("hasRole('CUSTOMER') and #email == authentication.name")
     public void cancelOrder(String email, Long id) {
         User customer = requireCustomer(email);
+        if (cancellationService != null) {
+            cancellationService.cancel(customer, id);
+            return;
+        }
         if (id == null) throw new ResourceNotFoundException("Không tìm thấy đơn hàng của bạn.");
         // PK-only Order lock, identical lock order to payment/fulfillment. Scope is checked before child reads/writes.
         var order = orders.findByIdForUpdate(id)
                 .filter(o -> o.getUser().getId().equals(customer.getId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đơn hàng của bạn."));
         if (order.getOrderStatus() == OrderStatus.CANCELLED) return;
+        if (order.getOrderStatus() == OrderStatus.PROCESSING || order.getOrderStatus() == OrderStatus.SHIPPING
+                || order.getOrderStatus() == OrderStatus.PARTIALLY_COMPLETED
+                || order.getOrderStatus() == OrderStatus.COMPLETED) {
+            // some Store has already started (or finished) its part: never cancel half an Order
+            throw new FulfillmentConflictException(FulfillmentConflictException.ORDER_ALREADY_PREPARING,
+                    "Cửa hàng đã bắt đầu xử lý đơn hàng nên không thể hủy.");
+        }
+        if (order.getOrderStatus() == OrderStatus.NEEDS_ATTENTION) {
+            // an exception (failed delivery or an unconfirmed payment) is waiting for an administrator (BE-05)
+            throw new FulfillmentConflictException(FulfillmentConflictException.ORDER_NEEDS_ATTENTION,
+                    "Đơn hàng đang chờ quản trị viên xử lý nên chưa thể hủy.");
+        }
         if (!policy.canCustomerCancel(order.getOrderStatus(), order.getFulfillmentType(),
                 order.getPaymentMethod(), order.getPaymentStatus())) {
             throw new BadRequestException("Chỉ hủy đơn chưa thanh toán, trước khi cửa hàng chuẩn bị hàng.");

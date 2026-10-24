@@ -1,142 +1,92 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <title>Điều chỉnh tồn kho</title>
-    <style>
-        .os-stock-adjust {
-            --adjust-coral: #FF7F50;
-            --adjust-dark: #e86738;
-            --adjust-soft: #fff5f2;
-            --adjust-border: #ffd5c7;
-        }
-
-        .os-stock-adjust .os-back {
-            border-color: var(--adjust-border);
-            color: var(--adjust-dark);
-            background: #fff;
-            border-radius: 10px;
-            padding: 9px 16px;
-            font-weight: 600;
-        }
-
-        .os-stock-adjust .os-back:hover {
-            background: var(--adjust-soft);
-            border-color: var(--adjust-coral);
-        }
-
-        .os-stock-adjust .os-product-info {
-            background: linear-gradient(135deg, #fff5f2, #fff);
-            border: 1px solid var(--adjust-border);
-            border-radius: 16px;
-            padding: 22px;
-            margin-bottom: 20px;
-        }
-
-        .os-stock-adjust .os-product-info h2 {
-            color: #bf360c;
-            font-weight: 800;
-        }
-
-        .os-stock-adjust .os-current-count strong {
-            color: var(--adjust-dark);
-            font-size: 1.5rem;
-            font-weight: 800;
-        }
-
-        .os-stock-adjust .os-form-card {
-            padding: 28px;
-            border: 1px solid var(--adjust-border);
-            border-radius: 16px;
-            background: #fff;
-            box-shadow: 0 6px 24px rgba(255, 127, 80, .07);
-        }
-
-        .os-stock-adjust .form-label {
-            font-weight: 700;
-            color: #2c3038;
-        }
-
-        .os-stock-adjust .form-control {
-            border-radius: 10px;
-            border-color: #f3e5df;
-            padding: 12px 14px;
-        }
-
-        .os-stock-adjust .form-control:focus {
-            border-color: var(--adjust-coral);
-            box-shadow: 0 0 0 .2rem rgba(255, 127, 80, .16);
-        }
-
-        .os-stock-adjust .os-form-card .btn-primary {
-            background: var(--adjust-coral);
-            border-color: var(--adjust-coral);
-            border-radius: 10px;
-            font-weight: 700;
-            padding: 11px 22px;
-        }
-
-        .os-stock-adjust .os-form-card .btn-primary:hover {
-            background: var(--adjust-dark);
-            border-color: var(--adjust-dark);
-        }
-
-        @media (max-width: 575.98px) {
-
-            .os-stock-adjust .os-product-info,
-            .os-stock-adjust .os-form-card {
-                padding: 16px;
-            }
-
-            .os-stock-adjust .os-form-card .btn-primary {
-                width: 100%;
-            }
-        }
-    </style>
 </head>
-
 <body>
-    <div class="os-stock-adjust">
-
-        <div
-            th:replace="~{fragments/components :: pageHeader('Điều chỉnh tồn kho', 'Ghi nhận tồn thực tế và lý do điều chỉnh.')}">
+<div class="os-page-header mb-4">
+    <div>
+        <h1 class="h3 mb-1">Điều chỉnh tồn kho</h1>
+        <p class="text-secondary mb-0">Ghi nhận kết quả kiểm kê thực tế của một SKU và ngân lý do vào nhật ký biến động.
+            Khi số lượng không thay đổi, hệ thống không ghi biến động mới.</p>
+    </div>
+    <div class="os-page-header__actions">
+        <div class="btn-group">
+            <a class="btn btn-outline-secondary btn-sm" th:href="@{/staff/stock}">Tồn kho chi nhánh</a>
+            <a class="btn btn-outline-primary btn-sm" th:href="@{/staff/inventory-history/{id}(id=${stock.storeProductId})}">Lịch sử SKU</a>
         </div>
+    </div>
+</div>
 
-        <a class="btn btn-outline-secondary mb-3 os-back" th:href="@{/staff/stock}">Tồn kho chi nhánh</a>
+<div class="row g-4">
+    <div class="col-12 col-lg-5">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5 fw-semibold mb-1" th:text="${stock.productName}">Tên sản phẩm</h2>
+                <div class="text-secondary small">
+                    <span class="os-store-chip me-2" th:text="${stock.storeName}">OneShop Thủ Đức</span>
+                    <span th:text="${stock.sku}">OS-SKU-001</span>
+                </div>
+                <hr>
+                <div class="d-flex gap-4">
+                    <div>
+                        <div class="text-secondary small">Tồn hiện tại</div>
+                        <strong class="fs-2" id="current-quantity" th:text="${stock.quantity}">20</strong>
+                    </div>
+                    <div>
+                        <div class="text-secondary small">Giá online chung</div>
+                        <strong class="fs-5"><span th:replace="~{fragments/components :: price(${stock.price})}"></span></strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <section class="os-product-info">
-            <h2 class="h5" th:text="${stock.productName}"></h2>
-            <p>
-                <span th:text="${stock.sku}"></span> ·
-                <span th:text="${stock.storeName}"></span>
-            </p>
-            <p class="os-current-count mb-0">
-                Tồn hiện tại:
-                <strong id="current-quantity" th:text="${stock.quantity}"></strong>
-            </p>
-        </section>
+    <div class="col-12 col-lg-7">
+        <form id="adjust-form" class="card shadow-sm"
+              th:action="@{/staff/stock/{id}/adjust(id=${stock.storeProductId})}" th:object="${form}" method="post"
+              th:attr="data-current=${stock.quantity}">
+            <div class="card-body">
+                <label class="form-label" for="newQuantity">Số lượng kiểm đếm thực tế</label>
+                <input id="newQuantity" type="number" class="form-control" th:field="*{newQuantity}" min="0"
+                       max="2147483647" required data-qty-input>
+                <p class="text-danger small mb-0" th:if="${#fields.hasErrors('newQuantity')}"
+                   th:errors="*{newQuantity}"></p>
 
-        <form class="card card-body os-form-card" th:action="@{/staff/stock/{id}/adjust(id=${stock.storeProductId})}"
-            th:object="${form}" method="post">
+                <div class="os-qty-preview mt-2" data-qty-preview th:attr="data-qty-before=${stock.quantity}">
+                    Tồn sau khi lưu: <strong data-qty-after th:text="${stock.quantity}">20</strong>
+                    <span class="badge ms-1" data-qty-delta>không đổi</span>
+                    <div class="form-text d-none" data-qty-warned
+                         data-qty-warned-text="Số lượng không thay đổi: hệ thống sẽ không ghi biến động mới."></div>
+                </div>
 
-            <label for="newQuantity" class="form-label">Số lượng tồn thực tế</label>
-            <input id="newQuantity" type="number" class="form-control" th:field="*{newQuantity}" min="0"
-                max="2147483647" required>
-            <p class="text-danger small" th:if="${#fields.hasErrors('newQuantity')}" th:errors="*{newQuantity}"></p>
+                <label class="form-label mt-3" for="note">Lý do điều chỉnh</label>
+                <textarea id="note" class="form-control" th:field="*{note}" maxlength="500" required rows="3"></textarea>
+                <p class="text-danger small mb-0" th:if="${#fields.hasErrors('note')}" th:errors="*{note}"></p>
+                <div class="form-text">Lý do (5–500 ký tự) lưu vào nhật ký biến động và hiện trên lịch sử của SKU.</div>
 
-            <label for="note" class="form-label mt-3">Lý do điều chỉnh</label>
-            <textarea id="note" class="form-control" th:field="*{note}" maxlength="500" required rows="3"></textarea>
-            <p class="text-danger small" th:if="${#fields.hasErrors('note')}" th:errors="*{note}"></p>
-
-            <p class="small text-secondary mt-3">
-                Nhập số lượng sau khi kiểm đếm. Khi số lượng không đổi, hệ thống không ghi biến động mới.
-            </p>
-
-            <button class="btn btn-primary align-self-start" type="submit">
-                Lưu điều chỉnh
-            </button>
+                <button class="btn btn-primary mt-3" type="submit">Lưu điều chỉnh</button>
+                <div class="form-text">Lưu điều chỉnh sẽ ghi một biến động tồn, không thể sửa lại.</div>
+            </div>
         </form>
     </div>
-</body>
+</div>
 
+<script>
+    (function () {
+        var form = document.getElementById('adjust-form');
+        if (!form) return;
+        var current = parseInt(form.getAttribute('data-current'), 10) || 0;
+        var input = document.getElementById('newQuantity');
+        form.addEventListener('submit', function (event) {
+            var n = parseInt(input.value, 10);
+            var d = isNaN(n) ? null : n - current;
+            if (d !== null && d !== 0 && !window.confirm('Ghi nhận tồn kho từ ' + current + ' thành ' + n +
+                    ' (' + (d > 0 ? '+' + d : d) + ')?')) {
+                event.preventDefault();
+            }
+        });
+    })();
+</script>
+</body>
 </html>

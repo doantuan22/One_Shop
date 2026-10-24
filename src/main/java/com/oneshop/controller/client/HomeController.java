@@ -11,12 +11,10 @@ import com.oneshop.service.CloudinaryService;
 import com.oneshop.service.ProductService;
 import com.oneshop.service.StoreProductService;
 import com.oneshop.service.StoreService;
-import com.oneshop.web.SelectedStoreInterceptor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 
 import java.time.Clock;
 import java.time.temporal.ChronoUnit;
@@ -47,14 +45,12 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(@RequestAttribute(name = SelectedStoreInterceptor.SELECTED_STORE, required = false)
-                       StoreResponse selectedStore, Model model) {
+    public String home(Model model) {
         List<HomeCategoryTile> categories = productService.getActiveCategories().stream()
                 .map(HomeController::tile).toList();
 
-        Long storeId = selectedStore == null ? null : selectedStore.id();
         List<ProductCardResponse> products = storeProductService
-                .getRandomSellable(storeId, PRODUCTS, seed(storeId)).stream()
+                .getRandomSellable(null, PRODUCTS, seed(null)).stream()
                 .map(ProductCardResponse::from).toList();
 
         Map<Long, Long> counts = productService.countVisibleProductsByBrand();

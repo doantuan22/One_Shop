@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Xử lý thanh toán đơn hàng</title>
+</head>
+<body>
+<div class="os-admin-payment-case" th:with="c=${paymentCase.summary}">
+    <a class="btn btn-outline-secondary mb-3" th:href="@{/admin/payments}">Danh sách thanh toán</a>
+
+    <h1 class="h3" th:text="'Thanh toán đơn #' + ${c.orderId}"></h1>
+    <p class="text-secondary" th:text="${c.customerName} + ' · ' + ${c.customerEmail}"></p>
+
+    <div class="alert alert-info" th:if="${param.result != null}" id="payment-result">
+        Kết quả xử lý: <strong th:text="${param.result[0]}"></strong>
+    </div>
+    <div class="alert alert-info" th:if="${param.refund != null}" id="refund-result">
+        Hoàn tiền mô phỏng: <strong th:text="${param.refund[0]}"></strong>
+    </div>
+    <div class="alert alert-warning" th:unless="${paymentCase.gatewayEnabled}">
+        Cổng thanh toán mô phỏng đang tắt trong môi trường này: không thể ghi nhận kết quả mô phỏng.
+    </div>
+
+    <dl class="row">
+        <dt class="col-sm-4">Phân loại thanh toán</dt>
+        <dd class="col-sm-8" id="case-category"><span th:replace="~{fragments/components :: paymentCategory(${c.category})}"></span>
+            <span class="small text-secondary d-block" th:if="${c.category.name() == 'RECONCILING'}">Kết quả chưa xác định nhưng còn trong hạn thanh toán: chưa cần quản trị viên can thiệp.</span>
+            <span class="small text-secondary d-block" th:if="${c.category.name() == 'ATTENTION'}">Quá hạn, ngoại lệ hoặc hoàn tiền mô phỏng chưa xong: cần quản trị viên đối soát lại.</span></dd>
+        <dt class="col-sm-4" th:if="${#strings.contains(paymentCase.partStatuses.values().toString(), 'FAILED')}">Giao hàng thất bại</dt>
+        <dd class="col-sm-8" th:if="${#strings.contains(paymentCase.partStatuses.values().toString(), 'FAILED')}" id="case-delivery-failure">
+            Đơn có phần giao không thành công. Đây là ngoại lệ giao hàng, không phải lỗi thanh toán:
+            <a th:href="@{/admin/orders/{id}(id=${c.orderId})}">xử lý (giao lại / xác nhận không thể giao) ở chi tiết đơn</a>.
+        </dd>
+        <dt class="col-sm-4">Trạng thái đơn</dt>
+        <dd class="col-sm-8" id="case-order-status" th:attr="data-status=${c.orderStatus}">
+            <span th:replace="~{staff/delivery/fragments :: state(${c.orderStatus})}"></span>
+        </dd>
+        <dt class="col-sm-4">Trạng thái thanh toán</dt>
+        <dd class="col-sm-8" id="case-payment-status" th:attr="data-status=${c.paymentStatus}">
+            <span th:replace="~{staff/delivery/fragments :: payment(${c.paymentStatus})}"></span>
+        </dd>
+        <dt class="col-sm-4">Cổng mô phỏng trả lời</dt>
+        <dd class="col-sm-8" id="case-verification"><span th:replace="~{fragments/components :: gatewayAnswer(${c.verification})}"></span></dd>
+        <dt class="col-sm-4">Hạn thanh toán</dt>
+        <dd class="col-sm-8" th:text="${c.paymentDeadline != null} ? ${#temporals.format(c.paymentDeadline, 'dd/MM/yyyy HH:mm:ss')} : '—'"></dd>
+        <dt class="col-sm-4">Cửa sổ đối soát đến</dt>
+        <dd class="col-sm-8" th:text="${c.reconciliationDeadline != null} ? ${#temporals.format(c.reconciliationDeadline, 'dd/MM/yyyy HH:mm:ss')} : '—'"></dd>
+        <dt class="col-sm-4">Tổng đơn</dt>
+        <dd class="col-sm-8"><span th:replace="~{fragments/components :: price(${c.totalAmount})}"></span></dd>
+    </dl>
+
+    <div th:replace="~{orders/fragments :: refundSection(${refund})}"></div>
+
+    <h2 class="h5">Các lần thanh toán (cổng mô phỏng)</h2>
+    <div class="table-responsive">
+        <table class="table">
+            <thead><tr><th>#</th><th>Trạng thái</th><th>Sổ cổng</th><th>Mã giao dịch</th><th>Số tiền</th><th>Ghi nhận lúc</th><th>Hoàn tiền (mô phỏng)</th></tr></thead>
+            <tbody id="payment-attempts">
+            <tr th:each="a : ${paymentCase.attempts}" th:attr="data-payment-id=${a.paymentId},data-ledger=${a.ledgerState}">
+                <td th:text="${a.paymentId}"></td>
+                <td><span th:replace="~{fragments/components :: paymentRecordStatus(${a.status})}"></span></td>
+                <td th:text="${a.ledgerState}"></td>
+                <td class="font-monospace" th:text="${a.reference}"></td>
+                <td><span th:replace="~{fragments/components :: price(${a.amount})}"></span></td>
+                <td th:text="${a.paidAt != null} ? ${#temporals.format(a.paidAt, 'dd/MM/yyyy HH:mm:ss')} : '—'"></td>
+                <td>
+                    <span th:replace="~{fragments/components :: refundStatus(${a.refundStatus})}"></span>
+                    <span class="small text-secondary" th:if="${a.refundedAt != null}"
+                          th:text="' · ' + ${#temporals.format(a.refundedAt, 'dd/MM/yyyy HH:mm')}"></span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="h5">Các phần giao</h2>
+    <ul id="payment-case-parts">
+        <li th:each="p : ${paymentCase.partStatuses}" th:attr="data-part-id=${p.key}">
+            <span th:text="'Phần giao #' + ${p.key} + ': '"></span><span th:replace="~{staff/fulfillments/fragments :: status(${p.value})}"></span></li>
+    </ul>
+
+    <div class="card card-body mb-3" id="payment-case-actions">
+        <form method="post" th:if="${paymentCase.canRecheck}" th:action="@{/admin/payments/{id}/recheck(id=${c.orderId})}"
+              class="mb-3">
+            <p class="small text-secondary">Hỏi lại cổng thanh toán và áp dụng kết quả có bằng chứng. Không có thao tác nào cho phép tự chọn trạng thái.</p>
+            <button class="btn btn-primary" type="submit" id="action-recheck">Đối soát lại</button>
+        </form>
+        <div th:if="${paymentCase.canSettleGateway}" class="mb-3" id="gateway-console">
+            <p class="small text-secondary">Ghi nhận kết quả phản hồi của cổng thanh toán (mô phỏng) cho lần thanh toán chưa xác định.</p>
+            <form method="post" class="d-inline" th:action="@{/admin/payments/{id}/gateway(id=${c.orderId})}">
+                <input type="hidden" name="answer" value="COLLECTED">
+                <button class="btn btn-outline-success" type="submit" id="action-gateway-collected">Cổng xác nhận ĐÃ thu</button>
+            </form>
+            <form method="post" class="d-inline" th:action="@{/admin/payments/{id}/gateway(id=${c.orderId})}">
+                <input type="hidden" name="answer" value="NOT_COLLECTED">
+                <button class="btn btn-outline-danger" type="submit" id="action-gateway-not-collected">Cổng xác nhận KHÔNG thu</button>
+            </form>
+        </div>
+        <form method="post" th:if="${paymentCase.canRetryRefund}" th:action="@{/admin/payments/{id}/refund(id=${c.orderId})}">
+            <p class="small text-secondary">Hoàn tiền mô phỏng toàn phần cho khoản đã thu. Không hoàn một phần.</p>
+            <button class="btn btn-outline-primary" type="submit" id="action-refund-retry">Thử lại hoàn tiền mô phỏng</button>
+        </form>
+        <p class="text-secondary mb-0"
+           th:unless="${paymentCase.canRecheck or paymentCase.canSettleGateway or paymentCase.canRetryRefund}">
+            Không có thao tác thanh toán nào cho đơn này.
+        </p>
+    </div>
+
+    <h2 class="h5">Lịch sử trạng thái đơn</h2>
+    <ol class="list-group list-group-numbered" id="payment-case-history">
+        <li class="list-group-item" th:each="h : ${paymentCase.detail.history}">
+            <span th:if="${h.oldStatus != null}"><span th:replace="~{staff/delivery/fragments :: state(${h.oldStatus})}"></span> → </span>
+            <span th:replace="~{staff/delivery/fragments :: state(${h.newStatus})}"></span>
+            <div class="small"><span th:text="${h.actorName}"></span> ·
+                <span th:text="${#temporals.format(h.changedAt, 'dd/MM/yyyy HH:mm:ss')}"></span></div>
+            <div class="small text-secondary" th:if="${h.note}" th:text="${h.note}"></div>
+        </li>
+    </ol>
+</div>
+</body>
+</html>

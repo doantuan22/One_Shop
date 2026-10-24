@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-/**
- * Admin: Brand list with its create/edit form on one page, plus the logo (uploaded to Cloudinary; the database keeps
- * its URL and public id). Brands are hidden by status, never deleted.
- */
+/** Admin: Brand list and create/edit form, plus a separate logo upload action. */
 @Controller
 @RequestMapping("/admin/brands")
 public class AdminBrandController {

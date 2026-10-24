@@ -1,0 +1,7 @@
+{
+  "files" : [ "qa-fix/44312773-f660-4fcb-945a-51ef151e7d89" ],
+  "tasks" : [ ],
+  "database" : "oneshop_fix_20261024_test",
+  "timestamp" : "2026-10-24T03:09:49.668603100Z",
+  "scenario" : "replace-commit-CATEGORY"
+}

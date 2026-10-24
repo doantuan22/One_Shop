@@ -16,17 +16,42 @@
         <dt class="col-sm-4">Trạng thái thanh toán</dt>
         <dd class="col-sm-8" id="payment-order-status" th:attr="data-status=${paymentOrder.paymentStatus}" th:switch="${paymentOrder.paymentStatus.name()}">
             <span th:case="'UNPAID'">Chưa thanh toán</span><span th:case="'PAID'">Đã thanh toán</span><span th:case="'FAILED'">Thanh toán thất bại</span>
+            <span th:case="'REFUNDED'">Đã hoàn tiền (mô phỏng)</span>
         </dd>
         <dt class="col-sm-4">Trạng thái đơn hàng</dt>
         <dd class="col-sm-8" id="payment-order-state" th:attr="data-status=${paymentOrder.orderStatus}" th:switch="${paymentOrder.orderStatus.name()}">
             <span th:case="'PENDING_PAYMENT'">Chờ thanh toán</span><span th:case="'CONFIRMED'">Đã xác nhận</span>
-            <span th:case="'CANCELLED'">Đã hủy</span><span th:case="*" th:text="${paymentOrder.orderStatus}"></span>
+            <span th:case="'CANCELLED'">Đã hủy</span>
+            <span th:case="'NEEDS_ATTENTION'">Đang chờ quản trị viên xử lý</span>
+            <span th:case="*" th:text="${paymentOrder.orderStatus}"></span>
         </dd>
     </dl>
 </div></div>
 <div class="alert alert-info" th:if="${paymentOrder.paymentMethod.name() == 'ONLINE'}">
-    Đây là thanh toán trực tuyến mô phỏng, không thu tiền thật. Chọn kết quả để kiểm tra luồng thanh toán.
-    Nếu thanh toán thất bại, đơn hàng sẽ bị hủy. Bạn có thể đặt đơn mới để mua lại.
+    Đây là thanh toán trực tuyến mô phỏng, không thu tiền thật. Kết quả thanh toán chỉ được ghi nhận khi hệ thống
+    xác minh qua cổng thanh toán mô phỏng; bấm nút trên trình duyệt không làm thay đổi trạng thái thanh toán.
+</div>
+<div class="alert alert-warning" id="payment-deadline" th:if="${paymentOrder.paymentDeadline != null and paymentOrder.orderStatus.name() == 'PENDING_PAYMENT'}">
+    Hạn thanh toán:
+    <strong th:text="${#temporals.format(paymentOrder.paymentDeadline, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:15</strong>
+    (15 phút kể từ lúc đặt hàng, không gia hạn).
+    <span th:if="${paymentOrder.expired}">Đơn đã quá hạn thanh toán.</span>
+</div>
+<div class="alert alert-secondary" id="payment-outcome" th:if="${param.outcome != null}" th:switch="${param.outcome[0]}">
+    <span th:case="'CONFIRMED'">Cổng thanh toán mô phỏng xác nhận đã thu. Đơn hàng đã được xác nhận.</span>
+    <span th:case="'CANCELLED_PAYMENT_FAILED'">Thanh toán thất bại. Đơn hàng đã được hủy và tồn kho đã hoàn lại; vui lòng đặt hàng mới.</span>
+    <span th:case="'CANCELLED_TIMEOUT'">Đơn hàng đã quá hạn thanh toán nên đã được hủy.</span>
+    <span th:case="'CANCELLED_LATE_PAYMENT'">Khoản thanh toán đến sau hạn nên không thể xác nhận đơn hàng. Đơn đã được hủy và hoàn tiền mô phỏng.</span>
+    <span th:case="'LATE_PAYMENT_REFUNDED'">Khoản thanh toán đến sau khi đơn đã hủy. Hệ thống ghi nhận và hoàn tiền mô phỏng một lần.</span>
+    <span th:case="'IN_DOUBT_RECORDED'">Cổng thanh toán chưa xác nhận kết quả. Hệ thống đang đối soát, vui lòng chưa thanh toán lại hoặc hủy đơn.</span>
+    <span th:case="'RECONCILING'">Kết quả thanh toán đang được đối soát.</span>
+    <span th:case="'NEEDS_ATTENTION'">Kết quả thanh toán chưa xác định. Đơn hàng chờ quản trị viên xử lý.</span>
+    <span th:case="'ALREADY_PAID'">Đơn hàng đã được thanh toán.</span>
+    <span th:case="'ALREADY_CANCELLED'">Đơn hàng đã được hủy.</span>
+    <span th:case="*">Hệ thống đã ghi nhận yêu cầu.</span>
+</div>
+<div class="alert alert-warning" id="payment-reconciling" th:if="${paymentOrder.reconciling}">
+    Kết quả thanh toán đang được đối soát. Trong thời gian này bạn chưa thể thanh toán lại hoặc hủy đơn hàng.
 </div>
 <form th:if="${paymentOrder.payable() and !paymentOrder.hasPendingAttempt()}" method="post"
       th:action="@{/orders/{id}/payments/attempts(id=${paymentOrder.orderId})}">
@@ -42,13 +67,15 @@
                 <span th:case="'SUCCESS'">Thành công</span><span th:case="'FAILED'">Thất bại</span></span>
         </p>
         <p class="small mb-1" th:if="${attempt.transactionCode}">Mã giao dịch: <span class="payment-transaction-code" th:text="${attempt.transactionCode}"></span></p>
-        <p class="small mb-1" th:if="${attempt.paidAt}">Đã thanh toán lúc: <span class="payment-paid-at" th:text="${#temporals.format(attempt.paidAt, 'dd/MM/yyyy HH:mm:ss')}"></span></p>
-        <div class="d-flex flex-wrap gap-2 mt-2" th:if="${paymentOrder.payable() and attempt.status.name() == 'PENDING'}">
-            <form method="post" th:action="@{/orders/{oid}/payments/{pid}/success(oid=${paymentOrder.orderId},pid=${attempt.paymentId})}">
-                <button class="btn btn-success" type="submit">Mô phỏng thành công</button>
-            </form>
-            <form method="post" th:action="@{/orders/{oid}/payments/{pid}/failure(oid=${paymentOrder.orderId},pid=${attempt.paymentId})}">
-                <button class="btn btn-outline-danger" type="submit">Mô phỏng thất bại và hủy đơn</button>
+        <p class="small mb-1" th:if="${attempt.paidAt != null and attempt.status.name() == 'SUCCESS'}">Đã thanh toán lúc: <span class="payment-paid-at" th:text="${#temporals.format(attempt.paidAt, 'dd/MM/yyyy HH:mm:ss')}"></span></p>
+        <div class="os-gateway-simulation" th:if="${paymentOrder.canSimulate() and attempt.status.name() == 'PENDING'}">
+            <p class="small text-secondary mb-2">Cổng thanh toán mô phỏng, không thu tiền thật: chọn kết quả mà cổng sẽ phản hồi.
+                Hệ thống xác minh lại với cổng, không tin vào nút bấm.</p>
+            <form method="post" class="d-inline" th:each="scenario : ${ {'SUCCESS','FAILED','UNKNOWN'} }"
+                  th:action="@{/orders/{id}/payments/{pid}/simulate(id=${paymentOrder.orderId},pid=${attempt.paymentId})}">
+                <input type="hidden" name="scenario" th:value="${scenario}">
+                <button type="submit" class="btn btn-sm btn-outline-secondary"
+                        th:text="${scenario == 'SUCCESS'} ? 'Thanh toán thành công (mô phỏng)' : (${scenario == 'FAILED'} ? 'Thanh toán thất bại (mô phỏng)' : 'Mất kết nối cổng (kết quả chưa xác định)')"></button>
             </form>
         </div>
     </div>

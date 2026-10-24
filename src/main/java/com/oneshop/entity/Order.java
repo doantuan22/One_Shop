@@ -19,8 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * An Order belongs to exactly one Store (BR-07). Status changes must go through OrderService so that the
- * transition is validated and written to {@link OrderStatusHistory}.
+ * A V3 Order may be supplied by several Stores through its Fulfillments. The nullable legacy Store is a read
+ * compatibility field, never a Staff authorization source. Aggregate status is written by the fulfillment
+ * aggregator or authenticated payment/cancellation orchestration, with {@link OrderStatusHistory}.
  */
 @Entity
 @Table(name = "orders")
@@ -39,8 +40,8 @@ public class Order extends TimestampedEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "store_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id")
     private Store store;
 
     @Enumerated(EnumType.STRING)
@@ -83,6 +84,12 @@ public class Order extends TimestampedEntity {
 
     @Column(name = "total_amount", nullable = false, precision = 18, scale = 2)
     private BigDecimal totalAmount;
+
+    @Column(name = "shipping_fee", nullable = false, precision = 18, scale = 2)
+    private BigDecimal shippingFee = BigDecimal.ZERO;
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderFulfillment> fulfillments = new ArrayList<>();
 
     @OneToMany(mappedBy = "order")
     private List<OrderItem> items = new ArrayList<>();
@@ -207,6 +214,18 @@ public class Order extends TimestampedEntity {
 
     public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public BigDecimal getShippingFee() {
+        return shippingFee;
+    }
+
+    public void setShippingFee(BigDecimal shippingFee) {
+        this.shippingFee = shippingFee;
+    }
+
+    public List<OrderFulfillment> getFulfillments() {
+        return fulfillments;
     }
 
     public List<OrderItem> getItems() {

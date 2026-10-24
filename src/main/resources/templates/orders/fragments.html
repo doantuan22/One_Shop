@@ -1,38 +1,117 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org"><body>
-<div th:fragment="detail(detail)" th:with="order=${detail.order}">
-    <h1 class="h3" th:text="'Đơn hàng #' + ${order.orderId}"></h1>
-    <p class="mb-1" th:text="${order.storeName}"></p><p class="text-secondary" th:text="${order.storeAddress}"></p>
-    <dl class="row">
-        <dt class="col-sm-4">Ngày tạo</dt><dd class="col-sm-8" th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm:ss')}"></dd>
-        <dt class="col-sm-4">Hình thức nhận</dt><dd class="col-sm-8" th:text="${order.fulfillmentType.name() == 'STORE_PICKUP'} ? 'Nhận tại cửa hàng' : 'Giao tận nơi'"></dd>
-        <dt class="col-sm-4">Người nhận</dt><dd class="col-sm-8" th:text="${order.receiverName}"></dd>
-        <dt class="col-sm-4">Điện thoại</dt><dd class="col-sm-8" th:text="${order.receiverPhone}"></dd>
-        <dt class="col-sm-4" th:if="${order.shippingAddress}">Địa chỉ giao hàng</dt><dd class="col-sm-8" th:if="${order.shippingAddress}" th:text="${order.shippingAddress}"></dd>
-        <dt class="col-sm-4">Phương thức thanh toán</dt><dd class="col-sm-8"><span th:replace="~{staff/delivery/fragments :: method(${order.paymentMethod})}"></span></dd>
-        <dt class="col-sm-4">Thanh toán</dt><dd class="col-sm-8" id="order-payment-status" th:attr="data-status=${order.paymentStatus}"><span th:replace="~{staff/delivery/fragments :: payment(${order.paymentStatus})}"></span></dd>
-        <dt class="col-sm-4">Trạng thái đơn</dt><dd class="col-sm-8" id="order-status" th:attr="data-status=${order.orderStatus}"><span th:replace="~{staff/delivery/fragments :: state(${order.orderStatus})}"></span></dd>
-        <dt class="col-sm-4" th:if="${order.readyAt}">Sẵn sàng nhận lúc</dt><dd class="col-sm-8" th:if="${order.readyAt}" th:text="${#temporals.format(order.readyAt, 'dd/MM/yyyy HH:mm:ss')}"></dd>
-        <dt class="col-sm-4" th:if="${order.pickedUpAt}">Đã nhận lúc</dt><dd class="col-sm-8" th:if="${order.pickedUpAt}" th:text="${#temporals.format(order.pickedUpAt, 'dd/MM/yyyy HH:mm:ss')}"></dd>
-    </dl>
+<!--/*
+    Order detail shared by Customer and Admin. V3 reading order: ONE Order (three separate status layers: order,
+    payment, fulfillment) -> receiver info -> items -> Fulfillment per Store -> payment records -> history.
+*/-->
+<div th:fragment="detail(detail, refund)" th:with="order=${detail.order}">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+        <div>
+            <h1 class="h3 mb-1" th:text="'Đơn hàng #' + ${order.orderId}"></h1>
+            <p class="text-secondary small mb-0">
+                Đặt lúc <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                &middot; <span th:replace="~{fragments/components :: fulfillmentType(${order.fulfillmentType})}"></span>
+                <span th:if="${detail.fulfillments != null and detail.fulfillments.size() > 1}"
+                      th:text="'· ' + ${detail.fulfillments.size()} + ' phần giao từ nhiều chi nhánh'"></span>
+            </p>
+        </div>
+        <div class="text-end">
+            <div class="text-secondary small">Tổng đơn</div>
+            <div class="fs-4 fw-bold text-coral"><span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></div>
+        </div>
+    </div>
+
+    <!--/* three layers, never merged into one badge */-->
+    <div class="card shadow-sm mb-3"><div class="card-body">
+        <div class="row g-3">
+            <div class="col-12 col-md-4">
+                <div class="text-secondary small">Trạng thái đơn hàng</div>
+                <div id="order-status" th:attr="data-status=${order.orderStatus}"><span th:replace="~{staff/delivery/fragments :: state(${order.orderStatus})}"></span>
+                    <span class="badge os-soft os-soft-warning ms-1" id="order-closed-partial" th:if="${refund != null and refund.closedWithUndelivered}">Hoàn tất một phần: có phần không giao được</span></div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="text-secondary small">Thanh toán</div>
+                <div id="order-payment-status" th:attr="data-status=${order.paymentStatus}">
+                    <span th:replace="~{staff/delivery/fragments :: payment(${order.paymentStatus})}"></span>
+                    <span class="text-secondary small d-block"><span th:replace="~{staff/delivery/fragments :: method(${order.paymentMethod})}"></span></span>
+                </div>
+            </div>
+            <div class="col-12 col-md-4" th:if="${order.storeName != null}">
+                <div class="text-secondary small" th:text="${order.fulfillmentType.name() == 'STORE_PICKUP'} ? 'Cửa hàng nhận hàng' : 'Nơi cấp hàng'">Nơi cấp hàng</div>
+                <div class="fw-semibold" th:text="${order.storeName}"></div>
+                <div class="small text-secondary" th:if="${order.storeAddress}" th:text="${order.storeAddress}"></div>
+            </div>
+        </div>
+        <dl class="row small mt-3 mb-0">
+            <dt class="col-sm-3">Người nhận</dt><dd class="col-sm-9" th:text="${order.receiverName} + ' · ' + ${order.receiverPhone}"></dd>
+            <dt class="col-sm-3" th:if="${order.shippingAddress}">Địa chỉ giao hàng</dt><dd class="col-sm-9" th:if="${order.shippingAddress}" th:text="${order.shippingAddress}"></dd>
+            <dt class="col-sm-3" th:if="${order.readyAt}">Sẵn sàng nhận lúc</dt><dd class="col-sm-9" th:if="${order.readyAt}" th:text="${#temporals.format(order.readyAt, 'dd/MM/yyyy HH:mm')}"></dd>
+            <dt class="col-sm-3" th:if="${order.pickedUpAt}">Đã nhận lúc</dt><dd class="col-sm-9" th:if="${order.pickedUpAt}" th:text="${#temporals.format(order.pickedUpAt, 'dd/MM/yyyy HH:mm')}"></dd>
+        </dl>
+    </div></div>
+
     <div class="alert alert-info" th:if="${order.pickupCode != null}">
         Mã nhận hàng: <strong id="pickup-code" class="fs-4 font-monospace" th:text="${order.pickupCode}"></strong>
         <p class="mb-0" th:if="${order.orderStatus.name() == 'READY_FOR_PICKUP'}">Cung cấp mã này cho nhân viên tại chi nhánh để nhận hàng.</p>
         <p class="mb-0" th:if="${order.orderStatus.name() == 'COMPLETED'}">Đơn đã nhận. Mã này không còn sử dụng được.</p>
     </div>
+
     <h2 class="h5">Sản phẩm đã đặt</h2>
-    <div class="table-responsive"><table class="table"><thead><tr><th>Sản phẩm</th><th>Đơn giá</th><th>Số lượng</th><th>Thành tiền</th></tr></thead>
+    <div class="table-responsive mb-2"><table class="table align-middle os-table">
+        <thead><tr><th>Sản phẩm</th><th class="text-end">Đơn giá</th><th class="text-end">Số lượng</th><th class="text-end">Thành tiền</th></tr></thead>
         <tbody><tr th:each="item : ${detail.items}"><td th:text="${item.productName}"></td>
-            <td><span th:replace="~{fragments/components :: price(${item.unitPrice})}"></span></td><td th:text="${item.quantity}"></td>
-            <td><span th:replace="~{fragments/components :: price(${item.subtotal})}"></span></td></tr></tbody></table></div>
-    <p class="fw-bold">Tổng đơn: <span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></p>
-    <h2 class="h5">Thanh toán</h2><p th:if="${detail.payments.isEmpty()}">Chưa ghi nhận thanh toán.</p>
+            <td class="text-end"><span th:replace="~{fragments/components :: price(${item.unitPrice})}"></span></td>
+            <td class="text-end" th:text="${item.quantity}"></td>
+            <td class="text-end"><span th:replace="~{fragments/components :: price(${item.subtotal})}"></span></td></tr></tbody></table></div>
+    <p class="fw-bold text-end">Tổng đơn: <span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></p>
+
+    <section id="order-fulfillments" class="mb-4" th:if="${detail.fulfillments != null and !detail.fulfillments.isEmpty()}">
+        <h2 class="h5">Phần giao theo chi nhánh</h2>
+        <p class="small text-secondary" th:if="${detail.fulfillments.size() > 1}">
+            Đây vẫn là <strong>một đơn hàng</strong>. Mỗi chi nhánh chuẩn bị và giao phần hàng của mình nên các phần có thể
+            hoàn tất vào những thời điểm khác nhau.
+        </p>
+        <div class="card mb-2 os-order-fulfillment" th:each="part, row : ${detail.fulfillments}"
+             th:attr="data-fulfillment-id=${part.fulfillmentId},data-status=${part.status}">
+            <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between gap-2">
+                    <strong><span th:if="${detail.fulfillments.size() > 1}" th:text="'Phần ' + ${row.count} + ' · '"></span><span th:text="${part.storeName}"></span></strong>
+                    <span class="badge os-soft os-soft-danger os-part-undeliverable" th:if="${refund != null and refund.undeliverable.containsKey(part.fulfillmentId)}">Không giao được</span>
+                    <span th:unless="${refund != null and refund.undeliverable.containsKey(part.fulfillmentId)}" th:replace="~{staff/fulfillments/fragments :: status(${part.status})}"></span>
+                </div>
+                <p class="small mb-1 os-undeliverable-reason" th:if="${refund != null and refund.undeliverable.containsKey(part.fulfillmentId)}"
+                   th:text="'Lý do: ' + ${refund.undeliverable.get(part.fulfillmentId)}"></p>
+                <p class="small text-secondary mb-1" th:text="${part.storeAddress}"></p>
+                <p class="small mb-1"><span th:replace="~{fragments/components :: fulfillmentType(${part.fulfillmentType})}"></span></p>
+                <p class="small mb-1" th:if="${part.trackingCode != null}">Mã vận đơn:
+                    <span th:text="${part.trackingCode}"></span></p>
+                <ul class="small mb-1">
+                    <li th:each="line : ${part.items}" th:text="${line.productName} + ' × ' + ${line.quantity}"></li>
+                </ul>
+                <div class="alert alert-info mb-0" th:if="${part.pickupCode != null}">
+                    Mã nhận hàng: <strong class="fs-5 font-monospace os-fulfillment-pickup-code"
+                                          th:text="${part.pickupCode}"></strong>
+                    <p class="mb-0">Cung cấp mã này cho nhân viên tại chi nhánh để nhận hàng.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div th:replace="~{orders/fragments :: refundSection(${refund})}"></div>
+
+    <h2 class="h5">Thanh toán</h2><p class="text-secondary" th:if="${detail.payments.isEmpty()}">Chưa ghi nhận thanh toán.</p>
     <div class="card mb-2" th:each="payment : ${detail.payments}"><div class="card-body">
-        <span th:text="${payment.method} + ' · ' + ${payment.status}"></span> · <span th:replace="~{fragments/components :: price(${payment.amount})}"></span>
-        <p class="small mb-0" th:if="${payment.transactionCode}">Mã giao dịch: <span th:text="${payment.transactionCode}"></span></p>
-        <p class="small mb-0" th:if="${payment.paidAt}">Đã thu lúc: <span th:text="${#temporals.format(payment.paidAt, 'dd/MM/yyyy HH:mm:ss')}"></span></p>
+        <div class="d-flex flex-wrap justify-content-between gap-2">
+            <span><span th:replace="~{staff/delivery/fragments :: method(${payment.method})}"></span>
+                &middot; <span th:replace="~{fragments/components :: paymentRecordStatus(${payment.status})}"></span></span>
+            <strong><span th:replace="~{fragments/components :: price(${payment.amount})}"></span></strong>
+        </div>
+        <p class="small mb-0 text-secondary" th:if="${payment.transactionCode}">Mã giao dịch: <span th:text="${payment.transactionCode}"></span></p>
+        <p class="small mb-0 text-secondary" th:if="${payment.paidAt}">Ghi nhận lúc: <span th:text="${#temporals.format(payment.paidAt, 'dd/MM/yyyy HH:mm:ss')}"></span></p>
     </div></div>
-    <h2 class="h5 mt-4">Lịch sử trạng thái</h2><ol class="list-group list-group-numbered">
+
+    <h2 class="h5 mt-4">Lịch sử trạng thái đơn hàng</h2>
+    <ol class="list-group list-group-numbered" id="order-history">
         <li class="list-group-item" th:each="entry : ${detail.history}">
             <span th:if="${entry.oldStatus != null}"><span th:replace="~{staff/delivery/fragments :: state(${entry.oldStatus})}"></span> → </span>
             <span th:replace="~{staff/delivery/fragments :: state(${entry.newStatus})}"></span>
@@ -40,4 +119,27 @@
             <div class="small text-secondary" th:if="${entry.note}" th:text="${entry.note}"></div>
         </li></ol>
 </div>
+    <section th:fragment="refundSection(refund)" id="order-refunds" class="mb-4" th:if="${refund != null and refund.hasContent()}">
+        <h2 class="h5">Hoàn tiền (mô phỏng)</h2>
+        <p class="small text-secondary">Đây là hoàn tiền <strong>mô phỏng</strong>: hệ thống chỉ ghi nhận, không có khoản tiền thật nào được chuyển về tài khoản hay thẻ của bạn.</p>
+        <dl class="row small mb-2" th:if="${refund.collected.signum() > 0}" id="refund-money">
+            <dt class="col-sm-4">Đã thanh toán trực tuyến</dt><dd class="col-sm-8"><span th:replace="~{fragments/components :: price(${refund.collected})}"></span></dd>
+            <dt class="col-sm-4">Đã hoàn (mô phỏng)</dt><dd class="col-sm-8"><span th:replace="~{fragments/components :: price(${refund.refunded})}"></span></dd>
+            <dt class="col-sm-4">Số tiền giữ lại (hàng đã giao<span th:if="${refund.retained.signum() > 0}"> và một lần phí giao</span>)</dt>
+            <dd class="col-sm-8"><span th:replace="~{fragments/components :: price(${refund.retained})}"></span></dd>
+        </dl>
+        <div class="table-responsive" th:unless="${refund.lines.isEmpty()}">
+            <table class="table table-sm align-middle os-table">
+                <thead><tr><th>Thời gian</th><th>Nội dung</th><th class="text-end">Số tiền</th><th>Trạng thái</th><th>Lý do</th><th th:if="${refund.lines.get(0).actor != null}">Người xử lý</th></tr></thead>
+                <tbody><tr th:each="line : ${refund.lines}" th:attr="data-refund-id=${line.refundId}">
+                    <td class="text-nowrap" th:text="${#temporals.format(line.at, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td><span th:text="${line.label}"></span><span class="small text-secondary" th:if="${line.fulfillmentId != null}" th:text="' · phần giao #' + ${line.fulfillmentId}"></span></td>
+                    <td class="text-end"><span th:replace="~{fragments/components :: price(${line.amount})}"></span></td>
+                    <td th:switch="${line.status.name()}"><span th:case="'SIMULATED_REFUNDED'">Đã hoàn (mô phỏng)</span><span th:case="'PENDING_SIMULATION'">Đang hoàn (mô phỏng)</span><span th:case="*">Hoàn thất bại (mô phỏng), đang chờ xử lý</span></td>
+                    <td th:text="${line.reason}"></td>
+                    <td th:if="${line.actor != null}" th:text="${line.actor}"></td>
+                </tr></tbody>
+            </table>
+        </div>
+    </section>
 </body></html>

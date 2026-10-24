@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "remove",
+    "controller" : "com.oneshop.controller.client.CartController",
+    "path" : "/cart/items/{cartItemId}/delete"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:14.791508500Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/cart/items/999999999/delete",
+  "kind" : "anonymous guard/input probe"
+}

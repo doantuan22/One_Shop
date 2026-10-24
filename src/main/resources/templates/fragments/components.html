@@ -30,54 +30,117 @@
 
 <!--/* Money in VND, for example 129.000 ₫. */-->
 <span th:fragment="price(value)" class="os-price"
-      th:text="${#numbers.formatDecimal(value, 1, 'POINT', 0, 'COMMA')} + ' ₫'">129.000 ₫</span>
+      th:text="${value == null ? 'Chưa có giá' : (#numbers.formatDecimal(value, 1, 'POINT', 0, 'COMMA') + ' ₫')}">129.000 ₫</span>
 
 <!--/* What a Client may know about stock: in stock or out of stock, never a quantity (BR-15). */-->
 <span th:fragment="availability(inStock)" class="badge"
-      th:classappend="${inStock} ? 'text-bg-success' : 'text-bg-secondary'"
+      th:classappend="${inStock} ? 'os-soft os-soft-success' : 'os-soft os-soft-neutral'"
       th:text="${inStock} ? 'Còn hàng' : 'Hết hàng'">Còn hàng</span>
 
+<!--/* Selling state of a Product (ACTIVE / INACTIVE / HIDDEN enum) in plain Vietnamese. */-->
+<span th:fragment="productStatusLabel(status)" th:switch="${status.name()}">
+    <span th:case="'ACTIVE'">Đang bán</span><span th:case="'HIDDEN'">Đang ẩn</span>
+    <span th:case="'INACTIVE'">Ngừng bán</span><span th:case="*">Trạng thái chưa xác định</span>
+</span>
+
 <!--/* Status of an Admin record (ACTIVE / INACTIVE / HIDDEN enums). */-->
-<span th:fragment="statusBadge(status)" class="badge" th:with="name=${status.name()}"
-      th:classappend="${name == 'ACTIVE'} ? 'text-bg-success' : (${name == 'HIDDEN'} ? 'text-bg-warning' : 'text-bg-secondary')"
+<span th:fragment="statusBadge(status)" class="badge os-soft" th:with="name=${status.name()}"
+      th:classappend="${name == 'ACTIVE'} ? 'os-soft-success' : (${name == 'HIDDEN'} ? 'os-soft-warning' : 'os-soft-neutral')"
       th:text="${name == 'ACTIVE'} ? 'Đang hoạt động' : (${name == 'HIDDEN'} ? 'Đang ẩn' : 'Ngừng hoạt động')">Trạng thái</span>
+
+<!--/* Account role (RoleName enum) in Vietnamese: badge ("roleBadge") and plain label ("roleLabel"). */-->
+<span th:fragment="roleBadge(role)" class="badge" th:with="name=${role.name()}"
+      th:classappend="${name == 'ADMIN'} ? 'os-soft-danger' : (${name == 'STAFF'} ? 'os-soft-coral' : 'os-soft-neutral')"
+      th:text="${name == 'ADMIN'} ? 'Quản trị viên' : (${name == 'STAFF'} ? 'Nhân viên' : 'Khách hàng')">Vai trò</span>
+
+<!--/* One Staff-Store assignment row (ACTIVE / INACTIVE) in plain Vietnamese. */-->
+<span th:fragment="assignmentStatusBadge(status)" class="badge" th:with="name=${status.name()}"
+      th:classappend="${name == 'ACTIVE'} ? 'os-soft-success' : 'os-soft-neutral'"
+      th:text="${name == 'ACTIVE'} ? 'Đang làm việc' : 'Tạm đình chỉ'">Trạng thái phân công</span>
+
+<!--/* Fulfillment type of an Order / Fulfillment (DELIVERY, STORE_PICKUP) in plain Vietnamese. */-->
+<span th:fragment="fulfillmentType(type)" th:text="${type != null and type.name() == 'STORE_PICKUP'} ? 'Nhận tại cửa hàng' : (${type != null and type.name() == 'DELIVERY'} ? 'Giao tận nơi' : 'Chưa xác định')">Giao tận nơi</span>
+
+<!--/* Status of one payment record (payments.status): a different layer from the Order status. */-->
+<span th:fragment="paymentRecordStatus(status)" th:switch="${status.name()}">
+    <span th:case="'PENDING'">Đang chờ thanh toán</span>
+    <span th:case="'SUCCESS'">Đã ghi nhận</span>
+    <span th:case="'FAILED'">Thất bại</span>
+    <span th:case="*">Trạng thái chưa xác định</span>
+</span>
+
+<!--/* Simulated refund state of a payment (payments.refund_status). Always labelled "mô phỏng": no real bank refund. */-->
+<span th:fragment="refundStatus(status)" th:switch="${status.name()}">
+    <span th:case="'NONE'">Chưa hoàn</span>
+    <span th:case="'PENDING_SIMULATION'">Đang hoàn tiền (mô phỏng)</span>
+    <span th:case="'SIMULATED_REFUNDED'">Đã hoàn tiền (mô phỏng)</span>
+    <span th:case="'SIMULATION_FAILED'">Hoàn tiền thất bại (mô phỏng)</span>
+    <span th:case="*">Hoàn tiền chưa xác định (mô phỏng)</span>
+</span>
+
+<!--/* What the simulated gateway answered when asked about a payment. */-->
+<span th:fragment="gatewayAnswer(result)" th:if="${result != null}" th:switch="${result.name()}">
+    <span th:case="'SUCCESS'">Đã thu</span>
+    <span th:case="'FAILED'">Từ chối</span>
+    <span th:case="'NOT_PAID'">Chưa thanh toán</span>
+    <span th:case="'UNKNOWN'">Chưa xác định</span>
+    <span th:case="*">Kết quả chưa xác định</span>
+</span>
+
+<!--/* Where an ONLINE payment stands for the Admin (PaymentCaseCategory): one classification for list, detail and dashboard. */-->
+<span th:fragment="paymentCategory(category)" class="badge os-payment-category" th:attr="data-category=${category.name()}"
+      th:classappend="${category.name() == 'ATTENTION'} ? 'text-bg-danger' : (${category.name() == 'RECONCILING'} ? 'text-bg-warning' : (${category.name() == 'WAITING'} ? 'text-bg-light border' : (${category.name() == 'PAID'} ? 'text-bg-success' : 'text-bg-secondary')))"
+      th:text="${category.label()}">Cần xử lý</span>
 
 <!--/* Card with a header title; `content` is a fragment expression for the body. */-->
 <!--/*
     Product card of the Client (ProductCardResponse). The whole card is one link to the detail page (stretched link on
-    the title). With a selected Store and in stock it also has the add to cart form (same POST /cart/items as the
-    detail page); for the whole chain it shows "Từ X" and the number of Stores that have it in stock. Never an exact
+    the title). V3: one online price per SKU and a chain-wide "in stock" flag; when in stock it has the add to cart
+    form (POST /cart/items with productId, like the detail page). It never depends on a Store and never shows an exact
     quantity (BR-15). The styles (.pcard) are in static/css/home.css.
 */-->
 <article th:fragment="productCard(card)" class="pcard">
     <div class="pcard__media">
-        <img th:if="${card.imageUrl}" th:src="${card.imageUrl}" alt="" width="400" height="400"
+        <img th:if="${card.imageUrl}" th:src="${card.imageUrl}" th:alt="${card.name}" width="400" height="400"
              loading="lazy" decoding="async">
-        <span class="pcard__ph" th:unless="${card.imageUrl}" th:text="${card.brandName}">Cocoon</span>
+        <div class="pcard__ph" th:unless="${card.imageUrl}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                <circle cx="9" cy="9" r="2"/>
+                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+            </svg>
+        </div>
     </div>
     <div class="pcard__body">
         <div class="pcard__brand" th:text="${card.brandName}">Cocoon</div>
         <h3 class="pcard__title">
-            <a class="stretched-link" th:href="@{/products/{id}(id=${card.productId})}" th:text="${card.name}">Tên sản phẩm</a>
+            <a class="product-title-link stretched-link" th:href="@{/products/{id}(id=${card.productId})}" th:text="${card.name}">Tên sản phẩm</a>
         </h3>
-        <div class="pcard__price" th:if="${card.price != null}">
-            <span class="pcard__from" th:if="${card.fromPrice}">Từ </span><span
-                    th:replace="~{fragments/components :: price(${card.price})}"></span>
-        </div>
-        <div class="pcard__stock">
-            <span class="badge text-bg-success" th:if="${card.inStock and card.storeProductId != null}">Còn hàng</span>
-            <span class="badge text-bg-success" th:if="${card.inStock and card.storeProductId == null}"
-                  th:text="'Còn hàng ở ' + ${card.inStockStoreCount} + ' chi nhánh'">Còn hàng ở 2 chi nhánh</span>
-            <span class="badge text-bg-secondary" th:unless="${card.inStock}">Hết hàng</span>
-        </div>
-        <div class="pcard__actions" th:if="${card.storeProductId != null and card.inStock}">
-            <form th:action="@{/cart/items}" method="post" sec:authorize="hasRole('CUSTOMER')">
-                <input type="hidden" name="storeProductId" th:value="${card.storeProductId}">
-                <input type="hidden" name="quantity" value="1">
-                <button type="submit" class="btn btn-primary btn-sm">Thêm vào giỏ</button>
-            </form>
-            <a class="btn btn-outline-primary btn-sm" th:href="@{/login}"
-               sec:authorize="!isAuthenticated()">Đăng nhập để thêm vào giỏ</a>
+        <div class="pcard__footer mt-auto">
+            <div class="pcard__price" th:if="${card.price != null}">
+                <span class="pcard__from" th:if="${card.fromPrice}">Từ </span><span
+                        th:replace="~{fragments/components :: price(${card.price})}"></span>
+            </div>
+            <div class="pcard__stock">
+                <span class="pcard__stock-tag in-stock" th:if="${card.inStock}">Còn hàng toàn hệ thống</span>
+                <span class="pcard__stock-tag out-stock" th:unless="${card.inStock}">Hết hàng</span>
+            </div>
+            <div class="pcard__actions" th:if="${card.inStock}">
+                <form th:action="@{/cart/items}" method="post" sec:authorize="hasRole('CUSTOMER')">
+                    <input type="hidden" name="productId" th:value="${card.productId}">
+                    <input type="hidden" name="quantity" value="1">
+                    <button type="submit" class="btn pcard__btn-cart">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"/>
+                            <circle cx="20" cy="21" r="1"/>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                        </svg>
+                        <span>Thêm vào giỏ</span>
+                    </button>
+                </form>
+                <a class="btn pcard__btn-login" th:href="@{/login}"
+                   sec:authorize="!isAuthenticated()">Đăng nhập để mua</a>
+            </div>
         </div>
     </div>
 </article>
@@ -87,11 +150,13 @@
 </section>
 
 <!--/* KPI tile. Pass '—' as value while no data is connected. */-->
-<div th:fragment="statCard(label, value, hint)" class="card os-stat h-100 shadow-sm">
-    <div class="card-body">
-        <div class="text-secondary small" th:text="${label}">Chỉ số</div>
-        <div class="os-stat__value" th:text="${value}">0</div>
-        <div class="text-secondary small" th:if="${hint}" th:text="${hint}">Ghi chú</div>
+<div th:fragment="statCard(label, value, hint)" class="card os-stat h-100 shadow-sm border-0">
+    <div class="card-body d-flex flex-column justify-content-between p-3">
+        <div>
+            <div class="text-secondary small fw-medium mb-1" th:text="${label}">Chỉ số</div>
+            <div class="os-stat__value fs-2 fw-bold" th:text="${value}">0</div>
+        </div>
+        <div class="text-secondary small mt-2 pt-1 border-top" style="border-color: #f1f5f9 !important;" th:if="${hint}" th:text="${hint}">Ghi chú</div>
     </div>
 </div>
 

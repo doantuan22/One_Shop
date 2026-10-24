@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "GET",
+    "method" : "view",
+    "controller" : "com.oneshop.controller.client.PaymentController",
+    "path" : "/orders/{orderId}/payments"
+  },
+  "location" : "http://localhost:56221/login",
+  "executedAt" : "2026-10-24T02:07:16.315593600Z",
+  "expected" : 302,
+  "actual" : 302,
+  "requestPath" : "/orders/999999999/payments",
+  "kind" : "anonymous guard/input probe"
+}

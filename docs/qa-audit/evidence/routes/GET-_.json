@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "GET",
+    "method" : "home",
+    "controller" : "com.oneshop.controller.client.HomeController",
+    "path" : "/"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:08.521237100Z",
+  "expected" : 200,
+  "actual" : 200,
+  "requestPath" : "/",
+  "kind" : "anonymous guard/input probe"
+}

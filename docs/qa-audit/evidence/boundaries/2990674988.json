@@ -1,0 +1,7 @@
+{
+  "actual" : 400,
+  "expected" : "success/empty page or controlled 4xx; never 5xx",
+  "request" : "/admin/orders?from=invalid&to=invalid",
+  "timestamp" : "2026-10-24T02:07:00.638170800Z",
+  "actor" : "admin@oneshop.vn"
+}

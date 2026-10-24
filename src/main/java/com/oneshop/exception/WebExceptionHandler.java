@@ -101,17 +101,26 @@ public class WebExceptionHandler {
             return "redirect:/admin/brands?error=image-size";
         }
 
-        String referer = request.getHeader("Referer");
-        if (StringUtils.hasText(referer) && (referer.startsWith("/") || referer.contains("/admin/"))) {
-            return "redirect:" + referer + (referer.contains("?") ? "&" : "?") + "error=image-size";
-        }
-
         return "redirect:/admin/products?error=image-size";
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ModelAndView handleNotFound(ResourceNotFoundException ex) {
         return errorView(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(PaymentConflictException.class)
+    public ModelAndView handlePaymentConflict(PaymentConflictException ex) {
+        ModelAndView mav = errorView(HttpStatus.CONFLICT, ex.getMessage());
+        mav.addObject("code", ex.getCode());
+        return mav;
+    }
+
+    @ExceptionHandler(FulfillmentConflictException.class)
+    public ModelAndView handleFulfillmentConflict(FulfillmentConflictException ex) {
+        ModelAndView mav = errorView(HttpStatus.CONFLICT, ex.getMessage());
+        mav.addObject("code", ex.getCode());
+        return mav;
     }
 
     @ExceptionHandler(BadRequestException.class)

@@ -14,6 +14,10 @@ import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @Query("select p from Product p where p.id=:id")
+    Optional<Product> findByIdForUpdate(@Param("id") Long id);
+
     @EntityGraph(attributePaths = {"category", "brand"})
     Page<Product> findByStatus(ProductStatus status, Pageable pageable);
 
@@ -65,7 +69,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
               and exists (select 1 from StoreProduct sp
                           where sp.product = p
                             and sp.status = com.oneshop.entity.ActiveStatus.ACTIVE
-                            and sp.quantity > 0
+                            and (sp.quantity - sp.reservedQuantity) > 0
                             and sp.store.status = com.oneshop.entity.ActiveStatus.ACTIVE)
             order by p.id""")
     List<Long> findSellableInStockIds(Pageable pageable);
@@ -106,6 +110,27 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             select count(p) from Product p
             where lower(p.name) like :keyword escape '\\' or lower(p.sku) like :keyword escape '\\'""")
     Page<Product> searchAll(@Param("keyword") String keyword, Pageable pageable);
+
+    /**
+     * Admin product console search: same text rule as {@link #searchAll} (every status) plus optional
+     * Category, Brand and Product status filters (null = no filter). Stable name ordering.
+     */
+    @Query(value = """
+            select p from Product p join fetch p.category c join fetch p.brand b
+            where (lower(p.name) like :keyword escape '\\' or lower(p.sku) like :keyword escape '\\')
+              and (:categoryId is null or c.id = :categoryId)
+              and (:brandId is null or b.id = :brandId)
+              and (:status is null or p.status = :status)
+            order by p.name, p.id""",
+            countQuery = """
+            select count(p) from Product p
+            where (lower(p.name) like :keyword escape '\\' or lower(p.sku) like :keyword escape '\\')
+              and (:categoryId is null or p.category.id = :categoryId)
+              and (:brandId is null or p.brand.id = :brandId)
+              and (:status is null or p.status = :status)""")
+    Page<Product> searchAdminProducts(@Param("keyword") String keyword, @Param("categoryId") Long categoryId,
+                                      @Param("brandId") Long brandId,
+                                      @Param("status") com.oneshop.entity.ProductStatus status, Pageable pageable);
 
     /** Choices of the Admin StoreProduct form. */
     List<Product> findByStatusNotOrderByName(ProductStatus status);

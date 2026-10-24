@@ -12,9 +12,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import java.math.BigDecimal;
+
 /**
- * One sellable SKU, shared by the whole chain (BR-01). It has no price or quantity of its own:
- * those live in {@link StoreProduct}.
+ * One sellable SKU, shared by the whole chain (V3). {@link #price} is its one online selling price across all Stores.
+ * Physical quantity and Store-specific selling status live in {@link StoreProduct}.
  */
 @Entity
 @Table(name = "products")
@@ -41,6 +43,12 @@ public class Product extends TimestampedEntity {
 
     @Column(columnDefinition = "NVARCHAR(MAX)")
     private String description;
+
+    @Column(nullable = false, precision = 18, scale = 2)
+    private BigDecimal price = BigDecimal.ZERO;
+
+    @Column(name = "original_price", precision = 18, scale = 2)
+    private BigDecimal originalPrice;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -88,6 +96,22 @@ public class Product extends TimestampedEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public BigDecimal getOriginalPrice() {
+        return originalPrice;
+    }
+
+    public void setOriginalPrice(BigDecimal originalPrice) {
+        this.originalPrice = originalPrice;
     }
 
     public ProductStatus getStatus() {

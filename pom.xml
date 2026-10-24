@@ -21,6 +21,13 @@
         <sitemesh.version>3.2.3</sitemesh.version>
         <jjwt.version>0.12.7</jjwt.version>
         <cloudinary.version>2.4.0</cloudinary.version>
+        <!-- Security fixes newer than the Boot 3.5 BOM; keep the existing Java/Jakarta stack. -->
+        <tomcat.version>10.1.60</tomcat.version>
+        <jackson-bom.version>2.21.7</jackson-bom.version>
+        <log4j2.version>2.25.5</log4j2.version>
+        <commons-lang3.version>3.18.0</commons-lang3.version>
+        <httpclient5.version>5.6.3</httpclient5.version>
+        <httpcore5.version>5.4.3</httpcore5.version>
         <!-- Database tests run against their own database (base data only), never against the large development seed. -->
         <oneshop.test.db>oneshop_test</oneshop.test.db>
     </properties>
@@ -96,6 +103,8 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Live Code / Live Reload & Hot Swap -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -117,14 +126,21 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
-                        <!-- overrides DB_NAME of .env for the forked test JVM; build the database with database/rebuild_dev_db.ps1 -Database oneshop_test -BaseDataOnly -->
+                        <!-- overrides DB_NAME of .env for the forked test JVM; provision a fresh *_test database with database/01_schema.sql and 02_seed.sql -->
                         <DB_NAME>${oneshop.test.db}</DB_NAME>
+                        <!-- the timeout worker would cancel the seeded expired ONLINE Order of the test database; tests call the scan directly -->
+                        <oneshop.payment.timeout-worker-enabled>false</oneshop.payment.timeout-worker-enabled>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                    <!-- Tự động đồng bộ static và templates HTML trực tiếp từ src/main/resources mà không cần build lại -->
+                    <addResources>true</addResources>
+                </configuration>
             </plugin>
         </plugins>
     </build>

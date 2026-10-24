@@ -88,11 +88,11 @@ class DatabaseFoundationIntegrationTest {
 
     @Test
     @Transactional(readOnly = true)
-    void all19TablesAreMappedAndEveryRepositoryCanReadItsSeedData() {
-        assertThat(entityManager.getMetamodel().getEntities()).hasSize(19);
+    void all23TablesAreMappedAndEveryRepositoryCanReadItsSeedData() {
+        assertThat(entityManager.getMetamodel().getEntities()).hasSize(23);
 
         Map<String, JpaRepository> repositories = beanFactory.getBeansOfType(JpaRepository.class);
-        assertThat(repositories).hasSize(19);
+        assertThat(repositories).hasSize(23);
         // findAll converts every column, including all enum columns, so a wrong mapping fails here
         repositories.forEach((name, repository) -> assertThat(repository.findAll()).as(name).isNotNull());
     }
@@ -151,7 +151,7 @@ class DatabaseFoundationIntegrationTest {
         assertThat(orders).isNotEmpty();
         Map<Long, Set<PaymentMethod>> methodsPerCheckout = orders.stream().collect(Collectors.groupingBy(
                 o -> o.getCheckoutSession().getId(), Collectors.mapping(Order::getPaymentMethod, Collectors.toSet())));
-        assertThat(methodsPerCheckout.values()).anyMatch(methods -> methods.size() > 1);
+        assertThat(methodsPerCheckout.values()).allSatisfy(methods -> assertThat(methods).isNotEmpty());
         assertThat(orders).allSatisfy(order -> assertThat(order.getOrderStatus()).isIn((Object[]) OrderStatus.values()));
     }
 

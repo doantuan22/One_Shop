@@ -1,6 +1,8 @@
 package com.oneshop.controller.client;
 
 import com.oneshop.service.PaymentService;
+import com.oneshop.service.payment.PaymentOutcome;
+import com.oneshop.service.payment.PaymentReconciliationService;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
@@ -20,9 +23,11 @@ import java.security.Principal;
 @RequestMapping("/orders/{orderId}/payments")
 public class PaymentController {
     private final PaymentService paymentService;
+    private final PaymentReconciliationService reconciliation;
 
-    public PaymentController(PaymentService paymentService) {
+    public PaymentController(PaymentService paymentService, PaymentReconciliationService reconciliation) {
         this.paymentService = paymentService;
+        this.reconciliation = reconciliation;
     }
 
     @GetMapping
@@ -35,6 +40,18 @@ public class PaymentController {
     public String start(@PathVariable Long orderId, Principal principal) {
         paymentService.createOnlinePaymentAttempt(principal.getName(), orderId);
         return redirect(orderId);
+    }
+
+    /**
+     * The demo gateway enacts a scenario (SUCCESS / FAILED / UNKNOWN) for the customer's own attempt; the backend then
+     * verifies its ledger. The request carries no payment status, amount or time: only which scenario to enact.
+     */
+    @PostMapping("/{paymentId}/simulate")
+    public String simulate(@PathVariable Long orderId, @PathVariable Long paymentId,
+                           @RequestParam("scenario") PaymentReconciliationService.SimulatedResult scenario,
+                           Principal principal) {
+        PaymentOutcome outcome = reconciliation.simulate(principal.getName(), orderId, paymentId, scenario);
+        return "redirect:/orders/" + orderId + "/payments?outcome=" + outcome.name();
     }
 
     @PostMapping("/{paymentId}/success")

@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "POST",
+    "method" : "cancel",
+    "controller" : "com.oneshop.controller.client.CustomerOrderController",
+    "path" : "/orders/{orderId}/cancel"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:15.585647800Z",
+  "expected" : 403,
+  "actual" : 403,
+  "requestPath" : "/orders/999999999/cancel",
+  "kind" : "anonymous guard/input probe"
+}

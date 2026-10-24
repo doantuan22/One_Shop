@@ -1,0 +1,14 @@
+{
+  "route" : {
+    "verb" : "GET",
+    "method" : "suggest",
+    "controller" : "com.oneshop.controller.client.ProductController",
+    "path" : "/products/suggest"
+  },
+  "location" : "",
+  "executedAt" : "2026-10-24T02:07:16.491684Z",
+  "expected" : 200,
+  "actual" : 200,
+  "requestPath" : "/products/suggest",
+  "kind" : "anonymous guard/input probe"
+}

@@ -5,6 +5,7 @@
     'use strict';
     var root = document.documentElement;
     var STAGGER_MS = 80;
+    var REVEAL_FALLBACK_MS = 2500;
 
     try {
         if (!('IntersectionObserver' in window)) {
@@ -37,6 +38,12 @@
                 });
             }, { threshold: 0.12, rootMargin: '0px 0px -5% 0px' });
             items.forEach(function (el) { observer.observe(el); });
+            // Safety net: whatever has not been revealed shortly after load (full-page capture, print, a viewer that
+            // never scrolls, an observer that does not fire) is shown, so the product block is never left blank.
+            window.setTimeout(function () {
+                items.forEach(function (el) { el.classList.add('is-revealed'); });
+                observer.disconnect();
+            }, REVEAL_FALLBACK_MS);
         } catch (e) {
             root.classList.remove('reveal-ready');
         }

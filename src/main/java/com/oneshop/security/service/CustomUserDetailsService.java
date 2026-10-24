@@ -40,7 +40,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     private static AppUserDetails toDetails(User user) {
-        return new AppUserDetails(user.getId(), user.getEmail(), user.getPasswordHash(), user.isActive(),
+        return new AppUserDetails(user.getId(), user.getEmail(), user.getFullName(), user.getPasswordHash(), user.isActive(),
                 List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName().name())));
     }
 }

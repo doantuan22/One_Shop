@@ -1,0 +1,17 @@
+{
+  "bothTransactionsCommitted" : true,
+  "before" : [ {
+    "image_id" : 11,
+    "is_primary" : true
+  } ],
+  "after" : [ {
+    "image_id" : 11,
+    "is_primary" : false
+  }, {
+    "image_id" : 45,
+    "is_primary" : true
+  }, {
+    "image_id" : 46,
+    "is_primary" : false
+  } ]
+}

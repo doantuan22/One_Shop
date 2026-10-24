@@ -29,6 +29,10 @@ public class OrderItem {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fulfillment_id", nullable = false)
+    private OrderFulfillment fulfillment;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "store_product_id", nullable = false)
     private StoreProduct storeProduct;
@@ -55,6 +59,14 @@ public class OrderItem {
 
     public void setOrder(Order order) {
         this.order = order;
+    }
+
+    public OrderFulfillment getFulfillment() {
+        return fulfillment;
+    }
+
+    public void setFulfillment(OrderFulfillment fulfillment) {
+        this.fulfillment = fulfillment;
     }
 
     public StoreProduct getStoreProduct() {

@@ -1,0 +1,14 @@
+{
+  "executedAt" : "2026-10-24T03:23:55.526674100Z",
+  "location" : "http://localhost:50550/login",
+  "route" : {
+    "method" : "list",
+    "verb" : "GET",
+    "path" : "/admin/orders",
+    "controller" : "com.oneshop.controller.admin.AdminOrderController"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/admin/orders",
+  "actual" : 302,
+  "expected" : 302
+}

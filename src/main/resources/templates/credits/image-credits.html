@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghi công hình ảnh sản phẩm - OneShop</title>
+</head>
+<body>
+<div class="container py-4" id="image-credits">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb small"><li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li><li class="breadcrumb-item active" aria-current="page">Ghi công hình ảnh</li></ol></nav>
+    <h1 class="h3 mb-3">Ghi công hình ảnh sản phẩm</h1>
+    <p>
+        Ảnh bao bì sản phẩm trên OneShop lấy từ
+        <a th:href="${credits.sourceUrl}" rel="noopener" target="_blank" th:text="${credits.source}">Open Beauty Facts</a>,
+        cơ sở dữ liệu mở do cộng đồng đóng góp, theo giấy phép
+        <a th:href="${credits.licenseUrl}" rel="license noopener" target="_blank" th:text="${credits.license}">CC BY-SA 3.0</a>.
+        Open Beauty Facts lưu ý ảnh có thể chứa thành phần đồ họa, nhãn hiệu hoặc bản quyền của bên khác; nhãn hiệu và tên sản phẩm thuộc chủ sở hữu tương ứng.
+        OneShop là sản phẩm học thuật, không phải nhà bán lẻ chính thức của các thương hiệu này.
+    </p>
+    <p><strong>Thay đổi đã thực hiện:</strong> không chỉnh sửa nội dung sản phẩm trong ảnh. Tệp gốc được lưu nguyên bản; khi hiển thị, ảnh được thêm nền trắng để vừa khung vuông 800×800 và được nén/chuyển định dạng.
+        Theo điều kiện chia sẻ tương tự, nếu bạn chỉnh sửa và phát hành lại các ảnh này thì phải dùng cùng giấy phép.
+        Chủ sở hữu quyền muốn gỡ ảnh có thể liên hệ quản trị OneShop.</p>
+    <p class="small text-secondary">Tác giả là tên tài khoản người đóng góp ảnh trên Open Beauty Facts, ghi nhận ngày <span th:text="${credits.verifiedOn}">2026-10-20</span>.</p>
+    <div class="table-responsive">
+        <table class="table table-sm align-middle" id="image-credits-table">
+            <thead><tr><th>Sản phẩm</th><th>Tác giả (Open Beauty Facts)</th><th>Trang gốc</th><th>Giấy phép</th></tr></thead>
+            <tbody>
+            <tr th:each="item : ${credits.items}">
+                <td th:text="${item.name}">Sản phẩm</td>
+                <td th:text="${item.author}">tác giả</td>
+                <td><a th:href="${item.obfPage}" rel="noopener" target="_blank" th:text="${item.obfCode}">mã vạch</a></td>
+                <td><a th:href="${credits.licenseUrl}" rel="license noopener" target="_blank" th:text="${credits.license}">CC BY-SA 3.0</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

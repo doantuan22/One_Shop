@@ -1,0 +1,14 @@
+{
+  "executedAt" : "2026-10-24T03:23:57.298913400Z",
+  "location" : "",
+  "route" : {
+    "method" : "assign",
+    "verb" : "POST",
+    "path" : "/admin/staff-assignments",
+    "controller" : "com.oneshop.controller.admin.AdminStaffAssignmentController"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/admin/staff-assignments",
+  "actual" : 403,
+  "expected" : 403
+}

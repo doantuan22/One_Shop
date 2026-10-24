@@ -104,6 +104,10 @@ abstract class AbstractIntegrationTest {
     @MockitoBean
     protected StaffOperationsService staffOperationsService;
 
+    /** The Fulfillment queue (V3-BE-04) is a database reader like the services above; real reads are in DB tests. */
+    @MockitoBean
+    protected com.oneshop.service.fulfillment.StaffFulfillmentService staffFulfillmentService;
+
     @MockitoBean
     protected com.oneshop.service.StaffInventoryService staffInventoryService;
 
@@ -111,11 +115,17 @@ abstract class AbstractIntegrationTest {
     @MockitoBean
     protected com.oneshop.service.AdminOperationsService adminOperationsService;
 
+    /** Read model of the refund ledger (OPEN-10.1): database tests cover it, web tests stay independent of SQL. */
+    @MockitoBean
+    protected com.oneshop.service.payment.OrderRefundViewService orderRefundViewService;
+
     @BeforeEach
     void staffReadModelsByDefault() {
         when(staffOperationsService.getDashboard()).thenAnswer(invocation -> new StaffDashboardResponse(
                 storeService.getAssignedStores(SecurityContextHolder.getContext().getAuthentication().getName()).stream()
                         .map(s -> new StaffStoreDashboardResponse(s, 0, 0, 0, 0)).toList(), 5, java.util.List.of()));
+        when(staffFulfillmentService.getQueue(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.anyInt()))
+                .thenReturn(Page.empty());
         when(staffOperationsService.getOrders(org.mockito.ArgumentMatchers.anyInt())).thenReturn(Page.empty());
         when(staffOperationsService.getPickupQueue(org.mockito.ArgumentMatchers.anyInt())).thenReturn(Page.empty());
         when(staffInventoryService.getStock(org.mockito.ArgumentMatchers.anyInt())).thenReturn(Page.empty());

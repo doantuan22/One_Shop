@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--/* Status of one Fulfillment (order_fulfillments.status). Shared by staff, admin and customer pages. */-->
+<span th:fragment="status(status)" class="badge os-fulfillment-status" th:attr="data-status=${status}"
+      th:with="n=${status.name()}"
+      th:classappend="${n == 'COMPLETED'} ? 'text-bg-success' : (${n == 'FAILED'} ? 'text-bg-danger' : (${n == 'CANCELLED'} ? 'text-bg-secondary' : (${n == 'CONFIRMED'} ? 'text-bg-light border' : 'text-bg-warning')))"
+      th:switch="${n}">
+    <span th:case="'CONFIRMED'">Chờ chuẩn bị</span>
+    <span th:case="'PREPARING'">Đang chuẩn bị</span>
+    <span th:case="'PACKED'">Đã đóng gói</span>
+    <span th:case="'SHIPPING'">Đang giao hàng</span>
+    <span th:case="'READY_FOR_PICKUP'">Sẵn sàng cho khách nhận</span>
+    <span th:case="'COMPLETED'">Hoàn tất</span>
+    <span th:case="'CANCELLED'">Đã hủy</span>
+    <span th:case="'FAILED'">Không thành công</span>
+    <span th:case="*">Trạng thái chưa xác định</span>
+</span>
+
+<div th:fragment="table(rows)" class="table-responsive">
+    <table class="table table-hover os-table align-middle mb-0" aria-label="Phần giao hàng thuộc các chi nhánh được phân công">
+        <thead>
+        <tr>
+            <th scope="col" class="os-col-code">Phần giao</th><th scope="col">Đơn</th><th scope="col" class="os-fulfillment-extra-column">Chi nhánh</th>
+            <th scope="col">Khách hàng</th><th scope="col">Hình thức</th>
+            <th scope="col" class="os-fulfillment-extra-column">Thanh toán</th><th scope="col">Trạng thái phần giao</th>
+            <th scope="col" class="os-fulfillment-extra-column">Trạng thái đơn</th>
+            <th scope="col" class="text-end os-fulfillment-extra-column">Sản phẩm</th>
+            <th scope="col" class="os-fulfillment-extra-column">Phân công lúc</th><th scope="col" class="text-nowrap os-col-actions">Việc tiếp theo</th>
+        </tr>
+        </thead>
+        <tbody id="fulfillments-body">
+        <tr th:each="row : ${rows}"
+            th:classappend="${row.blockedReason == null and row.nextAction != null} ? 'os-fulfillment-row--action-needed'"
+            th:attr="data-fulfillment-id=${row.fulfillmentId},data-order-id=${row.orderId},data-store-id=${row.storeId}">
+            <td class="os-col-code"><a class="os-id-link" th:href="@{/staff/fulfillments/{id}(id=${row.fulfillmentId})}" th:text="'#' + ${row.fulfillmentId}">#10</a></td>
+            <td th:text="'#' + ${row.orderId}">#77</td>
+            <td class="os-fulfillment-extra-column"><span class="os-cell-main" th:text="${row.storeName}">OneShop Thủ Đức</span></td>
+            <td><span class="os-cell-main" th:text="${row.customerName}">Nguyễn Khách</span></td>
+            <td>
+                <span th:replace="~{staff/delivery/fragments :: method(${row.paymentMethod})}"></span>
+                <span class="small text-secondary os-fulfillment-compact-only"><span th:replace="~{staff/delivery/fragments :: payment(${row.paymentStatus})}"></span></span>
+            </td>
+            <td class="os-fulfillment-extra-column"><span th:replace="~{staff/delivery/fragments :: payment(${row.paymentStatus})}"></span></td>
+            <td><span th:replace="~{staff/fulfillments/fragments :: status(${row.status})}"></span></td>
+            <td class="os-fulfillment-extra-column"><span th:replace="~{staff/delivery/fragments :: state(${row.orderStatus})}"></span></td>
+            <td class="text-end os-fulfillment-extra-column os-col-num" th:text="${row.totalQuantity} + ' (' + ${row.itemCount} + ' dòng)'">2 (1 dòng)</td>
+            <td class="os-fulfillment-extra-column" th:text="${#temporals.format(row.assignedAt, 'dd/MM/yyyy HH:mm')}">01/10/2026 09:00</td>
+            <td class="text-nowrap os-col-actions">
+                <span th:if="${row.blockedReason != null}" class="small text-warning-emphasis os-blocked"
+                      th:text="${row.blockedReason}">Đơn hàng đang chờ thanh toán</span>
+                <a th:if="${row.blockedReason == null and row.nextAction != null}" class="btn btn-primary btn-sm text-nowrap os-next-action"
+                   th:href="@{/staff/fulfillments/{id}(id=${row.fulfillmentId})}" th:text="${row.nextAction.label}">Bắt đầu chuẩn bị</a>
+                <span th:if="${row.blockedReason == null and row.nextAction == null}" class="small text-secondary">—</span>
+            </td>
+        </tr>
+        <tr th:if="${rows.isEmpty()}"><td colspan="11" class="text-center text-secondary py-4">
+            <strong>Chưa có phần giao hàng cần hiển thị.</strong>
+            <div class="mt-1">Thử xóa bộ lọc hoặc đợi chi nhánh được phân công có đơn cần xử lý.</div>
+        </td></tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

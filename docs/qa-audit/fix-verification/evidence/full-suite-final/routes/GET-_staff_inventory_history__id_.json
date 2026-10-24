@@ -1,0 +1,14 @@
+{
+  "executedAt" : "2026-10-24T03:24:00.336605600Z",
+  "location" : "http://localhost:50550/login",
+  "route" : {
+    "method" : "history",
+    "verb" : "GET",
+    "path" : "/staff/inventory-history/{id}",
+    "controller" : "com.oneshop.controller.staff.StaffStockController"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/staff/inventory-history/999999999",
+  "actual" : 302,
+  "expected" : 302
+}
