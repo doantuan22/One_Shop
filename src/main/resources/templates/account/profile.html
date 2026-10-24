@@ -281,6 +281,15 @@
             transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
 
+        .acc-input:-webkit-autofill,
+        .acc-input:-webkit-autofill:hover,
+        .acc-input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #0f172a;
+            -webkit-box-shadow: 0 0 0 1000px #ffffff inset;
+            box-shadow: 0 0 0 1000px #ffffff inset;
+            transition: background-color 9999s ease-out 0s;
+        }
+
         .acc-input::placeholder {
             color: #94a3b8;
         }
@@ -398,7 +407,7 @@
 
         .acc-pw__toggle:hover {
             color: #e86638;
-            background: #fff5f1;
+            background: transparent;
         }
 
         .acc-pw__toggle:focus-visible {

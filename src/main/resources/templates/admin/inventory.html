@@ -99,10 +99,13 @@
                     <span class="badge os-soft-warning"
                           th:unless="${row.quantity == 0}"
                           th:if="${row.quantity <= summary.lowThreshold}">Sắp hết</span>
-                    <span class="badge os-soft-success"
+                    <span class="status-text status-text--success"
                           th:if="${row.quantity > summary.lowThreshold}">Tồn ổn định</span>
                 </td>
-                <td><span th:replace="~{fragments/components :: statusBadge(${row.status})}"></span></td>
+                <td>
+                    <span class="status-text status-text--success" th:if="${row.status.name() == 'ACTIVE'}">Đang hoạt động</span>
+                    <span th:unless="${row.status.name() == 'ACTIVE'}" th:replace="~{fragments/components :: statusBadge(${row.status})}"></span>
+                </td>
             </tr>
             <tr th:if="${storeProducts.isEmpty()}">
                 <td colspan="7" class="text-center text-secondary py-5">

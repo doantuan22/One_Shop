@@ -230,54 +230,6 @@
     color: #c8a795;
 }
 
-/* ===== 6. Soft status badges (less saturated, more professional than text-bg-*) ===== */
-.badge.os-soft {
-    font-weight: 600;
-    border: 1px solid transparent;
-}
-
-.badge.os-soft-success {
-    color: #027a48;
-    background: #ecfdf3;
-    border-color: #abefc6;
-}
-
-.badge.os-soft-danger {
-    color: #b42318;
-    background: #fef3f2;
-    border-color: #fecdca;
-}
-
-.badge.os-soft-warning {
-    color: #b54708;
-    background: #fffaeb;
-    border-color: #fedf89;
-}
-
-.badge.os-soft-info {
-    color: #175cd3;
-    background: #eff8ff;
-    border-color: #b2ddff;
-}
-
-.badge.os-soft-neutral {
-    color: #344054;
-    background: #f2f4f7;
-    border-color: #e4e7ec;
-}
-
-.badge.os-soft-coral {
-    color: #d65426;
-    background: #fff5f2;
-    border-color: #ffd5c7;
-}
-
-.badge.os-soft-purple {
-    color: #5925dc;
-    background: #f4f3ff;
-    border-color: #d9d6fe;
-}
-
 /* outline pill for store / customer chips inside tables */
 .os-store-chip {
     display: inline-flex;
@@ -604,40 +556,17 @@
     }
 }
 
-/* Softer fulfillment status badges inside the admin / staff shells only (client pages keep stock Bootstrap). */
-.os-app--admin .os-fulfillment-status,
-.os-app--staff .os-fulfillment-status {
-    border-radius: 999px;
-    font-weight: 600;
-    font-size: 0.78rem;
-    padding: 0.3rem 0.65rem;
-    border: 1px solid transparent;
-}
-
-.os-app--admin .os-fulfillment-status.text-bg-warning,
-.os-app--staff .os-fulfillment-status.text-bg-warning {
-    background-color: #fff0e3 !important;
-    color: #b25e00 !important;
-}
-
-.os-app--admin .os-fulfillment-status.text-bg-success,
-.os-app--staff .os-fulfillment-status.text-bg-success {
-    background-color: #e7f8f0 !important;
-    color: #027a48 !important;
-}
-
-.os-app--admin .os-fulfillment-status.text-bg-danger,
-.os-app--staff .os-fulfillment-status.text-bg-danger {
-    background-color: #fdecec !important;
-    color: #b42318 !important;
-}
-
-.os-app--admin .os-fulfillment-status.text-bg-secondary,
-.os-app--staff .os-fulfillment-status.text-bg-secondary {
-    background-color: #eef1f4 !important;
-    color: #5b6472 !important;
-}
-
 .os-blocked {
     white-space: normal;
+}
+
+/* Action column: header and buttons share one centre line instead of hugging the right edge. */
+.os-app .os-table thead th.os-col-actions,
+.os-app .os-table tbody td.os-col-actions {
+    text-align: center !important;
+}
+
+.os-app .os-table td.os-col-actions .table-actions,
+.os-app .os-table td.os-col-actions .d-flex {
+    justify-content: center !important;
 }

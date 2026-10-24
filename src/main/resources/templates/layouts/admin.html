@@ -10,6 +10,8 @@
     <link rel="stylesheet" th:href="@{/css/ui-system.css}">
     <!--/* The Admin UI skin: last, so it wins over the console layer above. Look only, no behaviour. */-->
     <link rel="stylesheet" th:href="@{/css/admin-ui.css}">
+    <link rel="stylesheet" th:href="@{/css/os-select.css}">
+    <link rel="stylesheet" th:href="@{/css/status-badge.css}">
 </head>
 <body class="os-app os-app--admin" data-layout="admin" th:attr="data-admin-page=${currentPath}">
 <a class="visually-hidden-focusable os-skip-link" href="#main-content">Bỏ qua đến nội dung chính</a>
@@ -25,5 +27,6 @@
 <th:block th:replace="~{fragments/assets :: scripts}"></th:block>
 <script th:src="@{/js/admin-staff.js}" defer></script>
 <script th:src="@{/js/os-suggest.js}" defer></script>
+<script th:src="@{/js/os-select.js}" defer></script>
 </body>
 </html>

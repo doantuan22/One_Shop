@@ -89,7 +89,7 @@
 
 <!--/* Where an ONLINE payment stands for the Admin (PaymentCaseCategory): one classification for list, detail and dashboard. */-->
 <span th:fragment="paymentCategory(category)" class="badge os-payment-category" th:attr="data-category=${category.name()}"
-      th:classappend="${category.name() == 'ATTENTION'} ? 'text-bg-danger' : (${category.name() == 'RECONCILING'} ? 'text-bg-warning' : (${category.name() == 'WAITING'} ? 'text-bg-light border' : (${category.name() == 'PAID'} ? 'text-bg-success' : 'text-bg-secondary')))"
+      th:classappend="${category.name() == 'ATTENTION'} ? 'os-soft os-soft-danger' : (${category.name() == 'RECONCILING'} ? 'os-soft os-soft-purple' : (${category.name() == 'WAITING'} ? 'os-soft os-soft-warning' : (${category.name() == 'PAID'} ? 'os-soft os-soft-success' : 'os-soft os-soft-neutral')))"
       th:text="${category.label()}">Cần xử lý</span>
 
 <!--/* Card with a header title; `content` is a fragment expression for the body. */-->
@@ -121,9 +121,18 @@
                 <span class="pcard__from" th:if="${card.fromPrice}">Từ </span><span
                         th:replace="~{fragments/components :: price(${card.price})}"></span>
             </div>
-            <div class="pcard__stock">
-                <span class="pcard__stock-tag in-stock" th:if="${card.inStock}">Còn hàng toàn hệ thống</span>
-                <span class="pcard__stock-tag out-stock" th:unless="${card.inStock}">Hết hàng</span>
+            <div class="pcard__stock" th:if="${card.inStock}">
+                <span class="status-badge status-badge--success">Còn hàng toàn hệ thống</span>
+            </div>
+            <div class="pcard__actions" th:unless="${card.inStock}">
+                <button type="button" class="btn pcard__btn-soldout" disabled aria-disabled="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="9" cy="21" r="1"/>
+                            <circle cx="20" cy="21" r="1"/>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                        </svg>
+                    <span>Hết hàng</span>
+                </button>
             </div>
             <div class="pcard__actions" th:if="${card.inStock}">
                 <form th:action="@{/cart/items}" method="post" sec:authorize="hasRole('CUSTOMER')">

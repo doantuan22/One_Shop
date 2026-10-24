@@ -33,7 +33,13 @@ public class PaymentController {
 
     @GetMapping
     public String view(@PathVariable Long orderId, Principal principal, Model model) {
-        model.addAttribute("paymentOrder", paymentService.getOrderPayments(principal.getName(), orderId));
+        var info = paymentService.getOrderPayments(principal.getName(), orderId);
+        if (info.expired() && info.orderStatus() == com.oneshop.entity.OrderStatus.PENDING_PAYMENT) {
+            // the 15 minutes are over: cancel the unpaid order and give the stock back now, then show the real state
+            reconciliation.reconcile(orderId, PaymentReconciliationService.Trigger.TIMEOUT_SCAN);
+            info = paymentService.getOrderPayments(principal.getName(), orderId);
+        }
+        model.addAttribute("paymentOrder", info);
         return "payment/index";
     }
 

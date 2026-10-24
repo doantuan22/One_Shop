@@ -52,7 +52,7 @@ class PasswordResetServiceTest {
         otps = mock(PasswordResetOtpRepository.class);
         mailer = mock(OtpMailSender.class);
         Clock clock = Clock.fixed(NOW.atZone(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
-        service = new PasswordResetService(users, otps, encoder, mailer, clock);
+        service = new PasswordResetService(users, otps, encoder, mailer, clock, "test-secret-test-secret-1234567890");
 
         user = new User();
         user.setEmail(EMAIL);
@@ -138,14 +138,75 @@ class PasswordResetServiceTest {
                 .hasMessageContaining("Không gửi được email");
     }
 
-    // ------------------------------------------------------------------ resetting with the code
+    // ------------------------------------------------------------------ step 2: proving the code
+
+    private void openCode(PasswordResetOtp row) {
+        when(otps.findFirstByEmailAndConsumedAtIsNullOrderByIdDesc(EMAIL)).thenReturn(Optional.of(row));
+        when(otps.findById(99L)).thenReturn(Optional.of(row));
+    }
 
     @Test
-    void theRightCodeResetsThePasswordOfThatEmailsAccountOnlyAndIsUsedOnce() {
-        when(otps.findFirstByEmailAndConsumedAtIsNullOrderByIdDesc(EMAIL))
-                .thenReturn(Optional.of(otpRow(7L, EMAIL, "123456", NOW.plusMinutes(5), 0)));
+    void theRightCodeGivesATicketButIsNotUsedUpAndChangesNoPassword() {
+        openCode(otpRow(7L, EMAIL, "123456", NOW.plusMinutes(5), 0));
 
-        service.resetPassword(EMAIL, " 123456 ", "NewPass#2026", "NewPass#2026");
+        String ticket = service.verifyOtp(EMAIL, " 123456 ");
+
+        assertThat(ticket).isNotBlank();
+        verify(otps, never()).consume(any(), any());
+        verify(users, never()).updatePasswordHash(anyString(), anyString(), any());
+    }
+
+    @Test
+    void aWrongCodeGivesNoTicketAndCountsATry() {
+        openCode(otpRow(7L, EMAIL, "123456", NOW.plusMinutes(5), 1));
+
+        assertThatThrownBy(() -> service.verifyOtp(EMAIL, "000000"))
+                .isInstanceOf(BadRequestException.class).hasMessageContaining("còn 3 lần");
+        verify(otps).addAttempt(99L);
+    }
+
+    @Test
+    void theFifthWrongCodeKillsTheCode() {
+        openCode(otpRow(7L, EMAIL, "123456", NOW.plusMinutes(5), 4));
+
+        assertThatThrownBy(() -> service.verifyOtp(EMAIL, "000000"))
+                .isInstanceOf(BadRequestException.class).hasMessageContaining("quá nhiều lần");
+        verify(otps).consume(eq(99L), any());
+    }
+
+    @Test
+    void anExpiredCodeIsRefusedEvenIfItIsRight() {
+        openCode(otpRow(7L, EMAIL, "123456", NOW.minusSeconds(1), 0));
+
+        assertThatThrownBy(() -> service.verifyOtp(EMAIL, "123456"))
+                .isInstanceOf(BadRequestException.class).hasMessageContaining("hết hạn");
+    }
+
+    @Test
+    void aCodeOfAnotherAccountOrAnotherEmailNeverVerifies() {
+        openCode(otpRow(8L, EMAIL, "123456", NOW.plusMinutes(5), 0));
+        assertThatThrownBy(() -> service.verifyOtp(EMAIL, "123456")).isInstanceOf(BadRequestException.class);
+
+        openCode(otpRow(7L, "other@example.com", "123456", NOW.plusMinutes(5), 0));
+        assertThatThrownBy(() -> service.verifyOtp(EMAIL, "123456")).isInstanceOf(BadRequestException.class);
+    }
+
+    @Test
+    void verifyingForAnUnknownEmailOrWithoutAnOpenCodeIsRefused() {
+        assertThatThrownBy(() -> service.verifyOtp("nobody@example.com", "123456"))
+                .isInstanceOf(BadRequestException.class).hasMessageContaining("chưa được đăng ký");
+        when(otps.findFirstByEmailAndConsumedAtIsNullOrderByIdDesc(EMAIL)).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> service.verifyOtp(EMAIL, "123456")).isInstanceOf(BadRequestException.class);
+    }
+
+    // ------------------------------------------------------------------ step 3: the new password
+
+    @Test
+    void withTheTicketThePasswordOfThatEmailsAccountIsChangedAndTheCodeUsedOnce() {
+        openCode(otpRow(7L, EMAIL, "123456", NOW.plusMinutes(5), 0));
+        String ticket = service.verifyOtp(EMAIL, "123456");
+
+        service.resetPassword(EMAIL, ticket, "NewPass#2026", "NewPass#2026");
 
         ArgumentCaptor<String> hash = ArgumentCaptor.forClass(String.class);
         verify(users).updatePasswordHash(eq(EMAIL), hash.capture(), any());
@@ -154,91 +215,70 @@ class PasswordResetServiceTest {
     }
 
     @Test
-    void aWrongCodeChangesNothingAndCountsATry() {
-        when(otps.findFirstByEmailAndConsumedAtIsNullOrderByIdDesc(EMAIL))
-                .thenReturn(Optional.of(otpRow(7L, EMAIL, "123456", NOW.plusMinutes(5), 1)));
+    void withoutATicketOrWithAForgedOneNothingChanges() {
+        openCode(otpRow(7L, EMAIL, "123456", NOW.plusMinutes(5), 0));
+        String real = service.verifyOtp(EMAIL, "123456");
 
-        assertThatThrownBy(() -> service.resetPassword(EMAIL, "000000", "NewPass#2026", "NewPass#2026"))
-                .isInstanceOf(BadRequestException.class).hasMessageContaining("còn 3 lần");
-        verify(otps).addAttempt(99L);
+        for (String bad : new String[] {null, "", "x", "99.9999999999.AAAA", real + "x", real.substring(0, real.length() - 3)}) {
+            assertThatThrownBy(() -> service.resetPassword(EMAIL, bad, "NewPass#2026", "NewPass#2026"))
+                    .isInstanceOf(BadRequestException.class)
+                    .extracting(e -> ((BadRequestException) e).getField()).isEqualTo("ticket");
+        }
         verify(users, never()).updatePasswordHash(anyString(), anyString(), any());
+        verify(otps, never()).consume(any(), any());
     }
 
     @Test
-    void theFifthWrongCodeKillsTheCode() {
-        when(otps.findFirstByEmailAndConsumedAtIsNullOrderByIdDesc(EMAIL))
-                .thenReturn(Optional.of(otpRow(7L, EMAIL, "123456", NOW.plusMinutes(5), 4)));
+    void aTicketOfOneEmailCannotResetAnotherAccount() {
+        openCode(otpRow(7L, EMAIL, "123456", NOW.plusMinutes(5), 0));
+        String ticket = service.verifyOtp(EMAIL, "123456");
 
-        assertThatThrownBy(() -> service.resetPassword(EMAIL, "000000", "NewPass#2026", "NewPass#2026"))
-                .isInstanceOf(BadRequestException.class).hasMessageContaining("quá nhiều lần");
-        verify(otps).consume(eq(99L), any());
-        verify(users, never()).updatePasswordHash(anyString(), anyString(), any());
-    }
+        User other = new User();
+        other.setEmail("other@example.com");
+        other.setRole(new Role(RoleName.CUSTOMER));
+        ReflectionTestUtils.setField(other, "id", 8L);
+        when(users.findByEmail("other@example.com")).thenReturn(Optional.of(other));
 
-    @Test
-    void anExpiredCodeIsRefusedEvenIfItIsRight() {
-        when(otps.findFirstByEmailAndConsumedAtIsNullOrderByIdDesc(EMAIL))
-                .thenReturn(Optional.of(otpRow(7L, EMAIL, "123456", NOW.minusSeconds(1), 0)));
-
-        assertThatThrownBy(() -> service.resetPassword(EMAIL, "123456", "NewPass#2026", "NewPass#2026"))
-                .isInstanceOf(BadRequestException.class).hasMessageContaining("hết hạn");
-        verify(users, never()).updatePasswordHash(anyString(), anyString(), any());
-    }
-
-    @Test
-    void aCodeOfAnotherAccountCanNeverResetThisEmailsPassword() {
-        // the open code for this e-mail belongs to user 8, not to the account that owns the e-mail (user 7)
-        when(otps.findFirstByEmailAndConsumedAtIsNullOrderByIdDesc(EMAIL))
-                .thenReturn(Optional.of(otpRow(8L, EMAIL, "123456", NOW.plusMinutes(5), 0)));
-
-        assertThatThrownBy(() -> service.resetPassword(EMAIL, "123456", "NewPass#2026", "NewPass#2026"))
+        assertThatThrownBy(() -> service.resetPassword("other@example.com", ticket, "NewPass#2026", "NewPass#2026"))
                 .isInstanceOf(BadRequestException.class);
         verify(users, never()).updatePasswordHash(anyString(), anyString(), any());
     }
 
     @Test
-    void aCodeSentToAnotherEmailCannotBeUsedForThisOne() {
-        when(otps.findFirstByEmailAndConsumedAtIsNullOrderByIdDesc(EMAIL))
-                .thenReturn(Optional.of(otpRow(7L, "other@example.com", "123456", NOW.plusMinutes(5), 0)));
+    void aTicketDiesWithItsCode() {
+        openCode(otpRow(7L, EMAIL, "123456", NOW.plusMinutes(5), 0));
+        String ticket = service.verifyOtp(EMAIL, "123456");
 
-        assertThatThrownBy(() -> service.resetPassword(EMAIL, "123456", "NewPass#2026", "NewPass#2026"))
-                .isInstanceOf(BadRequestException.class);
-        verify(users, never()).updatePasswordHash(anyString(), anyString(), any());
-    }
+        // the code is replaced or used elsewhere: the stored row is no longer open
+        PasswordResetOtp used = otpRow(7L, EMAIL, "123456", NOW.plusMinutes(5), 0);
+        ReflectionTestUtils.setField(used, "consumedAt", NOW);
+        when(otps.findById(99L)).thenReturn(Optional.of(used));
 
-    @Test
-    void resettingForAnUnknownEmailIsRefused() {
-        assertThatThrownBy(() -> service.resetPassword("nobody@example.com", "123456", "NewPass#2026", "NewPass#2026"))
-                .isInstanceOf(BadRequestException.class).hasMessageContaining("chưa được đăng ký");
-        verify(users, never()).updatePasswordHash(anyString(), anyString(), any());
-    }
-
-    @Test
-    void withoutAnOpenCodeNothingCanBeReset() {
-        when(otps.findFirstByEmailAndConsumedAtIsNullOrderByIdDesc(EMAIL)).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> service.resetPassword(EMAIL, "123456", "NewPass#2026", "NewPass#2026"))
+        assertThatThrownBy(() -> service.resetPassword(EMAIL, ticket, "NewPass#2026", "NewPass#2026"))
                 .isInstanceOf(BadRequestException.class);
         verify(users, never()).updatePasswordHash(anyString(), anyString(), any());
     }
 
     @Test
     void aMismatchedConfirmationDoesNotBurnTheCode() {
-        assertThatThrownBy(() -> service.resetPassword(EMAIL, "123456", "NewPass#2026", "Other#2026"))
+        openCode(otpRow(7L, EMAIL, "123456", NOW.plusMinutes(5), 0));
+        String ticket = service.verifyOtp(EMAIL, "123456");
+
+        assertThatThrownBy(() -> service.resetPassword(EMAIL, ticket, "NewPass#2026", "Other#2026"))
                 .isInstanceOf(BadRequestException.class)
                 .extracting(e -> ((BadRequestException) e).getField()).isEqualTo("confirmPassword");
-        verify(otps, never()).addAttempt(any());
         verify(otps, never()).consume(any(), any());
         verify(users, never()).updatePasswordHash(anyString(), anyString(), any());
     }
 
     @Test
     void aCodeThatSomeoneElseJustUsedCannotBeUsedTwice() {
-        when(otps.findFirstByEmailAndConsumedAtIsNullOrderByIdDesc(EMAIL))
-                .thenReturn(Optional.of(otpRow(7L, EMAIL, "123456", NOW.plusMinutes(5), 0)));
+        openCode(otpRow(7L, EMAIL, "123456", NOW.plusMinutes(5), 0));
+        String ticket = service.verifyOtp(EMAIL, "123456");
         when(otps.consume(any(), any())).thenReturn(0);
 
-        assertThatThrownBy(() -> service.resetPassword(EMAIL, "123456", "NewPass#2026", "NewPass#2026"))
-                .isInstanceOf(BadRequestException.class).hasMessageContaining("đã được sử dụng");
+        assertThatThrownBy(() -> service.resetPassword(EMAIL, ticket, "NewPass#2026", "NewPass#2026"))
+                .isInstanceOf(BadRequestException.class);
         verify(users, times(0)).updatePasswordHash(anyString(), anyString(), any());
     }
 }

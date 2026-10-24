@@ -3,10 +3,12 @@ package com.oneshop.dto.request;
 import com.oneshop.dto.validation.MaxUtf8Bytes;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-/** Step 2 of "forgot password": the e-mail, the 6-digit code it received, and the new password typed twice. */
+/**
+ * Step 3 of "forgot password": the e-mail, the ticket given when its code was proved, and the new password typed
+ * twice. The ticket is the only proof of the code: no code is ever sent here.
+ */
 public class ResetPasswordRequest {
 
     @NotBlank(message = "Vui lòng nhập email")
@@ -14,9 +16,9 @@ public class ResetPasswordRequest {
     @Size(max = 255, message = "Email tối đa 255 ký tự")
     private String email;
 
-    @NotBlank(message = "Vui lòng nhập mã OTP")
-    @Pattern(regexp = "^\\s*[0-9]{6}\\s*$", message = "Mã OTP gồm 6 chữ số")
-    private String otp;
+    @NotBlank(message = "Phiên đặt lại mật khẩu không hợp lệ")
+    @Size(max = 200, message = "Phiên đặt lại mật khẩu không hợp lệ")
+    private String ticket;
 
     @NotBlank(message = "Vui lòng nhập mật khẩu mới")
     @Size(min = 8, max = 72, message = "Mật khẩu từ 8 đến 72 ký tự")
@@ -34,12 +36,12 @@ public class ResetPasswordRequest {
         this.email = email;
     }
 
-    public String getOtp() {
-        return otp;
+    public String getTicket() {
+        return ticket;
     }
 
-    public void setOtp(String otp) {
-        this.otp = otp;
+    public void setTicket(String ticket) {
+        this.ticket = ticket;
     }
 
     public String getNewPassword() {

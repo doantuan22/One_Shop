@@ -1,0 +1,87 @@
+/*
+ * Status badges: one solid, borderless treatment shared by Client, Staff and Admin.
+ * Loaded last in every layout, so it is the only definition of how a status looks.
+ *
+ * Two spellings hit the same rule:
+ *   .badge.os-soft-<tone>        used by the shared Thymeleaf fragments and the Staff/Admin tables
+ *   .status-badge--<tone>        used by Client pages that build their own status label
+ * Tones (text/background contrast is >= 4.5:1 for each):
+ *   success  done / paid / active          danger   cancelled / failed / needs action
+ *   warning  waiting on someone            info     confirmed / on the way
+ *   process  being prepared / handled      coral    ready for the customer (brand)
+ *   neutral  inactive / no state
+ * Action buttons are not touched: nothing here targets .btn.
+ */
+:root {
+    --os-st-success: #15803d;
+    --os-st-danger: #c2392e;
+    --os-st-warning: #f5b83d;
+    --os-st-warning-ink: #3b2a00;
+    --os-st-info: #1d6fb8;
+    --os-st-process: #5b45c7;
+    --os-st-coral: #c2461a;
+    --os-st-neutral: #667085;
+}
+
+.badge.os-soft,
+.badge[class*="os-soft-"],
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    min-height: 24px;
+    padding: 0.2rem 0.6rem;
+    border: 0;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: 0;
+    text-shadow: none;
+    box-shadow: none;
+    white-space: nowrap;
+    color: #fff;
+    background: var(--os-st-neutral);
+}
+
+.badge.os-soft-success,
+.status-badge--success { background: var(--os-st-success); color: #fff; }
+.badge.os-soft-danger,
+.status-badge--danger { background: var(--os-st-danger); color: #fff; }
+.badge.os-soft-warning,
+.status-badge--warning { background: var(--os-st-warning); color: var(--os-st-warning-ink); }
+.badge.os-soft-info,
+.status-badge--info { background: var(--os-st-info); color: #fff; }
+.badge.os-soft-purple,
+.status-badge--process { background: var(--os-st-process); color: #fff; }
+.badge.os-soft-coral,
+.status-badge--coral { background: var(--os-st-coral); color: #fff; }
+.badge.os-soft-neutral,
+.status-badge--neutral { background: var(--os-st-neutral); color: #fff; }
+
+/* A dot before the label, for client cards where the text alone would read as plain metadata. */
+.status-badge--dot::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.85;
+}
+
+/* Quiet status: plain coloured text for secondary places (timeline, dense metadata). */
+.status-text { font-weight: 600; }
+.status-text--success { color: var(--os-st-success); }
+.status-text--danger { color: var(--os-st-danger); }
+.status-text--warning { color: #92600a; }
+.status-text--info { color: var(--os-st-info); }
+.status-text--neutral { color: var(--os-st-neutral); }
+
+/* Inline counts inside tables/tabs keep the same geometry but must not wrap. */
+.table .badge[class*="os-soft-"],
+.os-table .badge[class*="os-soft-"] { vertical-align: middle; }
+
+/* Stock movement quantity: signed number, not a state. */
+.badge.os-delta-pos { color: var(--os-st-success); background: transparent; padding-inline: 0; }
+.badge.os-delta-neg { color: var(--os-st-danger); background: transparent; padding-inline: 0; }
+.badge.os-delta-neutral { color: var(--os-st-neutral); background: transparent; padding-inline: 0; }

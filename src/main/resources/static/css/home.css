@@ -691,38 +691,6 @@ body:has(.home-hero) {
     margin-bottom: 0.75rem;
 }
 
-.pcard__stock-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    padding: 2px 7px;
-    border-radius: 4px;
-    line-height: 1.4;
-}
-
-.pcard__stock-tag.in-stock {
-    background-color: #f0fdf4;
-    color: #166534;
-    border: 1px solid #bbf7d0;
-}
-
-.pcard__stock-tag.in-stock::before {
-    content: "";
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background-color: #16a34a;
-    flex-shrink: 0;
-}
-
-.pcard__stock-tag.out-stock {
-    background-color: #f8fafc;
-    color: #64748b;
-    border: 1px solid #e2e8f0;
-}
-
 /* above the stretched link of the title, so the button stays clickable */
 .pcard__actions {
     position: relative;
@@ -759,6 +727,27 @@ body:has(.home-hero) {
 .pcard__btn-cart:focus-visible {
     outline: none !important;
     box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.28) !important;
+}
+
+/* sold out: same size and shape as "Thêm vào giỏ", grey and not clickable */
+.pcard__btn-soldout {
+    height: 42px;
+    min-height: 42px;
+    border-radius: 9px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: 100%;
+    padding: 0 1rem;
+    background-color: #e2e8f0 !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #475569 !important;
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 1;
 }
 
 .pcard__btn-login {
@@ -809,6 +798,7 @@ body:has(.home-hero) {
     }
 
     .pcard__btn-cart,
+    .pcard__btn-soldout,
     .pcard__btn-login {
         height: 38px;
         min-height: 38px;

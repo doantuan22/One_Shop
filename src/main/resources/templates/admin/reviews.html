@@ -89,7 +89,7 @@
                 <td>
                     <span class="os-cell-main" th:text="${r.customerName}">Nguyễn Bình Luận</span>
                     <span class="os-cell-sub" th:text="${r.customerEmail}">khach@example.com</span>
-                    <span class="badge os-soft-coral mt-1" th:if="${r.reply == null}">Chưa phản hồi</span>
+                    <span class="badge os-soft-warning mt-1" th:if="${r.reply == null}">Chưa phản hồi</span>
                     <span class="badge os-soft-info mt-1" th:if="${r.reply != null}">Đã phản hồi</span>
                 </td>
                 <td>

@@ -273,10 +273,21 @@
                 row-gap: 8px;
             }
         }
+        .pay-timer {
+            font-variant-numeric: tabular-nums;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+        }
+
+        .is-urgent .pay-timer,
+        .is-expired .pay-timer {
+            color: #dc2626;
+        }
+
     </style>
 </head>
 <body class="os-home">
-<div class="payment-wrapper">
+<div class="payment-wrapper" data-countdown-scope>
     <nav aria-label="breadcrumb" class="payment-breadcrumb-nav">
         <ol class="payment-breadcrumb">
             <li><a th:href="@{/}">Trang chủ</a></li>
@@ -317,9 +328,13 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
             <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
         </svg>
-        <div>
+        <div th:attr="data-countdown=${paymentOrder.expired ? null : paymentOrder.remainingSeconds()}">
             Hạn thanh toán: <strong th:text="${#temporals.format(paymentOrder.paymentDeadline, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:15</strong> (15 phút kể từ lúc đặt hàng, không gia hạn).
             <span class="text-danger fw-bold" th:if="${paymentOrder.expired}">Đơn đã quá hạn thanh toán.</span>
+            <span th:unless="${paymentOrder.expired}">
+                Còn lại <strong class="pay-timer" data-countdown-time>--:--</strong>. Quá hạn đơn sẽ tự động hủy và hoàn lại tồn kho.
+            </span>
+            <span class="text-danger fw-bold" data-countdown-expired hidden>Đã hết hạn thanh toán.</span>
         </div>
     </div>
 
@@ -399,7 +414,7 @@
                 </div>
             </div>
 
-            <div class="mt-4 pt-3 border-top" th:if="${paymentOrder.payable() and !paymentOrder.reconciling}">
+            <div class="mt-4 pt-3 border-top" data-pay-action th:if="${paymentOrder.payable() and !paymentOrder.reconciling}">
                 <form method="post" th:action="@{/orders/{id}/payments/attempts(id=${paymentOrder.orderId})}">
                     <button id="start-payment" class="btn-start-pay" type="submit">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -459,5 +474,6 @@
         </div>
     </div>
 </div>
+<script th:src="@{/js/payment-countdown.js}" defer></script>
 </body>
 </html>

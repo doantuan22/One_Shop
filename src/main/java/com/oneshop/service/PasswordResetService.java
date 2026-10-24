@@ -6,18 +6,25 @@ import com.oneshop.exception.BadRequestException;
 import com.oneshop.repository.PasswordResetOtpRepository;
 import com.oneshop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.util.Base64;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Locale;
 
 /**
- * "Forgot password" with a one-time code sent by e-mail.
+ * "Forgot password" with a one-time code sent by e-mail, in three steps: (1) send the code, (2) prove it by typing it,
+ * (3) only then choose the new password.
  *
  * <p>The account is decided by the e-mail alone and the code is bound to it: a code is created only for an e-mail that
  * belongs to an active account, it is stored against that account's id and that e-mail, and it can reset only that
@@ -38,20 +45,22 @@ public class PasswordResetService {
     private final PasswordEncoder encoder;
     private final OtpMailSender mailer;
     private final Clock clock;
+    private final byte[] ticketKey;
 
     @Autowired
     public PasswordResetService(UserRepository users, PasswordResetOtpRepository otps, PasswordEncoder encoder,
-                                OtpMailSender mailer) {
-        this(users, otps, encoder, mailer, Clock.systemDefaultZone());
+                                OtpMailSender mailer, @Value("${app.jwt.secret:}") String secret) {
+        this(users, otps, encoder, mailer, Clock.systemDefaultZone(), secret);
     }
 
     PasswordResetService(UserRepository users, PasswordResetOtpRepository otps, PasswordEncoder encoder,
-                         OtpMailSender mailer, Clock clock) {
+                         OtpMailSender mailer, Clock clock, String secret) {
         this.users = users;
         this.otps = otps;
         this.encoder = encoder;
         this.mailer = mailer;
         this.clock = clock;
+        this.ticketKey = ("password-reset-ticket:" + (secret == null ? "" : secret)).getBytes(StandardCharsets.UTF_8);
     }
 
     public static String normalize(String email) {
@@ -89,17 +98,16 @@ public class PasswordResetService {
     }
 
     /**
-     * Resets the password of the account that owns {@code rawEmail} when {@code otp} is the code sent to that e-mail.
-     * A wrong code only counts a try (hence {@code noRollbackFor}); the code dies after {@value #MAX_WRONG_TRIES} wrong
-     * tries, on expiry, or when used.
+     * Step 2: checks the code the customer typed. A right code is NOT used up here: it earns a short-lived signed
+     * ticket that step 3 must present. A wrong code only counts a try (hence {@code noRollbackFor}); the code dies
+     * after {@value #MAX_WRONG_TRIES} wrong tries or when it expires.
+     *
+     * @return the ticket for {@link #resetPassword}; it is tied to this code, this account and this e-mail
      */
     @Transactional(noRollbackFor = BadRequestException.class)
-    public void resetPassword(String rawEmail, String rawOtp, String newPassword, String confirmPassword) {
+    public String verifyOtp(String rawEmail, String rawOtp) {
         String email = normalize(rawEmail);
         User user = requireActiveAccount(email);
-        if (newPassword == null || !newPassword.equals(confirmPassword)) {
-            throw new BadRequestException("confirmPassword", "Mật khẩu nhập lại không khớp");
-        }
         LocalDateTime now = LocalDateTime.now(clock).withNano(0);
 
         PasswordResetOtp row = otps.findFirstByEmailAndConsumedAtIsNullOrderByIdDesc(email)
@@ -128,14 +136,81 @@ public class PasswordResetService {
             }
             throw new BadRequestException("otp", "Mã OTP không đúng. Bạn còn " + left + " lần thử.");
         }
-        // right code: use it once, then change the password of this e-mail's account only
+        return issueTicket(row);
+    }
+
+    /**
+     * Step 3: sets the new password of the account that owns {@code rawEmail}, but only with the ticket step 2 gave
+     * for that e-mail while its code is still open. The code is used up here, exactly once. The ticket is checked
+     * first, so a wrong confirmation or a weak password never burns it.
+     */
+    @Transactional(noRollbackFor = BadRequestException.class)
+    public void resetPassword(String rawEmail, String ticket, String newPassword, String confirmPassword) {
+        String email = normalize(rawEmail);
+        User user = requireActiveAccount(email);
+        LocalDateTime now = LocalDateTime.now(clock).withNano(0);
+
+        Long otpId = readTicket(ticket, email, user.getId(), now);
+        PasswordResetOtp row = otpId == null ? null : otps.findById(otpId).orElse(null);
+        if (row == null || row.getConsumedAt() != null || !row.getExpiresAt().isAfter(now)
+                || !user.getId().equals(row.getUserId()) || !email.equals(row.getEmail())) {
+            throw new BadRequestException("ticket", "Phiên đặt lại mật khẩu đã hết hạn. Vui lòng nhập lại mã OTP.");
+        }
+        if (newPassword == null || !newPassword.equals(confirmPassword)) {
+            throw new BadRequestException("confirmPassword", "Mật khẩu nhập lại không khớp");
+        }
         if (otps.consume(row.getId(), now) != 1) {
-            throw new BadRequestException("otp", "Mã OTP đã được sử dụng. Vui lòng gửi mã mới.");
+            throw new BadRequestException("ticket", "Phiên đặt lại mật khẩu đã hết hạn. Vui lòng nhập lại mã OTP.");
         }
         if (users.updatePasswordHash(email, encoder.encode(newPassword), now) != 1) {
             throw new BadRequestException("email", "Tài khoản không còn hoạt động.");
         }
         otps.consumeAllOpen(email, now);
+    }
+
+    // ------------------------------------------------------------------ the ticket between step 2 and step 3
+
+    /** {@code otpId.expiryEpochSecond.signature}; the signature covers the id, the expiry, the account and the e-mail. */
+    private String issueTicket(PasswordResetOtp row) {
+        long expires = row.getExpiresAt().atZone(clock.getZone()).toEpochSecond();
+        String body = row.getId() + "." + expires;
+        return body + "." + sign(body, row.getUserId(), row.getEmail());
+    }
+
+    /** @return the code id the ticket was issued for, or {@code null} when it is forged, for someone else, or expired */
+    private Long readTicket(String ticket, String email, Long userId, LocalDateTime now) {
+        if (ticket == null) {
+            return null;
+        }
+        String[] parts = ticket.split("\\.");
+        if (parts.length != 3) {
+            return null;
+        }
+        try {
+            String body = parts[0] + "." + parts[1];
+            byte[] expected = sign(body, userId, email).getBytes(StandardCharsets.UTF_8);
+            if (!MessageDigest.isEqual(expected, parts[2].getBytes(StandardCharsets.UTF_8))) {
+                return null;
+            }
+            long expires = Long.parseLong(parts[1]);
+            if (expires <= now.atZone(clock.getZone()).toEpochSecond()) {
+                return null;
+            }
+            return Long.parseLong(parts[0]);
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
+    private String sign(String body, Long userId, String email) {
+        try {
+            Mac mac = Mac.getInstance("HmacSHA256");
+            mac.init(new SecretKeySpec(ticketKey, "HmacSHA256"));
+            byte[] signature = mac.doFinal((body + "|" + userId + "|" + email).getBytes(StandardCharsets.UTF_8));
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(signature);
+        } catch (java.security.GeneralSecurityException ex) {
+            throw new IllegalStateException("HmacSHA256 is not available", ex);
+        }
     }
 
     private User requireActiveAccount(String email) {

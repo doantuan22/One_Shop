@@ -68,7 +68,7 @@
                     <div th:text="${p.endAt != null} ? 'Đến ' + ${#temporals.format(p.endAt, 'dd/MM/yyyy HH:mm')} : 'Không giới hạn'">Đến</div>
                 </td>
                 <td><span class="badge os-soft" th:attr="data-state=${p.state}"
-                          th:classappend="${p.state == 'ACTIVE'} ? 'os-soft-success' : (${p.state == 'SCHEDULED'} ? 'os-soft-info' : (${p.state == 'INACTIVE'} ? 'os-soft-neutral' : 'os-soft-warning'))"
+                          th:classappend="${p.state == 'ACTIVE'} ? 'os-soft-success' : (${p.state == 'SCHEDULED'} ? 'os-soft-info' : (${p.state == 'INACTIVE' or p.state == 'EXPIRED'} ? 'os-soft-neutral' : 'os-soft-warning'))"
                           th:text="${p.state == 'ACTIVE'} ? 'Đang áp dụng' : (${p.state == 'SCHEDULED'} ? 'Chưa bắt đầu' : (${p.state == 'EXPIRED'} ? 'Hết hạn' : (${p.state == 'EXHAUSTED'} ? 'Hết lượt' : 'Ngừng áp dụng')))">Trạng thái</span></td>
                 <td class="text-end text-nowrap">
                     <a class="btn btn-sm btn-outline-primary" th:href="@{/admin/promotions/{id}/edit(id=${p.id})}">Sửa</a>

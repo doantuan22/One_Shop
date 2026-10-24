@@ -47,6 +47,12 @@ public record OrderPaymentResponse(Long orderId, Long checkoutId, String storeNa
                 && paymentStatus == OrderPaymentStatus.UNPAID && !expired;
     }
 
+    /** Whole seconds left to pay ({@code 0} once the window has ended or when there is no deadline). */
+    public long remainingSeconds() {
+        return paymentDeadline == null ? 0
+                : Math.max(0, java.time.Duration.between(java.time.LocalDateTime.now(), paymentDeadline).getSeconds());
+    }
+
     public boolean hasPendingAttempt() {
         return attempts.stream().anyMatch(payment -> payment.status() == PaymentStatus.PENDING);
     }

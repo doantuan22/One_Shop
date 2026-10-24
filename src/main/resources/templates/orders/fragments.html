@@ -287,7 +287,7 @@
                 <span>&middot;</span>
                 <span th:replace="~{fragments/components :: fulfillmentType(${order.fulfillmentType})}"></span>
                 <span th:if="${detail.fulfillments != null and detail.fulfillments.size() > 1}"
-                      class="badge rounded-pill bg-warning-subtle text-warning-emphasis border border-warning-subtle px-2 py-1"
+                      class="status-text status-text--warning"
                       th:text="${detail.fulfillments.size()} + ' phần giao từ nhiều chi nhánh'"></span>
             </p>
         </div>
@@ -437,7 +437,7 @@
                  th:attr="data-fulfillment-id=${part.fulfillmentId},data-status=${part.status}">
                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
                     <strong class="text-dark fs-6">
-                        <span th:if="${detail.fulfillments.size() > 1}" class="badge rounded-pill bg-dark text-white me-1" th:text="'Phần ' + ${row.count}"></span>
+                        <span th:if="${detail.fulfillments.size() > 1}" class="badge os-soft os-soft-neutral me-1" th:text="'Phần ' + ${row.count}"></span>
                         <span th:text="${part.storeName}"></span>
                     </strong>
                     <span class="badge os-soft os-soft-danger os-part-undeliverable" th:if="${refund != null and refund.undeliverable.containsKey(part.fulfillmentId)}">Không giao được</span>
@@ -581,9 +581,9 @@
                         </td>
                         <td class="text-end fw-bold text-coral"><span th:replace="~{fragments/components :: price(${line.amount})}"></span></td>
                         <td th:switch="${line.status.name()}">
-                            <span class="badge bg-success-subtle text-success-emphasis rounded-pill px-2 py-1" th:case="'SIMULATED_REFUNDED'">Đã hoàn</span>
-                            <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill px-2 py-1" th:case="'PENDING_SIMULATION'">Đang hoàn</span>
-                            <span class="badge bg-danger-subtle text-danger-emphasis rounded-pill px-2 py-1" th:case="*">Hoàn thất bại, đang chờ xử lý</span>
+                            <span class="badge os-soft os-soft-success" th:case="'SIMULATED_REFUNDED'">Đã hoàn</span>
+                            <span class="badge os-soft os-soft-warning" th:case="'PENDING_SIMULATION'">Đang hoàn</span>
+                            <span class="badge os-soft os-soft-danger" th:case="*">Hoàn thất bại, đang chờ xử lý</span>
                         </td>
                         <td class="small text-secondary" th:text="${line.reason}"></td>
                         <td class="small fw-medium" th:if="${line.actor != null}" th:text="${line.actor}"></td>

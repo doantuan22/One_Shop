@@ -2,15 +2,12 @@ package com.oneshop.controller.client;
 
 import com.oneshop.dto.request.PlaceOrderRequest;
 import com.oneshop.dto.response.CheckoutResultResponse;
-import com.oneshop.dto.response.OrderSummaryResponse;
 import com.oneshop.entity.FulfillmentType;
 import com.oneshop.entity.PaymentMethod;
 import com.oneshop.exception.BadRequestException;
 import com.oneshop.exception.CheckoutConflictException;
 import com.oneshop.service.CartService;
 import com.oneshop.service.CheckoutService;
-import com.oneshop.service.PaymentService;
-import com.oneshop.service.payment.PaymentReconciliationService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.dao.ConcurrencyFailureException;
@@ -44,31 +41,9 @@ public class CheckoutController {
     private final CheckoutService checkoutService;
     private final CartService cartService;
 
-    private final PaymentService paymentService;
-    private final PaymentReconciliationService reconciliation;
-
-    public CheckoutController(CheckoutService checkoutService, CartService cartService,
-                              PaymentService paymentService, PaymentReconciliationService reconciliation) {
+    public CheckoutController(CheckoutService checkoutService, CartService cartService) {
         this.checkoutService = checkoutService;
         this.cartService = cartService;
-        this.paymentService = paymentService;
-        this.reconciliation = reconciliation;
-    }
-
-    /** Demo gateway: an ONLINE order is paid successfully the moment it is placed (no real money moves). */
-    private void settleOnlineOrders(String email, CheckoutResultResponse result) {
-        for (OrderSummaryResponse order : result.orders()) {
-            if (order.paymentMethod() != PaymentMethod.ONLINE) {
-                continue;
-            }
-            try {
-                var attempt = paymentService.createOnlinePaymentAttempt(email, order.orderId());
-                reconciliation.simulate(email, order.orderId(), attempt.paymentId(),
-                        PaymentReconciliationService.SimulatedResult.SUCCESS);
-            } catch (RuntimeException ex) {
-                // the order stays placed and payable; the customer can still pay from the payment page
-            }
-        }
     }
 
     /** The checkout page for the lines ticked in the cart, for the way to receive and pay chosen so far. */
@@ -102,7 +77,6 @@ public class CheckoutController {
         } else {
             try {
                 CheckoutResultResponse result = checkoutService.placeOrder(principal.getName(), request);
-                settleOnlineOrders(principal.getName(), result);
                 return "redirect:/checkout/" + result.checkoutId() + "?success=placed";
             } catch (CheckoutConflictException ex) {
                 error = ex.getMessage();

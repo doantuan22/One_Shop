@@ -190,7 +190,7 @@
                         </td>
                         <td class="os-col-num"><span th:replace="~{fragments/components :: price(${item.price})}"></span></td>
                         <td>
-                            <span class="badge os-soft-success" th:if="${item.status.name() == 'ACTIVE'}">Đang kinh doanh</span>
+                            <span class="status-text status-text--success" th:if="${item.status.name() == 'ACTIVE'}">Đang kinh doanh</span>
                             <span class="badge os-soft-neutral" th:if="${item.status.name() != 'ACTIVE'}">Ngừng kinh doanh</span>
                             <span class="badge os-soft-danger" th:if="${item.quantity == 0}">Hết hàng</span>
                             <span class="badge os-soft-warning" th:if="${item.quantity > 0 and item.quantity <= lowStockThreshold}">Sắp hết</span>

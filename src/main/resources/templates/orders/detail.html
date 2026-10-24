@@ -165,12 +165,12 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background: #dcfce7;
-            color: #15803d;
-            font-size: 0.8rem;
-            font-weight: 700;
-            padding: 0.35rem 0.85rem;
-            border-radius: 999px;
+            background: #15803d;
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
         }
 
         .form-control-pro,
@@ -365,25 +365,6 @@
             color: var(--os-coral-dark);
         }
 
-        .od-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 0.32rem 0.85rem;
-            border-radius: 999px;
-            font-size: 0.8rem;
-            font-weight: 750;
-            white-space: nowrap;
-        }
-
-        .od-badge.s-pending { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
-        .od-badge.s-confirmed { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
-        .od-badge.s-preparing { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
-        .od-badge.s-ready { background: #f0fdfa; color: #0f766e; border: 1px solid #99f6e4; }
-        .od-badge.s-shipping { background: #f5f3ff; color: #6d28d9; border: 1px solid #ddd6fe; }
-        .od-badge.s-completed { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
-        .od-badge.s-cancelled { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
-        .od-badge.s-default { background: var(--os-slate-100); color: var(--os-slate-700); border: 1px solid var(--os-slate-200); }
 
         /* ---------- progress ---------- */
         .od-progress {
@@ -961,6 +942,77 @@
                 justify-content: center;
             }
         }
+        .pay-timer {
+            font-variant-numeric: tabular-nums;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+        }
+
+        .is-urgent .pay-timer,
+        .is-expired .pay-timer {
+            color: #dc2626;
+        }
+
+        .od-pay {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.6rem 1.25rem;
+            margin-top: 0.85rem;
+        }
+
+        .od-pay__time {
+            font-size: 0.88rem;
+            color: var(--os-slate-700);
+        }
+
+        .od-callout .od-pay__time strong,
+        .od-pay__time .pay-timer {
+            display: inline;
+            font-size: 1.15rem;
+            color: var(--os-slate-900);
+        }
+
+        .od-callout .od-pay strong.text-danger {
+            display: inline;
+            font-size: 0.9rem;
+            color: #dc2626;
+        }
+
+        .btn-pay-now {
+            height: 42px;
+            padding: 0 1.4rem;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(135deg, #ff7f50 0%, #f06437 100%);
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px -2px rgba(255, 127, 80, 0.35);
+            transition: all 0.2s ease;
+        }
+
+        .btn-pay-now:hover {
+            background: linear-gradient(135deg, #f06437 0%, #d95326 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px -2px rgba(255, 127, 80, 0.45);
+        }
+
+        .btn-pay-now:focus-visible {
+            outline: 3px solid rgba(255, 127, 80, 0.5);
+            outline-offset: 2px;
+        }
+
+        @media (max-width: 575.98px) {
+            .btn-pay-now {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
     </style>
 </head>
 <body class="os-home">
@@ -1011,20 +1063,8 @@
 
         <div class="od-head__side">
             <div id="order-status" th:attr="data-status=${order.orderStatus}" class="d-flex flex-wrap align-items-center gap-2">
-                <span class="od-badge"
-                      th:classappend="${ {'PENDING_PAYMENT':'s-pending','PARTIALLY_COMPLETED':'s-pending','CONFIRMED':'s-confirmed','PROCESSING':'s-confirmed','PREPARING':'s-preparing','PACKED':'s-preparing','READY_FOR_PICKUP':'s-ready','SHIPPING':'s-shipping','COMPLETED':'s-completed','CANCELLED':'s-cancelled','FAILED':'s-cancelled','NEEDS_ATTENTION':'s-cancelled'}[ost + ''] ?: 's-default' }">
-                    <th:block th:switch="${ost}">
-                        <span th:case="'PENDING_PAYMENT'">Chờ thanh toán</span><span th:case="'CONFIRMED'">Đã xác nhận</span>
-                        <span th:case="'PREPARING'">Đang chuẩn bị</span><span th:case="'PACKED'">Đã đóng gói</span>
-                        <span th:case="'READY_FOR_PICKUP'">Sẵn sàng nhận tại cửa hàng</span>
-                        <span th:case="'SHIPPING'">Đang giao hàng</span><span th:case="'COMPLETED'">Hoàn tất</span>
-                        <span th:case="'CANCELLED'">Đã hủy</span>
-                        <span th:case="'PROCESSING'">Đang xử lý</span><span th:case="'PARTIALLY_COMPLETED'">Hoàn tất một phần</span>
-                        <span th:case="'NEEDS_ATTENTION'">Cần xử lý ngoại lệ</span><span th:case="'FAILED'">Không thành công</span>
-                        <span th:case="*">Trạng thái chưa xác định</span>
-                    </th:block>
-                </span>
-                <span class="od-badge s-pending" id="order-closed-partial" th:if="${refund != null and refund.closedWithUndelivered}">Hoàn tất một phần: có phần không giao được</span>
+                <span th:replace="~{staff/delivery/fragments :: state(${order.orderStatus})}"></span>
+                <span class="status-text status-text--warning small" id="order-closed-partial" th:if="${refund != null and refund.closedWithUndelivered}">Hoàn tất một phần: có phần không giao được</span>
             </div>
             <div class="od-total">
                 <span class="od-total__label">Tổng thanh toán</span>
@@ -1041,7 +1081,7 @@
     </header>
 
     <!-- PROGRESS: a real step list only for the normal path; every other state is stated plainly -->
-    <section class="od-progress" aria-label="Tiến trình đơn hàng"
+    <section class="od-progress" data-countdown-scope aria-label="Tiến trình đơn hàng"
              th:with="step=${ {'CONFIRMED':0,'PROCESSING':1,'PREPARING':1,'PACKED':1,'SHIPPING':2,'READY_FOR_PICKUP':2,'COMPLETED':3}[ost + ''] ?: -1 }">
         <ol class="od-steps" th:if="${step >= 0}" th:with="pickup=${order.fulfillmentType.name() == 'STORE_PICKUP'}">
             <li class="od-step" th:each="i : ${#numbers.sequence(0, 3)}"
@@ -1069,6 +1109,24 @@
             <div>
                 <strong>Đơn hàng đang chờ thanh toán</strong>
                 <span>Đơn sẽ được xác nhận sau khi thanh toán thành công.</span>
+                <div class="od-pay" th:if="${paymentInfo != null}" th:attr="data-countdown=${paymentInfo.remainingSeconds()}">
+                    <span class="od-pay__time">
+                        Còn lại <strong class="pay-timer" data-countdown-time>--:--</strong> để thanh toán
+                        (hạn <span th:text="${#temporals.format(paymentInfo.paymentDeadline, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:15</span>).
+                        Quá hạn đơn sẽ tự động hủy và hoàn lại tồn kho.
+                    </span>
+                    <form th:action="@{/orders/{id}/payments/attempts(id=${orderDetail.order.orderId})}" method="post" class="m-0" data-pay-action
+                          th:if="${paymentInfo.payable() and !paymentInfo.reconciling}">
+                        <button type="submit" class="btn-pay-now" id="pay-now">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="2" y="5" width="20" height="14" rx="2"/>
+                                <line x1="2" y1="10" x2="22" y2="10"/>
+                            </svg>
+                            <span>Thanh toán ngay</span>
+                        </button>
+                    </form>
+                    <strong class="text-danger" data-countdown-expired hidden>Đã hết hạn thanh toán.</strong>
+                </div>
             </div>
         </div>
         <div class="od-callout is-warn" th:if="${ost == 'PARTIALLY_COMPLETED'}">
@@ -1389,5 +1447,6 @@
         </div>
     </section>
 </div>
+<script th:src="@{/js/payment-countdown.js}" defer></script>
 </body>
 </html>

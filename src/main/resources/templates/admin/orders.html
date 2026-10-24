@@ -31,7 +31,7 @@
                 <select id="filter-store" name="storeId" class="form-select form-select-sm">
                     <option value="">Tất cả chi nhánh</option>
                     <option th:each="s : ${stores}" th:value="${s.id}" th:selected="${s.id == storeId}"
-                            th:text="${s.name} + ' · ' + ${s.status}"></option>
+                            th:text="${s.name} + (${s.status.name() == 'ACTIVE'} ? '' : ' · Ngừng hoạt động')"></option>
                 </select>
             </div>
             <div class="os-filter-field">
@@ -44,7 +44,7 @@
                 <select id="filter-order-status" name="orderStatus" class="form-select form-select-sm">
                     <option value="">Tất cả trạng thái</option>
                     <option th:each="st : ${orderStatuses}" th:value="${st.name()}" th:selected="${st == orderStatus}"
-                            th:text="${st.name}"></option>
+                            th:text="${ {'PENDING_PAYMENT':'Chờ thanh toán','CONFIRMED':'Đã xác nhận','PROCESSING':'Đang xử lý','PREPARING':'Đang chuẩn bị','PACKED':'Đã đóng gói','SHIPPING':'Đang giao hàng','READY_FOR_PICKUP':'Sẵn sàng nhận tại cửa hàng','PARTIALLY_COMPLETED':'Hoàn tất một phần','COMPLETED':'Hoàn tất','CANCELLED':'Đã hủy','NEEDS_ATTENTION':'Cần xử lý ngoại lệ'}[st.name()] ?: st.name() }"></option>
                 </select>
             </div>
             <div class="os-filter-field">
@@ -52,7 +52,7 @@
                 <select id="filter-payment-status" name="paymentStatus" class="form-select form-select-sm">
                     <option value="">Tất cả</option>
                     <option th:each="st : ${paymentStatuses}" th:value="${st.name()}" th:selected="${st == paymentStatus}"
-                            th:text="${st.name}"></option>
+                            th:text="${ {'UNPAID':'Chưa thanh toán','PAID':'Đã thanh toán','FAILED':'Thanh toán thất bại','REFUNDED':'Đã hoàn tiền'}[st.name()] ?: st.name() }"></option>
                 </select>
             </div>
             <div class="os-filter-field">
@@ -118,7 +118,7 @@
                           th:text="${o.storeName}">OneShop Thủ Đức</span>
                 </td>
                 <td class="text-center">
-                    <span class="badge os-soft-coral"
+                    <span class="text-secondary small fw-semibold"
                           th:text="${row.fulfillmentCount} + ' phần'">1 phần</span>
                 </td>
                 <td><span th:replace="~{fragments/components :: fulfillmentType(${o.fulfillmentType})}"></span></td>

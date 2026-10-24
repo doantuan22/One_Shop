@@ -238,35 +238,6 @@
             color: var(--os-slate-500);
         }
 
-        .store-status-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 0.18rem 0.65rem;
-            border-radius: 999px;
-            font-size: 0.72rem;
-            font-weight: 700;
-            white-space: nowrap;
-        }
-
-        .store-status-pill::before {
-            content: "";
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: currentColor;
-        }
-
-        .store-status-pill.in-service {
-            background: #ecfdf3;
-            color: #15803d;
-        }
-
-        .store-status-pill.paused {
-            background: var(--os-slate-100);
-            color: var(--os-slate-500);
-        }
-
         .store-info-list {
             display: flex;
             flex-direction: column;
@@ -496,8 +467,8 @@
             <h2 class="store-name" th:text="${store.name}">OneShop Thủ Đức</h2>
             <div class="store-subline">
                 <span class="store-location" th:text="${store.area} + ' · ' + ${store.provinceCity}">Thủ Đức · TP. Hồ Chí Minh</span>
-                <span class="store-status-pill"
-                      th:classappend="${active} ? 'in-service' : 'paused'"
+                <span class="status-badge"
+                      th:classappend="${active} ? 'status-badge--success' : 'status-badge--neutral'"
                       th:text="${active} ? 'Đang hoạt động' : 'Tạm ngừng'">Đang hoạt động</span>
             </div>
 

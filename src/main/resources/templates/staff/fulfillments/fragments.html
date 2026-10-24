@@ -2,9 +2,9 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <body>
 <!--/* Status of one Fulfillment (order_fulfillments.status). Shared by staff, admin and customer pages. */-->
-<span th:fragment="status(status)" class="badge os-fulfillment-status" th:attr="data-status=${status}"
+<span th:fragment="status(status)" class="badge os-soft os-fulfillment-status" th:attr="data-status=${status}"
       th:with="n=${status.name()}"
-      th:classappend="${n == 'COMPLETED'} ? 'text-bg-success' : (${n == 'FAILED'} ? 'text-bg-danger' : (${n == 'CANCELLED'} ? 'text-bg-secondary' : (${n == 'CONFIRMED'} ? 'text-bg-light border' : 'text-bg-warning')))"
+      th:classappend="${ {'COMPLETED':'os-soft-success','FAILED':'os-soft-danger','CANCELLED':'os-soft-danger','CONFIRMED':'os-soft-warning','PREPARING':'os-soft-purple','PACKED':'os-soft-purple','SHIPPING':'os-soft-info','READY_FOR_PICKUP':'os-soft-coral'}[n + ''] ?: 'os-soft-neutral' }"
       th:switch="${n}">
     <span th:case="'CONFIRMED'">Chờ chuẩn bị</span>
     <span th:case="'PREPARING'">Đang chuẩn bị</span>

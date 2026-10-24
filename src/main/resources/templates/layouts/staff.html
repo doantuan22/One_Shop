@@ -8,8 +8,12 @@
     <title th:text="${#strings.isEmpty(pageTitle)} ? 'OneShop Staff' : ${pageTitle} + ' | OneShop Staff'">OneShop Staff</title>
     <th:block th:utext="${pageHead}"></th:block>
     <link rel="stylesheet" th:href="@{/css/ui-system.css}">
+    <!--/* The Admin UI skin is shared with the Staff console; last, so it wins over the console layer. */-->
+    <link rel="stylesheet" th:href="@{/css/admin-ui.css}">
+    <link rel="stylesheet" th:href="@{/css/os-select.css}">
+    <link rel="stylesheet" th:href="@{/css/status-badge.css}">
 </head>
-<body class="os-app os-app--staff" data-layout="staff">
+<body class="os-app os-app--staff" data-layout="staff" th:attr="data-admin-page=${currentPath}">
 <a class="visually-hidden-focusable os-skip-link" href="#main-content">Bỏ qua đến nội dung chính</a>
 <div th:replace="~{fragments/staff :: topbar}"></div>
 
@@ -23,5 +27,6 @@
 <th:block th:replace="~{fragments/assets :: scripts}"></th:block>
 <script th:src="@{/js/admin-staff.js}" defer></script>
 <script th:src="@{/js/os-suggest.js}" defer></script>
+<script th:src="@{/js/os-select.js}" defer></script>
 </body>
 </html>

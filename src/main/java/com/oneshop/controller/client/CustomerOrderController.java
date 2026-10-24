@@ -19,10 +19,14 @@ public class CustomerOrderController {
     private final ReviewService reviews;
     private final OrderRefundViewService refundView;
     private final CustomerOrderReturnService returns;
+    private final com.oneshop.service.PaymentService payments;
+    private final com.oneshop.service.payment.PaymentReconciliationService reconciliation;
     public CustomerOrderController(CustomerOrderService orders, OrderTransitionPolicy policy, ReviewService reviews,
-                                   OrderRefundViewService refundView, CustomerOrderReturnService returns) {
+                                   OrderRefundViewService refundView, CustomerOrderReturnService returns,
+                                   com.oneshop.service.PaymentService payments,
+                                   com.oneshop.service.payment.PaymentReconciliationService reconciliation) {
         this.orders = orders; this.policy = policy; this.reviews = reviews; this.refundView = refundView;
-        this.returns = returns;
+        this.returns = returns; this.payments = payments; this.reconciliation = reconciliation;
     }
     @GetMapping
     public String list(Principal principal, Model model) {
@@ -48,6 +52,18 @@ public class CustomerOrderController {
     public String detail(@PathVariable Long orderId, Principal principal, Model model) {
         var detail = orders.getOrder(principal.getName(), orderId);
         var order = detail.order();
+        if (order.paymentMethod() == com.oneshop.entity.PaymentMethod.ONLINE
+                && order.orderStatus() == com.oneshop.entity.OrderStatus.PENDING_PAYMENT) {
+            var paymentInfo = payments.getOrderPayments(principal.getName(), orderId);
+            if (paymentInfo.expired()) {
+                // the 15 minutes are over: cancel the unpaid order and give the stock back now
+                reconciliation.reconcile(orderId, com.oneshop.service.payment.PaymentReconciliationService.Trigger.TIMEOUT_SCAN);
+                detail = orders.getOrder(principal.getName(), orderId);
+                order = detail.order();
+            } else {
+                model.addAttribute("paymentInfo", paymentInfo);
+            }
+        }
         model.addAttribute("orderDetail", detail);
         model.addAttribute("orderNumber", orderNumbers(orders.getOrders(principal.getName())).get(orderId));
         var info = orders.getOrderItems(principal.getName()).get(orderId);

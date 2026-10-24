@@ -303,35 +303,6 @@
             color: var(--os-slate-500);
         }
 
-        .pdp-stock-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            padding: 0.28rem 0.75rem;
-            border-radius: 999px;
-        }
-
-        .pdp-stock-pill.in-stock {
-            background: #dcfce7;
-            color: #15803d;
-        }
-
-        .pdp-stock-pill.in-stock::before {
-            content: "";
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #16a34a;
-            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
-        }
-
-        .pdp-stock-pill.out-stock {
-            background: var(--os-slate-100);
-            color: var(--os-slate-500);
-        }
-
         /* buy box */
         .pdp-action-box {
             margin-bottom: 1.5rem;
@@ -940,8 +911,8 @@
 
                 <div class="pdp-price-policy">
                     <span>Một giá online chung cho toàn hệ thống.</span>
-                    <span class="pdp-stock-pill in-stock" th:if="${detail.inStock()}">Còn hàng toàn hệ thống</span>
-                    <span class="pdp-stock-pill out-stock" th:unless="${detail.inStock()}">Tạm hết hàng</span>
+                    <span class="status-badge status-badge--success" th:if="${detail.inStock()}">Còn hàng toàn hệ thống</span>
+                    <span class="status-badge status-badge--neutral" th:unless="${detail.inStock()}">Tạm hết hàng</span>
                 </div>
             </section>
 

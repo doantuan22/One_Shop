@@ -1,0 +1,44 @@
+/* Styled option list that replaces the browser native select popup (see js/os-select.js). */
+.os-select__panel {
+    position: fixed;
+    z-index: 2000;
+    margin: 0;
+    padding: 6px;
+    list-style: none;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #e6e9ef;
+    border-radius: 12px;
+    box-shadow: 0 12px 32px -8px rgba(16, 24, 40, 0.22), 0 2px 6px rgba(16, 24, 40, 0.06);
+    font-size: 0.9rem;
+}
+
+.os-select__option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0.5rem 0.7rem;
+    border-radius: 8px;
+    color: #1d2939;
+    cursor: pointer;
+    line-height: 1.35;
+}
+
+.os-select__option.is-active { background: #fff3ed; color: #b8431b; }
+.os-select__option.is-selected { font-weight: 650; color: #c2461a; }
+.os-select__option.is-selected::after {
+    content: "";
+    flex: none;
+    width: 14px;
+    height: 14px;
+    background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.os-select__option.is-disabled { color: #98a2b3; cursor: not-allowed; }
+
+.os-select__panel { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+.os-select__panel::-webkit-scrollbar { width: 8px; }
+.os-select__panel::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; border: 2px solid #fff; }
+.os-select__panel::-webkit-scrollbar-button { display: none; }

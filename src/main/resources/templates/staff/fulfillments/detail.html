@@ -7,8 +7,12 @@
 <div class="os-staff-fulfillment-detail" th:with="s=${detail.summary}">
     <a class="btn btn-outline-secondary mb-3" th:href="@{/staff/fulfillments}">Danh sách phần giao hàng</a>
 
-    <h1 class="h3 mb-1" th:text="'Phần giao #' + ${s.fulfillmentId} + ' thuộc đơn #' + ${s.orderId}"></h1>
-    <p class="text-secondary" th:text="${s.storeName} + ' · Chỉ gồm hàng của chi nhánh này'"></p>
+    <div class="os-page-header">
+        <div>
+        <h1 class="h3 mb-1" th:text="'Phần giao #' + ${s.fulfillmentId} + ' thuộc đơn #' + ${s.orderId}"></h1>
+        <p class="text-secondary" th:text="${s.storeName} + ' · Chỉ gồm hàng của chi nhánh này'"></p>
+        </div>
+    </div>
 
     <!--/* state stepper along the real path of this Fulfillment type; FAILED/CANCELLED are shown as a badge only */-->
     <ol class="list-unstyled d-flex flex-wrap gap-2 mb-3 os-stepper" id="fulfillment-stepper" aria-label="Tiến độ phần giao"

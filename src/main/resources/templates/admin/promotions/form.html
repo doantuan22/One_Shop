@@ -13,14 +13,14 @@
               th:action="${current == null} ? @{/admin/promotions} : @{/admin/promotions/{id}(id=${current.id})}">
             <div class="alert alert-danger" th:each="message : ${#fields.globalErrors()}" th:text="${message}">Lỗi</div>
             <div class="row g-3">
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-6">
                     <label class="form-label" for="code">Mã <span class="text-danger">*</span></label>
                     <input id="code" type="text" class="form-control font-monospace text-uppercase" th:field="*{code}" th:errorclass="is-invalid"
                            maxlength="50" autocapitalize="characters" spellcheck="false" th:readonly="${current != null}" required>
                     <div class="form-text" th:text="${current == null} ? 'Chữ không dấu, số, dấu _ và -, 3 đến 30 ký tự. Không đổi được sau khi tạo.' : 'Mã không đổi được sau khi tạo.'"></div>
                     <div class="invalid-feedback" th:errors="*{code}">Lỗi</div>
                 </div>
-                <div class="col-12 col-md-8">
+                <div class="col-12 col-md-6">
                     <label class="form-label" for="name">Tên khuyến mãi <span class="text-danger">*</span></label>
                     <input id="name" type="text" class="form-control" th:field="*{name}" th:errorclass="is-invalid" maxlength="150" required>
                     <div class="invalid-feedback" th:errors="*{name}">Lỗi</div>
