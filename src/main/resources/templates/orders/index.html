@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<<<<<<< HEAD
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -9,73 +8,128 @@
     <link rel="stylesheet" th:href="@{/css/bootstrap-coral.css}">
     <link rel="stylesheet" th:href="@{/css/home.css}">
     <style>
+        :root {
+            --os-coral: #ff7f50;
+            --os-coral-dark: #e86638;
+            --os-coral-soft: #fff5f1;
+            --os-slate-900: #0f172a;
+            --os-slate-700: #334155;
+            --os-slate-500: #64748b;
+            --os-slate-200: #e2e8f0;
+            --os-slate-100: #f1f5f9;
+            --os-bg: #f8fafc;
+        }
+
         body {
-            background-color: #f8f9fa;
+            background-color: var(--os-bg);
+            color: var(--os-slate-900);
         }
 
-        .orders-container {
-            max-width: 980px;
+        .orders-wrapper {
+            max-width: 1080px;
             margin: 0 auto;
-            padding: 2.25rem 1rem 5rem;
+            padding: 1.25rem 1rem 5.5rem;
         }
 
-        .breadcrumb-clean {
+        .orders-breadcrumb-nav {
+            margin-bottom: 1.25rem;
+        }
+
+        .orders-breadcrumb {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.4rem;
+            margin: 0;
+            padding: 0.55rem 1rem;
+            list-style: none;
+            font-size: 0.82rem;
+            font-weight: 500;
             background: #ffffff;
-            border: 1px solid #e2e8f0;
-            padding: 0.5rem 1rem;
+            border: 1px solid var(--os-slate-200);
             border-radius: 999px;
-            display: inline-flex;
-            margin-bottom: 1.5rem;
+            width: fit-content;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.02);
         }
 
-        .breadcrumb-clean .breadcrumb-item a {
-            color: #64748b;
+        .orders-breadcrumb a {
+            color: var(--os-slate-500);
             text-decoration: none;
-            font-weight: 600;
+            transition: color 0.15s ease;
         }
 
-        .breadcrumb-clean .breadcrumb-item a:hover {
-            color: var(--bs-primary, #ff7f50);
+        .orders-breadcrumb a:hover {
+            color: var(--os-coral);
         }
 
-        .breadcrumb-clean .breadcrumb-item.active {
-            color: var(--bs-primary, #ff7f50);
-            font-weight: 700;
+        .orders-breadcrumb-sep {
+            color: #94a3b8;
+            font-size: 1rem;
+            line-height: 1;
         }
 
-        .orders-header {
-            margin-bottom: 2rem;
+        .orders-breadcrumb .active {
+            color: var(--os-slate-900);
+            font-weight: 650;
         }
 
-        .orders-title {
-            font-size: 1.65rem;
+        .orders-hero-card {
+            background: #ffffff;
+            border: 1px solid var(--os-slate-200);
+            border-radius: 24px;
+            padding: 1.75rem 2.25rem;
+            box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.04);
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.25rem;
+        }
+
+        .orders-hero-title {
+            font-size: clamp(1.45rem, 2vw, 1.85rem);
             font-weight: 850;
-            color: #0f172a;
+            color: var(--os-slate-900);
             letter-spacing: -0.025em;
-            margin-bottom: 0.35rem;
+            line-height: 1.3;
+            margin-bottom: 0.25rem;
         }
 
-        .orders-subtitle {
-            font-size: 0.9rem;
-            color: #64748b;
-            margin-bottom: 0;
+        .orders-hero-desc {
+            font-size: 0.88rem;
+            color: var(--os-slate-500);
+            margin: 0;
+        }
+
+        .orders-hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--os-coral-soft);
+            color: var(--os-coral-dark);
+            border: 1px solid rgba(255, 127, 80, 0.25);
+            padding: 0.45rem 0.95rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 750;
         }
 
         .empty-orders-card {
             background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 20px;
-            padding: 3.5rem 1.5rem;
+            border: 1px solid var(--os-slate-200);
+            border-radius: 24px;
+            padding: 4rem 2rem;
             text-align: center;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.04);
         }
 
         .empty-orders-icon {
-            width: 68px;
-            height: 68px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
-            background-color: #fffaf8;
-            color: var(--bs-primary, #ff7f50);
+            background: var(--os-coral-soft);
+            color: var(--os-coral);
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -83,63 +137,64 @@
         }
 
         .empty-orders-title {
-            font-size: 1.15rem;
-            font-weight: 750;
-            color: #0f172a;
-            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+            font-weight: 850;
+            color: var(--os-slate-900);
+            margin-bottom: 0.45rem;
         }
 
         .empty-orders-desc {
             font-size: 0.9rem;
-            color: #64748b;
-            max-width: 420px;
+            color: var(--os-slate-500);
+            max-width: 440px;
             margin: 0 auto 1.5rem;
-            line-height: 1.5;
+            line-height: 1.55;
         }
 
         .btn-start-shopping {
             height: 44px;
-            padding: 0 1.5rem;
-            border-radius: 10px;
-            font-weight: 700;
+            padding: 0 1.75rem;
+            border-radius: 12px;
             font-size: 0.9rem;
-            background: linear-gradient(135deg, #ff7f50, #f06437);
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff7f50 0%, #f06437 100%);
             border: none;
             color: #ffffff;
             display: inline-flex;
             align-items: center;
             gap: 8px;
             text-decoration: none;
-            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.22);
+            box-shadow: 0 4px 14px -2px rgba(255, 127, 80, 0.35);
             transition: all 0.2s ease;
         }
 
         .btn-start-shopping:hover {
+            background: linear-gradient(135deg, #f06437 0%, #d95326 100%);
             color: #ffffff;
-            background: linear-gradient(135deg, #f06437, #df5124);
-            box-shadow: 0 6px 16px rgba(255, 127, 80, 0.32);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px -2px rgba(255, 127, 80, 0.45);
         }
 
-        .order-history-card {
+        .order-bento-card {
             background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
+            border: 1px solid var(--os-slate-200);
+            border-radius: 20px;
             overflow: hidden;
             margin-bottom: 1.25rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+            box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.04);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .order-history-card:hover {
+        .order-bento-card:hover {
             border-color: #cbd5e1;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.08);
         }
 
         .order-card-header {
             background-color: #ffffff;
-            border-bottom: 1px solid #f1f5f9;
-            padding: 1rem 1.35rem;
+            border-bottom: 1px solid var(--os-slate-100);
+            padding: 1.15rem 1.5rem;
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
@@ -147,48 +202,48 @@
             gap: 12px;
         }
 
-        .order-id-badge {
-            font-size: 0.95rem;
-            font-weight: 800;
-            color: #0f172a;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+        .order-id-link {
+            font-size: 1.05rem;
+            font-weight: 850;
+            color: var(--os-slate-900);
+            letter-spacing: -0.02em;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+
+        .order-id-link:hover {
+            color: var(--os-coral);
         }
 
         .store-pill {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 3px 10px;
+            background-color: var(--os-coral-soft);
+            border: 1px solid rgba(255, 127, 80, 0.25);
+            padding: 0.22rem 0.7rem;
             border-radius: 999px;
-            font-size: 0.825rem;
-            font-weight: 600;
-            color: #334155;
-        }
-
-        .store-pill-icon {
-            color: var(--bs-primary, #ff7f50);
-            flex-shrink: 0;
+            font-size: 0.76rem;
+            font-weight: 750;
+            color: var(--os-coral-dark);
         }
 
         .order-datetime {
-            font-size: 0.825rem;
-            color: #64748b;
+            font-size: 0.82rem;
+            font-weight: 550;
+            color: var(--os-slate-500);
             display: inline-flex;
             align-items: center;
             gap: 6px;
         }
 
         .order-card-body {
-            padding: 1.2rem 1.35rem;
+            padding: 1.25rem 1.5rem;
         }
 
         .order-info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 1.15rem 1.5rem;
         }
 
@@ -199,44 +254,44 @@
         }
 
         .info-item-label {
-            font-size: 0.775rem;
-            font-weight: 700;
+            font-size: 0.75rem;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.04em;
-            color: #94a3b8;
+            letter-spacing: 0.05em;
+            color: var(--os-slate-500);
         }
 
         .fulfillment-chip {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 5px 12px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            font-weight: 650;
+            gap: 7px;
+            padding: 0.32rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 750;
             width: fit-content;
         }
 
         .fulfillment-delivery {
             background-color: #eff6ff;
             color: #1e40af;
-            border: 1px solid #dbeafe;
+            border: 1px solid #bfdbfe;
         }
 
         .fulfillment-pickup {
-            background-color: #fff7ed;
-            color: #c2410c;
-            border: 1px solid #ffedd5;
+            background-color: var(--os-coral-soft);
+            color: var(--os-coral-dark);
+            border: 1px solid rgba(255, 127, 80, 0.3);
         }
 
         .status-badge {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 5px 12px;
+            padding: 0.32rem 0.8rem;
             border-radius: 999px;
-            font-size: 0.825rem;
-            font-weight: 700;
+            font-size: 0.8rem;
+            font-weight: 750;
             line-height: 1.2;
             width: fit-content;
         }
@@ -272,7 +327,7 @@
         }
 
         .status-completed {
-            background-color: #f0fdf4;
+            background-color: #dcfce7;
             color: #15803d;
             border: 1px solid #bbf7d0;
         }
@@ -284,33 +339,33 @@
         }
 
         .status-default {
-            background-color: #f1f5f9;
-            color: #475569;
-            border: 1px solid #e2e8f0;
+            background-color: var(--os-slate-100);
+            color: var(--os-slate-700);
+            border: 1px solid var(--os-slate-200);
         }
 
         .payment-chip {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 5px 12px;
+            padding: 0.32rem 0.8rem;
             border-radius: 999px;
-            font-size: 0.825rem;
-            font-weight: 700;
+            font-size: 0.8rem;
+            font-weight: 750;
             width: fit-content;
             line-height: 1.2;
         }
 
         .payment-paid {
-            background-color: #ecfdf5;
-            color: #047857;
-            border: 1px solid #a7f3d0;
+            background-color: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
         }
 
         .payment-unpaid {
             background-color: #fff7ed;
             color: #c2410c;
-            border: 1px solid #ffedd5;
+            border: 1px solid #fed7aa;
         }
 
         .payment-failed {
@@ -320,9 +375,9 @@
         }
 
         .order-card-footer {
-            background-color: #fcfcfc;
-            border-top: 1px solid #f1f5f9;
-            padding: 0.95rem 1.35rem;
+            background: linear-gradient(135deg, #fff9f6 0%, #fff1eb 100%);
+            border-top: 1px solid rgba(255, 127, 80, 0.18);
+            padding: 1rem 1.5rem;
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
@@ -337,82 +392,116 @@
         }
 
         .order-total-label {
-            font-size: 0.85rem;
-            color: #64748b;
-            font-weight: 500;
+            font-size: 0.84rem;
+            color: var(--os-slate-700);
+            font-weight: 700;
         }
 
         .order-total-value {
-            font-size: 1.25rem;
-            font-weight: 850;
-            color: var(--bs-primary, #ff7f50);
-            letter-spacing: -0.02em;
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: var(--os-coral-dark);
+            letter-spacing: -0.025em;
         }
 
         .btn-view-order-detail {
-            height: 38px;
-            padding: 0 1.15rem;
-            border-radius: 9px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #334155;
-            background-color: #ffffff;
-            border: 1px solid #cbd5e1;
+            height: 40px;
+            padding: 0 1.25rem;
+            border-radius: 10px;
+            font-size: 0.86rem;
+            font-weight: 800;
+            color: #ffffff;
+            background: linear-gradient(135deg, #ff7f50 0%, #f06437 100%);
+            border: none;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            transition: all 0.15s ease;
+            box-shadow: 0 4px 12px -2px rgba(255, 127, 80, 0.35);
+            transition: all 0.2s ease;
         }
 
         .btn-view-order-detail:hover {
             color: #ffffff;
-            background-color: var(--bs-primary, #ff7f50);
-            border-color: var(--bs-primary, #ff7f50);
-            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.2);
+            background: linear-gradient(135deg, #f06437 0%, #d95326 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px -2px rgba(255, 127, 80, 0.45);
+        }
+
+        @media (max-width: 575.98px) {
+            .orders-wrapper {
+                padding: 0.75rem 0.5rem 3.5rem;
+            }
+
+            .orders-hero-card {
+                padding: 1.25rem;
+                border-radius: 18px;
+            }
+
+            .order-card-header,
+            .order-card-body,
+            .order-card-footer {
+                padding: 1rem 1.15rem;
+            }
+
+            .btn-view-order-detail {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
-<body>
-<div class="orders-container">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb breadcrumb-clean small">
-            <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Đơn hàng của tôi</li>
+<body class="os-home">
+<div class="orders-wrapper">
+    <nav aria-label="breadcrumb" class="orders-breadcrumb-nav">
+        <ol class="orders-breadcrumb">
+            <li><a th:href="@{/}">Trang chủ</a></li>
+            <span class="orders-breadcrumb-sep">›</span>
+            <li class="active" aria-current="page">Đơn hàng của tôi</li>
         </ol>
     </nav>
 
-    <div class="orders-header">
-        <h1 class="orders-title">Đơn hàng của tôi</h1>
-        <p class="orders-subtitle">Theo dõi lịch sử và tiến độ xử lý đơn hàng tại các chi nhánh OneShop</p>
+    <div class="orders-hero-card">
+        <div>
+            <h1 class="orders-hero-title">Đơn hàng của tôi</h1>
+            <p class="orders-hero-desc">Theo dõi trạng thái xử lý, thanh toán và lịch sử các đơn hàng tại OneShop.</p>
+        </div>
+        <div class="orders-hero-pill" th:unless="${customerOrders.isEmpty()}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
+                <path d="M3 6h18"/>
+                <path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+            <span>Tổng cộng <strong th:text="${#lists.size(customerOrders)}">3</strong> đơn hàng</span>
+        </div>
     </div>
 
     <div class="empty-orders-card" th:if="${customerOrders.isEmpty()}">
         <div class="empty-orders-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
                 <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
             </svg>
         </div>
         <div class="empty-orders-title">Bạn chưa có đơn hàng nào</div>
-        <p class="empty-orders-desc">Hãy khám phá bộ sưu tập mỹ phẩm chính hãng và lựa chọn chi nhánh gần bạn nhất để nhận hàng.</p>
+        <p class="empty-orders-desc">Hãy khám phá bộ sưu tập mỹ phẩm chính hãng và lựa chọn những sản phẩm yêu thích của bạn.</p>
         <a class="btn-start-shopping" th:href="@{/products}">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="9" cy="21" r="1"/>
                 <circle cx="20" cy="21" r="1"/>
                 <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
             </svg>
-            Khám phá sản phẩm
+            <span>Bắt đầu mua sắm</span>
         </a>
     </div>
 
     <div th:unless="${customerOrders.isEmpty()}">
-        <article class="order-history-card" th:each="order : ${customerOrders}" th:attr="data-order-id=${order.orderId}">
+        <article class="order-bento-card" th:each="order : ${customerOrders}" th:attr="data-order-id=${order.orderId}">
             <div class="order-card-header">
                 <div class="d-flex align-items-center gap-2 flex-wrap">
-                    <span class="order-id-badge" th:text="'Đơn #' + ${order.orderId}">Đơn #1001</span>
+                    <a class="order-id-link" th:href="@{/orders/{id}(id=${order.orderId})}" th:text="'Đơn #' + ${order.orderId}">Đơn #1001</a>
                     <span class="store-pill">
-                        <svg class="store-pill-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M3 21h18"/>
                             <path d="M5 21V7l8-4v18"/>
                             <path d="M19 21V11l-6-4"/>
@@ -436,18 +525,17 @@
                         <span class="info-item-label">Hình thức nhận hàng</span>
                         <div>
                             <span class="fulfillment-chip fulfillment-delivery" th:if="${order.fulfillmentType.name() == 'DELIVERY'}">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
-                                    <path d="M15 18H9"/>
-                                    <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.24-4.05a1 1 0 0 0-.78-.38H14v10"/>
-                                    <circle cx="17" cy="18.5" r="2.5"/>
-                                    <circle cx="7" cy="18.5" r="2.5"/>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="1" y="3" width="15" height="13"></rect>
+                                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                                    <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                                    <circle cx="18.5" cy="18.5" r="2.5"></circle>
                                 </svg>
                                 <span>Giao hàng tận nơi</span>
                             </span>
 
                             <span class="fulfillment-chip fulfillment-pickup" th:if="${order.fulfillmentType.name() == 'STORE_PICKUP'}">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                                     <polyline points="9 22 9 12 15 12 15 22"/>
                                 </svg>
@@ -476,11 +564,11 @@
 
                             <span class="status-badge status-ready" th:case="'READY_FOR_PICKUP'">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                                Sẵn sàng nhận tại cửa hàng
+                                Sẵn sàng nhận tại quầy
                             </span>
 
                             <span class="status-badge status-shipping" th:case="'SHIPPING'">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
                                 Đang giao hàng
                             </span>
 
@@ -537,8 +625,8 @@
                 </div>
 
                 <a class="btn-view-order-detail" th:href="@{/orders/{id}(id=${order.orderId})}">
-                    <span>Chi tiết đơn hàng</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <span>Xem chi tiết</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
                 </a>
@@ -548,30 +636,3 @@
 </div>
 </body>
 </html>
-=======
-<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Đơn hàng của tôi</title></head><body>
-<div th:replace="~{fragments/components :: pageHeader('Đơn hàng của tôi', 'Theo dõi trạng thái, thanh toán và các phần giao của từng đơn.')}"></div>
-<div th:if="${customerOrders.isEmpty()}">
-    <div th:replace="~{fragments/components :: emptyState('Bạn chưa có đơn hàng nào.')}"></div>
-    <div class="text-center mt-3"><a class="btn btn-primary" th:href="@{/products}">Bắt đầu mua sắm</a></div>
-</div>
-<div class="card shadow-sm mb-3" th:each="order : ${customerOrders}" th:attr="data-order-id=${order.orderId}"><div class="card-body">
-    <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
-        <div>
-            <h2 class="h5 mb-1"><a class="text-decoration-none" th:href="@{/orders/{id}(id=${order.orderId})}" th:text="'Đơn #' + ${order.orderId}"></a></h2>
-            <div class="small text-secondary">
-                <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
-                &middot; <span th:replace="~{fragments/components :: fulfillmentType(${order.fulfillmentType})}"></span>
-                &middot; <span th:text="${order.storeName}"></span>
-            </div>
-        </div>
-        <div class="fs-5 fw-bold"><span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></div>
-    </div>
-    <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
-        <span th:replace="~{staff/delivery/fragments :: state(${order.orderStatus})}"></span>
-        <span class="small text-secondary"><span th:replace="~{staff/delivery/fragments :: payment(${order.paymentStatus})}"></span></span>
-        <a class="btn btn-outline-primary btn-sm ms-auto" th:href="@{/orders/{id}(id=${order.orderId})}">Xem chi tiết</a>
-    </div>
-</div></div>
-</body></html>
->>>>>>> 986bd39383b9ed7d4f582667875d648811b0b707
