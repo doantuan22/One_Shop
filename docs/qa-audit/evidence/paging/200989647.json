@@ -1,1 +1,1 @@
-{"request":"/products?page=-1&q=qa-no-match-999","expected":200,"timestamp":"2026-10-24T09:13:11.718330500Z","actual":200}
+{"actual":200,"timestamp":"2026-10-24T10:18:23.327637400Z","expected":200,"request":"/products?page=-1&q=qa-no-match-999"}

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Mỹ phẩm chính hãng, một giá online toàn hệ thống</title>
+    <meta name="description"
+          content="OneShop: mỹ phẩm chính hãng, một giá online chung cho cả hệ thống. Đặt hàng online, nhận tại cửa hàng hoặc giao tận nơi.">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <script th:src="@{/js/home-reveal.js}"></script>
+</head>
+<body>
+<!--/*
+    Home page. Data comes from HomeController (model attribute "home"); a section without data is not rendered.
+    All images are bundled files under /images/site (credits: docs/IMAGE_CREDITS.md). No quantity is ever printed (BR-15).
+*/-->
+<div class="os-home">
+
+    <!--/* HERO: photo + headline; the search bar below overlaps its bottom edge */-->
+    <section class="home-hero" aria-labelledby="hero-title">
+        <picture>
+            <source media="(max-width: 575.98px)" type="image/webp"
+                    th:srcset="@{/images/site/hero/hero-mobile-480.webp} + ' 480w, ' + @{/images/site/hero/hero-mobile-800.webp} + ' 800w'"
+                    sizes="100vw">
+            <img class="home-hero__img"
+                 th:src="@{/images/site/hero/hero-1280.webp}"
+                 th:srcset="@{/images/site/hero/hero-800.webp} + ' 800w, ' + @{/images/site/hero/hero-1280.webp} + ' 1280w, ' + @{/images/site/hero/hero-1920.webp} + ' 1920w'"
+                 sizes="100vw" width="1920" height="720" alt="" fetchpriority="high" decoding="async">
+        </picture>
+        <div class="home-hero__overlay" aria-hidden="true"></div>
+        <div class="home-hero__inner container">
+            <div class="home-hero__text">
+                <h1 id="hero-title">Mỹ phẩm chính hãng, một giá online toàn hệ thống</h1>
+                <p class="home-hero__sub">Đặt hàng một lần, hệ thống tự chọn nơi còn hàng. Nhận tại cửa hàng hoặc giao tận nơi.</p>
+            </div>
+        </div>
+    </section>
+
+    <!--/* SEARCH: the one main action of the page */-->
+    <div class="home-search">
+        <form class="home-search__form" method="get" th:action="@{/products}" role="search">
+            <svg class="home-search__icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 aria-hidden="true" focusable="false">
+                <circle cx="11" cy="11" r="7"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input class="home-search__input" id="hero-q" type="search" name="q" th:attr="data-suggest-url=@{/products/suggest}" data-suggest-label="name" data-suggest-fill="name" maxlength="100"
+                   placeholder="Tìm serum, son, sữa rửa mặt…" aria-label="Tìm sản phẩm"
+                   enterkeyhint="search" autocomplete="off">
+            <button class="btn btn-primary home-search__submit" type="submit">Tìm</button>
+        </form>
+        <ul class="home-search__chips" aria-label="Gợi ý tìm kiếm"
+            th:unless="${home.searchCategories.isEmpty() and home.searchBrands.isEmpty()}">
+            <li th:each="category : ${home.searchCategories}">
+                <a class="home-chip" th:href="@{/products(categoryId=${category.id})}" th:text="${category.name}">Chăm sóc da</a>
+            </li>
+            <li th:each="brand : ${home.searchBrands}">
+                <a class="home-chip" th:href="@{/products(brandId=${brand.id})}" th:text="${brand.name}">Cocoon</a>
+            </li>
+        </ul>
+    </div>
+
+    <!--/* CATEGORIES: layout by the number of categories */-->
+    <section class="home-band" id="home-categories" aria-labelledby="home-categories-title"
+             th:unless="${home.categories.isEmpty()}">
+        <div class="home-section__head">
+            <div>
+                <h2 id="home-categories-title">Danh mục</h2>
+                <p>Chọn nhóm sản phẩm bạn đang tìm.</p>
+            </div>
+        </div>
+        <div class="home-cats" th:classappend="'home-cats--' + ${home.categoryLayout}">
+            <a class="home-tile" th:each="category : ${home.categories}"
+               th:classappend="${category.imageUrl == null or #strings.trim(category.imageUrl).isEmpty()} ? 'home-tile--plain'"
+               th:href="@{/products(categoryId=${category.id})}">
+                <img class="home-tile__img" th:if="${category.imageUrl != null and !#strings.trim(category.imageUrl).isEmpty()}"
+                     th:src="@{${category.imageUrl}}"
+                     th:alt="${category.name}" width="800" height="800" loading="lazy" decoding="async">
+                <span class="home-tile__body">
+                    <span class="home-tile__name" th:text="${category.name}">Chăm sóc da</span>
+                    <span class="home-tile__cta">Xem sản phẩm &rarr;</span>
+                </span>
+            </a>
+        </div>
+    </section>
+
+    <!--/* DISCOVER PRODUCTS: 8 random in-stock products, fixed for the current hour */-->
+    <section class="home-band home-band--white" id="home-products" aria-labelledby="home-products-title"
+             th:unless="${home.products.isEmpty()}">
+        <div class="home-section__head">
+            <div>
+                <h2 id="home-products-title">Khám phá sản phẩm</h2>
+                <p>Còn hàng trong hệ thống, cùng một giá online ở mọi cửa hàng.</p>
+            </div>
+            <a class="home-link" th:href="@{/products}">Xem tất cả</a>
+        </div>
+        <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 g-lg-4" id="home-product-grid">
+            <div class="col" th:each="card : ${home.products}" data-reveal>
+                <div th:replace="~{fragments/components :: productCard(${card})}"></div>
+            </div>
+        </div>
+    </section>
+
+    <!--/* BRANDS: text only */-->
+    <section class="home-band" id="home-brands" aria-labelledby="home-brands-title"
+             th:unless="${home.brands.isEmpty()}">
+        <div class="home-section__head">
+            <div>
+                <h2 id="home-brands-title">Thương hiệu</h2>
+                <p>Mua theo thương hiệu bạn tin dùng.</p>
+            </div>
+        </div>
+        <ul class="home-brands" th:classappend="${home.brands.size() > 6} ? 'home-brands--scroll'">
+            <li th:each="brand : ${home.brands}">
+                <a class="home-brand" th:href="@{/products(brandId=${brand.id})}">
+                    <span class="home-brand__name" th:text="${brand.name}">Cocoon</span>
+                    <span class="home-brand__count" th:text="${brand.productCount} + ' sản phẩm'">12 sản phẩm</span>
+                </a>
+            </li>
+        </ul>
+    </section>
+
+    <!--/* STORES (unchanged content) */-->
+    <section class="home-band home-band--white" id="home-stores" aria-labelledby="home-stores-title"
+             th:unless="${home.stores.isEmpty()}">
+        <div class="home-section__head">
+            <div>
+                <h2 id="home-stores-title">Hệ thống cửa hàng</h2>
+                <p>Tra cứu địa chỉ, giờ mở cửa và dịch vụ của từng cửa hàng.</p>
+            </div>
+            <a class="home-link" th:href="@{/stores}">Xem tất cả cửa hàng</a>
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3">
+            <div class="col" th:each="store : ${home.stores}">
+                <article class="home-store">
+                    <h3 th:text="${store.name}">OneShop Thủ Đức</h3>
+                    <p class="home-store__meta" th:text="${store.area} + ' · ' + ${store.provinceCity}">Thủ Đức · TP. Hồ Chí Minh</p>
+                    <p class="home-store__meta" th:text="${store.address}">101 Võ Văn Ngân</p>
+                    <p class="home-store__meta" th:if="${store.openingHours}" th:text="'Giờ mở cửa: ' + ${store.openingHours}">Giờ mở cửa: 08:00 - 22:00</p>
+                    <ul class="home-store__tags">
+                        <li th:if="${store.deliveryEnabled}">Giao tận nơi</li>
+                        <li th:if="${store.pickupEnabled}">Nhận tại cửa hàng</li>
+                    </ul>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!--/* PICK-UP / DELIVERY STRIP */-->
+    <section class="home-band" aria-labelledby="home-cta-title">
+        <div class="home-cta">
+            <picture>
+                <img class="home-cta__img"
+                     th:src="@{/images/site/cta/cta-1600.webp}"
+                     th:srcset="@{/images/site/cta/cta-800.webp} + ' 800w, ' + @{/images/site/cta/cta-1600.webp} + ' 1600w'"
+                     sizes="(min-width: 1320px) 1296px, 100vw" width="1600" height="640" alt="" loading="lazy"
+                     decoding="async">
+            </picture>
+            <div class="home-cta__overlay" aria-hidden="true"></div>
+            <div class="home-cta__inner">
+                <h2 id="home-cta-title">Nhận tại cửa hàng hoặc giao tận nơi</h2>
+                <ol class="home-cta__steps">
+                    <li>Chọn sản phẩm</li>
+                    <li>Chọn cách nhận hàng</li>
+                    <li>Nhận hàng</li>
+                </ol>
+                <a class="btn btn-primary" th:href="@{/products}">Mua sắm ngay</a>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

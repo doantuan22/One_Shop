@@ -10,11 +10,11 @@
 <div class="alert os-return-result" id="return-result" role="status" th:if="${param.result != null}"
      th:classappend="${#strings.startsWith(param.result[0], 'refused') or #strings.startsWith(param.result[0], 'invalid')} ? 'alert-warning' : 'alert-success'"
      th:switch="${param.result[0]}">
-    <span th:case="'approved'">Đã duyệt yêu cầu. Tiền hàng đã được hoàn mô phỏng và hàng hoàn đã chuyển cho nhân viên chi nhánh đã giao.</span>
+    <span th:case="'approved'">Đã duyệt yêu cầu. Tiền hàng đã được hoàn và hàng hoàn đã chuyển cho nhân viên chi nhánh đã giao.</span>
     <span th:case="'rejected'">Đã từ chối yêu cầu trả hàng.</span>
     <span th:case="'invalid:note'" th:text="'Vui lòng nhập lý do từ chối từ ' + ${minNote} + ' đến ' + ${maxNote} + ' ký tự.'"></span>
     <span th:case="'refused:RETURN_ALREADY_DECIDED'">Yêu cầu này đã được xử lý trước đó; không có thay đổi nào được thực hiện lại.</span>
-    <span th:case="*">Không thể thực hiện thao tác (ví dụ hoàn tiền mô phỏng chưa thành công hoặc số tiền còn lại không đủ). Dữ liệu có thể đã thay đổi; vui lòng tải lại trang.</span>
+    <span th:case="*">Không thể thực hiện thao tác (ví dụ hoàn tiền chưa thành công hoặc số tiền còn lại không đủ). Dữ liệu có thể đã thay đổi; vui lòng tải lại trang.</span>
 </div>
 
 <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
@@ -32,7 +32,7 @@
         <dd class="col-sm-9" th:text="${#temporals.format(orderReturn.receivedAt, 'dd/MM/yyyy HH:mm')} + ' (thời điểm phần giao hoàn tất muộn nhất)'"></dd>
         <dt class="col-sm-3">Gửi yêu cầu lúc</dt>
         <dd class="col-sm-9" th:text="${#temporals.format(orderReturn.requestedAt, 'dd/MM/yyyy HH:mm')}"></dd>
-        <dt class="col-sm-3">Tiền hàng hoàn (mô phỏng)</dt>
+        <dt class="col-sm-3">Tiền hàng hoàn</dt>
         <dd class="col-sm-9"><strong><span th:replace="~{fragments/components :: price(${orderReturn.refundAmount})}"></span></strong>
             <span class="text-secondary">- không gồm phí giao hàng</span></dd>
         <dt class="col-sm-3">Lý do của khách</dt>
@@ -57,11 +57,11 @@
 <section class="card border-primary shadow-sm mt-4" id="return-decision" th:if="${orderReturn.status.name() == 'REQUESTED'}">
     <div class="card-header bg-white fw-semibold">Quyết định của quản trị viên</div>
     <div class="card-body">
-        <p class="small text-secondary">Duyệt sẽ hoàn mô phỏng tiền hàng ngay và chuyển từng dòng hàng cho nhân viên chi nhánh đã giao
+        <p class="small text-secondary">Duyệt sẽ hoàn tiền hàng ngay và chuyển từng dòng hàng cho nhân viên chi nhánh đã giao
             (nhập lại kho hoặc xử lý). Từ chối là quyết định cuối cùng và cần lý do. Trạng thái đơn hàng không thay đổi.</p>
         <div class="d-flex flex-wrap gap-3 align-items-start">
             <form method="post" th:action="@{/admin/returns/{id}/approve(id=${orderReturn.returnId})}">
-                <button class="btn btn-success" type="submit" id="return-approve">Duyệt và hoàn tiền mô phỏng</button>
+                <button class="btn btn-success" type="submit" id="return-approve">Duyệt và hoàn tiền</button>
             </form>
             <form method="post" class="flex-grow-1" th:action="@{/admin/returns/{id}/reject(id=${orderReturn.returnId})}">
                 <label class="form-label small" for="return-reject-note">Lý do từ chối</label>

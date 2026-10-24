@@ -129,7 +129,7 @@ class OrderReturnHttpDatabaseIntegrationTest extends V3RegressionTestSupport {
         assertThat(location(approved)).endsWith("/admin/returns/" + id + "?result=approved");
         assertThat(getAs(ADMIN, "/admin/returns/" + id + "?result=approved").body()).contains("Đã duyệt yêu cầu").doesNotContain("id=\"return-approve\"");
         var paid = getAs(ALICE, "/orders/" + order);
-        assertThat(paid.body()).contains("data-return-status=\"APPROVED\"", "hoàn mô phỏng", "Hoàn tiền hàng trả lại");
+        assertThat(paid.body()).contains("data-return-status=\"APPROVED\"", "hoàn", "Hoàn tiền hàng trả lại");
 
         var work = getAs(STAFF_THUDUC, "/staff/returns");
         assertThat(work.statusCode()).isEqualTo(200);

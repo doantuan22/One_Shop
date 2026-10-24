@@ -8,7 +8,6 @@ import com.oneshop.exception.BadRequestException;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.Profiles;
 import org.springframework.core.env.StandardEnvironment;
 
 import java.time.LocalDateTime;
@@ -37,7 +36,7 @@ public class MockPaymentGateway implements PaymentGateway {
 
     @Override
     public boolean enabled() {
-        return properties.isMockGatewayEnabled() && !environment.acceptsProfiles(Profiles.of("prod"));
+        return properties.isMockGatewayEnabled();
     }
 
     @Override

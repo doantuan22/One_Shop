@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "POST",
-    "method" : "add",
-    "controller" : "com.oneshop.controller.client.CartController",
-    "path" : "/cart/items"
-  },
-  "location" : "",
-  "executedAt" : "2026-10-24T09:12:20.670258800Z",
-  "expected" : 403,
-  "actual" : 403,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/cart/items",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 403,
+  "expected" : 403,
+  "executedAt" : "2026-10-24T10:17:35.201733900Z",
+  "location" : "",
+  "route" : {
+    "path" : "/cart/items",
+    "controller" : "com.oneshop.controller.client.CartController",
+    "method" : "add",
+    "verb" : "POST"
+  }
 }

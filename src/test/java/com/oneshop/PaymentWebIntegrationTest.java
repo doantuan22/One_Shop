@@ -27,6 +27,7 @@ class PaymentWebIntegrationTest extends AbstractIntegrationTest {
     private static final String EMAIL = "customer@oneshop.test";
     private static final String PATH = "/orders/10/payments";
     @MockitoBean private PaymentService payments;
+    @MockitoBean private com.oneshop.service.payment.PaymentReconciliationService reconciliation;
     @Autowired private JwtService jwt;
     @Autowired private CustomUserDetailsService users;
 
@@ -68,6 +69,10 @@ class PaymentWebIntegrationTest extends AbstractIntegrationTest {
     void formsUsePrincipalAndIgnoreAllClientPaymentData() throws Exception {
         String cookie = cookie(RoleName.CUSTOMER);
         String forged = "amount=1&method=COD&userId=999&status=SUCCESS&paymentStatus=PAID&orderStatus=CANCELLED";
+        when(payments.createOnlinePaymentAttempt(EMAIL, 10L)).thenReturn(new PaymentResponse(20L, 10L,
+                PaymentMethod.ONLINE, new BigDecimal("200000"), PaymentStatus.PENDING, "MOCK-1", null, LocalDateTime.now()));
+        when(reconciliation.simulate(EMAIL, 10L, 20L, com.oneshop.service.payment.PaymentReconciliationService.SimulatedResult.SUCCESS))
+                .thenReturn(com.oneshop.service.payment.PaymentOutcome.CONFIRMED);
         assertThat(postAs(cookie, "/attempts", forged).statusCode()).isEqualTo(302);
         assertThat(postAs(cookie, "/20/success", forged).statusCode()).isEqualTo(302);
         assertThat(postAs(cookie, "/20/failure", forged).statusCode()).isEqualTo(302);

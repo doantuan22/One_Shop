@@ -80,7 +80,7 @@ public class PaymentReconciliationService {
     public PaymentOutcome simulate(String customerEmail, Long orderId, Long paymentId, SimulatedResult scenario) {
         if (!gateway.enabled()) {
             throw new PaymentConflictException(PaymentConflictException.GATEWAY_DISABLED,
-                    "Cổng thanh toán mô phỏng không được bật trong môi trường này.");
+                    "Cổng thanh toán không được bật trong môi trường này.");
         }
         Order order = lockOwnOrder(customerEmail, orderId);
         if (order.getPaymentMethod() != PaymentMethod.ONLINE) {
@@ -225,7 +225,7 @@ public class PaymentReconciliationService {
         order.setPaymentStatus(OrderPaymentStatus.PAID);
         writer.write(order, OrderStatus.CONFIRMED, actor,
                 note("PAYMENT_CONFIRMED", trigger, "ref", verification.reference(),
-                        "thu lúc", at, "kết quả", "đã thu trước hạn (mô phỏng)"));
+                        "thu lúc", at, "kết quả", "đã thu trước hạn"));
         return PaymentOutcome.CONFIRMED;
     }
 
@@ -249,9 +249,9 @@ public class PaymentReconciliationService {
         cancellation.cancelAndRestore(order,
                 "Hoàn tồn do thanh toán ONLINE sau hạn - Order #" + order.getId(),
                 note("LATE_PAYMENT", trigger, "ref", verification.reference(), "thu lúc", at, "hạn", deadline,
-                        "kết quả", "thu sau hạn: hủy đơn, hoàn tiền mô phỏng"),
+                        "kết quả", "thu sau hạn: hủy đơn, hoàn tiền"),
                 actor, OrderPaymentStatus.PAID);
-        refunds.simulate(order, "Khoản thu sau hạn thanh toán; hoàn tiền mô phỏng");
+        refunds.simulate(order, "Khoản thu sau hạn thanh toán; hoàn tiền");
         return PaymentOutcome.CANCELLED_LATE_PAYMENT;
     }
 
@@ -276,9 +276,9 @@ public class PaymentReconciliationService {
                 order.setPaymentStatus(OrderPaymentStatus.PAID);
                 orders.saveAndFlush(order);
             }
-            refunds.simulate(order, "Khoản thu trên đơn đã hủy; hoàn tiền mô phỏng");
+            refunds.simulate(order, "Khoản thu trên đơn đã hủy; hoàn tiền");
             writer.audit(order, actor, note("LATE_PAYMENT", trigger, "ref", verification.reference(),
-                    "kết quả", "đơn đã hủy, hoàn tiền mô phỏng"));
+                    "kết quả", "đơn đã hủy, hoàn tiền"));
         }
         return PaymentOutcome.LATE_PAYMENT_REFUNDED;
     }
@@ -302,9 +302,9 @@ public class PaymentReconciliationService {
         if (order.getPaymentStatus() != OrderPaymentStatus.REFUNDED) {
             order.setPaymentStatus(OrderPaymentStatus.PAID);
             orders.saveAndFlush(order);
-            refunds.simulate(order, "Khoản thu đến sau khi đơn đã hủy; hoàn tiền mô phỏng");
+            refunds.simulate(order, "Khoản thu đến sau khi đơn đã hủy; hoàn tiền");
             writer.audit(order, actor, note("LATE_PAYMENT", trigger, "ref", reference, "thu lúc", at,
-                    "kết quả", "đơn đã hủy, ghi nhận một lần và hoàn tiền mô phỏng"));
+                    "kết quả", "đơn đã hủy, ghi nhận một lần và hoàn tiền"));
         }
         return PaymentOutcome.LATE_PAYMENT_REFUNDED;
     }

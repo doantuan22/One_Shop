@@ -26,13 +26,32 @@ public class CustomerOrderController {
     }
     @GetMapping
     public String list(Principal principal, Model model) {
-        model.addAttribute("customerOrders", orders.getOrders(principal.getName())); return "orders/index";
+        var customerOrders = orders.getOrders(principal.getName());
+        model.addAttribute("customerOrders", customerOrders);
+        model.addAttribute("orderNumbers", orderNumbers(customerOrders));
+        model.addAttribute("orderItems", orders.getOrderItems(principal.getName()));
+        return "orders/index";
+    }
+
+    /**
+     * What the customer sees as the order number: their own running count (first order = 1, then 2, 3...), not the
+     * database id. The list is newest first, so the oldest order gets 1. Display only; links still use the real id.
+     */
+    private static java.util.Map<Long, Integer> orderNumbers(java.util.List<com.oneshop.dto.response.OrderViewResponse> list) {
+        java.util.Map<Long, Integer> numbers = new java.util.HashMap<>();
+        for (int i = 0; i < list.size(); i++) {
+            numbers.put(list.get(i).orderId(), list.size() - i);
+        }
+        return numbers;
     }
     @GetMapping("/{orderId}")
     public String detail(@PathVariable Long orderId, Principal principal, Model model) {
         var detail = orders.getOrder(principal.getName(), orderId);
         var order = detail.order();
         model.addAttribute("orderDetail", detail);
+        model.addAttribute("orderNumber", orderNumbers(orders.getOrders(principal.getName())).get(orderId));
+        var info = orders.getOrderItems(principal.getName()).get(orderId);
+        model.addAttribute("orderLines", info == null ? null : info.lines());
         model.addAttribute("refund", refundView.forCustomer(principal.getName(), orderId));
         model.addAttribute("reviewItems", reviews.getOrderReviewItems(principal.getName(), orderId));
         // post-delivery return: the request already made, or whether one may be made now (3 days from receipt)

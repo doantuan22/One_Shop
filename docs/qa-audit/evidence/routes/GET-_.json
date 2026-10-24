@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "GET",
-    "method" : "home",
-    "controller" : "com.oneshop.controller.client.HomeController",
-    "path" : "/"
-  },
-  "location" : "",
-  "executedAt" : "2026-10-24T09:12:13.825663Z",
-  "expected" : 200,
-  "actual" : 200,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 200,
+  "expected" : 200,
+  "executedAt" : "2026-10-24T10:17:28.567312300Z",
+  "location" : "",
+  "route" : {
+    "path" : "/",
+    "controller" : "com.oneshop.controller.client.HomeController",
+    "method" : "home",
+    "verb" : "GET"
+  }
 }

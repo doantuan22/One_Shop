@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "POST",
-    "method" : "remove",
-    "controller" : "com.oneshop.controller.client.CartController",
-    "path" : "/cart/items/{cartItemId}/delete"
-  },
-  "location" : "",
-  "executedAt" : "2026-10-24T09:12:20.404981900Z",
-  "expected" : 403,
-  "actual" : 403,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/cart/items/999999999/delete",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 403,
+  "expected" : 403,
+  "executedAt" : "2026-10-24T10:17:35.022346400Z",
+  "location" : "",
+  "route" : {
+    "path" : "/cart/items/{cartItemId}/delete",
+    "controller" : "com.oneshop.controller.client.CartController",
+    "method" : "remove",
+    "verb" : "POST"
+  }
 }

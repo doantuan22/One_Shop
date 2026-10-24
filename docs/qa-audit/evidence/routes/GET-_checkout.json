@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "GET",
-    "method" : "form",
-    "controller" : "com.oneshop.controller.client.CheckoutController",
-    "path" : "/checkout"
-  },
-  "location" : "http://localhost:57296/login",
-  "executedAt" : "2026-10-24T09:12:20.898217800Z",
-  "expected" : 302,
-  "actual" : 302,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/checkout",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 302,
+  "expected" : 302,
+  "executedAt" : "2026-10-24T10:17:35.370474200Z",
+  "location" : "http://localhost:62366/login",
+  "route" : {
+    "path" : "/checkout",
+    "controller" : "com.oneshop.controller.client.CheckoutController",
+    "method" : "form",
+    "verb" : "GET"
+  }
 }

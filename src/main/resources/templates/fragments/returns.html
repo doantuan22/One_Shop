@@ -63,11 +63,11 @@
             <div th:replace="~{fragments/returns :: photos(${orderReturn.imageUrls})}"></div>
             <div th:replace="~{fragments/returns :: lines(${orderReturn}, false)}"></div>
             <p class="mb-1">Tiền hàng được hoàn: <strong><span th:replace="~{fragments/components :: price(${orderReturn.refundAmount})}"></span></strong>
-                <span class="small text-secondary">(phí giao hàng không được hoàn; hoàn tiền là mô phỏng)</span></p>
+                <span class="small text-secondary">(phí giao hàng không được hoàn)</span></p>
             <div class="alert alert-info small mb-0" th:if="${orderReturn.status.name() == 'REQUESTED'}">
                 Yêu cầu đang chờ quản trị viên duyệt. Tiền hàng chỉ được hoàn sau khi yêu cầu được duyệt.</div>
             <div class="alert alert-success small mb-0" th:if="${orderReturn.status.name() == 'APPROVED' or orderReturn.status.name() == 'COMPLETED'}">
-                Yêu cầu đã được duyệt và tiền hàng đã được hoàn mô phỏng về tài khoản thanh toán của bạn.</div>
+                Yêu cầu đã được duyệt và tiền hàng đã được hoàn về tài khoản thanh toán của bạn.</div>
             <div class="alert alert-danger small mb-0" th:if="${orderReturn.status.name() == 'REJECTED'}">
                 Yêu cầu bị từ chối<span th:if="${orderReturn.reviewNote != null}">. Lý do: <span th:text="${orderReturn.reviewNote}"></span></span>.</div>
         </div>

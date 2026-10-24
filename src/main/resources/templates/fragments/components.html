@@ -69,13 +69,13 @@
     <span th:case="*">Trạng thái chưa xác định</span>
 </span>
 
-<!--/* Simulated refund state of a payment (payments.refund_status). Always labelled "mô phỏng": no real bank refund. */-->
+<!--/* Simulated refund state of a payment (payments.refund_status). No real bank refund. */-->
 <span th:fragment="refundStatus(status)" th:switch="${status.name()}">
     <span th:case="'NONE'">Chưa hoàn</span>
-    <span th:case="'PENDING_SIMULATION'">Đang hoàn tiền (mô phỏng)</span>
-    <span th:case="'SIMULATED_REFUNDED'">Đã hoàn tiền (mô phỏng)</span>
-    <span th:case="'SIMULATION_FAILED'">Hoàn tiền thất bại (mô phỏng)</span>
-    <span th:case="*">Hoàn tiền chưa xác định (mô phỏng)</span>
+    <span th:case="'PENDING_SIMULATION'">Đang hoàn tiền</span>
+    <span th:case="'SIMULATED_REFUNDED'">Đã hoàn tiền</span>
+    <span th:case="'SIMULATION_FAILED'">Hoàn tiền thất bại</span>
+    <span th:case="*">Hoàn tiền chưa xác định</span>
 </span>
 
 <!--/* What the simulated gateway answered when asked about a payment. */-->

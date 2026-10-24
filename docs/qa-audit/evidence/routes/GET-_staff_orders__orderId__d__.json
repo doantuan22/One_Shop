@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "GET",
-    "method" : "legacyOrder",
-    "controller" : "com.oneshop.controller.staff.StaffFulfillmentController",
-    "path" : "/staff/orders/{orderId:\\d+}"
-  },
-  "location" : "http://localhost:57296/login",
-  "executedAt" : "2026-10-24T09:12:23.105173700Z",
-  "expected" : 302,
-  "actual" : 302,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/staff/orders/999999999",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 302,
+  "expected" : 302,
+  "executedAt" : "2026-10-24T10:17:37.043238700Z",
+  "location" : "http://localhost:62366/login",
+  "route" : {
+    "path" : "/staff/orders/{orderId:\\d+}",
+    "controller" : "com.oneshop.controller.staff.StaffFulfillmentController",
+    "method" : "legacyOrder",
+    "verb" : "GET"
+  }
 }

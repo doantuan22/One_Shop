@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "POST",
-    "method" : "retry",
-    "controller" : "com.oneshop.controller.admin.AdminImageCleanupController",
-    "path" : "/admin/images/cleanup/retry"
-  },
-  "location" : "",
-  "executedAt" : "2026-10-24T09:12:15.397109500Z",
-  "expected" : 403,
-  "actual" : 403,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/admin/images/cleanup/retry",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 403,
+  "expected" : 403,
+  "executedAt" : "2026-10-24T10:17:29.928948400Z",
+  "location" : "",
+  "route" : {
+    "path" : "/admin/images/cleanup/retry",
+    "controller" : "com.oneshop.controller.admin.AdminImageCleanupController",
+    "method" : "retry",
+    "verb" : "POST"
+  }
 }

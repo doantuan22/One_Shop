@@ -173,16 +173,17 @@ class CatalogHttpDatabaseIntegrationTest {
 
     @Test
     void tc01_chainCatalogPageListsEachSkuOnceWithItsStores() throws Exception {
-        var r=get("/products?q=SIMPLE-PURIFY-150");assertThat(r.statusCode()).isEqualTo(200);String html=r.body();assertThat(html).contains("data-layout=\"client\"","SIMPLE-PURIFY-150","138.000 ₫","Purifying Gel Wash");assertThat(count(html,"class=\"product-title-link\"")).as("one card per SKU").isEqualTo(1);assertThat(html).doesNotContain("VASELINE-LIP-ROSY-7","OneShop Hải Châu");
+        var r=get("/products?q=SIMPLE-PURIFY-150");assertThat(r.statusCode()).isEqualTo(200);String html=r.body();assertThat(html).contains("data-layout=\"client\"","138.000 ₫","Purifying Gel Wash");assertThat(count(html,"<article class=\"pcard\"")).as("one card per SKU").isEqualTo(1);assertThat(html).doesNotContain("VASELINE-LIP-ROSY-7","OneShop Hải Châu");
     }
 
     @Test
     void chainCatalogSearchAndFilters() throws Exception {
         String byKeyword = get("/products?q=" + enc("purifying gel wash")).body();
-        assertThat(byKeyword).contains("SIMPLE-PURIFY-150").doesNotContain("CERAVE-HYDRA-236", "MAYB-LIFTER-003");
+        assertThat(byKeyword).contains("Purifying Gel Wash").doesNotContain("CERAVE-HYDRA-236", "MAYB-LIFTER-003");
 
         String bySku = get("/products?q=cerave-hydra").body();
-        assertThat(bySku).contains("CERAVE-HYDRA-236").doesNotContain("SIMPLE-PURIFY-150");
+        assertThat(count(bySku, "<article class=\"pcard\"")).isPositive();
+        assertThat(bySku).doesNotContain("Purifying Gel Wash");
 
         String nothing = get("/products?q=" + enc("không có đâu")).body();
         assertThat(nothing).contains("Không tìm thấy sản phẩm phù hợp.");
@@ -207,9 +208,9 @@ class CatalogHttpDatabaseIntegrationTest {
         String html = get("/products?q=SIMPLE-PURIFY-150", "Cookie", storeCookie(goVap)).body();
         assertThat(html).contains("id=\"catalog-store-scope\"");
         // SIMPLE-PURIFY-150 is only on sale at Thủ Đức: Gò Vấp shows nothing for it, Thủ Đức shows it
-        assertThat(count(html, "<article class=\"retail-product-card\"")).isZero();
+        assertThat(count(html, "<article class=\"pcard\"")).isZero();
         String atThuDuc = get("/products?q=SIMPLE-PURIFY-150", "Cookie", storeCookie(storeId("OS-THUDUC"))).body();
-        assertThat(count(atThuDuc, "<article class=\"retail-product-card\"")).isEqualTo(1);
+        assertThat(count(atThuDuc, "<article class=\"pcard\"")).isEqualTo(1);
         assertThat(atThuDuc).contains("Còn hàng tại chi nhánh");
         assertThat(get("/products?q=SIMPLE-PURIFY-150").body()).doesNotContain("id=\"catalog-store-scope\"");
     }
@@ -240,7 +241,7 @@ class CatalogHttpDatabaseIntegrationTest {
         for (String code : List.of("OS-THUDUC", "OS-GOVAP", "OS-QUAN7")) {
             var r = get(path, "Cookie", storeCookie(storeId(code)));
             assertThat(r.statusCode()).isEqualTo(200);
-            assertThat(r.body()).contains("SIMPLE-PURIFY-150", "138.000 ₫", "id=\"product-price\"", "Còn hàng toàn hệ thống");
+            assertThat(r.body()).contains("138.000 ₫", "id=\"product-price\"", "Còn hàng toàn hệ thống");
             assertThat(r.body()).doesNotContain("Chi nhánh đang xem", "135.000 ₫", "Chọn chi nhánh này");
         }
     }

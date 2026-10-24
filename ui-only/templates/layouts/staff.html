@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<!--/* SiteMesh decorator of the STAFF area (/staff/**): top bar + sidebar scoped to the assigned Store(s). */-->
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/assets :: head}"></th:block>
+    <!--/* Console layer for the Staff shell only; the public client pages never load it. */-->
+    <link rel="stylesheet" th:href="@{/css/admin-staff.css}">
+    <title th:text="${#strings.isEmpty(pageTitle)} ? 'OneShop Staff' : ${pageTitle} + ' | OneShop Staff'">OneShop Staff</title>
+    <th:block th:utext="${pageHead}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/ui-system.css}">
+</head>
+<body class="os-app os-app--staff" data-layout="staff">
+<a class="visually-hidden-focusable os-skip-link" href="#main-content">Bỏ qua đến nội dung chính</a>
+<div th:replace="~{fragments/staff :: topbar}"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="~{fragments/staff :: sidebar}"></div>
+        <main class="col-lg-9 col-xl-10 px-3 px-md-4 py-4" id="main-content" th:utext="${pageBody}"></main>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/assets :: scripts}"></th:block>
+<script th:src="@{/js/admin-staff.js}" defer></script>
+<script th:src="@{/js/os-suggest.js}" defer></script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 {
-  "expected" : "success/empty page or controlled 4xx; never 5xx",
-  "request" : "/products?page=178956969&q=qa-no-match-999",
-  "timestamp" : "2026-10-24T09:11:54.036864600Z",
+  "actual" : 200,
   "actor" : "guest",
-  "actual" : 200
+  "timestamp" : "2026-10-24T10:17:11.898193400Z",
+  "request" : "/products?page=178956969&q=qa-no-match-999",
+  "expected" : "success/empty page or controlled 4xx; never 5xx"
 }

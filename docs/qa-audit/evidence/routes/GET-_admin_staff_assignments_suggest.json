@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "GET",
-    "method" : "suggest",
-    "controller" : "com.oneshop.controller.admin.AdminStaffAssignmentController",
-    "path" : "/admin/staff-assignments/suggest"
-  },
-  "location" : "http://localhost:57296/login",
-  "executedAt" : "2026-10-24T09:12:18.522739100Z",
-  "expected" : 302,
-  "actual" : 302,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/admin/staff-assignments/suggest",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 302,
+  "expected" : 302,
+  "executedAt" : "2026-10-24T10:17:32.398037Z",
+  "location" : "http://localhost:62366/login",
+  "route" : {
+    "path" : "/admin/staff-assignments/suggest",
+    "controller" : "com.oneshop.controller.admin.AdminStaffAssignmentController",
+    "method" : "suggest",
+    "verb" : "GET"
+  }
 }

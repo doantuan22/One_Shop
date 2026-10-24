@@ -1,6 +1,8 @@
 package com.oneshop.controller.client;
 
+import com.oneshop.dto.request.ChangePasswordRequest;
 import com.oneshop.dto.request.UpdateAccountRequest;
+import com.oneshop.exception.BadRequestException;
 import com.oneshop.entity.User;
 import com.oneshop.exception.ResourceNotFoundException;
 import com.oneshop.repository.CustomerAddressRepository;
@@ -69,6 +71,30 @@ public class AccountController {
         return "redirect:/account?success";
     }
 
+    /** Change password: on any mistake nothing is saved, the form shows why and never gets the passwords back. */
+    @PostMapping("/password")
+    public String changePassword(Principal principal,
+                                 @Valid @ModelAttribute("changePasswordRequest") ChangePasswordRequest request,
+                                 BindingResult bindingResult,
+                                 Model model) {
+        if (principal == null) throw new ResourceNotFoundException("Chưa đăng nhập.");
+        if (!bindingResult.hasErrors()) {
+            try {
+                profiles.changePassword(principal.getName(), request);
+                return "redirect:/account?passwordChanged";
+            } catch (BadRequestException ex) {
+                bindingResult.rejectValue(ex.getField() == null ? "currentPassword" : ex.getField(), "invalid", ex.getMessage());
+            }
+        }
+        User user = getUser(principal);
+        populateModel(user, model);
+        model.addAttribute("updateAccountRequest", new UpdateAccountRequest(user.getFullName(), user.getPhone()));
+        request.setCurrentPassword(null);
+        request.setNewPassword(null);
+        request.setConfirmPassword(null);
+        return "account/profile";
+    }
+
     private User getUser(Principal principal) {
         if (principal == null) {
             throw new ResourceNotFoundException("Chưa đăng nhập.");
@@ -79,6 +105,9 @@ public class AccountController {
 
     private void populateModel(User user, Model model) {
         model.addAttribute("accountUser", user);
+        if (!model.containsAttribute("changePasswordRequest")) {
+            model.addAttribute("changePasswordRequest", new ChangePasswordRequest());
+        }
         model.addAttribute("addresses", addressRepository.findByUserEmailOrderByDefaultAddressDescCreatedAtDesc(user.getEmail()));
     }
 }

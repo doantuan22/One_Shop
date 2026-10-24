@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Có lỗi xảy ra</title>
+</head>
+<body>
+<!--/* Error raised by a controller (WebExceptionHandler). SiteMesh adds the layout of the area around it. */-->
+<div class="text-center py-5">
+    <p class="display-3 fw-bold text-primary mb-2" th:text="${status}">404</p>
+    <h1 class="h4 mb-3" th:text="${status == 404} ? 'Không tìm thấy nội dung' : 'Yêu cầu không hợp lệ'">Không tìm thấy nội dung</h1>
+    <p class="text-secondary" th:if="${message}" th:text="${message}">Chi tiết</p>
+    <a class="btn btn-primary" th:href="@{/}">Về trang chủ</a>
+</div>
+</body>
+</html>

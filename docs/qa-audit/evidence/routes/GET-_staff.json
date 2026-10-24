@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "GET",
-    "method" : "landing",
-    "controller" : "com.oneshop.controller.staff.StaffDashboardController",
-    "path" : "/staff"
-  },
-  "location" : "http://localhost:57296/login",
-  "executedAt" : "2026-10-24T09:12:24.045280Z",
-  "expected" : 302,
-  "actual" : 302,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/staff",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 302,
+  "expected" : 302,
+  "executedAt" : "2026-10-24T10:17:37.803400100Z",
+  "location" : "http://localhost:62366/login",
+  "route" : {
+    "path" : "/staff",
+    "controller" : "com.oneshop.controller.staff.StaffDashboardController",
+    "method" : "landing",
+    "verb" : "GET"
+  }
 }

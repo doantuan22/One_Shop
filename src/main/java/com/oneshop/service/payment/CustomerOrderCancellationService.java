@@ -102,7 +102,7 @@ public class CustomerOrderCancellationService {
             }
             cancellation.cancelAndRestore(order, stockNote, historyNote, customer, OrderPaymentStatus.PAID);
             RefundService.Result refund = refunds.simulate(order,
-                    "Khách hủy đơn trước khi chuẩn bị hàng; hoàn tiền mô phỏng toàn phần");
+                    "Khách hủy đơn trước khi chuẩn bị hàng; hoàn tiền toàn phần");
             return refund == RefundService.Result.SIMULATION_FAILED ? Result.CANCELLED_REFUND_FAILED
                     : Result.CANCELLED_AND_REFUNDED;
         }

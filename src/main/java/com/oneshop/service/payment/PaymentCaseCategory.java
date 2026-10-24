@@ -23,7 +23,7 @@ public enum PaymentCaseCategory {
     RECONCILING("reconciling", "Chờ đối soát"),
     WAITING("waiting", "Đang chờ thanh toán"),
     PAID("paid", "Đã thanh toán"),
-    REFUNDED("refunded", "Đã hoàn tiền (mô phỏng)"),
+    REFUNDED("refunded", "Đã hoàn tiền"),
     FAILED("failed", "Thất bại / đã hủy"),
     OTHER("other", "Khác");
 

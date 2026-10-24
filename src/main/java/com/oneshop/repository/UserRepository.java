@@ -50,4 +50,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
             + " where u.email = :email and u.status = com.oneshop.entity.ActiveStatus.ACTIVE")
     int updateProfileFields(@Param("email") String email, @Param("fullName") String fullName,
                             @Param("phone") String phone, @Param("updatedAt") java.time.LocalDateTime updatedAt);
+
+    /** Replaces the password hash of an active account only; one statement, so no stale User is ever merged back. */
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("update User u set u.passwordHash = :hash, u.updatedAt = :updatedAt"
+            + " where u.email = :email and u.status = com.oneshop.entity.ActiveStatus.ACTIVE")
+    int updatePasswordHash(@Param("email") String email, @Param("hash") String hash,
+                           @Param("updatedAt") java.time.LocalDateTime updatedAt);
 }

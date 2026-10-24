@@ -33,11 +33,13 @@ import static org.mockito.Mockito.verify;
 /** Pure tests of the durable mock ledger encoding, the gateway answers and the payment-domain Order edges. */
 class MockPaymentGatewayTest {
 
-    @Test void productionCannotEnableMockSettlementThroughAnEnvironmentOverride() {
+    @Test void productionFollowsTheMockGatewayProperty() {
         var environment = new org.springframework.mock.env.MockEnvironment();
         environment.setActiveProfiles("prod");
         var properties = new PaymentProperties();
         properties.setMockGatewayEnabled(true);
+        assertThat(new MockPaymentGateway(properties, environment).enabled()).isTrue();
+        properties.setMockGatewayEnabled(false);
         assertThat(new MockPaymentGateway(properties, environment).enabled()).isFalse();
     }
 

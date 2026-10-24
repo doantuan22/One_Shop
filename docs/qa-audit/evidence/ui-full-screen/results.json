@@ -14,7 +14,7 @@
         ],
         "buttons": 2
       },
-      "time": "2026-10-24T09:13:29.131Z"
+      "time": "2026-10-24T10:18:40.311Z"
     },
     {
       "id": "guest /login",
@@ -30,7 +30,7 @@
         ],
         "buttons": 2
       },
-      "time": "2026-10-24T09:13:29.897Z"
+      "time": "2026-10-24T10:18:41.121Z"
     },
     {
       "id": "guest /register",
@@ -46,7 +46,7 @@
         ],
         "buttons": 2
       },
-      "time": "2026-10-24T09:13:30.374Z"
+      "time": "2026-10-24T10:18:41.572Z"
     },
     {
       "id": "guest /products",
@@ -62,7 +62,7 @@
         ],
         "buttons": 2
       },
-      "time": "2026-10-24T09:13:30.944Z"
+      "time": "2026-10-24T10:18:42.092Z"
     },
     {
       "id": "guest /products?q=khongtimthayqa999",
@@ -78,7 +78,7 @@
         ],
         "buttons": 2
       },
-      "time": "2026-10-24T09:13:31.419Z"
+      "time": "2026-10-24T10:18:42.570Z"
     },
     {
       "id": "guest /products?page=1",
@@ -94,7 +94,7 @@
         ],
         "buttons": 2
       },
-      "time": "2026-10-24T09:13:32.017Z"
+      "time": "2026-10-24T10:18:43.081Z"
     },
     {
       "id": "guest /products?categoryId=1&brandId=1",
@@ -110,18 +110,18 @@
         ],
         "buttons": 2
       },
-      "time": "2026-10-24T09:13:32.548Z"
+      "time": "2026-10-24T10:18:43.594Z"
     },
     {
       "id": "guest /products/1",
       "status": "PASS",
       "detail": {
         "url": "/products/1",
-        "title": "Kem dÆ°á»¡ng áº©m CeraVe Moisturising Cream 340g - OneShop | OneShop",
+        "title": "Kem dưỡng ẩm CeraVe Moisturising Cream 340g - OneShop | OneShop",
         "forms": [],
         "buttons": 1
       },
-      "time": "2026-10-24T09:13:33.164Z"
+      "time": "2026-10-24T10:18:44.126Z"
     },
     {
       "id": "guest /stores",
@@ -157,7 +157,7 @@
         ],
         "buttons": 7
       },
-      "time": "2026-10-24T09:13:33.792Z"
+      "time": "2026-10-24T10:18:44.617Z"
     },
     {
       "id": "guest /stores?provinceCity=invalid",
@@ -173,7 +173,7 @@
         ],
         "buttons": 2
       },
-      "time": "2026-10-24T09:13:34.272Z"
+      "time": "2026-10-24T10:18:45.109Z"
     },
     {
       "id": "guest /image-credits",
@@ -184,31 +184,31 @@
         "forms": [],
         "buttons": 1
       },
-      "time": "2026-10-24T09:13:34.776Z"
+      "time": "2026-10-24T10:18:45.624Z"
     },
     {
       "id": "catalog browser title decodes entities /products",
       "status": "PASS",
       "detail": "Mỹ phẩm & Chăm sóc sắc đẹp - OneShop | OneShop",
-      "time": "2026-10-24T09:13:35.130Z"
+      "time": "2026-10-24T10:18:46.026Z"
     },
     {
       "id": "catalog browser title decodes entities /products?q=CeraVe",
       "status": "PASS",
       "detail": "Mỹ phẩm & Chăm sóc sắc đẹp - OneShop | OneShop",
-      "time": "2026-10-24T09:13:35.473Z"
+      "time": "2026-10-24T10:18:46.383Z"
     },
     {
       "id": "guest search form native submission",
       "status": "PASS",
       "detail": "/products",
-      "time": "2026-10-24T09:13:36.174Z"
+      "time": "2026-10-24T10:18:47.119Z"
     },
     {
       "id": "customer login",
       "status": "PASS",
       "detail": "/",
-      "time": "2026-10-24T09:13:37.058Z"
+      "time": "2026-10-24T10:18:48.053Z"
     },
     {
       "id": "customer /account",
@@ -236,7 +236,7 @@
         ],
         "buttons": 7
       },
-      "time": "2026-10-24T09:13:37.580Z"
+      "time": "2026-10-24T10:18:48.545Z"
     },
     {
       "id": "customer /orders",
@@ -260,7 +260,7 @@
         ],
         "buttons": 6
       },
-      "time": "2026-10-24T09:13:38.081Z"
+      "time": "2026-10-24T10:18:49.047Z"
     },
     {
       "id": "customer /cart",
@@ -304,25 +304,25 @@
         ],
         "buttons": 13
       },
-      "time": "2026-10-24T09:13:38.642Z"
+      "time": "2026-10-24T10:18:49.583Z"
     },
     {
       "id": "profile blank name rejected without write",
       "status": "PASS",
       "detail": "server validation rendered",
-      "time": "2026-10-24T09:13:39.258Z"
+      "time": "2026-10-24T10:18:50.234Z"
     },
     {
       "id": "customer logout",
       "status": "PASS",
       "detail": "authenticated cookie cleared",
-      "time": "2026-10-24T09:13:40.204Z"
+      "time": "2026-10-24T10:18:51.155Z"
     },
     {
       "id": "staff login",
       "status": "PASS",
       "detail": "/staff",
-      "time": "2026-10-24T09:13:41.403Z"
+      "time": "2026-10-24T10:18:51.999Z"
     },
     {
       "id": "staff /account",
@@ -350,7 +350,7 @@
         ],
         "buttons": 7
       },
-      "time": "2026-10-24T09:13:41.984Z"
+      "time": "2026-10-24T10:18:52.475Z"
     },
     {
       "id": "staff /staff/dashboard",
@@ -366,7 +366,7 @@
         ],
         "buttons": 3
       },
-      "time": "2026-10-24T09:13:42.592Z"
+      "time": "2026-10-24T10:18:53.014Z"
     },
     {
       "id": "staff /staff/fulfillments",
@@ -386,7 +386,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T09:13:43.182Z"
+      "time": "2026-10-24T10:18:53.571Z"
     },
     {
       "id": "staff /staff/fulfillments/delivery",
@@ -406,7 +406,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T09:13:43.780Z"
+      "time": "2026-10-24T10:18:54.100Z"
     },
     {
       "id": "staff /staff/fulfillments/pickup",
@@ -426,7 +426,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T09:13:44.270Z"
+      "time": "2026-10-24T10:18:54.610Z"
     },
     {
       "id": "staff /staff/stock",
@@ -476,26 +476,6 @@
             "method": "post"
           },
           {
-            "action": "/staff/stock/11/adjust",
-            "method": "post"
-          },
-          {
-            "action": "/staff/stock/8/adjust",
-            "method": "post"
-          },
-          {
-            "action": "/staff/stock/16/adjust",
-            "method": "post"
-          },
-          {
-            "action": "/staff/stock/10/adjust",
-            "method": "post"
-          },
-          {
-            "action": "/staff/stock/1/adjust",
-            "method": "post"
-          },
-          {
             "action": "/staff/stock/2/adjust",
             "method": "post"
           },
@@ -514,11 +494,31 @@
           {
             "action": "/staff/stock/29/adjust",
             "method": "post"
+          },
+          {
+            "action": "/staff/stock/11/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/8/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/16/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/10/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/1/adjust",
+            "method": "post"
           }
         ],
         "buttons": 76
       },
-      "time": "2026-10-24T09:13:44.922Z"
+      "time": "2026-10-24T10:18:55.162Z"
     },
     {
       "id": "staff /staff/stock/1/adjust",
@@ -538,7 +538,7 @@
         ],
         "buttons": 4
       },
-      "time": "2026-10-24T09:13:45.469Z"
+      "time": "2026-10-24T10:18:55.682Z"
     },
     {
       "id": "staff /staff/inventory-history",
@@ -558,7 +558,7 @@
         ],
         "buttons": 6
       },
-      "time": "2026-10-24T09:13:46.065Z"
+      "time": "2026-10-24T10:18:56.251Z"
     },
     {
       "id": "staff /staff/inventory-history/1",
@@ -574,7 +574,7 @@
         ],
         "buttons": 3
       },
-      "time": "2026-10-24T09:13:46.588Z"
+      "time": "2026-10-24T10:18:56.761Z"
     },
     {
       "id": "staff /staff/reviews",
@@ -598,19 +598,19 @@
         ],
         "buttons": 5
       },
-      "time": "2026-10-24T09:13:47.165Z"
+      "time": "2026-10-24T10:18:57.361Z"
     },
     {
       "id": "staff logout",
       "status": "PASS",
       "detail": "authenticated cookie cleared",
-      "time": "2026-10-24T09:13:48.170Z"
+      "time": "2026-10-24T10:18:58.286Z"
     },
     {
       "id": "admin login",
       "status": "PASS",
       "detail": "/admin",
-      "time": "2026-10-24T09:13:49.074Z"
+      "time": "2026-10-24T10:18:59.143Z"
     },
     {
       "id": "admin /account",
@@ -638,7 +638,7 @@
         ],
         "buttons": 7
       },
-      "time": "2026-10-24T09:13:49.595Z"
+      "time": "2026-10-24T10:18:59.630Z"
     },
     {
       "id": "admin /admin",
@@ -656,9 +656,9 @@
             "method": "get"
           }
         ],
-        "buttons": 10
+        "buttons": 11
       },
-      "time": "2026-10-24T09:13:50.119Z"
+      "time": "2026-10-24T10:19:00.246Z"
     },
     {
       "id": "admin /admin/users",
@@ -676,9 +676,9 @@
             "method": "get"
           }
         ],
-        "buttons": 4
+        "buttons": 5
       },
-      "time": "2026-10-24T09:13:50.673Z"
+      "time": "2026-10-24T10:19:00.761Z"
     },
     {
       "id": "admin /admin/users/new",
@@ -696,9 +696,9 @@
             "method": "post"
           }
         ],
-        "buttons": 4
+        "buttons": 5
       },
-      "time": "2026-10-24T09:13:51.196Z"
+      "time": "2026-10-24T10:19:01.245Z"
     },
     {
       "id": "admin /admin/users/7/edit",
@@ -716,9 +716,9 @@
             "method": "post"
           }
         ],
-        "buttons": 4
+        "buttons": 5
       },
-      "time": "2026-10-24T09:13:51.684Z"
+      "time": "2026-10-24T10:19:01.722Z"
     },
     {
       "id": "admin /admin/stores",
@@ -736,9 +736,9 @@
             "method": "get"
           }
         ],
-        "buttons": 5
+        "buttons": 6
       },
-      "time": "2026-10-24T09:13:52.203Z"
+      "time": "2026-10-24T10:19:02.217Z"
     },
     {
       "id": "admin /admin/stores/new",
@@ -756,9 +756,9 @@
             "method": "post"
           }
         ],
-        "buttons": 4
+        "buttons": 5
       },
-      "time": "2026-10-24T09:13:52.700Z"
+      "time": "2026-10-24T10:19:02.701Z"
     },
     {
       "id": "admin /admin/stores/1/edit",
@@ -776,9 +776,9 @@
             "method": "post"
           }
         ],
-        "buttons": 4
+        "buttons": 5
       },
-      "time": "2026-10-24T09:13:53.183Z"
+      "time": "2026-10-24T10:19:03.174Z"
     },
     {
       "id": "admin /admin/products",
@@ -796,9 +796,9 @@
             "method": "get"
           }
         ],
-        "buttons": 4
+        "buttons": 5
       },
-      "time": "2026-10-24T09:13:53.777Z"
+      "time": "2026-10-24T10:19:03.735Z"
     },
     {
       "id": "admin /admin/products/new",
@@ -816,9 +816,9 @@
             "method": "post"
           }
         ],
-        "buttons": 4
+        "buttons": 5
       },
-      "time": "2026-10-24T09:13:54.265Z"
+      "time": "2026-10-24T10:19:04.222Z"
     },
     {
       "id": "admin /admin/products/1/edit",
@@ -844,9 +844,9 @@
             "method": "post"
           }
         ],
-        "buttons": 6
+        "buttons": 7
       },
-      "time": "2026-10-24T09:13:54.761Z"
+      "time": "2026-10-24T10:19:04.736Z"
     },
     {
       "id": "admin /admin/categories",
@@ -864,9 +864,9 @@
             "method": "post"
           }
         ],
-        "buttons": 7
+        "buttons": 8
       },
-      "time": "2026-10-24T09:13:55.381Z"
+      "time": "2026-10-24T10:19:05.366Z"
     },
     {
       "id": "admin /admin/categories/1/edit",
@@ -888,9 +888,9 @@
             "method": "post"
           }
         ],
-        "buttons": 8
+        "buttons": 9
       },
-      "time": "2026-10-24T09:13:55.902Z"
+      "time": "2026-10-24T10:19:05.887Z"
     },
     {
       "id": "admin /admin/brands",
@@ -908,9 +908,9 @@
             "method": "post"
           }
         ],
-        "buttons": 7
+        "buttons": 8
       },
-      "time": "2026-10-24T09:13:56.418Z"
+      "time": "2026-10-24T10:19:06.368Z"
     },
     {
       "id": "admin /admin/brands/1/edit",
@@ -932,9 +932,9 @@
             "method": "post"
           }
         ],
-        "buttons": 8
+        "buttons": 9
       },
-      "time": "2026-10-24T09:13:56.933Z"
+      "time": "2026-10-24T10:19:06.863Z"
     },
     {
       "id": "admin /admin/store-products",
@@ -952,9 +952,9 @@
             "method": "get"
           }
         ],
-        "buttons": 4
+        "buttons": 5
       },
-      "time": "2026-10-24T09:13:57.501Z"
+      "time": "2026-10-24T10:19:07.405Z"
     },
     {
       "id": "admin /admin/store-products/new",
@@ -972,9 +972,9 @@
             "method": "post"
           }
         ],
-        "buttons": 4
+        "buttons": 5
       },
-      "time": "2026-10-24T09:13:58.014Z"
+      "time": "2026-10-24T10:19:07.902Z"
     },
     {
       "id": "admin /admin/store-products/1/edit",
@@ -992,9 +992,9 @@
             "method": "post"
           }
         ],
-        "buttons": 4
+        "buttons": 5
       },
-      "time": "2026-10-24T09:13:58.516Z"
+      "time": "2026-10-24T10:19:08.385Z"
     },
     {
       "id": "admin /admin/staff-assignments",
@@ -1040,9 +1040,9 @@
             "method": "post"
           }
         ],
-        "buttons": 21
+        "buttons": 22
       },
-      "time": "2026-10-24T09:13:59.061Z"
+      "time": "2026-10-24T10:19:08.927Z"
     },
     {
       "id": "admin /admin/inventory",
@@ -1060,9 +1060,9 @@
             "method": "get"
           }
         ],
-        "buttons": 4
+        "buttons": 5
       },
-      "time": "2026-10-24T09:13:59.624Z"
+      "time": "2026-10-24T10:19:09.480Z"
     },
     {
       "id": "admin /admin/orders",
@@ -1080,9 +1080,9 @@
             "method": "get"
           }
         ],
-        "buttons": 4
+        "buttons": 5
       },
-      "time": "2026-10-24T09:14:00.198Z"
+      "time": "2026-10-24T10:19:10.034Z"
     },
     {
       "id": "admin /admin/orders/1",
@@ -1096,9 +1096,9 @@
             "method": "post"
           }
         ],
-        "buttons": 3
+        "buttons": 4
       },
-      "time": "2026-10-24T09:14:00.805Z"
+      "time": "2026-10-24T10:19:10.595Z"
     },
     {
       "id": "admin /admin/payments",
@@ -1116,9 +1116,9 @@
             "method": "get"
           }
         ],
-        "buttons": 4
+        "buttons": 5
       },
-      "time": "2026-10-24T09:14:01.402Z"
+      "time": "2026-10-24T10:19:11.152Z"
     },
     {
       "id": "admin /admin/reviews",
@@ -1148,39 +1148,39 @@
             "method": "post"
           }
         ],
-        "buttons": 7
+        "buttons": 8
       },
-      "time": "2026-10-24T09:14:01.983Z"
+      "time": "2026-10-24T10:19:11.721Z"
     },
     {
       "id": "category modal open/cancel/invalid submit/reopen",
       "status": "PASS",
       "detail": "cancel made no request; empty submit refused",
-      "time": "2026-10-24T09:14:04.142Z"
+      "time": "2026-10-24T10:19:13.840Z"
     },
     {
       "id": "brand modal open/cancel/invalid submit/reopen",
       "status": "PASS",
       "detail": "cancel made no request; empty submit refused",
-      "time": "2026-10-24T09:14:06.252Z"
+      "time": "2026-10-24T10:19:15.952Z"
     },
     {
       "id": "admin user filter and reset",
       "status": "PASS",
       "detail": "10",
-      "time": "2026-10-24T09:14:07.290Z"
+      "time": "2026-10-24T10:19:16.970Z"
     },
     {
       "id": "admin logout",
       "status": "PASS",
       "detail": "authenticated cookie cleared",
-      "time": "2026-10-24T09:14:08.296Z"
+      "time": "2026-10-24T10:19:17.905Z"
     },
     {
       "id": "seed category image resource resolves",
       "status": "PASS",
       "detail": "no failed requests for seeded category image",
-      "time": "2026-10-24T09:14:08.296Z"
+      "time": "2026-10-24T10:19:17.905Z"
     }
   ],
   "runtimeErrors": [
@@ -1188,7 +1188,7 @@
   ],
   "networkFailures": [
     {
-      "url": "http://localhost:51451/favicon.ico",
+      "url": "http://localhost:56056/favicon.ico",
       "status": 404,
       "type": "Other"
     }

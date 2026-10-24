@@ -4,6 +4,7 @@
     <title th:text="${editId == null} ? 'Thêm sản phẩm' : 'Sửa sản phẩm'">Sản phẩm</title>
 </head>
 <body>
+<nav class="os-breadcrumb-pill" aria-label="Vị trí trang"><a th:href="@{/admin/products}">Sản phẩm</a><span class="os-breadcrumb-sep" aria-hidden="true">/</span><strong th:text="${editId == null} ? 'Thêm mới' : 'Chỉnh sửa'">Thêm mới</strong></nav>
 <div th:replace="~{fragments/components :: pageHeader(${editId == null} ? 'Thêm sản phẩm' : 'Sửa sản phẩm', 'Một SKU có một giá bán online dùng chung toàn chuỗi. Tồn kho được quản lý theo chi nhánh.')}"></div>
 
 <div class="alert alert-success" th:if="${param.success}" th:switch="${param.success[0]}">

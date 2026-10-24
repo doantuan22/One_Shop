@@ -8,8 +8,10 @@
     <title th:text="${#strings.isEmpty(pageTitle)} ? 'OneShop Admin' : ${pageTitle} + ' | OneShop Admin'">OneShop Admin</title>
     <th:block th:utext="${pageHead}"></th:block>
     <link rel="stylesheet" th:href="@{/css/ui-system.css}">
+    <!--/* The Admin UI skin: last, so it wins over the console layer above. Look only, no behaviour. */-->
+    <link rel="stylesheet" th:href="@{/css/admin-ui.css}">
 </head>
-<body class="os-app os-app--admin" data-layout="admin">
+<body class="os-app os-app--admin" data-layout="admin" th:attr="data-admin-page=${currentPath}">
 <a class="visually-hidden-focusable os-skip-link" href="#main-content">Bỏ qua đến nội dung chính</a>
 <div th:replace="~{fragments/admin :: topbar}"></div>
 

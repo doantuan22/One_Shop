@@ -1,5 +1,6 @@
 package com.oneshop.controller.client;
 
+import com.oneshop.dto.response.PaymentResponse;
 import com.oneshop.service.PaymentService;
 import com.oneshop.service.payment.PaymentOutcome;
 import com.oneshop.service.payment.PaymentReconciliationService;
@@ -38,8 +39,11 @@ public class PaymentController {
 
     @PostMapping("/attempts")
     public String start(@PathVariable Long orderId, Principal principal) {
-        paymentService.createOnlinePaymentAttempt(principal.getName(), orderId);
-        return redirect(orderId);
+        PaymentResponse attempt = paymentService.createOnlinePaymentAttempt(principal.getName(), orderId);
+        // Demo gateway: pressing "pay" always succeeds; the ledger is still verified server side.
+        PaymentOutcome outcome = reconciliation.simulate(principal.getName(), orderId, attempt.paymentId(),
+                PaymentReconciliationService.SimulatedResult.SUCCESS);
+        return "redirect:/orders/" + orderId + "/payments?outcome=" + outcome.name();
     }
 
     /**

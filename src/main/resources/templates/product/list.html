@@ -9,691 +9,784 @@
     <link rel="stylesheet" th:href="@{/css/bootstrap-coral.css}">
     <link rel="stylesheet" th:href="@{/css/home.css}">
     <style>
-        /* ==============================================================
-           PRODUCT-FIRST RETAIL CATALOG (Sephora / Watsons / Hasaki Style)
-           ============================================================== */
-        .catalog-retail-wrapper {
+        :root {
+            --pl-coral: #ff7f50;
+            --pl-coral-dark: #e86638;
+            --pl-coral-deep: #d65426;
+            --pl-coral-soft: #fff5f1;
+            --pl-navy: #1e293b;
+            --pl-ink: #0f172a;
+            --pl-muted: #64748b;
+            --pl-faint: #94a3b8;
+            --pl-line: #e8edf3;
+            --pl-bg: #f8fafc;
+        }
+
+        body {
+            background: var(--pl-bg);
+            color: var(--pl-navy);
+        }
+
+        .catalog-wrapper {
             max-width: 1240px;
             margin: 0 auto;
-            padding: 0.25rem 0 3.5rem;
+            padding: 0.5rem 1rem 4.5rem;
         }
 
-        /* 1. Breadcrumb tinh tế, chuẩn e-commerce */
-        .catalog-breadcrumb-nav {
-            margin-bottom: 0.65rem;
-        }
-
-        .catalog-breadcrumb {
+        /* ---------- editorial header: an open section, no card ---------- */
+        .catalog-crumbs {
             display: flex;
-            flex-wrap: wrap;
             align-items: center;
-            gap: 0.35rem;
-            margin-bottom: 0;
+            gap: 0.45rem;
+            margin: 0 0 1.4rem;
             padding: 0;
             list-style: none;
-            font-size: 0.85rem;
-            color: #64748b;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--pl-faint);
         }
 
-        .catalog-breadcrumb a {
-            color: #64748b;
+        .catalog-crumbs a {
+            color: var(--pl-muted);
             text-decoration: none;
-            transition: color 0.15s ease;
         }
 
-        .catalog-breadcrumb a:hover {
-            color: #ff7f50;
+        .catalog-crumbs a:hover {
+            color: var(--pl-coral-dark);
         }
 
-        .catalog-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+        .catalog-crumbs li + li::before {
             content: "/";
-            padding-right: 0.35rem;
+            margin-right: 0.45rem;
             color: #cbd5e1;
+        }
+
+        .catalog-crumbs [aria-current] {
+            color: var(--pl-navy);
+            font-weight: 650;
+        }
+
+        .catalog-head {
+            max-width: 640px;
+            margin-bottom: 1.75rem;
+        }
+
+        .catalog-eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            margin: 0 0 0.7rem;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.26em;
+            text-transform: uppercase;
+            color: var(--pl-coral-dark);
+        }
+
+        .catalog-eyebrow::before {
+            content: "";
+            width: 2.1rem;
+            height: 1px;
+            background: currentColor;
+            opacity: 0.75;
+        }
+
+        .catalog-title {
+            margin: 0 0 0.6rem;
+            font-size: clamp(1.75rem, 3.6vw, 2.5rem);
+            font-weight: 800;
+            line-height: 1.12;
+            letter-spacing: -0.025em;
+            color: var(--pl-ink);
+        }
+
+        .catalog-title em {
+            font-family: "Playfair Display", "Cormorant Garamond", Georgia, "Times New Roman", serif;
+            font-style: italic;
+            white-space: nowrap;
+            font-weight: 500;
+            letter-spacing: -0.01em;
+            color: var(--pl-coral-dark);
+        }
+
+        .catalog-desc {
+            margin: 0;
+            max-width: 34rem;
+            font-size: 0.98rem;
+            line-height: 1.6;
+            color: var(--pl-muted);
+        }
+
+        /* ---------- search + filters ---------- */
+        .catalog-tools {
+            margin-bottom: 1.25rem;
+        }
+
+        .catalog-search {
+            position: relative;
+            display: flex;
+            align-items: center;
+            height: 56px;
+            padding: 0 6px 0 1.15rem;
+            background: #ffffff;
+            border: 1px solid var(--pl-line);
+            border-radius: 999px;
+            box-shadow: 0 6px 20px -12px rgba(15, 23, 42, 0.18);
+            transition: border-color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .catalog-search:focus-within {
+            border-color: var(--pl-coral);
+            box-shadow: 0 0 0 4px rgba(255, 127, 80, 0.14), 0 6px 20px -12px rgba(15, 23, 42, 0.18);
+        }
+
+        .catalog-search__icon {
+            flex: none;
+            color: var(--pl-faint);
+            margin-right: 0.75rem;
+        }
+
+        .catalog-search input,
+        .catalog-search input:focus {
+            flex: 1;
+            min-width: 0;
+            height: 100%;
+            padding: 0;
+            border: 0 !important;
+            border-radius: 0;
+            outline: 0 !important;
+            box-shadow: none !important;
+            background: transparent !important;
+            -webkit-appearance: none;
+            appearance: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--pl-ink);
+        }
+
+        .catalog-search input::-webkit-search-cancel-button,
+        .catalog-search input::-webkit-search-decoration {
+            -webkit-appearance: none;
+            display: none;
+        }
+
+        .catalog-search input::placeholder {
+            color: var(--pl-faint);
             font-weight: 400;
         }
 
-        .catalog-breadcrumb .breadcrumb-item.active {
-            color: #0f172a;
-            font-weight: 500;
-        }
-
-        /* 2. Tiêu đề danh mục gọn gàng, giảm chiều cao */
-        .catalog-header-section {
-            margin-bottom: 1.25rem;
-        }
-
-        .catalog-page-title {
-            font-size: clamp(1.4rem, 2.2vw, 1.75rem);
-            font-weight: 700;
-            color: #0f172a;
-            letter-spacing: -0.02em;
-            line-height: 1.25;
-            margin-bottom: 0.3rem;
-        }
-
-        .catalog-page-desc {
-            font-size: 0.925rem;
-            color: #64748b;
-            margin-bottom: 0;
-            line-height: 1.5;
-        }
-
-        /* 3. Thanh lọc ngang gọn gàng, tách biệt */
-        .catalog-filter-bar {
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 0.95rem 1.15rem;
-            margin-bottom: 1.25rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-        }
-
-        .filter-search-box {
-            position: relative;
-        }
-
-        .filter-search-icon {
-            position: absolute;
-            left: 13px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        .filter-search-input {
-            height: 42px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 0.5rem 0.85rem 0.5rem 2.35rem;
-            font-size: 0.9rem;
-            color: #1e293b;
-            background-color: #ffffff;
-            transition: border-color 0.15s ease, box-shadow 0.15s ease;
-            width: 100%;
-        }
-
-        .filter-search-input:focus {
-            border-color: #ff7f50;
-            box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.18);
-            outline: none;
-        }
-
-        .filter-select {
-            height: 42px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 0.5rem 0.85rem;
-            font-size: 0.9rem;
-            color: #1e293b;
-            background-color: #ffffff;
-            transition: border-color 0.15s ease, box-shadow 0.15s ease;
-            width: 100%;
-        }
-
-        .filter-select:focus {
-            border-color: #ff7f50;
-            box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.18);
-            outline: none;
-        }
-
-        .btn-filter-submit {
-            height: 42px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            background-color: #ff7f50;
-            border: 1px solid #ff7f50;
+        .catalog-search button {
+            flex: none;
+            height: 44px;
+            padding: 0 1.5rem;
+            border: 0;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #ff7f50 0%, #f06437 100%);
             color: #ffffff;
-            display: inline-flex;
+            font-size: 0.88rem;
+            font-weight: 800;
+            transition: filter 0.18s ease;
+        }
+
+        .catalog-search button:hover {
+            filter: brightness(1.05);
+        }
+
+        .catalog-search button:focus-visible {
+            outline: 3px solid rgba(255, 127, 80, 0.45);
+            outline-offset: 2px;
+        }
+
+        .catalog-filters {
+            display: flex;
+            flex-wrap: wrap;
             align-items: center;
-            justify-content: center;
-            gap: 6px;
-            width: 100%;
-            transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+            gap: 0.65rem;
+            margin-top: 0.85rem;
         }
 
-        .btn-filter-submit:hover {
-            background-color: #e86738;
-            border-color: #e86738;
-            color: #ffffff;
-            box-shadow: 0 2px 6px rgba(255, 127, 80, 0.25);
+        .catalog-filters__label {
+            font-size: 0.74rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--pl-faint);
+            margin-right: 0.25rem;
         }
 
-        /* Thẻ bộ lọc đang kích hoạt */
-        .catalog-active-filters {
+        .catalog-select {
+            appearance: none;
+            -webkit-appearance: none;
+            height: 42px;
+            min-width: 190px;
+            padding: 0 2.3rem 0 1rem;
+            border: 1px solid var(--pl-line);
+            border-radius: 12px;
+            background: #ffffff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 0.85rem center;
+            font-size: 0.86rem;
+            font-weight: 600;
+            color: var(--pl-navy);
+            cursor: pointer;
+            transition: border-color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .catalog-select:hover {
+            border-color: #cbd5e1;
+        }
+
+        .catalog-select:focus-visible {
+            outline: 0;
+            border-color: var(--pl-coral);
+            box-shadow: 0 0 0 3px rgba(255, 127, 80, 0.16);
+        }
+
+        .catalog-select.is-set {
+            border-color: rgba(255, 127, 80, 0.55);
+            background-color: var(--pl-coral-soft);
+            color: var(--pl-coral-deep);
+        }
+
+        /* ---------- results bar ---------- */
+        .catalog-results-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem 1rem;
+            margin-bottom: 1.1rem;
+            padding-top: 1.1rem;
+            border-top: 1px solid var(--pl-line);
+        }
+
+        .catalog-count {
+            font-size: 0.9rem;
+            color: var(--pl-muted);
+        }
+
+        .catalog-count strong {
+            color: var(--pl-ink);
+            font-weight: 800;
+        }
+
+        .catalog-chips {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             gap: 0.5rem;
-            padding-top: 0.85rem;
-            margin-top: 0.85rem;
-            border-top: 1px dashed #e2e8f0;
-        }
-
-        .active-filter-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background-color: #fff7ed;
-            border: 1px solid #fed7aa;
-            color: #d65426;
-            font-size: 0.8125rem;
-            font-weight: 500;
-            padding: 0.2rem 0.65rem;
-            border-radius: 6px;
-            text-decoration: none;
-            transition: all 0.15s ease;
-        }
-
-        .active-filter-badge:hover {
-            background-color: #ffedd5;
-            color: #9a3412;
-            border-color: #fdba74;
-        }
-
-        .active-filter-badge .badge-close {
-            font-size: 1.1rem;
-            line-height: 0.8;
-            color: #d65426;
-        }
-
-        .btn-clear-all {
-            font-size: 0.8125rem;
-            font-weight: 500;
-            color: #64748b;
-            text-decoration: underline;
-            text-underline-offset: 3px;
-            margin-left: 0.25rem;
-            transition: color 0.15s ease;
-        }
-
-        .btn-clear-all:hover {
-            color: #dc2626;
-        }
-
-        /* 4. Toolbar đếm số lượng kết quả */
-        .catalog-toolbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             margin-bottom: 1rem;
         }
 
-        .catalog-count-text {
-            font-size: 0.875rem;
-            color: #64748b;
-        }
-
-        .catalog-count-text strong {
-            color: #0f172a;
+        .catalog-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.3rem 0.5rem 0.3rem 0.8rem;
+            border-radius: 999px;
+            background: #ffffff;
+            border: 1px solid rgba(255, 127, 80, 0.4);
+            font-size: 0.78rem;
             font-weight: 600;
+            color: var(--pl-navy);
+            text-decoration: none;
+            transition: background 0.15s ease;
         }
 
-        /* 5. Product Card chuẩn Clean Retail */
-        .retail-product-card {
-            background-color: #ffffff;
-            border: 1px solid #eef2f6;
-            border-radius: 10px;
-            overflow: hidden;
+        .catalog-chip strong {
+            color: var(--pl-coral-deep);
+            font-weight: 750;
+        }
+
+        .catalog-chip__x {
+            display: inline-grid;
+            place-items: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--pl-coral-soft);
+            color: var(--pl-coral-deep);
+            font-size: 0.9rem;
+            line-height: 1;
+        }
+
+        .catalog-chip:hover {
+            background: var(--pl-coral-soft);
+        }
+
+        .catalog-chip:focus-visible,
+        .catalog-clear:focus-visible,
+        .pcard__media:focus-visible,
+        .pcard__title a:focus-visible,
+        .pcard__cta:focus-visible {
+            outline: 3px solid rgba(255, 127, 80, 0.5);
+            outline-offset: 2px;
+        }
+
+        .catalog-clear {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--pl-muted);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .catalog-clear:hover {
+            color: var(--pl-coral-deep);
+        }
+
+        /* ---------- product grid ---------- */
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 24px;
+        }
+
+        @media (max-width: 1199.98px) {
+            .catalog-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .catalog-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 14px;
+            }
+        }
+
+        /* ---------- product card ---------- */
+        .pcard {
+            position: relative;
             display: flex;
             flex-direction: column;
             height: 100%;
-            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-                        box-shadow 0.2s ease,
-                        border-color 0.2s ease;
-        }
-
-        .retail-product-card:hover {
-            border-color: #cbd5e1;
-            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
-            transform: translateY(-2px);
-        }
-
-        .product-thumb-stage {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            background-color: #fbfcfd;
-            border-bottom: 1px solid #f1f5f9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-            position: relative;
+            background: #ffffff;
+            border: 1px solid var(--pl-line);
+            border-radius: 16px;
             overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .pcard:hover {
+            transform: translateY(-3px);
+            border-color: #dbe3ec;
+            box-shadow: 0 18px 32px -20px rgba(15, 23, 42, 0.28);
+        }
+
+        .pcard__media {
+            position: relative;
+            display: grid;
+            place-items: center;
+            height: 236px;
+            padding: 1.5rem;
+            background: #ffffff;
             text-decoration: none;
         }
 
-        .product-thumb-stage img {
+        .pcard__media img {
             max-width: 100%;
             max-height: 100%;
             width: auto;
             height: auto;
             object-fit: contain;
-            transition: transform 0.25s ease;
+            transition: transform 0.3s ease;
         }
 
-        .retail-product-card:hover .product-thumb-stage img {
-            transform: scale(1.03);
+        .pcard:hover .pcard__media img {
+            transform: scale(1.035);
         }
 
-        .product-placeholder-box {
+        .pcard__ph {
+            display: grid;
+            place-items: center;
             width: 100%;
             height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: 12px;
+            background: #f8fafc;
             color: #cbd5e1;
-            background-color: #f8fafc;
         }
 
-        .product-card-body {
-            padding: 0.95rem 1rem 1rem;
+        .pcard__ph.is-hidden {
+            display: none;
+        }
+
+        .pcard__flag {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            z-index: 1;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            background: var(--pl-coral-deep);
+            color: #ffffff;
+            font-size: 0.7rem;
+            font-weight: 800;
+        }
+
+        .pcard__body {
             display: flex;
+            flex: 1;
             flex-direction: column;
-            flex-grow: 1;
+            padding: 0.95rem 1.1rem 1.1rem;
+            border-top: 1px solid #f1f5f9;
         }
 
-        .product-card-brand {
-            font-size: 0.725rem;
-            font-weight: 600;
+        .pcard__brand {
+            margin-bottom: 0.3rem;
+            font-size: 0.68rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #64748b;
-            margin-bottom: 0.25rem;
+            color: var(--pl-coral-dark);
         }
 
-        .product-card-title {
-            font-size: 0.925rem;
-            font-weight: 600;
+        .pcard__title {
+            margin: 0;
+            font-size: 0.95rem;
+            font-weight: 650;
             line-height: 1.4;
-            margin-bottom: 0.35rem;
-        }
-
-        .product-title-link {
-            color: #0f172a;
-            text-decoration: none;
+            min-height: 4.2em;
             display: -webkit-box;
-            -webkit-line-clamp: 2;
+            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            min-height: 2.7em;
-            transition: color 0.15s ease;
         }
 
-        .product-title-link:hover {
-            color: #ff7f50;
+        .pcard__title a {
+            color: var(--pl-ink);
+            text-decoration: none;
         }
 
-        .product-card-sku {
-            font-size: 0.725rem;
-            color: #94a3b8;
-            margin-bottom: 0.65rem;
+        .pcard__title a:hover {
+            color: var(--pl-coral-deep);
         }
 
-        .product-card-footer {
-            margin-top: auto;
-            padding-top: 0.4rem;
+        .pcard__sku {
+            margin-top: 0.3rem;
+            font-size: 0.68rem;
+            color: var(--pl-faint);
+            letter-spacing: 0.02em;
         }
 
-        .product-card-price {
+        .pcard__buy {
+            padding-top: 0.9rem;
+        }
+
+        .pcard__price-row {
             display: flex;
-            align-items: baseline;
             flex-wrap: wrap;
-            gap: 0.4rem;
-            margin-bottom: 0.4rem;
+            align-items: baseline;
+            gap: 0.2rem 0.5rem;
         }
 
-        .product-current-price {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #ff7f50;
-            letter-spacing: -0.01em;
+        .pcard__price,
+        .pcard__price .os-price {
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            color: var(--pl-ink);
         }
 
-        .product-original-price {
-            font-size: 0.8125rem;
-            color: #94a3b8;
+        .pcard__old {
+            font-size: 0.8rem;
+            color: var(--pl-faint);
             text-decoration: line-through;
         }
 
-        .stock-badge-row {
-            margin-bottom: 0.75rem;
-        }
-
-        .stock-badge-tag {
-            display: inline-flex;
+        .pcard__stock {
+            display: flex;
             align-items: center;
-            gap: 5px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            padding: 2px 7px;
-            border-radius: 4px;
+            gap: 7px;
+            margin: 0.45rem 0 0.85rem;
+            font-size: 0.78rem;
+            font-weight: 650;
+            color: #15803d;
         }
 
-        .stock-badge-tag.in-stock {
-            background-color: #f0fdf4;
-            color: #166534;
-            border: 1px solid #bbf7d0;
-        }
-
-        .stock-badge-tag.in-stock::before {
+        .pcard__stock::before {
             content: "";
-            width: 5px;
-            height: 5px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
-            background-color: #16a34a;
+            background: #16a34a;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.18);
         }
 
-        .stock-badge-tag.out-stock {
-            background-color: #f8fafc;
-            color: #64748b;
-            border: 1px solid #e2e8f0;
+        .pcard__stock.is-out {
+            color: var(--pl-muted);
         }
 
-        .btn-card-action {
-            height: 38px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 600;
+        .pcard__stock.is-out::before {
+            background: var(--pl-faint);
+            box-shadow: none;
+        }
+
+        .pcard__cta {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 7px;
             width: 100%;
-            transition: all 0.15s ease;
-        }
-
-        .btn-card-add-cart {
-            background-color: #ff7f50;
-            border: 1px solid #ff7f50;
+            height: 42px;
+            border-radius: 12px;
+            border: 0;
+            background: #ff7f50;
             color: #ffffff;
-        }
-
-        .btn-card-add-cart:hover {
-            background-color: #e86738;
-            border-color: #e86738;
-            color: #ffffff;
-        }
-
-        .btn-card-login {
-            background-color: #ffffff;
-            border: 1px solid #ffd5c7;
-            color: #ff7f50;
+            font-size: 0.88rem;
+            font-weight: 800;
             text-decoration: none;
+            box-shadow: 0 4px 12px -4px rgba(255, 127, 80, 0.55);
+            transition: background 0.18s ease, box-shadow 0.18s ease;
         }
 
-        .btn-card-login:hover {
-            background-color: #fff5f2;
-            border-color: #ff7f50;
-            color: #e86738;
+        .pcard__cta:hover {
+            background: #f06437;
+            color: #ffffff;
+            box-shadow: 0 6px 16px -4px rgba(240, 100, 55, 0.6);
         }
 
-        /* 6. Phân trang tối giản */
-        .catalog-pagination {
-            margin-top: 2.75rem;
+        .pcard__form {
+            margin: 0;
         }
 
-        .catalog-pagination .page-link {
-            border-radius: 6px;
+        /* ---------- pagination ---------- */
+        .catalog-pagination-wrap {
+            margin-top: 2.5rem;
+        }
+
+        .catalog-pagination-wrap .page-link {
+            border-radius: 10px;
             margin: 0 3px;
-            color: #334155;
-            border-color: #e2e8f0;
-            font-size: 0.875rem;
-            font-weight: 500;
-            padding: 0.45rem 0.95rem;
-            transition: all 0.15s ease;
+            border: 1px solid var(--pl-line);
+            color: var(--pl-navy);
+            font-weight: 650;
+            font-size: 0.85rem;
         }
 
-        .catalog-pagination .page-link:hover {
-            color: #ff7f50;
-            border-color: #ffd5c7;
-            background-color: #fffaf8;
+        .catalog-pagination-wrap .page-item.disabled .page-link {
+            background: transparent;
+            color: var(--pl-faint);
         }
 
-        .catalog-pagination .page-item.active .page-link {
-            background-color: #ff7f50 !important;
-            border-color: #ff7f50 !important;
-            color: #ffffff !important;
-            box-shadow: 0 2px 6px rgba(255, 127, 80, 0.2);
-        }
-
-        .catalog-pagination .page-item.disabled .page-link {
-            color: #94a3b8;
-            background-color: #f8fafc;
-            border-color: #e2e8f0;
-        }
-
-        /* 7. Responsive Breakpoints */
-        @media (max-width: 991.98px) {
-            .catalog-filter-bar {
-                padding: 0.85rem 1rem;
-            }
+        .catalog-pagination-wrap .page-link:hover {
+            background: var(--pl-coral-soft);
+            color: var(--pl-coral-deep);
         }
 
         @media (max-width: 575.98px) {
-            .catalog-retail-wrapper {
-                padding: 0.25rem 0 2rem;
+            .catalog-wrapper {
+                padding: 0.25rem 0.85rem 3.5rem;
             }
 
-            .catalog-page-title {
-                font-size: 1.35rem;
+            .catalog-head {
+                margin-bottom: 1.25rem;
             }
 
-            .catalog-page-desc {
-                font-size: 0.85rem;
+            .catalog-search {
+                height: 50px;
             }
 
-            .filter-search-input,
-            .filter-select,
-            .btn-filter-submit {
-                height: 40px;
-                font-size: 0.85rem;
+            .catalog-search button {
+                height: 38px;
+                padding: 0 1.1rem;
             }
 
-            .product-thumb-stage {
-                padding: 0.65rem;
+            .catalog-filters__label {
+                display: none;
             }
 
-            .product-card-body {
-                padding: 0.75rem;
+            .catalog-select {
+                flex: 1 1 calc(50% - 0.35rem);
+                min-width: 0;
+                padding-right: 2rem;
             }
 
-            .product-card-title {
-                font-size: 0.85rem;
+            .pcard__media {
+                height: 168px;
+                padding: 1rem;
             }
 
-            .product-current-price {
-                font-size: 1.05rem;
+            .pcard__body {
+                padding: 0.75rem 0.8rem 0.9rem;
             }
 
-            .btn-card-action {
-                height: 35px;
+            .pcard__title {
+                font-size: 0.86rem;
+            }
+
+            .pcard__price,
+            .pcard__price .os-price {
+                font-size: 1.1rem;
+            }
+
+            .pcard__cta {
+                height: 38px;
                 font-size: 0.8rem;
-                padding: 0 4px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .pcard,
+            .pcard__media img {
+                transition: none;
+            }
+
+            .pcard:hover,
+            .pcard:hover .pcard__media img {
+                transform: none;
             }
         }
     </style>
 </head>
-<body>
-<div class="catalog-retail-wrapper">
-    <!-- 1. BREADCRUMB TEXT THUẦN E-COMMERCE -->
-    <nav class="catalog-breadcrumb-nav" aria-label="Breadcrumb">
-        <ol class="catalog-breadcrumb">
-            <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Sản phẩm</li>
+<body class="os-home">
+<div class="catalog-wrapper">
+    <nav aria-label="breadcrumb">
+        <ol class="catalog-crumbs">
+            <li><a th:href="@{/}">Trang chủ</a></li>
+            <li aria-current="page">Sản phẩm</li>
         </ol>
     </nav>
 
-    <!-- 2. PHẦN TIÊU ĐỀ DANH MỤC GỌN GÀNG -->
-    <header class="catalog-header-section">
-        <h1 class="catalog-page-title">Mỹ phẩm &amp; Chăm sóc sắc đẹp</h1>
-        <p class="catalog-page-desc">Khám phá các sản phẩm mỹ phẩm và chăm sóc sắc đẹp chính hãng, áp dụng một giá online toàn chuỗi OneShop.</p>
+    <header class="catalog-head">
+        <p class="catalog-eyebrow">Khám phá OneShop</p>
+        <h1 class="catalog-title">Khám phá thế giới <em>làm đẹp</em></h1>
+        <p class="catalog-desc">Từ chăm sóc da đến trang điểm, tìm sản phẩm yêu thích từ những thương hiệu mỹ phẩm chính hãng.</p>
     </header>
 
-    <!-- 3. BỘ LỌC TÌM KIẾM NGANG GỌN GÀNG -->
-    <form method="get" th:action="@{/products}" class="catalog-filter-bar" id="catalog-filter">
-        <div class="row g-2 align-items-center">
-            <!-- Tìm kiếm theo tên hoặc SKU -->
-            <div class="col-12 col-md-4 col-lg-4">
-                <div class="filter-search-box">
-                    <svg class="filter-search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"/>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                    </svg>
-                    <input type="search" class="filter-search-input" id="q" name="q" th:attr="data-suggest-url=@{/products/suggest}" data-suggest-label="name" data-suggest-fill="name"
-                           th:value="${criteria.keyword}" placeholder="Tìm theo tên sản phẩm hoặc SKU..." maxlength="100">
-                </div>
-            </div>
-
-            <!-- Danh mục -->
-            <div class="col-6 col-md-3 col-lg-3">
-                <select class="form-select filter-select" id="categoryId" name="categoryId" aria-label="Danh mục">
-                    <option value="">Tất cả danh mục</option>
-                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
-                            th:selected="${category.id == criteria.categoryId}">Chăm sóc da</option>
-                </select>
-            </div>
-
-            <!-- Thương hiệu -->
-            <div class="col-6 col-md-3 col-lg-3">
-                <select class="form-select filter-select" id="brandId" name="brandId" aria-label="Thương hiệu">
-                    <option value="">Tất cả thương hiệu</option>
-                    <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"
-                            th:selected="${brand.id == criteria.brandId}">Cocoon</option>
-                </select>
-            </div>
-
-            <!-- Nút lọc -->
-            <div class="col-12 col-md-2 col-lg-2">
-                <button type="submit" class="btn btn-filter-submit">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"/>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                    </svg>
-                    <span>Lọc kết quả</span>
-                </button>
-            </div>
+    <form method="get" th:action="@{/products}" class="catalog-tools" id="catalog-filter">
+        <div class="catalog-search" data-suggest-anchor>
+            <svg class="catalog-search__icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="search" id="q" name="q" aria-label="Tìm sản phẩm"
+                   th:attr="data-suggest-url=@{/products/suggest}" data-suggest-label="name" data-suggest-fill="name"
+                   th:value="${criteria.keyword}" placeholder="Tìm sản phẩm, thương hiệu..." maxlength="100">
+            <button type="submit">Tìm kiếm</button>
         </div>
 
-        <!-- Thẻ bộ lọc đang kích hoạt -->
-        <div class="catalog-active-filters" id="active-filters"
-             th:if="${criteria.keyword != null and !#strings.isEmpty(criteria.keyword) or criteria.categoryId != null or criteria.brandId != null}"
-             aria-label="Bộ lọc đang áp dụng">
-            <span class="small text-muted me-1">Đang lọc theo:</span>
-            <a th:if="${criteria.keyword != null and !#strings.isEmpty(criteria.keyword)}"
-               class="active-filter-badge"
-               th:href="@{/products(categoryId=${criteria.categoryId}, brandId=${criteria.brandId})}"
-               th:attr="aria-label='Bỏ lọc từ khóa ' + ${criteria.keyword}">
-                <span>Từ khóa: <strong th:text="${criteria.keyword}">serum</strong></span>
-                <span class="badge-close" aria-hidden="true">&times;</span>
-            </a>
-            <a th:if="${criteria.categoryId != null}"
-               class="active-filter-badge"
-               th:href="@{/products(q=${criteria.keyword}, brandId=${criteria.brandId})}">
-                <span>Danh mục: <strong th:each="category : ${categories}" th:if="${category.id == criteria.categoryId}" th:text="${category.name}">Chăm sóc da</strong></span>
-                <span class="badge-close" aria-hidden="true">&times;</span>
-            </a>
-            <a th:if="${criteria.brandId != null}"
-               class="active-filter-badge"
-               th:href="@{/products(q=${criteria.keyword}, categoryId=${criteria.categoryId})}">
-                <span>Thương hiệu: <strong th:each="brand : ${brands}" th:if="${brand.id == criteria.brandId}" th:text="${brand.name}">Cocoon</strong></span>
-                <span class="badge-close" aria-hidden="true">&times;</span>
-            </a>
-            <a class="btn-clear-all" th:href="@{/products}">Xóa tất cả</a>
+        <div class="catalog-filters">
+            <span class="catalog-filters__label">Lọc theo</span>
+            <select class="catalog-select" id="categoryId" name="categoryId" aria-label="Danh mục"
+                    th:classappend="${criteria.categoryId != null} ? 'is-set'">
+                <option value="">Tất cả danh mục</option>
+                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
+                        th:selected="${category.id == criteria.categoryId}">Chăm sóc da</option>
+            </select>
+            <select class="catalog-select" id="brandId" name="brandId" aria-label="Thương hiệu"
+                    th:classappend="${criteria.brandId != null} ? 'is-set'">
+                <option value="">Tất cả thương hiệu</option>
+                <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"
+                        th:selected="${brand.id == criteria.brandId}">Cocoon</option>
+            </select>
         </div>
     </form>
 
-    <!-- 4. TOOLBAR HIỂN THỊ SỐ LƯỢNG SẢN PHẨM TÌM THẤY -->
-    <div class="catalog-toolbar">
-        <div class="catalog-count-text" id="catalog-count">
+    <div class="catalog-chips" id="active-filters"
+         th:if="${criteria.keyword != null and !#strings.isEmpty(criteria.keyword) or criteria.categoryId != null or criteria.brandId != null}"
+         aria-label="Bộ lọc đang áp dụng">
+        <a th:if="${criteria.keyword != null and !#strings.isEmpty(criteria.keyword)}" class="catalog-chip"
+           th:href="@{/products(categoryId=${criteria.categoryId}, brandId=${criteria.brandId})}"
+           th:attr="aria-label='Bỏ lọc từ khóa ' + ${criteria.keyword}">
+            <span>Từ khóa: <strong th:text="${criteria.keyword}">serum</strong></span>
+            <span class="catalog-chip__x" aria-hidden="true">&times;</span>
+        </a>
+        <a th:if="${criteria.categoryId != null}" class="catalog-chip"
+           th:href="@{/products(q=${criteria.keyword}, brandId=${criteria.brandId})}">
+            <span>Danh mục: <strong th:each="category : ${categories}" th:if="${category.id == criteria.categoryId}" th:text="${category.name}">Chăm sóc da</strong></span>
+            <span class="catalog-chip__x" aria-hidden="true">&times;</span>
+        </a>
+        <a th:if="${criteria.brandId != null}" class="catalog-chip"
+           th:href="@{/products(q=${criteria.keyword}, categoryId=${criteria.categoryId})}">
+            <span>Thương hiệu: <strong th:each="brand : ${brands}" th:if="${brand.id == criteria.brandId}" th:text="${brand.name}">Cocoon</strong></span>
+            <span class="catalog-chip__x" aria-hidden="true">&times;</span>
+        </a>
+        <a class="catalog-clear" th:href="@{/products}">Xóa tất cả</a>
+    </div>
+
+    <div class="catalog-results-bar">
+        <div class="catalog-count" id="catalog-count">
             Tìm thấy <strong th:text="${catalog.totalElements}">12</strong> sản phẩm phù hợp
         </div>
-        <form method="post" th:action="@{/stores/clear}" class="d-flex align-items-center gap-2 flex-wrap" id="catalog-store-scope" th:if="${selectedStore != null}">
+        <form method="post" th:action="@{/stores/clear}" class="d-flex align-items-center gap-2 flex-wrap m-0" id="catalog-store-scope" th:if="${selectedStore != null}">
             <input type="hidden" name="returnTo" value="/products">
             <span class="small">Đang xem sản phẩm tại <strong th:text="${selectedStore.name}">OneShop Thủ Đức</strong></span>
             <button type="submit" class="btn btn-outline-secondary btn-sm">Xem toàn chuỗi</button>
         </form>
     </div>
 
-    <!-- Empty State -->
     <div th:if="${catalog.isEmpty()}">
         <div th:replace="~{fragments/components :: emptyState('Không tìm thấy sản phẩm phù hợp. Thử chọn danh mục khác hoặc xóa bộ lọc tìm kiếm.')}"></div>
     </div>
 
-    <!-- 5. PRODUCT CARDS GRID (4 CỘT TRÊN DESKTOP) -->
-    <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 g-lg-4" th:unless="${catalog.isEmpty()}">
-        <div class="col" th:each="item : ${catalog.content}">
-            <article class="retail-product-card" th:with="product=${item.product}">
-                <!-- Ảnh sản phẩm -->
-                <a th:href="@{/products/{id}(id=${product.id})}" class="product-thumb-stage" th:attr="aria-label=${product.name}">
-                    <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" th:alt="${product.name}" loading="lazy">
-                    <div class="product-placeholder-box" th:unless="${product.imageUrl}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
-                            <circle cx="9" cy="9" r="2"/>
-                            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
-                        </svg>
+    <div class="catalog-grid" th:unless="${catalog.isEmpty()}">
+        <article class="pcard" th:each="item : ${catalog.content}" th:with="product=${item.product}">
+            <a th:href="@{/products/{id}(id=${product.id})}" class="pcard__media" th:attr="aria-label=${product.name}">
+                <span class="pcard__flag"
+                      th:if="${product.originalPrice != null and product.price != null and product.originalPrice > product.price}"
+                      th:text="'-' + ${#numbers.formatDecimal((product.originalPrice - product.price) * 100.0 / product.originalPrice, 0, 'POINT', 0, 'COMMA')} + '%'">-15%</span>
+                <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" th:alt="${product.name}" loading="lazy"
+                     onerror="this.style.display='none';this.nextElementSibling.classList.remove('is-hidden')">
+                <span class="pcard__ph" th:classappend="${product.imageUrl != null} ? 'is-hidden'" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                        <circle cx="9" cy="9" r="2"/>
+                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                    </svg>
+                </span>
+            </a>
+
+            <div class="pcard__body">
+                <div class="pcard__brand" th:text="${product.brandName}">Thương hiệu</div>
+                <h2 class="pcard__title">
+                    <a th:href="@{/products/{id}(id=${product.id})}" th:text="${product.name}">Tên sản phẩm</a>
+                </h2>
+
+                <div class="pcard__buy"
+                     th:with="available=${item.atSelectedStore != null ? item.atSelectedStore.inStock : #lists.size(item.stores.?[inStock]) > 0}">
+                    <div class="pcard__price-row">
+                        <span class="pcard__price">
+                            <span th:replace="~{fragments/components :: price(${product.price != null ? product.price : item.lowestPrice})}"></span>
+                        </span>
+                        <span class="pcard__old"
+                              th:if="${product.originalPrice != null and product.price != null and product.originalPrice > product.price}"
+                              th:text="${#numbers.formatDecimal(product.originalPrice, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></span>
                     </div>
-                </a>
 
-                <!-- Nội dung thông tin sản phẩm -->
-                <div class="product-card-body">
-                    <div class="product-card-brand" th:text="${product.brandName}">Cocoon</div>
+                    <!-- when a Store is chosen: in stock at that very Store -->
+                    <div class="pcard__stock" th:if="${available and item.atSelectedStore == null}">Còn hàng toàn hệ thống</div>
+                    <div class="pcard__stock" th:if="${available and item.atSelectedStore != null}">Còn hàng tại chi nhánh</div>
+                    <div class="pcard__stock is-out" th:unless="${available}">Hết hàng</div>
 
-                    <h2 class="product-card-title">
-                        <a th:href="@{/products/{id}(id=${product.id})}" class="product-title-link" th:text="${product.name}">Tên sản phẩm</a>
-                    </h2>
-
-                    <div class="product-card-sku">
-                        SKU: <span th:text="${product.sku}">SKU-001</span>
-                    </div>
-
-                    <!-- Phần giá và hành động mua hàng -->
-                    <div class="product-card-footer">
-                        <div class="product-card-price">
-                            <span class="product-current-price"
-                                  th:replace="~{fragments/components :: price(${product.price != null ? product.price : item.lowestPrice})}"></span>
-                            <span class="product-original-price"
-                                  th:if="${product.originalPrice != null and product.originalPrice > product.price}"
-                                  th:text="${#numbers.formatDecimal(product.originalPrice, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></span>
-                        </div>
-
-                        <!-- Trạng thái kho hàng toàn chuỗi -->
-                        <!-- (khi đã chọn chi nhánh: còn hàng tại chính chi nhánh đó) -->
-                        <div class="stock-badge-row"
-                             th:with="available=${item.atSelectedStore != null ? item.atSelectedStore.inStock : #lists.size(item.stores.?[inStock]) > 0}">
-                            <span class="stock-badge-tag in-stock" th:if="${available and item.atSelectedStore == null}">Còn hàng toàn hệ thống</span>
-                            <span class="stock-badge-tag in-stock" th:if="${available and item.atSelectedStore != null}">Còn hàng tại chi nhánh</span>
-                            <span class="stock-badge-tag out-stock" th:unless="${available}">Hết hàng</span>
-                        </div>
-
-                        <!-- Thao tác mua hàng -->
-                        <div th:if="${item.atSelectedStore != null ? item.atSelectedStore.inStock : #lists.size(item.stores.?[inStock]) > 0}">
-                            <form th:action="@{/cart/items}" method="post" sec:authorize="hasRole('CUSTOMER')">
-                                <input type="hidden" name="productId" th:value="${product.id}">
-                                <input type="hidden" name="quantity" value="1">
-                                <button type="submit" class="btn btn-card-action btn-card-add-cart">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="9" cy="21" r="1"/>
-                                        <circle cx="20" cy="21" r="1"/>
-                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                                    </svg>
-                                    <span>Thêm vào giỏ</span>
-                                </button>
-                            </form>
-                            <a class="btn btn-card-action btn-card-login" th:href="@{/login}"
-                               sec:authorize="!isAuthenticated()">Đăng nhập để mua</a>
-                        </div>
-                    </div>
+                    <th:block th:if="${available}">
+                        <form th:action="@{/cart/items}" method="post" sec:authorize="hasRole('CUSTOMER')" class="pcard__form">
+                            <input type="hidden" name="productId" th:value="${product.id}">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="pcard__cta">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <circle cx="9" cy="21" r="1"/>
+                                    <circle cx="20" cy="21" r="1"/>
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                </svg>
+                                <span>Thêm vào giỏ</span>
+                            </button>
+                        </form>
+                        <a class="pcard__cta" th:href="@{/login}" sec:authorize="!isAuthenticated()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                                <polyline points="10 17 15 12 10 7"/>
+                                <line x1="15" y1="12" x2="3" y2="12"/>
+                            </svg>
+                            <span>Đăng nhập để mua</span>
+                        </a>
+                    </th:block>
                 </div>
-            </article>
-        </div>
+            </div>
+        </article>
     </div>
 
-    <!-- 6. PHÂN TRANG -->
-    <nav class="catalog-pagination" th:if="${catalog.totalPages > 1}" aria-label="Phân trang danh mục">
+    <nav class="catalog-pagination-wrap" th:if="${catalog.totalPages > 1}" aria-label="Phân trang danh mục">
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${catalog.first} ? 'disabled'">
                 <a class="page-link" th:href="@{/products(q=${criteria.keyword}, categoryId=${criteria.categoryId}, brandId=${criteria.brandId}, page=${catalog.number - 1})}">

@@ -6,7 +6,7 @@
 <section class="row g-3 mb-4" id="chain-summary" th:if="${chain != null}" aria-label="Số liệu toàn chuỗi">
     <div class="col-6 col-lg"><div th:replace="~{fragments/components :: statCard('Đơn hàng toàn chuỗi', ${chain.totalOrders}, 'Mỗi đơn tính một lần')}"></div></div>
     <div class="col-6 col-lg"><div th:replace="~{fragments/components :: statCard('Phần giao đang xử lý', ${chain.openFulfillments}, 'Nhân viên đang xử lý bình thường')}"></div></div>
-    <div class="col-6 col-lg" id="kpi-attention"><div th:replace="~{fragments/components :: statCard('Cần Admin xử lý', ${chain.ordersNeedingAttention}, 'Đơn ngoại lệ, thanh toán quá hạn, hoàn tiền mô phỏng chưa xong')}"></div></div>
+    <div class="col-6 col-lg" id="kpi-attention"><div th:replace="~{fragments/components :: statCard('Cần Admin xử lý', ${chain.ordersNeedingAttention}, 'Đơn ngoại lệ, thanh toán quá hạn, hoàn tiền chưa xong')}"></div></div>
     <div class="col-6 col-lg" id="kpi-reconciling"><div th:replace="~{fragments/components :: statCard('Chờ đối soát', ${chain.reconcilingOrders}, 'Kết quả chưa xác định, còn trong hạn')}"></div></div>
     <div class="col-6 col-lg"><div th:replace="~{fragments/components :: statCard('SKU hết hàng tại chi nhánh', ${#aggregates.sum(overview.![outOfStockRows])}, 'Số dòng SKU–chi nhánh có tồn bằng 0')}"></div></div>
     <div class="col-12 d-flex flex-wrap gap-2" id="dashboard-quick-actions">

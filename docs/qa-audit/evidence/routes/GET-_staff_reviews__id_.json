@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "GET",
-    "method" : "detail",
-    "controller" : "com.oneshop.controller.staff.StaffReviewController",
-    "path" : "/staff/reviews/{id}"
-  },
-  "location" : "http://localhost:57296/login",
-  "executedAt" : "2026-10-24T09:12:23.704029400Z",
-  "expected" : 302,
-  "actual" : 302,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/staff/reviews/999999999",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 302,
+  "expected" : 302,
+  "executedAt" : "2026-10-24T10:17:37.496663Z",
+  "location" : "http://localhost:62366/login",
+  "route" : {
+    "path" : "/staff/reviews/{id}",
+    "controller" : "com.oneshop.controller.staff.StaffReviewController",
+    "method" : "detail",
+    "verb" : "GET"
+  }
 }

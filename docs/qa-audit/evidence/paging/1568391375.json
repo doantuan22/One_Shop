@@ -1,1 +1,1 @@
-{"request":"/products?page=178956970","expected":200,"timestamp":"2026-10-24T09:13:11.879686900Z","actual":200}
+{"actual":200,"timestamp":"2026-10-24T10:18:23.461118Z","expected":200,"request":"/products?page=178956970"}

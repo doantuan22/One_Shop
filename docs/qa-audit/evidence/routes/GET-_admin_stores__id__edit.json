@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "GET",
-    "method" : "editForm",
-    "controller" : "com.oneshop.controller.admin.AdminStoreController",
-    "path" : "/admin/stores/{id}/edit"
-  },
-  "location" : "http://localhost:57296/login",
-  "executedAt" : "2026-10-24T09:12:19.522948600Z",
-  "expected" : 302,
-  "actual" : 302,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/admin/stores/999999999/edit",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 302,
+  "expected" : 302,
+  "executedAt" : "2026-10-24T10:17:33.530640800Z",
+  "location" : "http://localhost:62366/login",
+  "route" : {
+    "path" : "/admin/stores/{id}/edit",
+    "controller" : "com.oneshop.controller.admin.AdminStoreController",
+    "method" : "editForm",
+    "verb" : "GET"
+  }
 }

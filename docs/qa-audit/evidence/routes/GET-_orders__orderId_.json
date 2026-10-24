@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "GET",
-    "method" : "detail",
-    "controller" : "com.oneshop.controller.client.CustomerOrderController",
-    "path" : "/orders/{orderId}"
-  },
-  "location" : "http://localhost:57296/login",
-  "executedAt" : "2026-10-24T09:12:22.086600500Z",
-  "expected" : 302,
-  "actual" : 302,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/orders/999999999",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 302,
+  "expected" : 302,
+  "executedAt" : "2026-10-24T10:17:36.212996600Z",
+  "location" : "http://localhost:62366/login",
+  "route" : {
+    "path" : "/orders/{orderId}",
+    "controller" : "com.oneshop.controller.client.CustomerOrderController",
+    "method" : "detail",
+    "verb" : "GET"
+  }
 }

@@ -66,6 +66,12 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Outgoing mail (SMTP): one-time codes for resetting a forgotten password -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
         <!-- Security + JWT -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

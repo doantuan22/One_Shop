@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "POST",
-    "method" : "reply",
-    "controller" : "com.oneshop.controller.admin.AdminReviewController",
-    "path" : "/admin/reviews/{id}/reply"
-  },
-  "location" : "",
-  "executedAt" : "2026-10-24T09:12:18.222972400Z",
-  "expected" : 403,
-  "actual" : 403,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/admin/reviews/999999999/reply",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 403,
+  "expected" : 403,
+  "executedAt" : "2026-10-24T10:17:32.163399400Z",
+  "location" : "",
+  "route" : {
+    "path" : "/admin/reviews/{id}/reply",
+    "controller" : "com.oneshop.controller.admin.AdminReviewController",
+    "method" : "reply",
+    "verb" : "POST"
+  }
 }

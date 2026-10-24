@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "GET",
-    "method" : "imageCredits",
-    "controller" : "com.oneshop.controller.client.ImageCreditsController",
-    "path" : "/image-credits"
-  },
-  "location" : "",
-  "executedAt" : "2026-10-24T09:12:21.103158400Z",
-  "expected" : 200,
-  "actual" : 200,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/image-credits",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 200,
+  "expected" : 200,
+  "executedAt" : "2026-10-24T10:17:35.543965600Z",
+  "location" : "",
+  "route" : {
+    "path" : "/image-credits",
+    "controller" : "com.oneshop.controller.client.ImageCreditsController",
+    "method" : "imageCredits",
+    "verb" : "GET"
+  }
 }

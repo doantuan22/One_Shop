@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "GET",
-    "method" : "dashboard",
-    "controller" : "com.oneshop.controller.admin.AdminDashboardController",
-    "path" : "/admin"
-  },
-  "location" : "http://localhost:57296/login",
-  "executedAt" : "2026-10-24T09:12:20.322999200Z",
-  "expected" : 302,
-  "actual" : 302,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/admin",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 302,
+  "expected" : 302,
+  "executedAt" : "2026-10-24T10:17:34.950576400Z",
+  "location" : "http://localhost:62366/login",
+  "route" : {
+    "path" : "/admin",
+    "controller" : "com.oneshop.controller.admin.AdminDashboardController",
+    "method" : "dashboard",
+    "verb" : "GET"
+  }
 }

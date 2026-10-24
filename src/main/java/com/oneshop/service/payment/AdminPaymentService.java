@@ -231,7 +231,7 @@ public class AdminPaymentService {
     public PaymentOutcome settleGateway(Long orderId, boolean collected) {
         if (!gateway.enabled()) {
             throw new PaymentConflictException(PaymentConflictException.GATEWAY_DISABLED,
-                    "Cổng thanh toán mô phỏng không được bật trong môi trường này.");
+                    "Cổng thanh toán không được bật trong môi trường này.");
         }
         User admin = currentAdmin();
         Order order = lockOnline(orderId);
@@ -269,9 +269,9 @@ public class AdminPaymentService {
         if (order.getOrderStatus() != OrderStatus.CANCELLED) {
             // money is only given back for an Order that cannot continue; an active Order is never refunded
             throw new PaymentConflictException(PaymentConflictException.NOT_A_PAYMENT_CASE,
-                    "Chỉ hoàn tiền mô phỏng cho đơn đã hủy.");
+                    "Chỉ hoàn tiền cho đơn đã hủy.");
         }
-        RefundService.Result result = refunds.simulate(order, "Admin thử lại hoàn tiền mô phỏng");
+        RefundService.Result result = refunds.simulate(order, "Admin thử lại hoàn tiền");
         if (result == RefundService.Result.NOT_APPLICABLE) {
             throw new PaymentConflictException(PaymentConflictException.NOTHING_TO_REFUND,
                     "Đơn hàng không có khoản thu trực tuyến nào để hoàn.");

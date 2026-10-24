@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Quản lý người dùng</title></head><body>
+<nav class="os-breadcrumb-pill" aria-label="Vị trí trang"><a th:href="@{/admin/users}">Người dùng</a><span class="os-breadcrumb-sep" aria-hidden="true">/</span><strong th:text="${current == null} ? 'Thêm mới' : 'Chỉnh sửa'">Thêm mới</strong></nav>
 <div th:replace="~{fragments/components :: pageHeader(${current == null} ? 'Tạo tài khoản' : 'Cập nhật người dùng', 'Quản lý tài khoản, vai trò và trạng thái hoạt động.')}"></div>
 <section class="card shadow-sm">
     <div class="card-body">

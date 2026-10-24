@@ -39,6 +39,33 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         requireCustomer(email);
         return orders.findByUserEmailOrderByCreatedAtDescIdDesc(email).stream().map(o -> views.summary(o, false, null)).toList();
     }
+    @Transactional(readOnly = true)
+    public java.util.Map<Long, OrderListInfo> getOrderItems(String email) {
+        requireCustomer(email);
+        var customerOrders = orders.findByUserEmailOrderByCreatedAtDescIdDesc(email);
+        List<Long> productIds = customerOrders.stream().flatMap(o -> o.getItems().stream())
+                .filter(i -> i.getStoreProduct() != null && i.getStoreProduct().getProduct() != null)
+                .map(i -> i.getStoreProduct().getProduct().getId()).distinct().toList();
+        java.util.Map<Long, String> images = productService == null || productIds.isEmpty()
+                ? java.util.Map.of() : productService.getPrimaryImageUrls(productIds);
+        java.util.Map<Long, OrderListInfo> byOrder = new java.util.HashMap<>();
+        for (var o : customerOrders) {
+            List<OrderListInfo.Line> lines = o.getItems().stream().map(i -> new OrderListInfo.Line(i.getProductName(),
+                    i.getStoreProduct() == null || i.getStoreProduct().getProduct() == null ? null
+                            : images.get(i.getStoreProduct().getProduct().getId()),
+                    i.getQuantity(), i.getUnitPrice(), i.getSubtotal())).toList();
+            byOrder.put(o.getId(), new OrderListInfo(lines, o.getFulfillments().size()));
+        }
+        return byOrder;
+    }
+
+    private ProductService productService;
+
+    /** Product thumbnails for the order list; optional so the service still works without the catalog. */
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    void setProductService(ProductService productService) {
+        this.productService = productService;
+    }
     public OrderDetailResponse getOrder(String email, Long id) {
         requireCustomer(email);
         var order = orders.findByIdAndUserEmail(id, email)

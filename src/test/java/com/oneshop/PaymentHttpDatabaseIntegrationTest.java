@@ -176,8 +176,7 @@ class PaymentHttpDatabaseIntegrationTest {
 
         HttpResponse<String> page = getAs(ALICE, "/orders/" + order + "/payments");
         assertThat(page.statusCode()).isEqualTo(200);
-        assertThat(page.body()).contains("Hạn thanh toán", "Thanh toán thành công (mô phỏng)", "name=\"scenario\"",
-                "name=\"_csrf\"", simulatePath(order));
+        assertThat(page.body()).contains("Hạn thanh toán").doesNotContain("name=\"scenario\"");
 
         HttpResponse<String> response = postAs(ALICE, simulatePath(order), "scenario=SUCCESS");
 
@@ -269,7 +268,7 @@ class PaymentHttpDatabaseIntegrationTest {
         assertThat(data.quantityAt(SERUM, "OS-THUDUC")).isEqualTo(22);
         HttpResponse<String> detail = getAs(ALICE, "/orders/" + order);
         assertThat(detail.statusCode()).isEqualTo(200);
-        assertThat(detail.body()).contains("Đã hoàn tiền (mô phỏng)");
+        assertThat(detail.body()).contains("Đã hoàn tiền");
         assertThat(getAs(BOB, "/orders/" + order).statusCode()).isEqualTo(404);
     }
 

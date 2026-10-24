@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--/*
+    Slim brand strip above the navbar. V3: the shop is one shared catalog with one online price per SKU, so the
+    header never asks for a Store ("Chi nhánh đang chọn" was V2). Stores are only a lookup: /stores.
+*/-->
+<header th:fragment="header" class="os-topbar-coral" id="site-topbar">
+    <style>
+        .os-topbar-coral {
+            background: linear-gradient(90deg, #ff7f50 0%, #e86738 100%);
+            color: #ffffff;
+            font-size: 0.875rem;
+            padding: 0.45rem 0;
+            position: relative;
+            z-index: 1020;
+        }
+
+        .os-topbar-coral a {
+            color: #ffffff;
+            font-weight: 600;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .os-topbar-coral a:hover,
+        .os-topbar-coral a:focus-visible {
+            color: #ffffff;
+            text-decoration-thickness: 2px;
+        }
+
+        .topbar-info-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        @media (max-width: 575.98px) {
+            .os-topbar-coral {
+                font-size: 0.775rem;
+                padding: 0.35rem 0;
+            }
+            .os-topbar-coral .container {
+                justify-content: center !important;
+                text-align: center;
+                gap: 0.25rem !important;
+            }
+        }
+    </style>
+
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-1 gap-md-3">
+        <span class="topbar-info-item">Mỹ phẩm chính hãng &middot; một giá online chung cho toàn hệ thống</span>
+        <a th:href="@{/stores}">Tra cứu cửa hàng &amp; nhận tại cửa hàng</a>
+    </div>
+</header>
+</body>
+</html>

@@ -9,811 +9,1187 @@
     <link rel="stylesheet" th:href="@{/css/bootstrap-coral.css}">
     <link rel="stylesheet" th:href="@{/css/home.css}">
     <style>
-        /* -------------------------------------------------------------
-           CLEAN RETAIL PRODUCT DETAIL (Sephora / Kiehl's Style)
-           ------------------------------------------------------------- */
-        .product-detail-container {
-            max-width: 1200px;
+        :root {
+            --os-coral: #ff7f50;
+            --os-coral-dark: #e86638;
+            --os-coral-soft: #fff5f1;
+            --os-slate-900: #0f172a;
+            --os-slate-700: #334155;
+            --os-slate-500: #64748b;
+            --os-slate-400: #94a3b8;
+            --os-slate-200: #e2e8f0;
+            --os-slate-100: #f1f5f9;
+            --os-bg: #f8fafc;
+        }
+
+        body {
+            background-color: var(--os-bg);
+            color: var(--os-slate-900);
+        }
+
+        .pdp-wrapper {
+            max-width: 1240px;
             margin: 0 auto;
-            padding: 1.25rem 1rem 4rem;
+            padding: 0.5rem 1rem 5rem;
         }
 
-        /* 1. Breadcrumb tinh tế, dạng text thuần e-commerce */
-        .product-breadcrumb-nav {
-            margin-bottom: 1.75rem;
-        }
-
-        .product-breadcrumb {
+        /* ---------- breadcrumb ---------- */
+        .pdp-crumbs {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 0.4rem;
-            margin-bottom: 0;
+            gap: 0.3rem 0.45rem;
+            margin: 0 0 1.5rem;
             padding: 0;
-            background: transparent;
-            font-size: 0.85rem;
-            color: #64748b;
-        }
-
-        .product-breadcrumb .breadcrumb-item {
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .product-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
-            content: "/";
-            padding-right: 0.4rem;
-            color: #cbd5e1;
-            font-weight: 400;
-        }
-
-        .product-breadcrumb .breadcrumb-item a {
-            color: #64748b;
-            text-decoration: none;
-            transition: color 0.15s ease;
-        }
-
-        .product-breadcrumb .breadcrumb-item a:hover {
-            color: #ff7f50;
-        }
-
-        .product-breadcrumb .breadcrumb-item.active {
-            color: #0f172a;
+            list-style: none;
+            font-size: 0.8rem;
             font-weight: 500;
-            max-width: 380px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            color: var(--os-slate-400);
         }
 
-        /* 2. Gallery ảnh sản phẩm tối giản, nền trung tính */
-        .product-gallery-sticky {
-            position: sticky;
-            top: 90px;
+        .pdp-crumbs a {
+            color: var(--os-slate-500);
+            text-decoration: none;
         }
 
-        .product-image-stage {
-            background-color: #fbfcfd;
-            border: 1px solid #eef2f6;
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .pdp-crumbs a:hover {
+            color: var(--os-coral-dark);
         }
 
-        .gallery-main-img {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            object-fit: contain;
-            padding: 1.5rem;
-            display: block;
-            transition: opacity 0.2s ease;
-        }
-
-        .gallery-placeholder {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #f8fafc;
+        .pdp-crumbs li + li::before {
+            content: "/";
+            margin-right: 0.45rem;
             color: #cbd5e1;
         }
 
-        .product-thumbs-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.75rem;
+        .pdp-crumbs [aria-current] {
+            color: #1e293b;
+            font-weight: 650;
         }
 
-        .thumb-button {
-            width: 64px;
-            height: 64px;
-            padding: 3px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
+        /* ---------- hero: gallery + buy panel ---------- */
+        .pdp-hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+            gap: 3.5rem;
+            align-items: start;
+        }
+
+        .pdp-gallery {
+            position: sticky;
+            top: 100px;
+        }
+
+        .pdp-main-stage {
+            position: relative;
+            display: grid;
+            place-items: center;
+            aspect-ratio: 1 / 1;
+            padding: 2.25rem;
             background: #ffffff;
-            cursor: pointer;
-            flex: 0 0 auto;
-            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            border: 1px solid var(--os-slate-200);
+            border-radius: 22px;
+            overflow: hidden;
         }
 
-        .thumb-button:hover {
-            border-color: #ff7f50;
+        .pdp-main-stage:hover .pdp-main-img {
+            transform: scale(1.03);
         }
 
-        .thumb-button.active-thumb {
-            border-color: #ff7f50;
-            box-shadow: 0 0 0 1px #ff7f50;
+        .pdp-stage-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            z-index: 1;
+            padding: 0.25rem 0.7rem;
+            border-radius: 999px;
+            background: #d65426;
+            color: #ffffff;
+            font-size: 0.78rem;
+            font-weight: 800;
         }
 
-        .thumb-item {
+        .pdp-main-img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            border-radius: 5px;
-            display: block;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .image-credit-text {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            margin-top: 0.5rem;
-            margin-bottom: 0;
+        .pdp-thumbs-track {
+            display: flex;
+            gap: 0.65rem;
+            margin-top: 0.9rem;
+            overflow-x: auto;
+            padding: 2px 2px 6px;
         }
 
-        .image-credit-text a {
-            color: #94a3b8;
+        .pdp-thumb-btn {
+            width: 72px;
+            height: 72px;
+            border-radius: 14px;
+            border: 2px solid var(--os-slate-200);
+            background: #ffffff;
+            padding: 5px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .pdp-thumb-btn:hover {
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
+        }
+
+        .pdp-thumb-btn:focus-visible {
+            outline: 3px solid rgba(255, 127, 80, 0.5);
+            outline-offset: 2px;
+        }
+
+        .pdp-thumb-btn.active-thumb {
+            border-color: var(--os-coral);
+            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.2);
+        }
+
+        .pdp-thumb-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .pdp-credit-line {
+            font-size: 0.74rem;
+            color: var(--os-slate-400);
+            margin: 0.5rem 0 0;
+        }
+
+        .pdp-credit-line a {
+            color: var(--os-slate-500);
             text-decoration: underline;
         }
 
-        .image-credit-text a:hover {
-            color: #64748b;
-        }
-
-        /* 3. Typography & Thông tin sản phẩm */
-        .product-info-column {
-            padding-left: 0.5rem;
-        }
-
-        .product-brand-category {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #64748b;
-            margin-bottom: 0.4rem;
-        }
-
-        .product-brand-link {
-            color: #334155;
-            text-decoration: none;
-            transition: color 0.15s ease;
-        }
-
-        .product-brand-link:hover {
-            color: #ff7f50;
-        }
-
-        .product-meta-sep {
+        .pdp-gallery-empty {
+            display: grid;
+            place-items: center;
+            width: 100%;
+            height: 100%;
             color: #cbd5e1;
         }
 
-        .product-category-text {
-            color: #64748b;
-        }
-
-        .product-main-title {
-            font-size: clamp(1.35rem, 1.8vw, 1.65rem);
-            font-weight: 600;
-            line-height: 1.35;
-            color: #0f172a;
-            letter-spacing: -0.015em;
-            margin-bottom: 0.4rem;
-        }
-
-        .product-sku-line {
-            font-size: 0.825rem;
-            color: #94a3b8;
-            margin-bottom: 1.25rem;
-        }
-
-        .product-sku-val {
-            color: #475569;
-            font-family: monospace;
-            font-weight: 500;
-        }
-
-        /* 4. Khu vực giá & mua hàng trực tiếp (Loại bỏ hoàn toàn card viền cam) */
-        .product-purchase-area {
-            border-top: 1px solid #f1f5f9;
-            border-bottom: 1px solid #f1f5f9;
-            padding: 1.25rem 0;
-            margin-bottom: 1.5rem;
-        }
-
-        .product-price-row {
-            display: flex;
-            align-items: baseline;
-            gap: 0.75rem;
-            margin-bottom: 0.35rem;
-        }
-
-        .product-price-current .os-price,
-        .product-price-current {
-            font-size: 1.85rem;
-            font-weight: 700;
-            color: #ff7f50;
-            letter-spacing: -0.02em;
-            line-height: 1;
-        }
-
-        .product-price-original {
-            font-size: 1.05rem;
-            color: #94a3b8;
-            text-decoration: line-through;
-            font-weight: 400;
-        }
-
-        .product-discount-badge {
-            font-size: 0.775rem;
-            font-weight: 600;
-            color: #e11d48;
-            background-color: #ffe4e6;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-        }
-
-        .product-price-subtext {
-            font-size: 0.8rem;
-            color: #94a3b8;
-            margin-bottom: 1rem;
-        }
-
-        /* Tình trạng tồn kho */
-        .stock-status-wrap {
+        /* ---------- product info ---------- */
+        .pdp-brand {
             display: inline-flex;
             align-items: center;
-            gap: 0.4rem;
-            margin-bottom: 1.25rem;
-            font-size: 0.875rem;
+            gap: 0.7rem;
+            margin: 0 0 0.75rem;
+            font-size: 0.74rem;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--os-coral-dark);
+            text-decoration: none;
         }
 
-        .stock-status-indicator {
+        .pdp-brand::before {
+            content: "";
+            width: 1.8rem;
+            height: 1px;
+            background: currentColor;
+            opacity: 0.75;
+        }
+
+        .pdp-brand:hover {
+            color: #d65426;
+        }
+
+        .pdp-title {
+            margin: 0 0 0.85rem;
+            max-width: 32rem;
+            font-size: clamp(1.6rem, 3vw, 2.15rem);
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -0.025em;
+            color: var(--os-slate-900);
+            text-wrap: balance;
+        }
+
+        .pdp-submeta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.35rem 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.86rem;
+            color: var(--os-slate-500);
+        }
+
+        .pdp-submeta a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .pdp-submeta a:hover {
+            color: var(--os-coral-dark);
+        }
+
+        .pdp-submeta strong {
+            color: var(--os-slate-700);
+            font-weight: 650;
+        }
+
+        .pdp-star {
+            color: #f59e0b;
+            margin-right: 0.2rem;
+        }
+
+        .pdp-submeta .sep {
+            width: 1px;
+            height: 14px;
+            background: var(--os-slate-200);
+        }
+
+        /* price + availability */
+        .pdp-price-card {
+            padding: 1.4rem 1.6rem;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(135deg, #fff9f6 0%, #fff1eb 100%);
+            border: 1px solid rgba(255, 127, 80, 0.22);
+            border-radius: 18px;
+        }
+
+        .pdp-price-main-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 0.4rem 0.85rem;
+        }
+
+        .pdp-current-price,
+        .pdp-current-price .os-price {
+            font-size: 2.15rem;
+            font-weight: 850;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            color: var(--os-coral);
+        }
+
+        .pdp-old-price {
+            font-size: 1.05rem;
+            color: var(--os-slate-400);
+            text-decoration: line-through;
+        }
+
+        .pdp-save-tag {
+            padding: 0.15rem 0.6rem;
+            border-radius: 999px;
+            background: #ffffff;
+            border: 1px solid rgba(255, 127, 80, 0.4);
+            color: #d65426;
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        .pdp-price-policy {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.6rem 1rem;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(255, 127, 80, 0.16);
+            font-size: 0.84rem;
+            color: var(--os-slate-500);
+        }
+
+        .pdp-stock-pill {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            font-weight: 600;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.28rem 0.75rem;
+            border-radius: 999px;
         }
 
-        .stock-status-indicator.in-stock {
-            color: #16a34a;
+        .pdp-stock-pill.in-stock {
+            background: #dcfce7;
+            color: #15803d;
         }
 
-        .stock-status-indicator.out-of-stock {
-            color: #64748b;
-        }
-
-        .stock-dot {
-            width: 8px;
-            height: 8px;
+        .pdp-stock-pill.in-stock::before {
+            content: "";
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
-            background-color: currentColor;
-            display: inline-block;
+            background: #16a34a;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
         }
 
-        /* Bộ chọn số lượng (Stepper) */
-        .os-qty-stepper {
+        .pdp-stock-pill.out-stock {
+            background: var(--os-slate-100);
+            color: var(--os-slate-500);
+        }
+
+        /* buy box */
+        .pdp-action-box {
+            margin-bottom: 1.5rem;
+        }
+
+        .pdp-buy-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: stretch;
+            gap: 0.75rem;
+        }
+
+        .pdp-buy-row .btn-pdp-cart,
+        .pdp-buy-row .btn-pdp-login {
+            flex: 1 1 14rem;
+        }
+
+        .pdp-qty-control {
             display: inline-flex;
             align-items: center;
-            background-color: #ffffff;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            height: 46px;
-            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            background: #ffffff;
+            border: 1.5px solid var(--os-slate-200);
+            border-radius: 10px;
+            height: 48px;
+            padding: 0 2px;
+            transition: all 0.15s ease;
         }
 
-        .os-qty-stepper:focus-within {
-            border-color: #ff7f50;
+        .pdp-qty-control:focus-within {
+            border-color: var(--os-coral);
             box-shadow: 0 0 0 3px rgba(255, 127, 80, 0.15);
         }
 
-        .btn-qty-step {
-            width: 36px;
-            height: 100%;
+        .pdp-qty-btn {
+            width: 38px;
+            height: 42px;
             border: none;
             background: transparent;
+            border-radius: 8px;
+            color: var(--os-slate-700);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            color: #475569;
             cursor: pointer;
-            transition: background-color 0.15s ease, color 0.15s ease;
+            transition: all 0.15s ease;
         }
 
-        .btn-qty-step:hover {
-            background-color: #f8fafc;
-            color: #ff7f50;
+        .pdp-qty-btn:hover {
+            background: var(--os-slate-100);
+            color: var(--os-coral);
         }
 
-        .qty-stepper-input {
+        .pdp-qty-btn:focus-visible {
+            outline: 3px solid rgba(255, 127, 80, 0.5);
+            outline-offset: -2px;
+        }
+
+        .pdp-qty-input {
             width: 44px;
             border: none;
             background: transparent;
             text-align: center;
-            font-weight: 600;
             font-size: 0.95rem;
-            color: #0f172a;
+            font-weight: 750;
+            color: var(--os-slate-900);
             outline: none;
             -moz-appearance: textfield;
-            padding: 0;
         }
 
-        .qty-stepper-input::-webkit-outer-spin-button,
-        .qty-stepper-input::-webkit-inner-spin-button {
+        .pdp-qty-input::-webkit-outer-spin-button,
+        .pdp-qty-input::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
 
-        /* Nút thêm vào giỏ hàng CTA */
-        .btn-add-cart {
-            height: 46px;
-            padding: 0 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            background-color: #ff7f50;
-            border: 1px solid #ff7f50;
+        .btn-pdp-cart {
+            height: 48px;
+            padding: 0 1.35rem;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #ff7f50 0%, #f06437 100%);
+            border: none;
             color: #ffffff !important;
+            font-size: 0.92rem;
+            font-weight: 750;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: background-color 0.15s ease, border-color 0.15s ease;
-            box-shadow: none !important;
+            box-shadow: 0 4px 12px -2px rgba(255, 127, 80, 0.3);
+            transition: all 0.2s ease;
             text-decoration: none;
         }
 
-        .btn-add-cart:hover {
-            background-color: #e86738;
-            border-color: #e86738;
-            color: #ffffff !important;
+        .btn-pdp-cart:hover {
+            background: linear-gradient(135deg, #f06437 0%, #d95326 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px -2px rgba(255, 127, 80, 0.4);
         }
 
-        .fulfillment-note-text {
-            font-size: 0.8rem;
-            color: #64748b;
-            line-height: 1.45;
-            margin-top: 0.75rem;
-            margin-bottom: 0;
+        .btn-pdp-login {
+            height: 48px;
+            padding: 0 1.35rem;
+            border-radius: 10px;
+            background: var(--os-slate-900);
+            color: #ffffff !important;
+            font-size: 0.92rem;
+            font-weight: 750;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-pdp-login:hover {
+            background: #1e293b;
+            transform: translateY(-1px);
+        }
+
+        .btn-pdp-cart:focus-visible,
+        .btn-pdp-login:focus-visible {
+            outline: 3px solid rgba(255, 127, 80, 0.5);
+            outline-offset: 2px;
+        }
+
+        .pdp-unavailable {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 48px;
+            border-radius: 10px;
+            background: var(--os-slate-100);
+            color: var(--os-slate-500);
+            font-size: 0.92rem;
+            font-weight: 750;
+        }
+
+        .pdp-fulfillment-hint {
             display: flex;
             align-items: flex-start;
-            gap: 6px;
+            gap: 0.55rem;
+            margin: 0.9rem 0 0;
+            font-size: 0.84rem;
+            line-height: 1.55;
+            color: var(--os-slate-500);
         }
 
-        /* 5. Kiểm tra tình trạng tại cửa hàng (Hàng chức năng gọn) */
-        .store-check-drawer {
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            background-color: #ffffff;
-            margin-bottom: 1.5rem;
+        .pdp-fulfillment-hint svg {
+            flex: none;
+            margin-top: 0.2rem;
+        }
+
+        /* trust signals: light, inline, no boxes */
+        .pdp-trust {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+            margin: 0 0 1.5rem;
+            padding: 1.1rem 0;
+            border-top: 1px solid var(--os-slate-200);
+            border-bottom: 1px solid var(--os-slate-200);
+        }
+
+        .pdp-trust-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            font-size: 0.8rem;
+            font-weight: 650;
+            line-height: 1.35;
+            color: var(--os-slate-700);
+        }
+
+        .pdp-trust-item svg {
+            flex: none;
+            color: var(--os-coral-dark);
+        }
+
+        /* store availability */
+        .pdp-stores {
+            border: 1px solid var(--os-slate-200);
+            border-radius: 16px;
+            background: #ffffff;
             overflow: hidden;
         }
 
-        .store-check-header {
-            cursor: pointer;
-            list-style: none;
-            padding: 0.75rem 1rem;
+        .pdp-stores summary {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background-color: #ffffff;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: #334155;
-            user-select: none;
-            transition: background-color 0.15s ease;
+            gap: 0.75rem;
+            padding: 1rem 1.25rem;
+            cursor: pointer;
+            list-style: none;
+            font-size: 0.92rem;
+            font-weight: 800;
+            color: var(--os-slate-900);
         }
 
-        .store-check-header:hover {
-            background-color: #f8fafc;
-        }
-
-        .store-check-header::-webkit-details-marker {
+        .pdp-stores summary::-webkit-details-marker {
             display: none;
         }
 
-        .store-check-chevron {
-            color: #94a3b8;
+        .pdp-stores summary:focus-visible {
+            outline: 3px solid rgba(255, 127, 80, 0.5);
+            outline-offset: -3px;
+        }
+
+        .pdp-stores__count {
+            white-space: nowrap;
+            padding: 0.1rem 0.6rem;
+            border-radius: 999px;
+            background: var(--os-coral-soft);
+            color: #d65426;
+            font-size: 0.74rem;
+            font-weight: 800;
+        }
+
+        .pdp-stores__chev {
+            color: var(--os-slate-400);
             transition: transform 0.2s ease;
         }
 
-        .store-check-drawer[open] .store-check-chevron {
+        .pdp-stores[open] .pdp-stores__chev {
             transform: rotate(180deg);
         }
 
-        .store-check-drawer[open] .store-check-header {
-            border-bottom: 1px solid #f1f5f9;
+        .pdp-stores__body {
+            padding: 0 1.25rem 1.1rem;
         }
 
-        .store-item-row {
-            padding: 0.65rem 1rem;
+        .pdp-stores__grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.6rem;
+        }
+
+        .pdp-stores__item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 1px solid #f8fafc;
-            font-size: 0.85rem;
+            gap: 0.5rem;
+            padding: 0.65rem 0.85rem;
+            border: 1px solid var(--os-slate-100);
+            border-radius: 12px;
+            background: #fcfdfe;
+            font-size: 0.86rem;
+            font-weight: 650;
+            color: var(--os-slate-900);
         }
 
-        .store-item-row:last-child {
-            border-bottom: none;
+        .pdp-stores__note {
+            margin: 0.85rem 0 0;
+            font-size: 0.8rem;
+            color: var(--os-slate-500);
         }
 
-        .store-tip-footer {
-            padding: 0.65rem 1rem;
-            font-size: 0.775rem;
-            color: #64748b;
-            background-color: #f8fafc;
-            border-top: 1px solid #f1f5f9;
-        }
-
-        /* 6. Phần thông tin chi tiết & Đánh giá (Nằm dưới hai cột) */
-        .product-bottom-section {
-            margin-top: 3.5rem;
-            padding-top: 2.5rem;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .product-section-title {
-            font-size: 1.2rem;
+        .pdp-stores__note a {
+            color: var(--os-coral-dark);
             font-weight: 700;
-            color: #0f172a;
-            letter-spacing: -0.01em;
-            margin-bottom: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            text-decoration: none;
         }
 
-        .product-description-content {
-            color: #334155;
-            font-size: 0.95rem;
-            line-height: 1.8;
-            white-space: pre-line;
+        .pdp-stores__empty {
+            padding: 0 1.25rem 1.1rem;
+            font-size: 0.86rem;
+            color: var(--os-slate-500);
+        }
+
+        /* ---------- details below the hero ---------- */
+        /* left edge lines up with the product image; only the line length is limited */
+        .pdp-below {
+            margin: 4rem 0 0;
+        }
+
+        .pdp-section {
             max-width: 900px;
         }
 
-        /* Đánh giá khách hàng */
-        .review-card-item {
-            padding: 1.25rem 0;
-            border-bottom: 1px solid #f1f5f9;
+        .pdp-section + .pdp-section {
+            margin-top: 3.5rem;
+            padding-top: 3rem;
+            border-top: 1px solid var(--os-slate-200);
         }
 
-        .review-card-item:last-child {
-            border-bottom: none;
+        .pdp-section__eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            margin: 0 0 0.6rem;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.26em;
+            text-transform: uppercase;
+            color: var(--os-coral-dark);
         }
 
-        .rating-stars-badge {
-            color: #f59e0b;
-            font-weight: 600;
-            font-size: 0.85rem;
+        .pdp-section__eyebrow::before {
+            content: "";
+            width: 2.1rem;
+            height: 1px;
+            background: currentColor;
+            opacity: 0.75;
         }
 
-        .review-reply-box {
-            background-color: #f8fafc;
-            border-left: 3px solid #ff7f50;
-            border-radius: 0 6px 6px 0;
-            padding: 0.75rem 1rem;
-            margin-top: 0.75rem;
+        .pdp-section__title {
+            margin: 0 0 1.25rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--os-slate-900);
+        }
+
+        .pdp-description-prose {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--os-slate-700);
+        }
+
+        .pdp-description-prose p {
+            margin: 0;
+            white-space: pre-line;
+        }
+
+        .pdp-review-overview {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1.25rem 2rem;
+            margin-bottom: 1.75rem;
+            padding: 1.35rem 1.75rem;
+            background: #ffffff;
+            border: 1px solid var(--os-slate-200);
+            border-radius: 18px;
+        }
+
+        .pdp-score-big {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--os-slate-900);
+            line-height: 1;
+            letter-spacing: -0.03em;
+        }
+
+        .pdp-review-item {
+            background: #ffffff;
+            border: 1px solid var(--os-slate-200);
+            border-radius: 16px;
+            padding: 1.35rem 1.5rem;
+            margin-bottom: 1rem;
+            transition: border-color 0.15s ease;
+        }
+
+        .pdp-review-item:hover {
+            border-color: #cbd5e1;
+        }
+
+        .pdp-reviewer-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--os-coral-soft);
+            color: var(--os-coral-dark);
+            font-weight: 800;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pdp-reply-card {
+            background: #f8fafc;
+            border-left: 3.5px solid var(--os-coral);
+            border-radius: 0 12px 12px 0;
+            padding: 0.9rem 1.15rem;
+            margin-top: 1rem;
             font-size: 0.875rem;
         }
 
-        /* 7. Responsive tối ưu */
+        .pdp-empty-reviews {
+            padding: 2.25rem 1.5rem;
+            text-align: center;
+            background: #ffffff;
+            border: 1px dashed #cbd5e1;
+            border-radius: 18px;
+            color: var(--os-slate-500);
+            font-size: 0.92rem;
+        }
+
+        .pdp-empty-reviews svg {
+            display: block;
+            margin: 0 auto 0.6rem;
+            color: #cbd5e1;
+        }
+
+        /* ---------- sticky buy bar ---------- */
+        .pdp-sticky-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--os-slate-200);
+            box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.08);
+            padding: 0.75rem 1rem;
+            z-index: 1030;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .pdp-sticky-bar.visible {
+            transform: translateY(0);
+        }
+
+        .pdp-sticky-inner {
+            max-width: 1240px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .pdp-sticky-thumb {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            border: 1px solid var(--os-slate-200);
+            object-fit: contain;
+            background: #ffffff;
+            padding: 3px;
+        }
+
         @media (max-width: 991.98px) {
-            .product-gallery-sticky {
+            .pdp-hero {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 1.75rem;
+            }
+
+            .pdp-gallery {
                 position: static;
             }
 
-            .product-info-column {
-                padding-left: 0;
-                margin-top: 1.5rem;
+            .pdp-main-stage {
+                aspect-ratio: 4 / 3;
+                max-height: 460px;
+                padding: 1.5rem;
             }
 
-            .product-bottom-section {
-                margin-top: 2.5rem;
-                padding-top: 2rem;
+            .pdp-below {
+                margin-top: 3rem;
             }
         }
 
         @media (max-width: 575.98px) {
-            .product-detail-container {
-                padding-top: 0.75rem;
+            .pdp-wrapper {
+                padding: 0.25rem 0.85rem 5.5rem;
             }
 
-            .product-price-current .os-price,
-            .product-price-current {
-                font-size: 1.6rem;
+            .pdp-crumbs {
+                margin-bottom: 1rem;
             }
 
-            .btn-add-cart {
+            .pdp-main-stage {
+                aspect-ratio: 6 / 5;
+                padding: 1.1rem;
+                border-radius: 18px;
+            }
+
+            .pdp-price-card {
+                padding: 1.1rem 1.15rem;
+            }
+
+            .pdp-current-price,
+            .pdp-current-price .os-price {
+                font-size: 1.75rem;
+            }
+
+            .pdp-buy-row .btn-pdp-cart,
+            .pdp-buy-row .btn-pdp-login {
+                flex-basis: 100%;
+            }
+
+            .pdp-qty-control {
                 width: 100%;
+                justify-content: space-between;
             }
 
-            .os-qty-stepper {
-                width: auto;
+            .pdp-qty-input {
+                flex: 1;
+            }
+
+            .pdp-trust {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 0.75rem;
+            }
+
+            .pdp-stores__grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .pdp-section + .pdp-section {
+                margin-top: 2.5rem;
+                padding-top: 2.25rem;
+            }
+
+            .pdp-review-overview {
+                padding: 1.1rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .pdp-main-img,
+            .pdp-thumb-btn,
+            .btn-pdp-cart,
+            .btn-pdp-login,
+            .pdp-sticky-bar {
+                transition: none;
+            }
+
+            .pdp-main-stage:hover .pdp-main-img {
+                transform: none;
             }
         }
     </style>
 </head>
 <body class="os-home">
-<div class="product-detail-container" th:with="product=${detail.product}">
-    <!-- Breadcrumb điều hướng dạng văn bản gọn gàng -->
-    <nav aria-label="breadcrumb" class="product-breadcrumb-nav">
-        <ol class="breadcrumb product-breadcrumb">
-            <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a th:href="@{/products}">Sản phẩm</a></li>
-            <li class="breadcrumb-item" th:if="${product.categoryName}">
-                <span th:text="${product.categoryName}">Danh mục</span>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page" th:text="${product.name}">Tên sản phẩm</li>
+<div class="pdp-wrapper" th:with="product=${detail.product}">
+    <nav aria-label="breadcrumb">
+        <ol class="pdp-crumbs">
+            <li><a th:href="@{/}">Trang chủ</a></li>
+            <li><a th:href="@{/products}">Sản phẩm</a></li>
+            <li th:if="${product.categoryName}"><span th:text="${product.categoryName}">Danh mục</span></li>
+            <li aria-current="page" th:text="${product.name}">Tên sản phẩm</li>
         </ol>
     </nav>
 
-    <!-- Hàng 2 cột chính: Ảnh bên trái (~45%), Thông tin mua bên phải (~55%) -->
-    <div class="row g-4 g-lg-5 align-items-start">
-        <!-- CỘT TRÁI: Gallery ảnh sản phẩm tối giản -->
-        <div class="col-12 col-lg-5">
-            <div class="product-gallery-sticky">
-                <div class="product-image-stage">
-                    <img th:if="${!detail.images.isEmpty()}"
-                         th:src="${detail.images[0].imageUrl}"
-                         th:alt="${product.name}"
-                         class="gallery-main-img"
-                         id="product-main-image">
-                    <div class="gallery-placeholder" th:if="${detail.images.isEmpty()}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
-                            <circle cx="9" cy="9" r="2"/>
-                            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
-                        </svg>
-                    </div>
+    <div class="pdp-hero">
+        <!-- ================= GALLERY ================= -->
+        <div class="pdp-gallery">
+            <div class="pdp-main-stage">
+                <span class="pdp-stage-badge"
+                      th:if="${product.originalPrice != null and product.price != null and product.originalPrice > product.price}"
+                      th:text="'-' + ${#numbers.formatDecimal((product.originalPrice - product.price) * 100.0 / product.originalPrice, 0, 'POINT', 0, 'COMMA')} + '%'">-15%</span>
+                <img th:if="${!detail.images.isEmpty()}"
+                     th:src="${detail.images[0].imageUrl}"
+                     th:alt="${product.name}"
+                     class="pdp-main-img"
+                     id="product-main-image">
+                <div class="pdp-gallery-empty" th:if="${detail.images.isEmpty()}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                        <circle cx="9" cy="9" r="2"/>
+                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                    </svg>
                 </div>
-
-                <!-- Dải ảnh thu nhỏ (Thumbnails) -->
-                <div class="product-thumbs-row" th:if="${detail.images.size() > 1}">
-                    <button th:each="image, iterStat : ${detail.images}"
-                            type="button"
-                            th:aria-label="'Xem ảnh ' + ${iterStat.index + 1} + ' của ' + ${product.name}"
-                            th:attr="aria-pressed=${iterStat.index == 0}"
-                            th:classappend="${iterStat.index == 0} ? 'active-thumb' : ''"
-                            class="thumb-button"
-                            onclick="switchMainImage(this)">
-                        <img th:src="${image.imageUrl}" th:alt="" class="thumb-item" loading="lazy">
-                    </button>
-                </div>
-
-                <p class="image-credit-text" id="image-credit-line" th:if="${!detail.images.isEmpty()}">
-                    Ảnh: Open Beauty Facts, CC BY-SA 3.0 · <a th:href="@{/image-credits}">Ghi công hình ảnh</a>
-                </p>
             </div>
+
+            <div class="pdp-thumbs-track" th:if="${detail.images.size() > 1}">
+                <button th:each="image, iterStat : ${detail.images}"
+                        type="button"
+                        th:aria-label="'Xem ảnh ' + ${iterStat.index + 1} + ' của ' + ${product.name}"
+                        th:attr="aria-pressed=${iterStat.index == 0}"
+                        th:classappend="${iterStat.index == 0} ? 'active-thumb' : ''"
+                        class="pdp-thumb-btn"
+                        onclick="switchMainImage(this)">
+                    <img th:src="${image.imageUrl}" th:alt="" loading="lazy">
+                </button>
+            </div>
+
+            <p class="pdp-credit-line" id="image-credit-line" th:if="${!detail.images.isEmpty()}">
+                Ảnh: Open Beauty Facts, CC BY-SA 3.0 · <a th:href="@{/image-credits}">Ghi công hình ảnh</a>
+            </p>
         </div>
 
-        <!-- CỘT PHẢI: Thông tin sản phẩm & Mua hàng -->
-        <div class="col-12 col-lg-7">
-            <div class="product-info-column">
-                <!-- Thương hiệu & Phân loại -->
-                <div class="product-brand-category">
-                    <a th:href="@{/products(q=${product.brandName})}" class="product-brand-link" th:text="${product.brandName}">Thương hiệu</a>
-                    <span class="product-meta-sep" th:if="${product.categoryName}">&middot;</span>
-                    <span class="product-category-text" th:if="${product.categoryName}" th:text="${product.categoryName}">Danh mục</span>
+        <!-- ================= INFO + BUY ================= -->
+        <div class="pdp-info">
+            <a th:href="@{/products(q=${product.brandName})}" class="pdp-brand" th:text="${product.brandName}">Thương hiệu</a>
+
+            <h1 class="pdp-title" th:text="${product.name}">Tên sản phẩm</h1>
+
+            <div class="pdp-submeta">
+                <a href="#reviews" th:if="${productReviews.count > 0}">
+                    <span class="pdp-star" aria-hidden="true">★</span><strong th:text="${#numbers.formatDecimal(productReviews.averageRating, 1, 1)}">4.8</strong>
+                    <span th:text="'(' + ${productReviews.count} + ' đánh giá)'">(12 đánh giá)</span>
+                </a>
+                <a href="#reviews" th:if="${productReviews.count == 0}">Chưa có đánh giá</a>
+                <span class="sep" aria-hidden="true" th:if="${product.categoryName}"></span>
+                <span th:if="${product.categoryName}">Phân loại: <strong th:text="${product.categoryName}">Danh mục</strong></span>
+            </div>
+
+            <section class="pdp-price-card" id="selected-store-offer">
+                <div class="pdp-price-main-row" id="product-price">
+                    <span class="pdp-current-price">
+                        <span th:replace="~{fragments/components :: price(${product.price != null ? product.price : 0})}"></span>
+                    </span>
+                    <span class="pdp-old-price"
+                          th:if="${product.originalPrice != null and product.price != null and product.originalPrice > product.price}"
+                          th:text="${#numbers.formatDecimal(product.originalPrice, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></span>
+                    <span class="pdp-save-tag"
+                          th:if="${product.originalPrice != null and product.price != null and product.originalPrice > product.price}"
+                          th:text="'Tiết kiệm ' + ${#numbers.formatDecimal((product.originalPrice - product.price) * 100.0 / product.originalPrice, 0, 'POINT', 0, 'COMMA')} + '%'">Tiết kiệm 15%</span>
                 </div>
 
-                <!-- Tên sản phẩm thanh lịch -->
-                <h1 class="product-main-title" th:text="${product.name}">Tên sản phẩm</h1>
-
-                <!-- Mã SKU -->
-                <div class="product-sku-line">
-                    Mã SKU: <span class="product-sku-val" th:text="${product.sku}">SKU-001</span>
+                <div class="pdp-price-policy">
+                    <span>Một giá online chung cho toàn hệ thống.</span>
+                    <span class="pdp-stock-pill in-stock" th:if="${detail.inStock()}">Còn hàng toàn hệ thống</span>
+                    <span class="pdp-stock-pill out-stock" th:unless="${detail.inStock()}">Tạm hết hàng</span>
                 </div>
+            </section>
 
-                <!-- Khu vực Mua hàng (Trực tiếp, không dùng card viền cam) -->
-                <section class="product-purchase-area" id="selected-store-offer">
-                    <!-- Giá sản phẩm -->
-                    <div class="product-price-row" id="product-price">
-                        <span class="product-price-current">
-                            <span th:replace="~{fragments/components :: price(${product.price != null ? product.price : 0})}"></span>
-                        </span>
-                        <span class="product-price-original"
-                              th:if="${product.originalPrice != null and product.price != null and product.originalPrice > product.price}"
-                              th:text="${#numbers.formatDecimal(product.originalPrice, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></span>
-                        <span class="product-discount-badge"
-                              th:if="${product.originalPrice != null and product.price != null and product.originalPrice > product.price}"
-                              th:text="'-' + ${#numbers.formatDecimal((product.originalPrice - product.price) * 100.0 / product.originalPrice, 0, 'POINT', 0, 'COMMA')} + '%'">-15%</span>
+            <div class="pdp-action-box" id="add-to-cart" th:if="${detail.inStock()}">
+                <form method="post" th:action="@{/cart/items}" id="main-cart-form"
+                      class="pdp-buy-row"
+                      sec:authorize="hasRole('CUSTOMER')">
+                    <input type="hidden" name="productId" th:value="${product.id}">
+
+                    <div class="pdp-qty-control">
+                        <button type="button" class="pdp-qty-btn" onclick="changeQty(-1)" aria-label="Giảm số lượng">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </button>
+                        <input type="number" class="pdp-qty-input" id="add-quantity" name="quantity"
+                               aria-label="Số lượng" value="1" min="1" step="1" required>
+                        <button type="button" class="pdp-qty-btn" onclick="changeQty(1)" aria-label="Tăng số lượng">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </button>
                     </div>
 
-                    <div class="product-price-subtext">Một giá online chung cho toàn hệ thống.</div>
-
-                    <!-- Tình trạng còn hàng -->
-                    <div class="stock-status-wrap">
-                        <span class="stock-status-indicator in-stock" th:if="${detail.inStock()}">
-                            <span class="stock-dot"></span>
-                            <span>Còn hàng toàn hệ thống</span>
-                        </span>
-                        <span class="stock-status-indicator out-of-stock" th:unless="${detail.inStock()}">
-                            <span class="stock-dot"></span>
-                            <span>Tạm hết hàng</span>
-                        </span>
-                    </div>
-
-                    <!-- Thao tác mua hàng & Chọn số lượng -->
-                    <div id="add-to-cart" th:if="${detail.inStock()}">
-                        <form method="post" th:action="@{/cart/items}" class="d-flex flex-wrap align-items-center gap-2 gap-sm-3"
-                              sec:authorize="hasRole('CUSTOMER')">
-                            <input type="hidden" name="productId" th:value="${product.id}">
-                            
-                            <!-- Stepper số lượng -->
-                            <div class="d-flex align-items-center gap-2">
-                                <label class="form-label small fw-semibold text-secondary mb-0 d-none d-sm-inline" for="add-quantity">Số lượng:</label>
-                                <div class="os-qty-stepper">
-                                    <button type="button" class="btn-qty-step" onclick="changeQty(-1)" aria-label="Giảm số lượng">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                                        </svg>
-                                    </button>
-                                    <input type="number" class="qty-stepper-input" id="add-quantity" name="quantity"
-                                           value="1" min="1" step="1" required>
-                                    <button type="button" class="btn-qty-step" onclick="changeQty(1)" aria-label="Tăng số lượng">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Nút Thêm vào giỏ -->
-                            <button type="submit" class="btn btn-add-cart flex-grow-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="9" cy="21" r="1"/>
-                                    <circle cx="20" cy="21" r="1"/>
-                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                                </svg>
-                                <span>Thêm vào giỏ hàng</span>
-                            </button>
-                        </form>
-
-                        <!-- Khi khách chưa đăng nhập -->
-                        <a class="btn btn-add-cart w-100" th:href="@{/login}" sec:authorize="!isAuthenticated()">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-                                <polyline points="10 17 15 12 10 7"/>
-                                <line x1="15" y1="12" x2="3" y2="12"/>
-                            </svg>
-                            <span>Đăng nhập để thêm vào giỏ</span>
-                        </a>
-
-                        <p class="fulfillment-note-text">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-secondary flex-shrink-0 mt-1">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                            </svg>
-                            <span>Hệ thống tự chọn chi nhánh còn hàng khi đặt hoặc bạn chọn &ldquo;Nhận tại cửa hàng&rdquo; ở bước thanh toán.</span>
-                        </p>
-                    </div>
-
-                    <button type="button" class="btn btn-secondary w-100 py-2 rounded-2 fw-semibold" disabled th:unless="${detail.inStock()}">
-                        Tạm hết hàng
-                    </button>
-                </section>
-
-                <!-- 5. Kiểm tra tại cửa hàng: Hàng chức năng phẳng, gọn gàng -->
-                <details class="store-check-drawer" id="other-stores">
-                    <summary class="store-check-header">
-                        <div class="d-flex align-items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-coral" aria-hidden="true">
-                                <path d="M3 21h18"/>
-                                <path d="M5 21V7l8-4v18"/>
-                                <path d="M19 21V11l-6-4"/>
-                            </svg>
-                            <span>Kiểm tra tại cửa hàng</span>
-                            <span class="badge bg-light text-secondary border fw-normal ms-1"
-                                  th:if="${detail.otherStores != null and !detail.otherStores.isEmpty()}"
-                                  th:text="${#lists.size(detail.otherStores)} + ' chi nhánh'">3 chi nhánh</span>
-                        </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="store-check-chevron">
-                            <polyline points="6 9 12 15 18 9"></polyline>
+                    <button type="submit" class="btn btn-pdp-cart">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="9" cy="21" r="1"/>
+                            <circle cx="20" cy="21" r="1"/>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
                         </svg>
-                    </summary>
+                        <span>Thêm vào giỏ hàng</span>
+                    </button>
+                </form>
 
-                    <div class="p-3 text-secondary small" th:if="${detail.otherStores == null or detail.otherStores.isEmpty()}">
-                        Hiện chưa có cửa hàng nào đang bán sản phẩm này.
-                    </div>
+                <div class="pdp-buy-row" sec:authorize="!isAuthenticated()">
+                    <a class="btn btn-pdp-login" th:href="@{/login}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                            <polyline points="10 17 15 12 10 7"/>
+                            <line x1="15" y1="12" x2="3" y2="12"/>
+                        </svg>
+                        <span>Đăng nhập để thêm vào giỏ</span>
+                    </a>
+                </div>
 
-                    <div class="store-items-list" th:if="${detail.otherStores != null and !detail.otherStores.isEmpty()}">
-                        <div class="store-item-row" th:each="store : ${detail.otherStores}">
-                            <span class="fw-medium text-dark" th:text="${store.storeName}">OneShop Gò Vấp</span>
+                <p class="pdp-fulfillment-hint">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e86638" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="16" x2="12" y2="12"/>
+                        <line x1="12" y1="8" x2="12.01" y2="8"/>
+                    </svg>
+                    <span>Hệ thống tự chọn chi nhánh còn hàng khi đặt hoặc bạn chọn &ldquo;Nhận tại cửa hàng&rdquo; ở bước thanh toán.</span>
+                </p>
+            </div>
+
+            <div class="mb-4" th:unless="${detail.inStock()}">
+                <div class="pdp-unavailable">Tạm hết hàng</div>
+            </div>
+
+            <div class="pdp-trust">
+                <div class="pdp-trust-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <polyline points="9 12 11 14 15 10"/>
+                    </svg>
+                    <span>Cam kết mỹ phẩm chính hãng 100%</span>
+                </div>
+                <div class="pdp-trust-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="1" y="3" width="15" height="13"></rect>
+                        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                        <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                        <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                    </svg>
+                    <span>Giao nhanh &amp; nhận tại quầy toàn chuỗi</span>
+                </div>
+                <div class="pdp-trust-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                    </svg>
+                    <span>Đổi trả dễ dàng tại mọi chi nhánh</span>
+                </div>
+            </div>
+
+            <details class="pdp-stores" id="other-stores" open>
+                <summary>
+                    <span class="d-inline-flex flex-wrap align-items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e86638" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M3 21h18"/>
+                            <path d="M5 21V7l8-4v18"/>
+                            <path d="M19 21V11l-6-4"/>
+                        </svg>
+                        <span>Kiểm tra tại cửa hàng</span>
+                        <span class="pdp-stores__count"
+                              th:if="${detail.otherStores != null and !detail.otherStores.isEmpty()}"
+                              th:text="${#lists.size(detail.otherStores)} + ' chi nhánh'">3 chi nhánh</span>
+                    </span>
+                    <svg class="pdp-stores__chev" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </summary>
+
+                <div class="pdp-stores__empty" th:if="${detail.otherStores == null or detail.otherStores.isEmpty()}">
+                    Hiện chưa có cửa hàng nào đang bán sản phẩm này.
+                </div>
+
+                <div class="pdp-stores__body" th:if="${detail.otherStores != null and !detail.otherStores.isEmpty()}">
+                    <div class="pdp-stores__grid">
+                        <div class="pdp-stores__item" th:each="store : ${detail.otherStores}">
+                            <span th:text="${store.storeName}">OneShop Gò Vấp</span>
                             <span th:replace="~{fragments/components :: availability(${store.inStock})}"></span>
                         </div>
-                        <div class="store-tip-footer">
-                            Tình trạng chỉ để tham khảo; giá luôn là giá online chung. Xem địa chỉ và giờ mở cửa tại
-                            <a th:href="@{/stores}" class="text-coral text-decoration-none fw-medium">Hệ thống cửa hàng</a>.
-                        </div>
                     </div>
-                </details>
-            </div>
+                    <p class="pdp-stores__note">
+                        Tình trạng chỉ để tham khảo; giá luôn là giá online chung. Xem địa chỉ và giờ mở cửa tại
+                        <a th:href="@{/stores}">Hệ thống cửa hàng</a>.
+                    </p>
+                </div>
+            </details>
         </div>
     </div>
 
-    <!-- 6. KHU VỰC DƯỚI HAI CỘT: Mô tả sản phẩm & Đánh giá của khách hàng -->
-    <div class="product-bottom-section">
-        <div class="row">
-            <div class="col-12 col-lg-9">
-                <!-- Mô tả sản phẩm (chỉ hiển thị khi có dữ liệu) -->
-                <section class="product-description-section mb-5" th:if="${product.description}">
-                    <h2 class="product-section-title">Mô tả sản phẩm</h2>
-                    <div class="product-description-content">
-                        <p class="os-product-description mb-0" th:text="${product.description}">Mô tả chi tiết sản phẩm.</p>
-                    </div>
-                </section>
+    <!-- ================= DESCRIPTION + REVIEWS ================= -->
+    <div class="pdp-below" id="reviews-section">
+        <section class="pdp-section" id="description" th:if="${product.description}">
+            <p class="pdp-section__eyebrow">Giới thiệu</p>
+            <h2 class="pdp-section__title">Mô tả sản phẩm</h2>
+            <div class="pdp-description-prose">
+                <p class="os-product-description" th:text="${product.description}">Mô tả chi tiết sản phẩm.</p>
+            </div>
+        </section>
 
-                <!-- Đánh giá của khách hàng -->
-                <section class="product-reviews-section" id="reviews">
-                    <h2 class="product-section-title">Đánh giá của khách hàng</h2>
-                    
-                    <div class="alert alert-success py-2 px-3 small" th:if="${param.reviewed != null}">
-                        Cảm ơn bạn đã đánh giá sản phẩm.
-                    </div>
-                    <div class="alert alert-danger py-2 px-3 small" th:if="${param.reviewError != null and #strings.equals(param.reviewError[0], 'invalid')}">
-                        Vui lòng chọn từ 1 đến 5 sao; nhận xét tối đa 1000 ký tự.
-                    </div>
-                    <div class="alert alert-warning py-2 px-3 small" th:if="${param.reviewError != null and !#strings.equals(param.reviewError[0], 'invalid')}">
-                        Không thể gửi đánh giá. Mỗi dòng hàng đã nhận chỉ được đánh giá một lần.
-                    </div>
+        <section class="pdp-section" id="reviews">
+            <p class="pdp-section__eyebrow">Khách hàng nói gì</p>
+            <h2 class="pdp-section__title">Đánh giá của khách hàng</h2>
 
-                    <p class="text-secondary small" id="no-reviews" th:if="${productReviews.count == 0}">Chưa có đánh giá nào.</p>
-                    <p class="d-flex align-items-center gap-2 mb-3" id="review-summary" th:unless="${productReviews.count == 0}">
-                        <strong class="fs-5 text-dark" th:text="${#numbers.formatDecimal(productReviews.averageRating, 1, 1)}">4.5</strong>
-                        <span class="text-secondary">/ 5 sao</span>
+            <div class="alert alert-success rounded-3 border-0 shadow-sm py-2 px-3 small" th:if="${param.reviewed != null}">
+                Cảm ơn bạn đã đánh giá sản phẩm.
+            </div>
+            <div class="alert alert-danger rounded-3 border-0 shadow-sm py-2 px-3 small" th:if="${param.reviewError != null and #strings.equals(param.reviewError[0], 'invalid')}">
+                Vui lòng chọn từ 1 đến 5 sao; nhận xét tối đa 1000 ký tự.
+            </div>
+            <div class="alert alert-warning rounded-3 border-0 shadow-sm py-2 px-3 small" th:if="${param.reviewError != null and !#strings.equals(param.reviewError[0], 'invalid')}">
+                Không thể gửi đánh giá. Mỗi dòng hàng đã nhận chỉ được đánh giá một lần.
+            </div>
+
+            <div class="pdp-empty-reviews" id="no-reviews" th:if="${productReviews.count == 0}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+                Chưa có đánh giá nào.
+            </div>
+
+            <div class="pdp-review-overview" th:unless="${productReviews.count == 0}">
+                <div class="pdp-score-big" th:text="${#numbers.formatDecimal(productReviews.averageRating, 1, 1)}">4.8</div>
+                <div>
+                    <div class="text-warning fw-bold" aria-hidden="true">★★★★★</div>
+                    <p class="text-secondary small mb-0 d-flex align-items-center gap-2" id="review-summary">
+                        <strong class="text-dark" th:text="${#numbers.formatDecimal(productReviews.averageRating, 1, 1)}">4.5</strong>
+                        <span>/ 5 sao</span>
                         <span class="text-muted">&middot;</span>
-                        <span class="text-secondary small" th:text="${productReviews.count} + ' đánh giá'">3 đánh giá</span>
+                        <span th:text="${productReviews.count} + ' đánh giá'">3 đánh giá</span>
                     </p>
+                </div>
+            </div>
 
-                    <!-- Danh sách đánh giá -->
-                    <div class="reviews-list mb-4" th:unless="${productReviews.latest.isEmpty()}">
-                        <div class="review-card-item" th:each="review : ${productReviews.latest}">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="fw-semibold text-dark" th:text="${review.reviewerName}">Khách hàng</span>
-                                <span class="rating-stars-badge" th:text="${review.rating} + ' / 5 sao'">5 / 5 sao</span>
-                            </div>
-                            <div class="small text-muted mb-2">
-                                <span th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}">01/01/2026</span>
-                                <span th:if="${review.replyStoreName != null}" th:text="' &middot; ' + ${review.replyStoreName}"> &middot; OneShop</span>
-                            </div>
-                            <p class="mb-0 text-dark small" style="white-space: pre-line" th:if="${review.comment}" th:text="${review.comment}">Nhận xét</p>
-                            
-                            <!-- Phản hồi từ chi nhánh -->
-                            <div class="os-review-reply review-reply-box" th:if="${review.reply != null}">
-                                <div class="fw-semibold text-dark mb-1"
-                                     th:text="${review.replyStoreName != null} ? 'Phản hồi từ OneShop ' + ${review.replyStoreName} : 'Phản hồi từ OneShop'">Phản hồi từ OneShop</div>
-                                <div class="text-secondary" style="white-space: pre-line" th:text="${review.reply}">Nội dung phản hồi</div>
+            <div class="mb-4" th:unless="${productReviews.latest.isEmpty()}">
+                <div class="pdp-review-item" th:each="review : ${productReviews.latest}">
+                    <div class="d-flex justify-content-between align-items-start mb-2 gap-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="pdp-reviewer-avatar" th:text="${#strings.isEmpty(review.reviewerName)} ? '?' : ${#strings.substring(review.reviewerName, 0, 1)}">K</span>
+                            <div>
+                                <div class="fw-bold text-dark" th:text="${review.reviewerName}">Khách hàng</div>
+                                <div class="small text-muted">
+                                    <span th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}">01/01/2026</span>
+                                    <span th:if="${review.replyStoreName != null}" th:text="' &middot; ' + ${review.replyStoreName}"> &middot; OneShop</span>
+                                </div>
                             </div>
                         </div>
+                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-2 py-1 fw-bold"
+                              th:text="${review.rating} + ' / 5 sao'">5 / 5 sao</span>
                     </div>
+                    <p class="mb-0 text-dark mt-2" style="white-space: pre-line; font-size: 0.92rem;" th:if="${review.comment}" th:text="${review.comment}">Nhận xét</p>
 
-                    <!-- Form gửi đánh giá cho đơn hàng đã nhận -->
-                    <form th:each="item : ${reviewItems}" th:if="${item.reviewable()}" th:action="@{/reviews}" method="post"
-                          class="border rounded-3 p-3 bg-light mb-3"
-                          th:attr="data-review-item=${item.orderItemId}">
-                        <div class="small text-secondary mb-2">
-                            <a th:href="@{/orders/{id}(id=${item.orderId})}" class="fw-semibold text-decoration-none" th:text="'Đơn #' + ${item.orderId}">Đơn đã mua</a>
-                            &middot; <span th:text="${item.storeName}">Chi nhánh cấp hàng</span>
-                        </div>
-                        <input type="hidden" name="orderItemId" th:value="${item.orderItemId}">
-                        <input type="hidden" name="orderId" th:value="${item.orderId}">
-                        <input type="hidden" name="productId" th:value="${product.id}">
-                        <div class="mb-2">
-                            <label class="form-label small fw-semibold" th:for="'review-rating-' + ${item.orderItemId}">Số sao</label>
-                            <select class="form-select form-select-sm w-auto" th:id="'review-rating-' + ${item.orderItemId}" name="rating" required>
-                                <option value="">Chọn</option>
-                                <option th:each="n : ${#numbers.sequence(5, 1, -1)}" th:value="${n}" th:text="${n} + ' sao'"></option>
-                            </select>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label small fw-semibold" th:for="'review-comment-' + ${item.orderItemId}">Nhận xét (không bắt buộc)</label>
-                            <textarea class="form-control form-control-sm" th:id="'review-comment-' + ${item.orderItemId}" name="comment" rows="3" maxlength="1000" placeholder="Cảm nhận của bạn về sản phẩm..."></textarea>
-                        </div>
-                        <div>
-                            <button type="submit" class="btn btn-sm btn-primary">Gửi đánh giá</button>
-                        </div>
-                    </form>
-                </section>
+                    <div class="os-review-reply pdp-reply-card" th:if="${review.reply != null}">
+                        <div class="fw-bold text-dark mb-1"
+                             th:text="${review.replyStoreName != null} ? 'Phản hồi từ OneShop ' + ${review.replyStoreName} : 'Phản hồi từ OneShop'">Phản hồi từ OneShop</div>
+                        <div class="text-secondary" style="white-space: pre-line" th:text="${review.reply}">Nội dung phản hồi</div>
+                    </div>
+                </div>
+            </div>
+
+            <form th:each="item : ${reviewItems}" th:if="${item.reviewable()}" th:action="@{/reviews}" method="post"
+                  class="border rounded-4 p-4 bg-white mb-3"
+                  th:attr="data-review-item=${item.orderItemId}">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                    <span class="fw-bold text-dark">Viết đánh giá sản phẩm</span>
+                    <span class="small text-secondary">
+                        <a th:href="@{/orders/{id}(id=${item.orderId})}" class="fw-bold text-coral text-decoration-none" th:text="'Đơn #' + ${item.orderId}">Đơn đã mua</a>
+                        &middot; <span th:text="${item.storeName}">Chi nhánh cấp hàng</span>
+                    </span>
+                </div>
+                <input type="hidden" name="orderItemId" th:value="${item.orderItemId}">
+                <input type="hidden" name="orderId" th:value="${item.orderId}">
+                <input type="hidden" name="productId" th:value="${product.id}">
+                <div class="row g-3">
+                    <div class="col-12 col-sm-4">
+                        <label class="form-label small fw-bold" th:for="'review-rating-' + ${item.orderItemId}">Số sao</label>
+                        <select class="form-select" th:id="'review-rating-' + ${item.orderItemId}" name="rating" required>
+                            <option value="">Chọn</option>
+                            <option th:each="n : ${#numbers.sequence(5, 1, -1)}" th:value="${n}" th:text="${n} + ' sao'"></option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small fw-bold" th:for="'review-comment-' + ${item.orderItemId}">Nhận xét (không bắt buộc)</label>
+                        <textarea class="form-control" th:id="'review-comment-' + ${item.orderItemId}" name="comment" rows="3" maxlength="1000" placeholder="Cảm nhận của bạn về sản phẩm..."></textarea>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn-pdp-cart" style="font-size: 0.88rem;">Gửi đánh giá</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <div class="pdp-sticky-bar" id="pdp-sticky-cta" th:if="${detail.inStock()}">
+        <div class="pdp-sticky-inner">
+            <div class="d-flex align-items-center gap-3 overflow-hidden">
+                <img th:if="${!detail.images.isEmpty()}" th:src="${detail.images[0].imageUrl}" alt="" class="pdp-sticky-thumb d-none d-sm-block">
+                <div class="text-truncate">
+                    <div class="fw-bold text-dark text-truncate" style="font-size: 0.92rem;" th:text="${product.name}">Tên sản phẩm</div>
+                    <div class="fw-bold text-coral" style="font-size: 0.95rem;">
+                        <span th:replace="~{fragments/components :: price(${product.price != null ? product.price : 0})}"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex-shrink-0">
+                <button type="button" class="btn-pdp-cart"
+                        sec:authorize="hasRole('CUSTOMER')"
+                        onclick="document.getElementById('main-cart-form').requestSubmit()">
+                    <span>Thêm vào giỏ</span>
+                </button>
+                <a th:href="@{/login}" class="btn-pdp-login"
+                   sec:authorize="!isAuthenticated()">
+                    <span>Đăng nhập để mua</span>
+                </a>
             </div>
         </div>
     </div>
@@ -836,7 +1212,7 @@
         const thumb = thumbElement && thumbElement.querySelector('img');
         if (mainImg && thumb) {
             mainImg.src = thumb.src;
-            document.querySelectorAll('.thumb-button').forEach(el => {
+            document.querySelectorAll('.pdp-thumb-btn').forEach(el => {
                 el.classList.remove('active-thumb');
                 el.setAttribute('aria-pressed', 'false');
             });
@@ -844,6 +1220,23 @@
             thumbElement.setAttribute('aria-pressed', 'true');
         }
     }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const actionBox = document.getElementById('add-to-cart');
+        const stickyBar = document.getElementById('pdp-sticky-cta');
+        if (actionBox && stickyBar && 'IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+                        stickyBar.classList.add('visible');
+                    } else {
+                        stickyBar.classList.remove('visible');
+                    }
+                });
+            }, { threshold: 0 });
+            observer.observe(actionBox);
+        }
+    });
 </script>
 </body>
 </html>

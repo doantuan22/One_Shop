@@ -272,7 +272,7 @@ public class PaymentServiceImpl implements PaymentService {
     private static String mockReference() { return MockLedger.newReference(); }
 
     private static BadRequestException browserConfirmationRefused() {
-        return new BadRequestException("Kết quả thanh toán chỉ được xác nhận qua cổng thanh toán mô phỏng của hệ thống; "
+        return new BadRequestException("Kết quả thanh toán chỉ được xác nhận qua cổng thanh toán của hệ thống; "
                 + "thao tác này từ trình duyệt không được chấp nhận.");
     }
 

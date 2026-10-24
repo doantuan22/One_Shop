@@ -216,6 +216,14 @@
             <div>Đăng ký thành công! Vui lòng đăng nhập.</div>
         </div>
 
+        <div class="alert alert-success auth-alert mb-4" th:if="${param.passwordReset}" role="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <div>Đặt lại mật khẩu thành công! Vui lòng đăng nhập bằng mật khẩu mới.</div>
+        </div>
+
         <div class="alert alert-info auth-alert mb-4" th:if="${param.logout}" role="alert">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
@@ -262,7 +270,10 @@
             </div>
 
             <div class="mb-4">
-                <label class="form-label" for="password">Mật khẩu</label>
+                <div class="d-flex justify-content-between align-items-baseline">
+                    <label class="form-label" for="password">Mật khẩu</label>
+                    <a th:href="@{/forgot-password}" class="auth-footer-link small">Quên mật khẩu?</a>
+                </div>
                 <div class="input-group-custom">
                     <span class="input-icon-lead">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

@@ -83,7 +83,9 @@
         function place() {
             var r = input.getBoundingClientRect();
             var form = input.closest('form');
-            var box = form && form.classList.contains('home-search__form') ? form.getBoundingClientRect() : r;
+            var anchor = input.closest('[data-suggest-anchor]');
+            var box = anchor ? anchor.getBoundingClientRect()
+                : form && form.classList.contains('home-search__form') ? form.getBoundingClientRect() : r;
             // narrow filter inputs still get a readable list (at least 26rem), kept inside the viewport
             var width = Math.min(Math.max(box.width, 416), document.documentElement.clientWidth - 16);
             var left = Math.min(Math.max(8, box.left), document.documentElement.clientWidth - width - 8);

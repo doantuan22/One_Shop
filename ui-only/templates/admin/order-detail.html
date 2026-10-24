@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Chi tiết đơn hàng</title></head><body>
+<div class="d-flex flex-wrap gap-2 mb-3">
+    <a class="btn btn-outline-secondary" th:href="@{/admin/orders}">Tất cả đơn hàng</a>
+    <a class="btn btn-outline-secondary" th:if="${orderDetail.detail.order.storeId != null}"
+       th:href="@{/admin/orders(storeId=${orderDetail.detail.order.storeId})}">Đơn cùng chi nhánh</a>
+    <a class="btn btn-outline-primary" th:if="${orderDetail.detail.order.paymentMethod.name() == 'ONLINE'}"
+       th:href="@{/admin/payments/{id}(id=${orderDetail.detail.order.orderId})}">Xử lý thanh toán</a>
+</div>
+<p class="small text-secondary">Checkout #<span th:text="${orderDetail.checkoutId}"></span> · Khách hàng:
+    <span th:text="${orderDetail.customerName}"></span> (<span th:text="${orderDetail.customerEmail}"></span>)</p>
+<!--/* OPEN-10: result of the last decision on a failed delivery */-->
+<div class="alert os-exception-result" id="exception-result" role="status" th:if="${param.exception != null}"
+     th:classappend="${#strings.startsWith(param.exception[0], 'refused') or #strings.startsWith(param.exception[0], 'invalid')} ? 'alert-warning' : 'alert-success'"
+     th:switch="${param.exception[0]}">
+    <span th:case="'redelivered'">Đã mở giao lại. Nhân viên chi nhánh tiếp tục xử lý phần giao này; đơn hàng đã rời trạng thái cần xử lý.</span>
+    <span th:case="'redelivered-more'">Đã mở giao lại phần giao này. Đơn còn phần giao thất bại khác cần quyết định.</span>
+    <span th:case="'closed'">Đã xác nhận không giao được. Không có hàng nào được giao nên đơn hàng đã hủy; thanh toán trực tuyến (nếu có) được hoàn mô phỏng toàn bộ gồm phí giao.</span>
+    <span th:case="'closed-partial'">Đã xác nhận phần này không giao được. Đơn hoàn tất một phần: hàng không giao được đã được hoàn mô phỏng, phí giao được giữ lại vì đã có hàng được giao.</span>
+    <span th:case="'undeliverable-resumed'">Đã xác nhận phần này không giao được và hoàn mô phỏng phần hàng đó. Các phần giao còn lại tiếp tục được nhân viên xử lý.</span>
+    <span th:case="'undeliverable-more'">Đã xác nhận phần giao này không giao được. Đơn còn phần giao thất bại khác cần quyết định.</span>
+    <span th:case="'pending-verification'">Đã ghi nhận: chưa xác nhận được tình trạng hàng. Ngoại lệ vẫn mở, chưa hủy, chưa hoàn tồn, chưa hoàn tiền; hãy quyết định khi đã biết hàng ở đâu.</span>
+    <span th:case="'refund-failed'">Đã xác nhận không giao được nhưng hoàn tiền mô phỏng chưa thành công. Thử lại ở mục Thanh toán của đơn.</span>
+    <span th:case="'invalid:reason'">Vui lòng nhập lý do xử lý từ 5 đến 400 ký tự.</span>
+    <span th:case="'invalid:goods'">Vui lòng chọn tình trạng hàng hóa.</span>
+    <span th:case="'invalid:goodsAtStore'">Vui lòng xác nhận hàng đang ở chi nhánh và đủ điều kiện giao lại.</span>
+    <span th:case="'refused:FAILURE_ALREADY_RESOLVED'">Phần giao này đã được xử lý trước đó; không có thay đổi nào được thực hiện lại.</span>
+    <span th:case="'refused:PARTIAL_SETTLEMENT_REQUIRED'">Không thể xác nhận không giao được: đơn còn phần giao khác đã giao hoặc đang thực hiện (cần hoàn tiền một phần, chưa được đặc tả).</span>
+    <span th:case="'refused:REDELIVERY_NOT_POSSIBLE'">Không thể giao lại phần giao này (chi nhánh, hình thức nhận hoặc thanh toán không cho phép).</span>
+    <span th:case="'refused:NOT_A_DELIVERY_FAILURE'">Đơn hàng không còn ở trạng thái cần xử lý ngoại lệ giao hàng.</span>
+    <span th:case="*">Không thể thực hiện thao tác. Dữ liệu có thể đã thay đổi; vui lòng tải lại trang.</span>
+</div>
+
+<section class="card border-danger shadow-sm mb-4" id="fulfillment-exception" th:if="${exception != null}">
+    <div class="card-header bg-white fw-semibold text-danger">Giao hàng không thành công: cần quản trị viên quyết định</div>
+    <div class="card-body">
+        <p class="small text-secondary">
+            Nhân viên chỉ báo thất bại; không có tồn kho, tiền hay phần giao nào khác bị thay đổi tự động. Đơn được giữ lại cho tới khi mọi phần giao thất bại
+            có quyết định (kèm lý do); sau đó trạng thái đơn được hệ thống tính lại từ các phần giao. Hoàn tiền luôn là <strong>mô phỏng</strong>.
+        </p>
+        <dl class="row small mb-3" id="exception-money">
+            <dt class="col-sm-3">Tổng đơn (gồm phí giao)</dt>
+            <dd class="col-sm-9"><span th:replace="~{fragments/components :: price(${exception.money.total})}"></span></dd>
+            <dt class="col-sm-3">Đã thu thực tế</dt>
+            <dd class="col-sm-9"><span th:replace="~{fragments/components :: price(${exception.money.collected})}"></span>
+                <span class="text-secondary" th:text="${exception.paymentMethod.name() == 'ONLINE'} ? '(thanh toán trực tuyến mô phỏng)' : '(COD / tại cửa hàng chỉ thu khi giao thành công)'"></span></dd>
+            <dt class="col-sm-3">Đã hoàn (mô phỏng)</dt>
+            <dd class="col-sm-9" id="exception-refunded"><span th:replace="~{fragments/components :: price(${exception.money.refunded})}"></span></dd>
+            <dt class="col-sm-3">Còn giữ lại</dt>
+            <dd class="col-sm-9"><span th:replace="~{fragments/components :: price(${exception.money.retained})}"></span></dd>
+            <dt class="col-sm-3">Hàng đã giao thành công</dt>
+            <dd class="col-sm-9"><span th:replace="~{fragments/components :: price(${exception.money.delivered})}"></span></dd>
+            <dt class="col-sm-3">Hàng giao không thành công</dt>
+            <dd class="col-sm-9"><span th:replace="~{fragments/components :: price(${exception.money.undelivered})}"></span></dd>
+            <dt class="col-sm-3">Hàng đang thực hiện</dt>
+            <dd class="col-sm-9"><span th:replace="~{fragments/components :: price(${exception.money.inProgress})}"></span></dd>
+        </dl>
+        <p class="alert alert-info small" th:if="${exception.money.delivered.signum() > 0 and exception.paymentMethod.name() == 'ONLINE'}">
+            Đơn đã có hàng giao thành công: xác nhận không giao được chỉ hoàn mô phỏng <strong>giá trị hàng của phần đó</strong>; phí giao được giữ lại
+            (không bao giờ hoàn quá số tiền đã thu).
+        </p>
+
+        <div class="border rounded p-3 mb-3 os-failed-part" th:each="part : ${exception.failed}" th:attr="data-fulfillment-id=${part.fulfillmentId}">
+            <div class="d-flex flex-wrap justify-content-between gap-2">
+                <strong th:text="'Phần giao #' + ${part.fulfillmentId} + ' · ' + ${part.storeName}"></strong>
+                <span class="badge os-soft os-soft-danger">Không thành công</span>
+            </div>
+            <div class="small text-secondary">
+                <span th:replace="~{fragments/components :: fulfillmentType(${part.type})}"></span>
+                <span th:unless="${part.storeActive}" class="text-danger"> · Chi nhánh đang ngừng hoạt động</span>
+                <span th:if="${part.failedAt != null}" th:text="' · báo lúc ' + ${#temporals.format(part.failedAt, 'dd/MM/yyyy HH:mm')}"></span>
+                <span th:if="${part.failedBy != null}" th:text="' bởi ' + ${part.failedBy}"></span>
+            </div>
+            <p class="alert alert-warning small mb-2 mt-2 os-awaiting-verification" th:if="${part.awaitingVerification}">
+                <strong>Đang chờ xác minh tình trạng hàng.</strong> Ngoại lệ vẫn mở: chưa hủy, chưa hoàn tồn, chưa hoàn tiền. Hãy chọn &ldquo;đã về chi nhánh&rdquo; hoặc &ldquo;thất lạc&rdquo; khi đã biết.
+            </p>
+            <p class="small mb-1" th:if="${part.goodsStatus != null and !part.awaitingVerification}"><span class="fw-semibold">Tình trạng hàng ghi nhận:</span> <span th:text="${part.goodsStatus}"></span></p>
+            <p class="mb-2 mt-2"><span class="fw-semibold">Lý do nhân viên ghi:</span>
+                <span class="os-failure-reason" th:text="${part.failureReason != null} ? ${part.failureReason} : '(không có)'"></span></p>
+            <div class="table-responsive">
+                <table class="table table-sm align-middle mb-2">
+                    <thead><tr><th>Sản phẩm</th><th class="text-end">Số lượng</th><th class="text-end">Thành tiền</th><th class="text-end">Tồn hiện tại tại chi nhánh</th></tr></thead>
+                    <tbody><tr th:each="line : ${part.lines}">
+                        <td th:text="${line.productName}"></td><td class="text-end" th:text="${line.quantity}"></td>
+                        <td class="text-end"><span th:replace="~{fragments/components :: price(${line.subtotal})}"></span></td>
+                        <td class="text-end" th:text="${line.stockNow}"></td></tr></tbody>
+                </table>
+            </div>
+            <details class="small mb-3">
+                <summary>Lịch sử phần giao</summary>
+                <ul class="mb-0 mt-1"><li th:each="h : ${part.history}">
+                    <span th:text="${h.oldStatus != null} ? ${h.oldStatus} + ' → ' + ${h.newStatus} : ${h.newStatus}"></span>
+                    · <span th:text="${h.actorName}"></span> · <span th:text="${#temporals.format(h.changedAt, 'dd/MM/yyyy HH:mm')}"></span>
+                    <span class="text-secondary" th:if="${h.note}" th:text="'· ' + ${h.note}"></span></li></ul>
+            </details>
+
+            <div class="row g-3">
+                <div class="col-12 col-lg-6">
+                    <h2 class="h6">Phương án A: giao lại</h2>
+                    <p class="small text-secondary mb-2">Hàng đang ở chi nhánh và có thể giao tiếp. Không trừ tồn lần hai, không tạo đơn hay thanh toán mới.</p>
+                    <div class="alert alert-secondary small" th:unless="${part.canRedeliver}" th:text="${part.redeliverBlocked}"></div>
+                    <form method="post" th:if="${part.canRedeliver}" class="os-redeliver-form" id="redeliver-form"
+                          th:action="@{/admin/orders/{o}/fulfillments/{f}/redeliver(o=${exception.orderId}, f=${part.fulfillmentId})}"
+                          data-confirm="Xác nhận giao lại phần giao này? Nhân viên chi nhánh sẽ tiếp tục xử lý.">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" name="goodsAtStore" value="true" th:id="'goods-at-store-' + ${part.fulfillmentId}" required>
+                            <label class="form-check-label small" th:for="'goods-at-store-' + ${part.fulfillmentId}">Tôi xác nhận hàng đang ở chi nhánh và đủ điều kiện giao lại</label>
+                        </div>
+                        <label class="form-label small" th:for="'redeliver-reason-' + ${part.fulfillmentId}">Lý do giao lại (5–400 ký tự)</label>
+                        <textarea class="form-control mb-2" th:id="'redeliver-reason-' + ${part.fulfillmentId}" name="reason" rows="2" minlength="5" maxlength="400" required></textarea>
+                        <button class="btn btn-primary" type="submit">Giao lại</button>
+                    </form>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <h2 class="h6">Phương án B: xác nhận không thể giao</h2>
+                    <p class="small text-secondary mb-2">Kết thúc phần giao này. Chỉ hoàn tồn khi hàng đã về chi nhánh; đơn ONLINE đã thanh toán được hoàn tiền mô phỏng (không phải hoàn tiền thật).</p>
+                    <p class="small mb-2 os-refund-preview" th:if="${exception.paymentMethod.name() == 'ONLINE' and part.refundGoods.signum() > 0}">
+                        Nếu xác nhận không thể giao: hoàn mô phỏng <strong><span th:replace="~{fragments/components :: price(${part.refundGoods})}"></span></strong> tiền hàng
+                        <span th:if="${part.refundShipping.signum() > 0}">và <strong><span th:replace="~{fragments/components :: price(${part.refundShipping})}"></span></strong> phí giao (không còn hàng nào được giao)</span><span th:unless="${part.refundShipping.signum() > 0}">; phí giao được giữ lại (còn phần giao khác chưa kết thúc hoặc đã có hàng được giao)</span>.
+                    </p>
+                    <div class="alert alert-secondary small" th:unless="${part.canMarkUndeliverable}" th:text="${part.undeliverableBlocked}"></div>
+                    <form method="post" th:if="${part.canMarkUndeliverable}" class="os-undeliverable-form" id="undeliverable-form"
+                          th:action="@{/admin/orders/{o}/fulfillments/{f}/undeliverable(o=${exception.orderId}, f=${part.fulfillmentId})}"
+                          data-confirm="Xác nhận lựa chọn này? Với &quot;đã về chi nhánh&quot; hoặc &quot;thất lạc&quot;, phần giao sẽ KẾT THÚC (không giao được) và không hoàn tác.">
+                        <label class="form-label small" th:for="'goods-' + ${part.fulfillmentId}">Tình trạng hàng hóa</label>
+                        <select class="form-select mb-2" th:id="'goods-' + ${part.fulfillmentId}" name="goods" required>
+                            <option value="">-- Chọn --</option>
+                            <option value="RETURNED">Hàng đã về chi nhánh (nhập lại kho)</option>
+                            <option value="LOST">Hàng thất lạc (không đổi tồn kho)</option>
+                            <option value="UNCONFIRMED">Chưa xác nhận được (chỉ ghi nhận, ngoại lệ vẫn mở)</option>
+                        </select>
+                        <label class="form-label small" th:for="'undeliverable-reason-' + ${part.fulfillmentId}">Lý do (5–400 ký tự)</label>
+                        <textarea class="form-control mb-2" th:id="'undeliverable-reason-' + ${part.fulfillmentId}" name="reason" rows="2" minlength="5" maxlength="400" required></textarea>
+                        <button class="btn btn-outline-danger" type="submit">Xác nhận không thể giao</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{orders/fragments :: detail(${orderDetail.detail}, ${refund})}"></div>
+</body></html>

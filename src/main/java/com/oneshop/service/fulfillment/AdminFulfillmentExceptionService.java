@@ -303,13 +303,13 @@ public class AdminFulfillmentExceptionService {
         PartialRefundService.Result refund = null;
         if (order.getPaymentMethod() == PaymentMethod.ONLINE && order.getPaymentStatus() == OrderPaymentStatus.PAID) {
             refund = refunds.refundUndeliverable(order, part, locked.parts(), admin,
-                    "Hoàn tiền mô phỏng: phần giao #" + part.getId() + " không giao được. " + why);
+                    "Hoàn tiền: phần giao #" + part.getId() + " không giao được. " + why);
         }
 
         int failedLeft = failedLeft(locked.parts());
         String orderNote = "[ADMIN_UNDELIVERABLE] Phần giao #" + part.getId() + " không giao được (" + goods.label() + "): "
                 + why + (refund == null || refund.status() == PartialRefundService.Status.NOT_APPLICABLE ? ""
-                : " · hoàn tiền mô phỏng " + refund.total().toPlainString());
+                : " · hoàn tiền " + refund.total().toPlainString());
         OrderStatus status = settle(order, locked.parts(), admin, orderNote);
         boolean closed = status == OrderStatus.CANCELLED && failedLeft == 0;
         boolean partially = status == OrderStatus.COMPLETED && failedLeft == 0;

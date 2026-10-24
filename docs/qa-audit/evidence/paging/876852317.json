@@ -1,1 +1,1 @@
-{"request":"/staff/stock?page=107374182","expected":200,"timestamp":"2026-10-24T09:13:19.077077500Z","actual":200}
+{"actual":200,"timestamp":"2026-10-24T10:18:28.023261400Z","expected":200,"request":"/staff/stock?page=107374182"}

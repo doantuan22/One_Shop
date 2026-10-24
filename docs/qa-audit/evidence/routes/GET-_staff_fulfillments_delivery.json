@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "GET",
-    "method" : "deliveryQueue",
-    "controller" : "com.oneshop.controller.staff.StaffFulfillmentController",
-    "path" : "/staff/fulfillments/delivery"
-  },
-  "location" : "http://localhost:57296/login",
-  "executedAt" : "2026-10-24T09:12:22.573460200Z",
-  "expected" : 302,
-  "actual" : 302,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/staff/fulfillments/delivery",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 302,
+  "expected" : 302,
+  "executedAt" : "2026-10-24T10:17:36.599143600Z",
+  "location" : "http://localhost:62366/login",
+  "route" : {
+    "path" : "/staff/fulfillments/delivery",
+    "controller" : "com.oneshop.controller.staff.StaffFulfillmentController",
+    "method" : "deliveryQueue",
+    "verb" : "GET"
+  }
 }

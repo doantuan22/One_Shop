@@ -1,0 +1,7 @@
+{
+  "database" : "oneshop_ui_20261025_test",
+  "timestamp" : "2026-10-24T10:18:22.962151700Z",
+  "scenario" : "replace-rollback-BRAND",
+  "files" : [ "qa-fix/old-BRAND" ],
+  "tasks" : [ ]
+}

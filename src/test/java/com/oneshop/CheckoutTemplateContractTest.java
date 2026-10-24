@@ -49,7 +49,7 @@ class CheckoutTemplateContractTest {
         String checkout = Files.readString(TEMPLATE, StandardCharsets.UTF_8);
         String result = Files.readString(Path.of("src/main/resources/templates/checkout/result.html"), StandardCharsets.UTF_8);
 
-        assertThat(checkout).contains("Thanh toán trực tuyến (mô phỏng, không thu tiền thật)");
-        assertThat(result).contains("Tiến hành thanh toán trực tuyến (mô phỏng, không thu tiền thật)");
+        assertThat(checkout).contains("Thanh toán trực tuyến");
+        assertThat(result).contains("Tiến hành thanh toán trực tuyến");
     }
 }

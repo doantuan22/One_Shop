@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "POST",
-    "method" : "create",
-    "controller" : "com.oneshop.controller.admin.AdminUserController",
-    "path" : "/admin/users"
-  },
-  "location" : "",
-  "executedAt" : "2026-10-24T09:12:20.194424400Z",
-  "expected" : 403,
-  "actual" : 403,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/admin/users",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 403,
+  "expected" : 403,
+  "executedAt" : "2026-10-24T10:17:34.682400200Z",
+  "location" : "",
+  "route" : {
+    "path" : "/admin/users",
+    "controller" : "com.oneshop.controller.admin.AdminUserController",
+    "method" : "create",
+    "verb" : "POST"
+  }
 }

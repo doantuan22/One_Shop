@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "GET",
-    "method" : "view",
-    "controller" : "com.oneshop.controller.client.PaymentController",
-    "path" : "/orders/{orderId}/payments"
-  },
-  "location" : "http://localhost:57296/login",
-  "executedAt" : "2026-10-24T09:12:21.824453200Z",
-  "expected" : 302,
-  "actual" : 302,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/orders/999999999/payments",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 302,
+  "expected" : 302,
+  "executedAt" : "2026-10-24T10:17:36.030240900Z",
+  "location" : "http://localhost:62366/login",
+  "route" : {
+    "path" : "/orders/{orderId}/payments",
+    "controller" : "com.oneshop.controller.client.PaymentController",
+    "method" : "view",
+    "verb" : "GET"
+  }
 }

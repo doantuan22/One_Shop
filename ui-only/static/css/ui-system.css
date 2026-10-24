@@ -1,0 +1,538 @@
+/* OneShop commercial UI system — loaded last by every SiteMesh decorator. */
+:root {
+    --os-brand: #ff7f50;
+    --os-brand-hover: #e86738;
+    --os-brand-active: #d65426;
+    --os-brand-soft: #fff5f2;
+    --os-brand-border: #ffd5c7;
+    --os-canvas: #f8f9fb;
+    --os-surface: #ffffff;
+    --os-surface-subtle: #fcfcfd;
+    --os-border: #e7eaf0;
+    --os-text-strong: #182230;
+    --os-text: #344054;
+    --os-text-muted: #667085;
+    --os-muted: #667085;
+    --os-success: #027a48;
+    --os-warning: #b54708;
+    --os-danger: #b42318;
+    --os-info: #175cd3;
+    --os-radius-card: 12px;
+    --os-radius-control: 9px;
+    --os-shadow-card: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+html { overflow-x: clip; }
+body {
+    color: var(--os-text);
+    background: var(--os-canvas);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    overflow-x: clip;
+}
+
+/* Shared hierarchy, forms and feedback */
+.os-page-header {
+    align-items: flex-start;
+    gap: 0.75rem 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom-color: var(--os-border);
+}
+.os-page-header h1,
+.os-page-header .h3 {
+    color: var(--os-text-strong);
+    font-size: clamp(1.45rem, 2vw, 1.75rem);
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+}
+.os-page-header p,
+.os-muted-text,
+.text-secondary { color: var(--os-text-muted) !important; }
+
+.card,
+.modal-content {
+    border-color: var(--os-border);
+    border-radius: var(--os-radius-card);
+    box-shadow: var(--os-shadow-card);
+}
+.card-header,
+.modal-header,
+.modal-footer {
+    border-color: var(--os-border);
+    background: var(--os-surface);
+}
+.card-header { padding: 0.75rem 1rem; }
+.card-body { padding: 1rem; }
+
+.form-label {
+    margin-bottom: 0.35rem;
+    color: #475467;
+    font-size: 0.8125rem;
+    font-weight: 650;
+}
+.form-control,
+.form-select {
+    min-height: 40px;
+    border-color: #d9dee8;
+    border-radius: var(--os-radius-control);
+    padding: 0.45rem 0.75rem;
+    color: var(--os-text-strong);
+    box-shadow: none;
+}
+.form-control::placeholder { color: #98a2b3; }
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--os-brand-hover) !important;
+    box-shadow: 0 0 0 3px rgba(232, 103, 56, 0.16) !important;
+}
+.form-text { color: var(--os-text-muted); }
+.alert { border-radius: var(--os-radius-control); }
+
+/* Buttons: deliberately compact in operation consoles, standard touch size on mobile. */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    min-height: 40px;
+    padding: 0.45rem 0.85rem;
+    border-radius: var(--os-radius-control);
+    font-weight: 650;
+    line-height: 1.2;
+    white-space: nowrap;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
+}
+.btn-primary { box-shadow: none; }
+.btn-primary:hover,
+.btn-primary:active { box-shadow: 0 2px 6px rgba(232, 103, 56, 0.2) !important; transform: none; }
+.btn-outline-secondary {
+    border-color: #d0d5dd;
+    color: #475467;
+}
+.btn-outline-secondary:hover {
+    border-color: #98a2b3;
+    background: #f9fafb;
+    color: #344054;
+}
+.btn-outline-danger { color: var(--os-danger); border-color: #fecdca; }
+.btn-outline-danger:hover { background: #fef3f2; color: #912018; border-color: #fda29b; }
+.btn-sm {
+    min-height: 34px;
+    padding: 0.32rem 0.65rem;
+    font-size: 0.8125rem;
+}
+.btn:disabled,
+.btn.disabled { opacity: 0.58; cursor: not-allowed; box-shadow: none !important; }
+
+.badge {
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 650;
+    line-height: 1.3;
+    padding: 0.28rem 0.55rem;
+}
+.badge.os-soft-success { color: var(--os-success); background: #ecfdf3; border-color: #abefc6; }
+.badge.os-soft-danger { color: var(--os-danger); background: #fef3f2; border-color: #fecdca; }
+.badge.os-soft-warning { color: var(--os-warning); background: #fffaeb; border-color: #fedf89; }
+.badge.os-soft-info { color: var(--os-info); background: #eff8ff; border-color: #b2ddff; }
+.badge.os-soft-neutral { color: #475467; background: #f2f4f7; border-color: #e4e7ec; }
+.badge.os-soft-coral { color: #d65426; background: var(--os-brand-soft); border-color: var(--os-brand-border); }
+
+/* Client chrome: a solid brand bar and lightweight navigation. */
+.os-topbar-coral { background: #f37348; }
+.os-navbar-custom { box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04); }
+.btn-nav-register,
+.btn-nav-register:hover,
+.os-avatar-circle { background: var(--os-brand) !important; box-shadow: none; }
+.btn-nav-register:hover { background: var(--os-brand-hover) !important; }
+
+/* CTA surfaces use the original OneShop coral; structure and interaction rules stay centralized. */
+.btn-primary,
+.btn-auth-submit,
+.btn-auth-submit:hover,
+.btn-filter-submit,
+.btn-filter-submit:hover,
+.btn-select-store,
+.btn-select-store:hover,
+.btn-card-add-cart,
+.btn-card-add-cart:hover,
+.pcard__btn-cart,
+.pcard__btn-cart:hover,
+.btn-add-cart,
+.btn-add-cart:hover,
+.btn-confirm-order,
+.btn-confirm-order:hover,
+.btn-checkout-submit,
+.btn-checkout-submit:hover,
+.btn-coral-save,
+.btn-coral-save:hover,
+.btn-order-online,
+.btn-order-online:hover {
+    background: var(--os-brand) !important;
+    border-color: var(--os-brand) !important;
+    color: #fff !important;
+}
+.btn-primary:hover,
+.btn-primary:active,
+.btn-auth-submit:hover,
+.btn-filter-submit:hover,
+.btn-select-store:hover,
+.btn-card-add-cart:hover,
+.pcard__btn-cart:hover,
+.btn-add-cart:hover,
+.btn-confirm-order:hover,
+.btn-checkout-submit:hover,
+.btn-coral-save:hover,
+.btn-order-online:hover {
+    background: var(--os-brand-hover) !important;
+    border-color: var(--os-brand-hover) !important;
+}
+
+/* Authentication and account surfaces retain the brand while avoiding promotional decoration. */
+.auth-card {
+    border-color: var(--os-border);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(16, 24, 40, 0.07);
+}
+.auth-card::before,
+.auth-card::after { display: none; }
+.btn-auth-submit { box-shadow: none; }
+.profile-avatar-circle { background: var(--os-brand); box-shadow: none; }
+.profile-card { border-color: var(--os-border); box-shadow: var(--os-shadow-card); }
+
+/* Store finder: results appear early; the content stays useful without a hero. */
+.store-finder-container { max-width: 1264px; padding: 0.5rem 0 3rem; }
+.store-hero {
+    margin-bottom: 1.25rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    overflow: visible;
+}
+.store-hero::before { display: none; }
+.store-hero h1,
+.store-hero .h1,
+.store-hero .h3 { font-size: clamp(1.55rem, 2.4vw, 1.9rem); }
+.store-hero p { max-width: 620px; color: var(--os-text-muted); }
+.store-hero .os-eyebrow { display: none; }
+.filter-panel {
+    margin-bottom: 1.25rem;
+    padding: 0.9rem 1rem;
+    border-color: var(--os-border);
+    border-radius: var(--os-radius-card);
+    box-shadow: var(--os-shadow-card);
+}
+.filter-select { min-height: 40px; padding: 0.45rem 0.75rem; border-color: #d9dee8; border-radius: var(--os-radius-control); background: #fff; }
+.btn-filter-submit { min-height: 40px; height: 40px; border-radius: var(--os-radius-control); box-shadow: none; }
+.modern-store-card {
+    padding: 1.1rem;
+    border-color: var(--os-border);
+    border-radius: var(--os-radius-card);
+    box-shadow: var(--os-shadow-card);
+}
+.modern-store-card:hover { border-color: var(--os-brand-border); box-shadow: 0 4px 12px rgba(16, 24, 40, 0.06); }
+.modern-store-card.selected-active-store { border: 1px solid var(--os-brand); background: #fffaf8; box-shadow: none; }
+.store-card-title { font-size: 1rem; }
+.store-location-text { margin-bottom: 0.75rem; color: #d65426; }
+.store-details-list { gap: 0.4rem; margin-bottom: 0.9rem; }
+.store-amenities { margin-bottom: 0.8rem; }
+.amenity-chip { border-radius: 999px; }
+.current-selection-badge { background: var(--os-brand); box-shadow: none; }
+.btn-select-store { min-height: 40px; background: var(--os-brand); box-shadow: none; }
+.btn-select-store:hover { background: var(--os-brand-hover); box-shadow: none; }
+
+/* Catalog and product details share a quieter retail surface. */
+.catalog-filter-bar,
+.product-image-stage,
+.store-check-drawer,
+.checkout-store-card,
+.order-summary-card,
+.cart-store-group,
+.cart-summary-panel { border-color: var(--os-border); box-shadow: var(--os-shadow-card); }
+.catalog-filter-bar { padding: 0.8rem 0.9rem; border-radius: var(--os-radius-card); }
+.retail-product-card,
+.pcard { border-color: var(--os-border); border-radius: var(--os-radius-card); box-shadow: var(--os-shadow-card); }
+.retail-product-card:hover,
+.pcard:hover { border-color: #cfd6e2; box-shadow: 0 5px 16px rgba(16, 24, 40, 0.07); }
+.product-thumb-stage,
+.pcard__media { background: #fafbfc; }
+.product-card-sku { color: #98a2b3; margin-bottom: 0.5rem; }
+.product-current-price,
+.pcard__price,
+.product-price-current .os-price,
+.product-price-current { color: #d65426; }
+.btn-card-action,
+.pcard__btn-cart,
+.pcard__btn-login { border-radius: var(--os-radius-control); }
+.product-main-title { color: var(--os-text-strong); font-weight: 700; }
+.product-purchase-area { border-color: var(--os-border); }
+.product-discount-badge { display: none; }
+.product-info-column { padding-left: 0; }
+.success-banner-card,
+.order-card { border-color: var(--os-border); box-shadow: var(--os-shadow-card); }
+
+/* Client copy and links: dark coral is reserved for text on light surfaces. */
+.home-section__head p,
+.home-store__meta { color: var(--os-text-muted); }
+.home-link,
+.home-search__scope a,
+.home-tile--plain .home-tile__cta { color: #d65426 !important; }
+.pcard__btn-login,
+.btn-card-login { color: var(--os-brand) !important; }
+.home-link:hover,
+.home-search__scope a:hover,
+.home-tile--plain .home-tile__cta:hover { color: #922f1c !important; }
+.pcard__btn-login:hover,
+.btn-card-login:hover { color: var(--os-brand-hover) !important; }
+.pcard__btn-login,
+.btn-card-login { border-color: var(--os-brand-border) !important; }
+.home-store__tags li { color: #9a3412; }
+
+/* Admin / staff: dense, scannable operational UI. */
+.os-app { background: #f7f8fa; }
+.os-app--admin .os-appbar,
+.os-app--staff .os-appbar { background: #f37348; box-shadow: 0 1px 3px rgba(16, 24, 40, 0.12); }
+.os-app .os-sidebar { background: #fbfcfe; border-right-color: var(--os-border); }
+.os-app .os-store-scope { background: #fff; border-color: var(--os-border); }
+.os-app .os-sidebar .os-nav-link { border-radius: 8px; }
+.os-app .nav-pills .os-nav-link.active { background: var(--os-brand); }
+.os-app .card { box-shadow: var(--os-shadow-card); }
+.os-app .card-header { font-weight: 650; }
+.os-app .os-stat { border-color: var(--os-border); box-shadow: var(--os-shadow-card); }
+.os-app .os-stat__value { font-size: clamp(1.55rem, 2vw, 1.9rem); color: var(--os-text-strong); }
+.os-app .os-stat .card-body { min-height: 126px; padding: 1rem; }
+.os-app .os-filter { border-color: var(--os-border); background: var(--os-surface); }
+.os-app .os-filter .card-body { padding: 0.8rem 1rem; }
+.os-app .os-filter-grid { gap: 0.55rem 0.75rem; }
+.os-app .os-filter-field .form-label { font-size: 0.75rem; margin-bottom: 0.2rem; }
+.os-app .os-filter-field .form-control,
+.os-app .os-filter-field .form-select { min-height: 36px; padding-block: 0.35rem; }
+.os-app .os-kpi-chips .os-kpi-chip { min-width: 7.75rem; padding: 0.45rem 0.7rem; border-color: var(--os-border); border-radius: 10px; }
+.os-app .os-kpi-chip .os-kpi-chip__value { color: var(--os-text-strong); }
+.os-app .table { --bs-table-bg: transparent; margin-bottom: 0; }
+.os-app .table > :not(caption) > * > * { padding: 0.7rem 0.55rem; border-bottom-color: var(--os-border); }
+.os-app .table thead th { color: #475467; background: #fafbfc; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.01em; }
+.os-app .table-hover > tbody > tr:hover > * { --bs-table-accent-bg: #fafbfc; }
+.os-app .os-col-code { min-width: 8rem; }
+.os-app .os-col-actions { min-width: 10.5rem; }
+.os-app .table-actions { gap: 0.375rem; }
+.os-app .table-actions .btn,
+.os-app .os-col-actions .btn { min-height: 34px; padding: 0.32rem 0.58rem; font-size: 0.78rem; }
+.os-app .os-col-actions .btn-primary { max-width: 12.75rem; overflow: hidden; text-overflow: ellipsis; }
+.os-app .modal-content { box-shadow: 0 16px 36px rgba(16, 24, 40, 0.16); }
+.os-app .modal-header,
+.os-app .modal-footer { padding: 0.75rem 1rem; }
+.os-app .os-admin-form-modal { max-width: 34rem; }
+.os-app .os-admin-form-modal .modal-body { padding: 1.25rem; }
+.os-app .os-admin-form-modal .modal-footer { gap: 0.5rem; }
+.os-app .os-admin-form-image {
+    display: block;
+    width: 88px;
+    height: 88px;
+    object-fit: contain;
+    padding: 0.35rem;
+    border: 1px solid var(--os-border);
+    border-radius: 10px;
+    background: #fafbfc;
+}
+.os-app .os-modal-image-tools { border-top: 1px solid var(--os-border); }
+/* Category/Brand tables: fixed, balanced columns while every cell stays a real table-cell. */
+.os-app .os-catalog-table .os-table { table-layout: fixed; width: 100%; }
+.os-app .os-catalog-table .os-col-thumb { width: 4.5rem; }
+.os-app .os-catalog-table .os-col-name { width: 22%; overflow-wrap: anywhere; }
+.os-app .os-catalog-table .os-col-status { width: 9.5rem; }
+.os-app .os-catalog-table .os-col-actions { width: 6.5rem; min-width: 0; }
+.os-app .os-catalog-table .os-col-desc { overflow: hidden; }
+/* The table fits its container, so the sticky-column divider used by wide tables is only visual noise here. */
+.os-app .os-catalog-table .os-table thead th.os-col-actions,
+.os-app .os-catalog-table .os-table tbody td.os-col-actions { position: static; box-shadow: none; }
+/* Clamp the text inside the cell, never the <td> itself (that removes display: table-cell). */
+.os-app .os-table-description {
+    display: -webkit-box;
+    max-width: 100%;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+/* Replace the previous staff dashboard's decorative surfaces with practical hierarchy. */
+.os-staff-dashboard .os-dashboard-store {
+    padding: 1rem;
+    border-color: var(--os-border);
+    border-radius: var(--os-radius-card);
+    background: #fff;
+    box-shadow: var(--os-shadow-card);
+}
+.os-staff-dashboard .os-dashboard-store-name,
+.os-staff-dashboard .os-dashboard-orders-title { color: var(--os-text-strong); }
+.os-staff-dashboard .os-dashboard-metrics { margin-top: 0.75rem; }
+.os-staff-dashboard .os-dashboard-metric .card,
+.os-staff-dashboard .os-dashboard-metric .os-card { border-color: var(--os-border); border-radius: 10px; box-shadow: none; }
+.os-staff-dashboard .os-dashboard-metric .card:hover,
+.os-staff-dashboard .os-dashboard-metric .os-card:hover { transform: none; box-shadow: var(--os-shadow-card); }
+.os-staff-dashboard .os-dashboard-orders-table { border-color: var(--os-border); border-radius: var(--os-radius-card); }
+
+@media (max-width: 767.98px) {
+    .os-page-header { margin-bottom: 1rem !important; }
+    .os-page-header__actions { width: 100%; }
+    .os-page-header__actions .btn { flex: 1 1 auto; }
+    .store-finder-container { padding-inline: 0; }
+    .store-hero { margin-bottom: 1rem; }
+    .filter-panel { padding: 0.8rem; }
+    .modern-store-card { padding: 1rem; }
+    .os-app main { padding-top: 1rem !important; }
+    .os-app .os-filter-grid { grid-template-columns: 1fr; }
+    .os-app .os-filter-field.d-flex { padding-top: 0.15rem; }
+    .os-app .os-filter-field.d-flex .btn { flex: 1; }
+    .os-app .os-kpi-chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .os-app .os-kpi-chips .os-kpi-chip { min-width: 0; }
+}
+
+@media (max-width: 575.98px) {
+    .btn { min-height: 44px; }
+    .btn-sm { min-height: 40px; }
+    .os-app .table > :not(caption) > * > * { padding: 0.6rem 0.5rem; }
+    .os-app .os-col-actions { min-width: 12rem; }
+    .os-app .os-col-actions .btn { min-height: 40px; }
+    .os-app .os-catalog-table .os-table { min-width: 44rem; }
+    .os-app .os-catalog-table .os-col-actions { min-width: 0; }
+    .os-app .os-admin-form-modal { max-width: calc(100% - 1.5rem); }
+    .catalog-filter-bar { padding: 0.75rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: 0.01ms !important; }
+}
+/* Shared pill tabs (payments, inventory history, stock adjust): wrap instead of scrolling, brand-coloured active tab. */
+.os-app .os-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.os-app .os-tabs .nav-link { padding: 0.35rem 0.85rem; border-radius: 999px; color: var(--os-text-strong); border: 1px solid var(--os-border); background: #fff; font-weight: 600; font-size: 0.875rem; white-space: nowrap; }
+.os-app .os-tabs .nav-link:hover { border-color: var(--os-brand); color: var(--os-brand-active); }
+.os-app .os-tabs .nav-link.active { background: var(--os-brand); border-color: var(--os-brand); color: #fff; }
+/* Row actions: one primary action plus a "more" menu, never wider than its cell. */
+.os-app .os-row-actions { display: inline-flex; align-items: center; justify-content: flex-end; gap: 0.375rem; }
+.os-app .os-row-actions .btn { min-height: 34px; }
+.os-app td:has(> .os-row-actions) { width: 11rem; white-space: nowrap; }
+/* Page header: description never pushes the action buttons below the title. */
+.os-app .os-page-header > div:first-child { flex: 1 1 24rem; min-width: 0; max-width: 52rem; }
+.os-app .os-page-header__actions { flex: 0 0 auto; margin-left: auto; }
+/* Pagination outside a card (list pages whose table fragment closes the card). */
+.os-app .os-pagination--standalone { background: #fff; border: 1px solid var(--os-border); border-radius: var(--os-radius-card); }
+/* Primary row action in staff queues: one width so the column reads as a column. */
+.os-app .os-next-action { min-width: 12.25rem; text-align: center; }
+/* The tabs that live in a card header keep spacing from the content below. */
+.os-app .os-tabs + .os-filter, .os-app nav > .os-tabs { margin-bottom: 0; }
+/* Compact filter grid: all fields and the buttons fit one row on desktop. */
+.os-app .os-filter-grid--compact { grid-template-columns: repeat(auto-fit, minmax(min(8.75rem, 100%), 1fr)); }
+/* Record id links (#12) read as links to the record, not default blue underlines. */
+.os-app .os-id-link { font-weight: 600; text-decoration: none; }
+.os-app .os-id-link:hover { text-decoration: underline; }
+/* ===== Button system for admin/staff: filled variants, existing tokens only =====
+   primary   -> .btn-primary           brand solid (same as "Thêm vào giỏ")
+   action    -> .btn-outline-primary   solid --os-text-strong (row actions: Chi tiết, Sửa, Điều chỉnh tồn ...)
+   secondary -> .btn-outline-secondary solid neutral (Lịch sử, Chi nhánh bản, Xóa lọc, Khác ...)
+   danger    -> .btn-outline-danger    solid --os-danger
+   The Bootstrap "outline-*" class names are kept so no href/form markup had to change; the look is filled. */
+.os-app .btn-outline-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--os-text-strong);
+    --bs-btn-border-color: var(--os-text-strong);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--os-text);
+    --bs-btn-hover-border-color: var(--os-text);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--os-text);
+    --bs-btn-active-border-color: var(--os-text);
+    --bs-btn-focus-shadow-rgb: 52, 64, 84;
+    --bs-btn-disabled-color: var(--os-text-muted);
+    --bs-btn-disabled-bg: #f2f4f7;
+    --bs-btn-disabled-border-color: #e4e7ec;
+}
+.os-app .btn-outline-secondary {
+    --bs-btn-color: var(--os-text);
+    --bs-btn-bg: #f2f4f7;
+    --bs-btn-border-color: #d0d5dd;
+    --bs-btn-hover-color: var(--os-text-strong);
+    --bs-btn-hover-bg: #e4e7ec;
+    --bs-btn-hover-border-color: #98a2b3;
+    --bs-btn-active-color: var(--os-text-strong);
+    --bs-btn-active-bg: #e4e7ec;
+    --bs-btn-active-border-color: #98a2b3;
+    --bs-btn-focus-shadow-rgb: 102, 112, 133;
+    --bs-btn-disabled-color: var(--os-text-muted);
+    --bs-btn-disabled-bg: #f9fafb;
+    --bs-btn-disabled-border-color: #e4e7ec;
+}
+.os-app .btn-outline-danger {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--os-danger);
+    --bs-btn-border-color: var(--os-danger);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #912018;
+    --bs-btn-hover-border-color: #912018;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #912018;
+    --bs-btn-active-border-color: #912018;
+    --bs-btn-focus-shadow-rgb: 180, 35, 24;
+}
+/* The generic .btn-outline-danger rule above sets color/background directly; inside the shell the filled variant must win. */
+.os-app .btn-outline-danger { color: var(--bs-btn-color); border-color: var(--bs-btn-border-color); }
+.os-app .btn-outline-danger:hover, .os-app .btn-outline-danger:focus-visible, .os-app .btn-outline-danger:active { background: var(--bs-btn-hover-bg); color: var(--bs-btn-hover-color); border-color: var(--bs-btn-hover-border-color); }
+.os-app .btn-outline-primary:focus-visible,
+.os-app .btn-outline-secondary:focus-visible,
+.os-app .btn-outline-danger:focus-visible,
+.os-app .btn-primary:focus-visible { outline: 2px solid var(--os-text-strong); outline-offset: 2px; }
+.os-app .btn-sm { min-height: 34px; padding: 0.32rem 0.75rem; font-size: 0.8125rem; font-weight: 650; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center; }
+.os-app td .btn-sm, .os-app .os-col-actions .btn-sm { min-width: 3.75rem; }
+.os-app .btn-group > .btn-sm:first-child { border-radius: 9px 0 0 9px; }
+.os-app .btn-group > .btn-sm:last-child { border-radius: 0 9px 9px 0; }
+.os-app .btn-outline-primary:disabled, .os-app .btn-outline-secondary:disabled { opacity: 1; }
+.os-app .btn-outline-primary:hover, .os-app .btn-outline-danger:hover, .os-app .btn-outline-secondary:hover { box-shadow: none; }
+
+@media (max-width: 575.98px) {
+    .os-app .btn-sm { min-height: 40px; }
+}
+
+.badge.os-soft { font-weight: 600; border-width: 1px; border-style: solid; }
+/* Dense admin tables: header text may wrap, id/action columns stay narrow so wide tables fit the 1440 content area. */
+.os-app .os-admin-payments .os-table thead th,
+.os-app .os-table--dense thead th { white-space: normal; vertical-align: bottom; }
+.os-app .os-admin-payments .os-table > :not(caption) > * > * { padding: 0.65rem 0.5rem; }
+.os-app .os-admin-payments .os-col-code { min-width: 4.5rem; }
+.os-app .os-admin-payments .os-col-actions { min-width: 5.5rem; }
+.os-app .os-table .os-col-code { min-width: 6.5rem; }
+.os-app .os-col-note { max-width: 12rem; }
+.os-app .os-note-ellipsis { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Appbar "Trang bán hàng": soft brand chip (existing brand tokens) so it reads as navigation, distinct from the white "Đăng xuất". */
+.os-appbar .os-appbar-link { gap: 0.4rem; align-items: center; background: var(--os-brand-soft); color: var(--brand-primary-text); border: 1px solid var(--os-brand-border); }
+.os-appbar .os-appbar-link:hover, .os-appbar .os-appbar-link:focus-visible { background: #fff; color: var(--os-brand-active); border-color: #fff; }
+.os-appbar .os-appbar-link:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.os-appbar .os-appbar-link__icon { flex: 0 0 auto; }
+
+/* Filter row with a wide product search box: store | product (wide) | status (narrow) | buttons. */
+.os-app .os-filter-grid--product-search { grid-template-columns: minmax(11rem, 1fr) minmax(18rem, 2.4fr) minmax(8.5rem, 0.7fr) auto; }
+@media (max-width: 991.98px) { .os-app .os-filter-grid--product-search { grid-template-columns: repeat(auto-fit, minmax(min(11rem, 100%), 1fr)); } }
+/* Search box with suggestion list (admin/store-products). */
+.os-app .os-suggest { position: relative; }
+.os-app .os-suggest__list { position: absolute; z-index: 20; top: calc(100% + 4px); left: 0; right: 0; max-height: 18rem; overflow-y: auto; margin: 0; padding: 0.25rem; list-style: none; background: var(--os-surface); border: 1px solid var(--os-border); border-radius: var(--os-radius-control); box-shadow: 0 10px 24px rgba(16, 24, 40, 0.12); }
+.os-app .os-suggest__item { display: flex; gap: 0.6rem; align-items: baseline; padding: 0.45rem 0.6rem; border-radius: 7px; font-size: 0.875rem; color: var(--os-text); cursor: pointer; }
+.os-app .os-suggest__item:hover, .os-app .os-suggest__item.active { background: var(--os-brand-soft); }
+.os-app .os-suggest__sku { flex: 0 0 auto; font-weight: 700; color: var(--os-text-strong); }
+.os-app .os-suggest__empty { padding: 0.5rem 0.6rem; font-size: 0.8125rem; color: var(--os-text-muted); }
+
+/* Search-box suggestion popup (os-suggest.js): fixed so no card or table can clip it. */
+.os-suggest-pop { position: fixed; z-index: 1085; max-height: 18rem; overflow-y: auto; margin: 0; padding: 0.25rem; list-style: none; background: var(--os-surface); border: 1px solid var(--os-border); border-radius: var(--os-radius-control); box-shadow: 0 10px 24px rgba(16, 24, 40, 0.12); text-align: left; }
+.os-suggest-pop__item { display: flex; gap: 0.6rem; align-items: baseline; padding: 0.5rem 0.65rem; border-radius: 7px; font-size: 0.875rem; line-height: 1.35; color: var(--os-text); cursor: pointer; }
+.os-suggest-pop__item:hover, .os-suggest-pop__item.active { background: var(--os-brand-soft); }
+.os-suggest-pop__sku { flex: 0 0 auto; font-weight: 700; color: var(--os-text-strong); }
+.os-suggest-pop__note { padding: 0.5rem 0.65rem; font-size: 0.8125rem; color: var(--os-text-muted); }
+
+/* Suggestion popup under the home search bar: same pill language as the bar (radius, shadow, icon column). */
+.os-suggest-pop mark { padding: 0; background: transparent; color: var(--os-text-strong); font-weight: 700; }
+.os-suggest-pop--pill { padding: 0.5rem; border-radius: 28px; border-color: var(--os-border); box-shadow: 0 14px 32px rgba(16, 24, 40, 0.14); }
+.os-suggest-pop--pill .os-suggest-pop__item { align-items: center; gap: 0.75rem; padding: 0.7rem 1rem; border-radius: 999px; font-size: 1rem; }
+.os-suggest-pop--pill .os-suggest-pop__icon { flex: 0 0 auto; color: var(--os-muted); }
+.os-suggest-pop--pill .os-suggest-pop__item:hover .os-suggest-pop__icon,
+.os-suggest-pop--pill .os-suggest-pop__item.active .os-suggest-pop__icon { color: var(--os-brand-active); }
+.os-suggest-pop--pill .os-suggest-pop__note { padding: 0.6rem 1rem; text-align: center; }

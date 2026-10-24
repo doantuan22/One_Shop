@@ -1,0 +1,7 @@
+{
+  "database" : "oneshop_ui_20261025_test",
+  "timestamp" : "2026-10-24T10:18:21.882367100Z",
+  "scenario" : "upload-commit-CATEGORY",
+  "files" : [ "qa-fix/cd099007-a010-4867-b0ed-e9c8ba065695" ],
+  "tasks" : [ ]
+}

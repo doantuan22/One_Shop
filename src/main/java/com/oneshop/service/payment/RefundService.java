@@ -125,7 +125,7 @@ public class RefundService {
                 });
         entry.setAmount(row.getRefundAmount() == null ? row.getAmount() : row.getRefundAmount());
         entry.setStatus(row.getRefundStatus());
-        entry.setReason(row.getRefundReason() == null ? "Hoàn tiền mô phỏng" : row.getRefundReason());
+        entry.setReason(row.getRefundReason() == null ? "Hoàn tiền" : row.getRefundReason());
         entry.setRefundedAt(row.getRefundStatus() == PaymentRefundStatus.SIMULATED_REFUNDED ? row.getRefundedAt() : null);
         ledger.saveAndFlush(entry);
     }

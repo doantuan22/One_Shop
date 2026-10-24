@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "POST",
-    "method" : "placeOrder",
-    "controller" : "com.oneshop.controller.client.CheckoutController",
-    "path" : "/checkout"
-  },
-  "location" : "",
-  "executedAt" : "2026-10-24T09:12:20.951179700Z",
-  "expected" : 403,
-  "actual" : 403,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/checkout",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 403,
+  "expected" : 403,
+  "executedAt" : "2026-10-24T10:17:35.421742100Z",
+  "location" : "",
+  "route" : {
+    "path" : "/checkout",
+    "controller" : "com.oneshop.controller.client.CheckoutController",
+    "method" : "placeOrder",
+    "verb" : "POST"
+  }
 }

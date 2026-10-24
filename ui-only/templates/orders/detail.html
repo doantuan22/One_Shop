@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Chi tiết đơn hàng #' + ${orderDetail.order.orderId} + ' - OneShop'">Chi tiết đơn hàng - OneShop</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-coral.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <style>
+        :root {
+            --os-coral: #ff7f50;
+            --os-coral-dark: #e86638;
+            --os-coral-soft: #fff5f1;
+            --os-slate-900: #0f172a;
+            --os-slate-700: #334155;
+            --os-slate-500: #64748b;
+            --os-slate-200: #e2e8f0;
+            --os-slate-100: #f1f5f9;
+            --os-bg: #f8fafc;
+        }
+
+        body {
+            background-color: var(--os-bg);
+            color: var(--os-slate-900);
+        }
+
+        .order-detail-wrapper {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 1.25rem 1rem 5.5rem;
+        }
+
+        .order-breadcrumb-nav {
+            margin-bottom: 1.25rem;
+        }
+
+        .order-breadcrumb {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.4rem;
+            margin: 0;
+            padding: 0.55rem 1rem;
+            list-style: none;
+            font-size: 0.82rem;
+            font-weight: 500;
+            background: #ffffff;
+            border: 1px solid var(--os-slate-200);
+            border-radius: 999px;
+            width: fit-content;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.02);
+        }
+
+        .order-breadcrumb a {
+            color: var(--os-slate-500);
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+
+        .order-breadcrumb a:hover {
+            color: var(--os-coral);
+        }
+
+        .order-breadcrumb-sep {
+            color: #94a3b8;
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        .order-breadcrumb .active {
+            color: var(--os-slate-900);
+            font-weight: 650;
+        }
+
+        .order-hero-card {
+            background: #ffffff;
+            border: 1px solid var(--os-slate-200);
+            border-radius: 24px;
+            padding: 1.75rem 2.25rem;
+            box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.04);
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.25rem;
+        }
+
+        .order-hero-title {
+            font-size: clamp(1.45rem, 2vw, 1.85rem);
+            font-weight: 850;
+            color: var(--os-slate-900);
+            letter-spacing: -0.025em;
+            line-height: 1.3;
+            margin-bottom: 0.25rem;
+        }
+
+        .order-hero-desc {
+            font-size: 0.88rem;
+            color: var(--os-slate-500);
+            margin: 0;
+        }
+
+        .btn-back-orders {
+            height: 42px;
+            padding: 0 1.25rem;
+            border-radius: 12px;
+            font-size: 0.86rem;
+            font-weight: 750;
+            color: var(--os-slate-700);
+            background-color: #ffffff;
+            border: 1.5px solid var(--os-slate-200);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+
+        .btn-back-orders:hover {
+            background-color: var(--os-slate-100);
+            border-color: #cbd5e1;
+            color: var(--os-slate-900);
+        }
+
+        .btn-online-payment {
+            height: 42px;
+            padding: 0 1.35rem;
+            border-radius: 12px;
+            font-size: 0.86rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff7f50 0%, #f06437 100%);
+            border: none;
+            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            box-shadow: 0 4px 14px -2px rgba(255, 127, 80, 0.35);
+            transition: all 0.2s ease;
+        }
+
+        .btn-online-payment:hover {
+            background: linear-gradient(135deg, #f06437 0%, #d95326 100%);
+            color: #ffffff;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px -2px rgba(255, 127, 80, 0.45);
+        }
+
+        .order-fragment-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .order-fragment-container .os-frag-bento-card {
+            background: #ffffff;
+            border: 1px solid var(--os-slate-200);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.04);
+            margin-bottom: 1.5rem;
+        }
+
+        .cancel-action-card {
+            background: #fff5f5;
+            border: 1px solid #fecaca;
+            border-radius: 20px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .cancel-action-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #991b1b;
+            font-size: 0.88rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .btn-cancel-order {
+            height: 40px;
+            padding: 0 1.25rem;
+            border-radius: 10px;
+            font-size: 0.86rem;
+            font-weight: 750;
+            background-color: #ffffff;
+            border: 1.5px solid #fca5a5;
+            color: #dc2626;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-cancel-order:hover {
+            background-color: #dc2626;
+            border-color: #dc2626;
+            color: #ffffff;
+        }
+
+        .reviews-bento-card {
+            background: #ffffff;
+            border: 1px solid var(--os-slate-200);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.04);
+            margin-bottom: 1.5rem;
+        }
+
+        .reviews-bento-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--os-slate-100);
+            padding: 1.25rem 1.75rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: 850;
+            color: var(--os-slate-900);
+        }
+
+        .reviews-bento-body {
+            padding: 1.5rem 1.75rem;
+        }
+
+        .review-product-item {
+            background: #f8fafc;
+            border: 1px solid var(--os-slate-200);
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            transition: border-color 0.15s ease;
+        }
+
+        .review-product-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .review-product-item:hover {
+            border-color: #cbd5e1;
+        }
+
+        .review-product-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 0.75rem;
+        }
+
+        .review-product-name {
+            font-size: 0.96rem;
+            font-weight: 800;
+            color: var(--os-slate-900);
+        }
+
+        .review-store-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--os-coral-soft);
+            color: var(--os-coral-dark);
+            border: 1px solid rgba(255, 127, 80, 0.25);
+            padding: 0.2rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.74rem;
+            font-weight: 750;
+        }
+
+        .reviewed-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #dcfce7;
+            color: #15803d;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+        }
+
+        .form-control-pro,
+        .form-select-pro {
+            border-radius: 12px;
+            border: 1.5px solid var(--os-slate-200);
+            background-color: #ffffff;
+            font-size: 0.885rem;
+            font-weight: 550;
+            color: var(--os-slate-900);
+            padding: 0.55rem 0.95rem;
+            transition: all 0.15s ease;
+            width: 100%;
+        }
+
+        .form-select-pro {
+            height: 44px;
+            cursor: pointer;
+        }
+
+        .form-control-pro:focus,
+        .form-select-pro:focus {
+            border-color: var(--os-coral);
+            box-shadow: 0 0 0 3.5px rgba(255, 127, 80, 0.15);
+            outline: none;
+        }
+
+        .field-label {
+            font-size: 0.78rem;
+            font-weight: 750;
+            color: var(--os-slate-700);
+            margin-bottom: 0.35rem;
+            display: block;
+        }
+
+        .btn-submit-review {
+            height: 44px;
+            padding: 0 1.4rem;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff7f50 0%, #f06437 100%);
+            border: none;
+            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px -2px rgba(255, 127, 80, 0.35);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-submit-review:hover {
+            background: linear-gradient(135deg, #f06437 0%, #d95326 100%);
+            color: #ffffff;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px -2px rgba(255, 127, 80, 0.45);
+        }
+
+        @media (max-width: 575.98px) {
+            .order-detail-wrapper {
+                padding: 0.75rem 0.5rem 3.5rem;
+            }
+
+            .order-hero-card {
+                padding: 1.25rem;
+                border-radius: 18px;
+            }
+
+            .reviews-bento-header,
+            .reviews-bento-body {
+                padding: 1.15rem;
+            }
+
+            .btn-submit-review {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="os-home">
+<div class="order-detail-wrapper">
+    <nav aria-label="breadcrumb" class="order-breadcrumb-nav">
+        <ol class="order-breadcrumb">
+            <li><a th:href="@{/}">Trang chủ</a></li>
+            <span class="order-breadcrumb-sep">›</span>
+            <li><a th:href="@{/orders}">Đơn hàng của tôi</a></li>
+            <span class="order-breadcrumb-sep">›</span>
+            <li class="active" aria-current="page" th:text="'Đơn #' + ${orderDetail.order.orderId}">Chi tiết đơn hàng</li>
+        </ol>
+    </nav>
+
+    <div class="order-hero-card">
+        <div>
+            <h1 class="order-hero-title" th:text="'Chi tiết đơn hàng #' + ${orderDetail.order.orderId}">Chi tiết đơn hàng</h1>
+            <p class="order-hero-desc">Theo dõi trạng thái xử lý, thông tin kiện hàng xuất kho và đánh giá chất lượng sản phẩm.</p>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <a class="btn-online-payment" th:if="${orderDetail.order.paymentMethod.name() == 'ONLINE'}"
+               th:href="@{/orders/{id}/payments(id=${orderDetail.order.orderId})}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="2"/>
+                    <line x1="2" y1="10" x2="22" y2="10"/>
+                </svg>
+                <span>Xem thanh toán trực tuyến</span>
+            </a>
+            <a class="btn-back-orders" th:href="@{/orders}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"/>
+                    <polyline points="12 19 5 12 12 5"/>
+                </svg>
+                <span>Đơn hàng của tôi</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="alert alert-success border-0 rounded-4 shadow-sm py-3 px-4 mb-4 d-flex align-items-center gap-2"
+         th:if="${param.cancelled != null and orderDetail.order.orderStatus.name() == 'CANCELLED'}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        <div class="small fw-semibold">Đơn đã hủy. Tồn kho đã được hoàn về chi nhánh của đơn.</div>
+    </div>
+
+    <div class="order-fragment-container">
+        <div th:replace="~{orders/fragments :: detail(${orderDetail}, ${refund})}"></div>
+    </div>
+
+    <form th:if="${canCancel == true}" th:action="@{/orders/{id}/cancel(id=${orderDetail.order.orderId})}" method="post" class="cancel-action-card">
+        <p class="cancel-action-info">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span>Có thể hủy đơn chưa thanh toán trước khi cửa hàng bắt đầu chuẩn bị hàng.</span>
+        </p>
+        <button class="btn-cancel-order" type="submit">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+            <span>Hủy đơn hàng</span>
+        </button>
+    </form>
+
+    <section class="reviews-bento-card" id="reviews" th:if="${reviewItems != null and !reviewItems.isEmpty()}">
+        <div class="reviews-bento-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff7f50" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+            <span>Đánh giá sản phẩm</span>
+        </div>
+
+        <div class="reviews-bento-body">
+            <div class="alert alert-success border-0 rounded-4 shadow-sm py-2 px-3 small mb-3" th:if="${param.reviewed != null}">
+                Cảm ơn bạn đã đánh giá sản phẩm.
+            </div>
+            <div class="alert alert-danger border-0 rounded-4 shadow-sm py-2 px-3 small mb-3" th:if="${param.reviewError != null and #strings.equals(param.reviewError[0], 'invalid')}">
+                Vui lòng chọn từ 1 đến 5 sao; nhận xét tối đa 1000 ký tự.
+            </div>
+            <div class="alert alert-warning border-0 rounded-4 shadow-sm py-2 px-3 small mb-3" th:if="${param.reviewError != null and !#strings.equals(param.reviewError[0], 'invalid')}">
+                Không thể gửi đánh giá. Mỗi dòng hàng đã nhận chỉ được đánh giá một lần.
+            </div>
+
+            <div class="review-product-item" th:each="item : ${reviewItems}" th:attr="data-review-product=${item.productId},data-review-item=${item.orderItemId}">
+                <div class="review-product-header">
+                    <div class="review-product-name" th:text="${item.productName}">Sản phẩm</div>
+                    <span class="review-store-pill">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 21h18"/>
+                            <path d="M5 21V7l8-4v18"/>
+                            <path d="M19 21V11l-6-4"/>
+                        </svg>
+                        <span th:text="${item.storeName}">Chi nhánh cấp hàng</span>
+                    </span>
+                </div>
+
+                <div th:if="${item.reviewed}">
+                    <span class="reviewed-badge">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        <span>Bạn đã đánh giá sản phẩm này.</span>
+                    </span>
+                </div>
+
+                <form th:if="${item.reviewable()}" th:action="@{/reviews}" method="post" class="row g-3 align-items-end mt-1">
+                    <input type="hidden" name="orderItemId" th:value="${item.orderItemId}">
+                    <input type="hidden" name="productId" th:value="${item.productId}">
+                    <input type="hidden" name="orderId" th:value="${orderDetail.order.orderId}">
+
+                    <div class="col-12 col-sm-3 col-md-2">
+                        <label class="field-label" th:for="'rating-' + ${item.orderItemId}">Số sao</label>
+                        <select class="form-select-pro" name="rating" th:id="'rating-' + ${item.orderItemId}" required>
+                            <option value="">Chọn</option>
+                            <option th:each="n : ${#numbers.sequence(5, 1, -1)}" th:value="${n}" th:text="${n} + ' ★'"></option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-md-8">
+                        <label class="field-label" th:for="'comment-' + ${item.orderItemId}">Nhận xét (không bắt buộc)</label>
+                        <textarea class="form-control-pro" name="comment" th:id="'comment-' + ${item.orderItemId}" rows="2" maxlength="1000" placeholder="Chia sẻ cảm nhận của bạn về chất lượng sản phẩm..."></textarea>
+                    </div>
+
+                    <div class="col-12 col-sm-3 col-md-2 d-grid">
+                        <button class="btn-submit-review" type="submit">
+                            <span>Gửi đánh giá</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

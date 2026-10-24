@@ -39,7 +39,7 @@ public class SecurityConfig {
 
     private static final String[] PUBLIC_PATHS = {
             // catalog, Store Finder and the choice of the Store being browsed are open to guests (Roadmap V2 5)
-            "/", "/login", "/register", "/products/**", "/stores/**", "/image-credits", "/health", "/error",
+            "/", "/login", "/register", "/forgot-password/**", "/forgot-password", "/products/**", "/stores/**", "/image-credits", "/health", "/error",
             "/css/**", "/js/**", "/images/**", "/vendor/**", "/favicon.ico",
             "/api/auth/**"
     };

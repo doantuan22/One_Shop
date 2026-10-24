@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Tổng quan chi nhánh</title>
+    <style>
+        /* Dashboard-only visual styling: reuse OneShop Coral theme tokens. */
+        .os-staff-dashboard { color: var(--os-text, var(--bs-body-color, #292d32)); }
+        .os-staff-dashboard .os-dashboard-store {
+            padding: clamp(1.25rem, 2.5vw, 2rem);
+            border: 1px solid var(--bs-coral-border, #ffd5c7);
+            border-radius: var(--bs-radius-lg, 16px);
+            background: linear-gradient(135deg, var(--bs-coral-soft, #fff5f2), #fff 55%);
+            box-shadow: 0 8px 24px rgba(255, 127, 80, .07);
+        }
+        .os-staff-dashboard .os-dashboard-store-name {
+            margin-bottom: .5rem;
+            color: var(--bs-dark-coral, #d65426);
+            font-weight: 800;
+            letter-spacing: -.02em;
+        }
+        .os-staff-dashboard .os-dashboard-store-address { font-weight: 600; }
+        .os-staff-dashboard .os-dashboard-store-detail { line-height: 1.7; }
+        .os-staff-dashboard .os-dashboard-metrics { margin-top: 1.25rem; }
+        .os-staff-dashboard .os-dashboard-metric { display: flex; }
+        .os-staff-dashboard .os-dashboard-metric > * { flex: 1; min-width: 0; }
+        .os-staff-dashboard .os-dashboard-metric .card,
+        .os-staff-dashboard .os-dashboard-metric .os-card {
+            height: 100%;
+            border: 1px solid var(--bs-coral-border, #ffd5c7);
+            border-radius: var(--bs-radius-lg, 16px);
+            background: #fff;
+            box-shadow: 0 4px 16px rgba(48, 36, 32, .05);
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+        .os-staff-dashboard .os-dashboard-metric .card:hover,
+        .os-staff-dashboard .os-dashboard-metric .os-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--bs-box-shadow-coral, 0 8px 24px rgba(255, 127, 80, .15));
+        }
+        .os-staff-dashboard .os-dashboard-metric .os-stat__value {
+            color: var(--bs-primary, #ff7f50);
+            font-weight: 800;
+        }
+        .os-staff-dashboard .os-dashboard-orders-heading { gap: .75rem; }
+        .os-staff-dashboard .os-dashboard-orders-title {
+            font-weight: 800;
+            color: var(--bs-dark-coral, #d65426);
+        }
+        .os-staff-dashboard .os-dashboard-orders-table {
+            overflow-x: auto;
+            border: 1px solid var(--bs-border-color, #f3e5df);
+            border-radius: var(--bs-radius-lg, 16px);
+            background: #fff;
+        }
+        .os-staff-dashboard .os-dashboard-orders-table .table { margin-bottom: 0; }
+        .os-staff-dashboard .os-dashboard-orders-table .table thead th {
+            background: var(--bs-coral-soft, #fff5f2);
+            color: var(--bs-dark-coral, #d65426);
+            border-bottom-color: var(--bs-coral-border, #ffd5c7);
+        }
+        .os-staff-dashboard .os-dashboard-warning {
+            border-radius: var(--bs-radius-md, 10px);
+            border: 1px solid var(--bs-coral-border, #ffd5c7);
+        }
+        @media (max-width: 575.98px) {
+            .os-staff-dashboard .os-dashboard-orders-heading { align-items: flex-start !important; flex-direction: column; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .os-staff-dashboard .os-dashboard-metric .card,
+            .os-staff-dashboard .os-dashboard-metric .os-card { transition: none; }
+            .os-staff-dashboard .os-dashboard-metric .card:hover,
+            .os-staff-dashboard .os-dashboard-metric .os-card:hover { transform: none; }
+        }
+    </style>
+</head>
+<body>
+<main class="os-staff-dashboard">
+<div th:replace="~{fragments/components :: pageHeader('Tổng quan chi nhánh', 'Chỉ hiển thị dữ liệu của chi nhánh bạn được phân công.')}"></div>
+<div class="alert alert-warning os-dashboard-warning" id="no-store-scope" role="alert" th:if="${dashboard == null}">
+    Tài khoản của bạn chưa được phân công chi nhánh nào nên chưa thể xem đơn hàng hay tồn kho.
+    Vui lòng liên hệ quản trị viên.
+</div>
+<th:block th:if="${dashboard != null}">
+    <section class="mb-4 os-dashboard-store" th:each="stats : ${dashboard.stores}" th:attr="data-dashboard-store-id=${stats.store.id}">
+        <h2 class="h5 os-dashboard-store-name" th:text="${stats.store.name}"></h2>
+        <p class="mb-1 os-dashboard-store-address" th:text="${stats.store.code} + ' · ' + ${stats.store.address}"></p>
+        <p class="small text-secondary os-dashboard-store-detail">
+            <span th:text="${stats.store.area} + ' · ' + ${stats.store.provinceCity}"></span>
+            <span th:if="${stats.store.phone}" th:text="' · ' + ${stats.store.phone}"></span>
+            <span th:if="${stats.store.openingHours}" th:text="' · ' + ${stats.store.openingHours}"></span>
+        </p>
+        <div class="row g-3 os-dashboard-metrics">
+            <div class="col-12 col-sm-6 col-xl-3 os-dashboard-metric" data-metric="pending-orders" th:attr="data-value=${stats.openFulfillmentCount}">
+                <div th:replace="~{fragments/components :: statCard('Phần giao cần xử lý', ${stats.openFulfillmentCount}, 'Chờ chuẩn bị, đang chuẩn bị, đóng gói, giao hàng hoặc chờ khách nhận')}"></div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3 os-dashboard-metric" data-metric="waiting-pickup" th:attr="data-value=${stats.waitingPickupCount}">
+                <div th:replace="~{fragments/components :: statCard('Hàng chờ khách nhận tại cửa hàng', ${stats.waitingPickupCount}, 'Nhận tại cửa hàng · Sẵn sàng nhận')}"></div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3 os-dashboard-metric" data-metric="shipping" th:attr="data-value=${stats.shippingCount}">
+                <div th:replace="~{fragments/components :: statCard('Đang giao hàng', ${stats.shippingCount}, 'Đã bàn giao vận chuyển, chờ xác nhận giao')}"></div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3 os-dashboard-metric" data-metric="blocked" th:attr="data-value=${stats.blockedCount}">
+                <div th:replace="~{fragments/components :: statCard('Đang bị giữ', ${stats.blockedCount}, 'Chờ thanh toán hoặc chờ xử lý ngoại lệ')}"></div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3 os-dashboard-metric" data-metric="failed" th:attr="data-value=${stats.failedCount}">
+                <div th:replace="~{fragments/components :: statCard('Không thành công', ${stats.failedCount}, 'Chờ quản trị viên xử lý')}"></div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3 os-dashboard-metric" data-metric="low-stock" th:attr="data-value=${stats.lowStockSkuCount}">
+                <div th:replace="~{fragments/components :: statCard('Sản phẩm sắp hết hàng', ${stats.lowStockSkuCount}, 'SKU đang kinh doanh · Tồn kho 1–' + ${dashboard.lowStockThreshold})}"></div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3 os-dashboard-metric" data-metric="out-of-stock" th:attr="data-value=${stats.outOfStockSkuCount}">
+                <div th:replace="~{fragments/components :: statCard('Sản phẩm hết hàng', ${stats.outOfStockSkuCount}, 'SKU đang kinh doanh · Tồn kho bằng 0')}"></div>
+            </div>
+        </div>
+    </section>
+    <div class="d-flex justify-content-between align-items-center mb-3 os-dashboard-orders-heading">
+        <h2 class="h5 mb-0 os-dashboard-orders-title">Phần giao đang xử lý</h2>
+        <a class="btn btn-outline-primary btn-sm" th:href="@{/staff/fulfillments}">Xem tất cả phần giao</a>
+    </div>
+    <div class="os-dashboard-orders-table">
+        <div th:replace="~{staff/fulfillments/fragments :: table(${dashboard.recentFulfillments})}"></div>
+    </div>
+</th:block>
+</main>
+</body></html>

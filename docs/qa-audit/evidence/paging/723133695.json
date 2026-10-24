@@ -1,1 +1,1 @@
-{"request":"/admin/staff-assignments?page=2147483646&q=qa-no-match-999","expected":400,"timestamp":"2026-10-24T09:13:16.417379800Z","actual":400}
+{"actual":400,"timestamp":"2026-10-24T10:18:26.731406600Z","expected":400,"request":"/admin/staff-assignments?page=2147483646&q=qa-no-match-999"}

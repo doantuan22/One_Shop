@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "POST",
-    "method" : "delete",
-    "controller" : "com.oneshop.controller.admin.AdminPromotionController",
-    "path" : "/admin/promotions/{id}/delete"
-  },
-  "location" : "",
-  "executedAt" : "2026-10-24T09:12:17.344728200Z",
-  "expected" : 403,
-  "actual" : 403,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/admin/promotions/999999999/delete",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 403,
+  "expected" : 403,
+  "executedAt" : "2026-10-24T10:17:31.421222600Z",
+  "location" : "",
+  "route" : {
+    "path" : "/admin/promotions/{id}/delete",
+    "controller" : "com.oneshop.controller.admin.AdminPromotionController",
+    "method" : "delete",
+    "verb" : "POST"
+  }
 }

@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "POST",
-    "method" : "update",
-    "controller" : "com.oneshop.controller.admin.AdminStoreController",
-    "path" : "/admin/stores/{id}"
-  },
-  "location" : "",
-  "executedAt" : "2026-10-24T09:12:19.581802900Z",
-  "expected" : 403,
-  "actual" : 403,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/admin/stores/999999999",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 403,
+  "expected" : 403,
+  "executedAt" : "2026-10-24T10:17:33.583580700Z",
+  "location" : "",
+  "route" : {
+    "path" : "/admin/stores/{id}",
+    "controller" : "com.oneshop.controller.admin.AdminStoreController",
+    "method" : "update",
+    "verb" : "POST"
+  }
 }

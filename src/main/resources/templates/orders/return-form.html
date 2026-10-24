@@ -19,7 +19,7 @@
         <p>Bạn đang trả <strong>toàn bộ</strong> các sản phẩm đã nhận của đơn hàng này. Hạn gửi yêu cầu:
             <strong th:text="${#temporals.format(eligibility.deadline, 'dd/MM/yyyy HH:mm')}"></strong>
             (<span th:text="${windowDays}">3</span> ngày kể từ khi nhận hàng).</p>
-        <p>Tiền hàng được hoàn mô phỏng sau khi quản trị viên duyệt:
+        <p>Tiền hàng được hoàn sau khi quản trị viên duyệt:
             <strong><span th:replace="~{fragments/components :: price(${eligibility.refundAmount})}"></span></strong>.
             Phí giao hàng không được hoàn.</p>
         <div class="mb-3">

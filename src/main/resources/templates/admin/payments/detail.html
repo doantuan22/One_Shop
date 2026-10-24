@@ -14,17 +14,17 @@
         Kết quả xử lý: <strong th:text="${param.result[0]}"></strong>
     </div>
     <div class="alert alert-info" th:if="${param.refund != null}" id="refund-result">
-        Hoàn tiền mô phỏng: <strong th:text="${param.refund[0]}"></strong>
+        Hoàn tiền: <strong th:text="${param.refund[0]}"></strong>
     </div>
     <div class="alert alert-warning" th:unless="${paymentCase.gatewayEnabled}">
-        Cổng thanh toán mô phỏng đang tắt trong môi trường này: không thể ghi nhận kết quả mô phỏng.
+        Cổng thanh toán đang tắt trong môi trường này: không thể ghi nhận kết quả.
     </div>
 
     <dl class="row">
         <dt class="col-sm-4">Phân loại thanh toán</dt>
         <dd class="col-sm-8" id="case-category"><span th:replace="~{fragments/components :: paymentCategory(${c.category})}"></span>
             <span class="small text-secondary d-block" th:if="${c.category.name() == 'RECONCILING'}">Kết quả chưa xác định nhưng còn trong hạn thanh toán: chưa cần quản trị viên can thiệp.</span>
-            <span class="small text-secondary d-block" th:if="${c.category.name() == 'ATTENTION'}">Quá hạn, ngoại lệ hoặc hoàn tiền mô phỏng chưa xong: cần quản trị viên đối soát lại.</span></dd>
+            <span class="small text-secondary d-block" th:if="${c.category.name() == 'ATTENTION'}">Quá hạn, ngoại lệ hoặc hoàn tiền chưa xong: cần quản trị viên đối soát lại.</span></dd>
         <dt class="col-sm-4" th:if="${#strings.contains(paymentCase.partStatuses.values().toString(), 'FAILED')}">Giao hàng thất bại</dt>
         <dd class="col-sm-8" th:if="${#strings.contains(paymentCase.partStatuses.values().toString(), 'FAILED')}" id="case-delivery-failure">
             Đơn có phần giao không thành công. Đây là ngoại lệ giao hàng, không phải lỗi thanh toán:
@@ -38,7 +38,7 @@
         <dd class="col-sm-8" id="case-payment-status" th:attr="data-status=${c.paymentStatus}">
             <span th:replace="~{staff/delivery/fragments :: payment(${c.paymentStatus})}"></span>
         </dd>
-        <dt class="col-sm-4">Cổng mô phỏng trả lời</dt>
+        <dt class="col-sm-4">Cổng trả lời</dt>
         <dd class="col-sm-8" id="case-verification"><span th:replace="~{fragments/components :: gatewayAnswer(${c.verification})}"></span></dd>
         <dt class="col-sm-4">Hạn thanh toán</dt>
         <dd class="col-sm-8" th:text="${c.paymentDeadline != null} ? ${#temporals.format(c.paymentDeadline, 'dd/MM/yyyy HH:mm:ss')} : '—'"></dd>
@@ -50,10 +50,10 @@
 
     <div th:replace="~{orders/fragments :: refundSection(${refund})}"></div>
 
-    <h2 class="h5">Các lần thanh toán (cổng mô phỏng)</h2>
+    <h2 class="h5">Các lần thanh toán</h2>
     <div class="table-responsive">
         <table class="table">
-            <thead><tr><th>#</th><th>Trạng thái</th><th>Sổ cổng</th><th>Mã giao dịch</th><th>Số tiền</th><th>Ghi nhận lúc</th><th>Hoàn tiền (mô phỏng)</th></tr></thead>
+            <thead><tr><th>#</th><th>Trạng thái</th><th>Sổ cổng</th><th>Mã giao dịch</th><th>Số tiền</th><th>Ghi nhận lúc</th><th>Hoàn tiền</th></tr></thead>
             <tbody id="payment-attempts">
             <tr th:each="a : ${paymentCase.attempts}" th:attr="data-payment-id=${a.paymentId},data-ledger=${a.ledgerState}">
                 <td th:text="${a.paymentId}"></td>
@@ -85,7 +85,7 @@
             <button class="btn btn-primary" type="submit" id="action-recheck">Đối soát lại</button>
         </form>
         <div th:if="${paymentCase.canSettleGateway}" class="mb-3" id="gateway-console">
-            <p class="small text-secondary">Ghi nhận kết quả phản hồi của cổng thanh toán (mô phỏng) cho lần thanh toán chưa xác định.</p>
+            <p class="small text-secondary">Ghi nhận kết quả phản hồi của cổng thanh toán cho lần thanh toán chưa xác định.</p>
             <form method="post" class="d-inline" th:action="@{/admin/payments/{id}/gateway(id=${c.orderId})}">
                 <input type="hidden" name="answer" value="COLLECTED">
                 <button class="btn btn-outline-success" type="submit" id="action-gateway-collected">Cổng xác nhận ĐÃ thu</button>
@@ -96,8 +96,8 @@
             </form>
         </div>
         <form method="post" th:if="${paymentCase.canRetryRefund}" th:action="@{/admin/payments/{id}/refund(id=${c.orderId})}">
-            <p class="small text-secondary">Hoàn tiền mô phỏng toàn phần cho khoản đã thu. Không hoàn một phần.</p>
-            <button class="btn btn-outline-primary" type="submit" id="action-refund-retry">Thử lại hoàn tiền mô phỏng</button>
+            <p class="small text-secondary">Hoàn tiền toàn phần cho khoản đã thu. Không hoàn một phần.</p>
+            <button class="btn btn-outline-primary" type="submit" id="action-refund-retry">Thử lại hoàn tiền</button>
         </form>
         <p class="text-secondary mb-0"
            th:unless="${paymentCase.canRecheck or paymentCase.canSettleGateway or paymentCase.canRetryRefund}">

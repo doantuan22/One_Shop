@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "GET",
-    "method" : "detail",
-    "controller" : "com.oneshop.controller.client.ProductController",
-    "path" : "/products/{id}"
-  },
-  "location" : "",
-  "executedAt" : "2026-10-24T09:12:22.233086100Z",
-  "expected" : 404,
-  "actual" : 404,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/products/999999999",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 404,
+  "expected" : 404,
+  "executedAt" : "2026-10-24T10:17:36.334235700Z",
+  "location" : "",
+  "route" : {
+    "path" : "/products/{id}",
+    "controller" : "com.oneshop.controller.client.ProductController",
+    "method" : "detail",
+    "verb" : "GET"
+  }
 }

@@ -55,7 +55,7 @@ class PartialRefundHttpDatabaseIntegrationTest extends V3RegressionTestSupport {
         HttpResponse<String> page = getAs(ADMIN, "/admin/orders/" + order);
 
         assertThat(page.statusCode()).isEqualTo(200);
-        assertThat(page.body()).contains("id=\"fulfillment-exception\"", "Đã hoàn (mô phỏng)", "Còn giữ lại", "os-refund-preview",
+        assertThat(page.body()).contains("id=\"fulfillment-exception\"", "Đã hoàn", "Còn giữ lại", "os-refund-preview",
                 "phí giao được giữ lại", "Chưa xác nhận được (chỉ ghi nhận, ngoại lệ vẫn mở)", path(order, thuDuc, "undeliverable"));
     }
 
@@ -77,7 +77,7 @@ class PartialRefundHttpDatabaseIntegrationTest extends V3RegressionTestSupport {
                 "goods=LOST&reason=" + enc("Vận chuyển xác nhận thất lạc hàng"), true);
         assertThat(location(lost)).endsWith("exception=closed-partial");
         assertThat(getAs(ADMIN, "/admin/orders/" + order + "?exception=closed-partial").body())
-                .contains("Hoàn tiền (mô phỏng)").doesNotContain("id=\"fulfillment-exception\"");
+                .contains("Hoàn tiền").doesNotContain("id=\"fulfillment-exception\"");
         assertThat(data.orderStatus(order)).isEqualTo("COMPLETED");
         assertThat(jdbc.queryForObject("select count(*) from dbo.payment_refunds where order_id = ? and component = 'GOODS' "
                 + "and status = 'SIMULATED_REFUNDED'", Integer.class, order)).isEqualTo(1);
@@ -96,14 +96,14 @@ class PartialRefundHttpDatabaseIntegrationTest extends V3RegressionTestSupport {
         HttpResponse<String> page = getAs(ALICE, "/orders/" + order);
 
         assertThat(page.statusCode()).isEqualTo(200);
-        assertThat(page.body()).contains("id=\"order-refunds\"", "Hoàn tiền (mô phỏng)", "mô phỏng", "không có khoản tiền thật",
+        assertThat(page.body()).contains("id=\"order-refunds\"", "Hoàn tiền",
                 "Hoàn tất một phần: có phần không giao được", "Khách đồng ý hủy phần hàng này", "Hoàn tiền hàng không giao được");
         assertThat(page.body()).doesNotContain("Người xử lý").doesNotContain("Quản trị viên");
         // somebody else's Order: not found, nothing leaks
         assertThat(getAs(BOB, "/orders/" + order).statusCode()).isEqualTo(404);
         // the Admin sees who decided
         assertThat(getAs(ADMIN, "/admin/orders/" + order).body()).contains("id=\"order-refunds\"", "Người xử lý");
-        assertThat(getAs(ADMIN, "/admin/payments/" + order).body()).contains("Hoàn tiền (mô phỏng)");
+        assertThat(getAs(ADMIN, "/admin/payments/" + order).body()).contains("Hoàn tiền");
     }
 
     @Test

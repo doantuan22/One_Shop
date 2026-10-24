@@ -4,6 +4,7 @@
     <title th:text="${editId == null} ? 'Thêm chi nhánh' : 'Sửa chi nhánh'">Chi nhánh</title>
 </head>
 <body>
+<nav class="os-breadcrumb-pill" aria-label="Vị trí trang"><a th:href="@{/admin/stores}">Chi nhánh</a><span class="os-breadcrumb-sep" aria-hidden="true">/</span><strong th:text="${editId == null} ? 'Thêm mới' : 'Chỉnh sửa'">Thêm mới</strong></nav>
 <div th:replace="~{fragments/components :: pageHeader(${editId == null} ? 'Thêm chi nhánh' : 'Sửa chi nhánh', 'Thông tin hiển thị trong Hệ thống cửa hàng của khách.')}"></div>
 
 <section class="card shadow-sm">

@@ -1,1 +1,1 @@
-{"request":"/staff/inventory-history?page=107374183&q=qa-no-match-999","expected":400,"timestamp":"2026-10-24T09:13:20.464562500Z","actual":400}
+{"actual":400,"timestamp":"2026-10-24T10:18:28.575113800Z","expected":400,"request":"/staff/inventory-history?page=107374183&q=qa-no-match-999"}

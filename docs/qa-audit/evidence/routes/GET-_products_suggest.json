@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "GET",
-    "method" : "suggest",
-    "controller" : "com.oneshop.controller.client.ProductController",
-    "path" : "/products/suggest"
-  },
-  "location" : "",
-  "executedAt" : "2026-10-24T09:12:22.222770100Z",
-  "expected" : 200,
-  "actual" : 200,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/products/suggest",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 200,
+  "expected" : 200,
+  "executedAt" : "2026-10-24T10:17:36.324779800Z",
+  "location" : "",
+  "route" : {
+    "path" : "/products/suggest",
+    "controller" : "com.oneshop.controller.client.ProductController",
+    "method" : "suggest",
+    "verb" : "GET"
+  }
 }

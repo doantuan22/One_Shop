@@ -2,6 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head><title>Mã khuyến mãi</title></head>
 <body>
+<nav class="os-breadcrumb-pill" aria-label="Vị trí trang"><a th:href="@{/admin/promotions}">Khuyến mãi</a><span class="os-breadcrumb-sep" aria-hidden="true">/</span><strong th:text="${current == null} ? 'Thêm mới' : 'Chỉnh sửa'">Thêm mới</strong></nav>
 <div th:replace="~{fragments/components :: pageHeader(${current == null} ? 'Thêm mã khuyến mãi' : 'Chỉnh sửa mã khuyến mãi', 'Giảm giá chỉ tính trên tiền hàng, không giảm phí giao hàng. Đơn đã đặt giữ nguyên số tiền đã giảm khi bạn sửa mã.')}"></div>
 
 <div class="alert alert-success" th:if="${param.success != null}">Đã tạo mã khuyến mãi.</div>

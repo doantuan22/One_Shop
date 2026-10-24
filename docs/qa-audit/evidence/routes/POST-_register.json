@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "POST",
-    "method" : "register",
-    "controller" : "com.oneshop.controller.client.AuthController",
-    "path" : "/register"
-  },
-  "location" : "",
-  "executedAt" : "2026-10-24T09:12:22.326350400Z",
-  "expected" : 403,
-  "actual" : 403,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/register",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 403,
+  "expected" : 403,
+  "executedAt" : "2026-10-24T10:17:36.398179800Z",
+  "location" : "",
+  "route" : {
+    "path" : "/register",
+    "controller" : "com.oneshop.controller.client.AuthController",
+    "method" : "register",
+    "verb" : "POST"
+  }
 }

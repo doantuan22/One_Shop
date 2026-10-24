@@ -1,7 +1,7 @@
 {
-  "expected" : "success/empty page or controlled 4xx; never 5xx",
-  "request" : "/staff/reviews?page=0&q=qa-no-match-999",
-  "timestamp" : "2026-10-24T09:12:03.958100200Z",
+  "actual" : 200,
   "actor" : "staff.thuduc@oneshop.vn",
-  "actual" : 200
+  "timestamp" : "2026-10-24T10:17:19.253026100Z",
+  "request" : "/staff/reviews?page=0&q=qa-no-match-999",
+  "expected" : "success/empty page or controlled 4xx; never 5xx"
 }

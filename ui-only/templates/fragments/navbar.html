@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+<body>
+<nav th:fragment="navbar" class="navbar bg-white sticky-top os-navbar-custom" aria-label="Điều hướng chính">
+    <style>
+        .os-navbar-custom {
+            border-bottom: 1px solid #f0e6e3;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            padding: 0.5rem 0;
+            background-color: #ffffff;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+        }
+
+        /* ------------------ LOGO ------------------ */
+        .navbar-brand-custom {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            padding: 0;
+            height: 48px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .navbar-logo-img {
+            height: 76px;
+            width: auto;
+            object-fit: contain;
+            display: block;
+            transform: translateY(2px) scale(1.22);
+            transform-origin: left center;
+            transition: transform 0.2s ease;
+        }
+
+        .navbar-brand-custom:hover .navbar-logo-img {
+            transform: translateY(2px) scale(1.28);
+        }
+
+        /* ------------------ NAVIGATION LINKS ------------------ */
+        .os-nav-menu {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .os-nav-link {
+            font-size: 0.925rem;
+            font-weight: 600;
+            color: #475569 !important;
+            padding: 0.5rem 0.95rem !important;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: color 0.15s ease, background-color 0.15s ease;
+            white-space: nowrap;
+            height: 38px;
+        }
+
+        .os-nav-link:hover {
+            color: #ff7f50 !important;
+            background-color: #fffaf8;
+        }
+
+        /* Current page: filled brand-soft chip with bold brand text (existing brand tokens). */
+        .os-nav-link.active {
+            color: var(--brand-primary, #ff7f50) !important;
+            background-color: var(--brand-primary-light, #fff5f2);
+            font-weight: 700;
+            position: relative;
+        }
+
+        /* ------------------ RIGHT ACTION GROUP ------------------ */
+        .os-nav-actions-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.65rem;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .os-btn-cart {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            height: 38px;
+            padding: 0 0.9rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #334155 !important;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .os-btn-cart:hover {
+            color: #ff7f50 !important;
+            border-color: #ffd5c7;
+            background-color: #fffaf8;
+        }
+
+        .os-btn-orders {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            height: 38px;
+            padding: 0 0.85rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #475569 !important;
+            background-color: transparent;
+            border: 1px solid transparent;
+            border-radius: 9px;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .os-btn-orders:hover {
+            color: #ff7f50 !important;
+            background-color: #fffaf8;
+            border-color: #ffd5c7;
+        }
+
+        .btn-nav-login {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 38px;
+            padding: 0 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #334155;
+            text-decoration: none;
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            background-color: #ffffff;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn-nav-login:hover {
+            color: #ff7f50;
+            border-color: #ffd5c7;
+            background-color: #fffaf8;
+        }
+
+        .btn-nav-register {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 38px;
+            padding: 0 1.15rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #ff7f50 0%, #e86738 100%);
+            border: 1px solid transparent;
+            border-radius: 9px;
+            box-shadow: 0 2px 8px rgba(255, 127, 80, 0.25);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-nav-register:hover {
+            background: linear-gradient(135deg, #e86738 0%, #d65426 100%);
+            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.35);
+            color: #ffffff !important;
+        }
+
+        /* ------------------ USER AVATAR & DROPDOWN ------------------ */
+        .os-account-dropdown {
+            position: relative;
+        }
+
+        .os-account-dropdown-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            height: 38px;
+            padding: 3px 10px 3px 4px;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            cursor: pointer;
+            text-decoration: none !important;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+
+        .os-account-dropdown-toggle:hover,
+        .os-account-dropdown-toggle.show,
+        .os-account-dropdown-toggle[aria-expanded="true"] {
+            background-color: #fffaf8;
+            border-color: #ffd5c7;
+            box-shadow: 0 2px 8px rgba(255, 127, 80, 0.15);
+        }
+
+        .os-account-dropdown-toggle::after {
+            display: none !important; /* Ẩn mũi tên mặc định của Bootstrap để dùng SVG tuỳ chỉnh */
+        }
+
+        .os-avatar-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff7f50 0%, #e86738 100%);
+            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.825rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            flex-shrink: 0;
+            box-shadow: 0 1px 4px rgba(255, 127, 80, 0.25);
+        }
+
+        .os-avatar-circle.os-avatar-lg {
+            width: 42px;
+            height: 42px;
+            font-size: 1.1rem;
+        }
+
+        .os-account-name {
+            max-width: 160px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        @media (max-width: 575.98px) {
+            .os-account-name { display: none; }
+        }
+
+        .os-avatar-chevron {
+            color: #64748b;
+            transition: transform 0.2s ease, color 0.15s ease;
+        }
+
+        .os-account-dropdown-toggle:hover .os-avatar-chevron,
+        .os-account-dropdown-toggle.show .os-avatar-chevron,
+        .os-account-dropdown-toggle[aria-expanded="true"] .os-avatar-chevron {
+            color: #ff7f50;
+            transform: rotate(180deg);
+        }
+
+        .os-account-menu {
+            min-width: 250px;
+            padding: 0.5rem;
+            border: 1px solid #f0e6e3;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            background-color: #ffffff;
+            margin-top: 8px !important;
+        }
+
+        /* Bootstrap runs this menu without Popper (it sits in a navbar), so centre it under the toggle with CSS;
+           --os-menu-shift is set by the script below only when the centred menu would leave the viewport. */
+        .os-account-dropdown .os-account-menu {
+            left: 50%;
+            right: auto;
+            transform: translateX(calc(-50% + var(--os-menu-shift, 0px)));
+        }
+
+        .os-account-menu-header {
+            padding: 0.4rem 0.6rem 0.65rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            margin-bottom: 0.35rem;
+        }
+
+        .os-account-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #334155 !important;
+            border-radius: 8px;
+            text-decoration: none !important;
+            transition: all 0.15s ease;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+
+        .os-account-menu-item:hover,
+        .os-account-menu-item:focus {
+            background-color: #fffaf8;
+            color: #ff7f50 !important;
+        }
+
+        .os-account-menu-item svg {
+            color: #94a3b8;
+            transition: color 0.15s ease;
+            flex-shrink: 0;
+        }
+
+        .os-account-menu-item:hover svg,
+        .os-account-menu-item:focus svg {
+            color: #ff7f50;
+        }
+
+        .os-account-menu-item.os-menu-logout {
+            color: #64748b !important;
+        }
+
+        .os-account-menu-item.os-menu-logout:hover,
+        .os-account-menu-item.os-menu-logout:focus {
+            background-color: #fef2f2;
+            color: #dc2626 !important;
+        }
+
+        .os-account-menu-item.os-menu-logout:hover svg,
+        .os-account-menu-item.os-menu-logout:focus svg {
+            color: #dc2626;
+        }
+
+        .badge-coral-subtle {
+            background-color: #fff0ea;
+            color: #ff7f50;
+            border: 1px solid #ffdcd1;
+            font-size: 0.725rem;
+            font-weight: 600;
+        }
+
+        .btn-nav-logout {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 38px;
+            font-size: 0.825rem;
+            font-weight: 600;
+            color: #64748b;
+            background: transparent;
+            border: 1px solid #cbd5e1;
+            padding: 0 0.75rem;
+            border-radius: 9px;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn-nav-logout:hover {
+            color: #dc2626;
+            border-color: #fca5a5;
+            background-color: #fef2f2;
+        }
+
+        .nav-role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            height: 38px;
+            font-size: 0.775rem;
+            font-weight: 700;
+            padding: 0 0.75rem;
+            border-radius: 9px;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .nav-role-staff {
+            background-color: #eff6ff;
+            color: #1d4ed8 !important;
+            border: 1px solid #bfdbfe;
+        }
+
+        .nav-role-staff:hover {
+            background-color: #dbeafe;
+        }
+
+        .nav-role-admin {
+            background-color: #fdf2f8;
+            color: #be185d !important;
+            border: 1px solid #fbcfe8;
+        }
+
+        .nav-role-admin:hover {
+            background-color: #fce7f3;
+        }
+
+        /* ------------------ MOBILE CONTROLS ------------------ */
+        .os-mobile-cart-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 9px;
+            color: #334155;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+
+        .os-mobile-cart-btn:hover {
+            color: #ff7f50;
+            background-color: #fffaf8;
+            border-color: #ffd5c7;
+        }
+
+        .navbar-toggler-custom {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            background-color: #ffffff;
+        }
+
+        .navbar-toggler-custom:focus {
+            box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.22);
+        }
+
+        /* ------------------ LAYOUT GRID / RESPONSIVE ------------------ */
+        @media (min-width: 992px) {
+            .os-navbar-container {
+                display: grid !important;
+                grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) !important;
+                align-items: center !important;
+                column-gap: 1.25rem;
+                width: 100%;
+            }
+
+            .os-nav-col-left {
+                display: flex !important;
+                align-items: center;
+                justify-content: flex-start;
+            }
+
+<<<<<<< HEAD
+        <div class="collapse navbar-collapse" id="mainNav">
+          <ul class="navbar-nav me-auto ps-lg-3 gap-lg-1">
+            <li class="nav-item">
+              <a class="nav-link os-nav-link" th:href="@{/}">Trang chủ</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link os-nav-link" th:href="@{/products}">Sản phẩm</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link os-nav-link" th:href="@{/stores}">Hệ thống cửa hàng</a>
+            </li>
+          </ul>
+=======
+            .os-nav-col-center {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                white-space: nowrap;
+            }
+>>>>>>> 986bd39383b9ed7d4f582667875d648811b0b707
+
+            .os-nav-col-right {
+                display: flex !important;
+                align-items: center;
+                justify-content: flex-end;
+                white-space: nowrap;
+            }
+
+            /* Hide mobile-only elements on desktop */
+            .os-nav-mobile-controls,
+            .os-nav-mobile-drawer {
+                display: none !important;
+            }
+        }
+
+        /* Tối ưu riêng cho dải màn hình 992px - 1199.98px (như tablet ngang 1024px) */
+        @media (min-width: 992px) and (max-width: 1199.98px) {
+            .os-navbar-container {
+                column-gap: 0.75rem !important;
+                padding-left: 1.25rem !important;
+                padding-right: 1.25rem !important;
+                max-width: 100% !important;
+            }
+
+<<<<<<< HEAD
+            <li
+              class="nav-item"
+              sec:authorize="!isAuthenticated() or hasRole('CUSTOMER')"
+            >
+              <a class="nav-link os-nav-link" th:href="@{/cart}">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="9" cy="21" r="1" />
+                  <circle cx="20" cy="21" r="1" />
+                  <path
+                    d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+                  />
+                </svg>
+                <span>Giỏ hàng</span>
+              </a>
+            </li>
+
+            <li class="nav-item" sec:authorize="!isAuthenticated()">
+              <a class="btn-nav-login" th:href="@{/login}">Đăng nhập</a>
+            </li>
+            <li class="nav-item" sec:authorize="!isAuthenticated()">
+              <a class="btn-nav-register" th:href="@{/register}">Đăng ký</a>
+            </li>
+=======
+            .os-nav-link {
+                padding: 0.45rem 0.65rem !important;
+                font-size: 0.85rem !important;
+            }
+>>>>>>> 986bd39383b9ed7d4f582667875d648811b0b707
+
+            .os-nav-actions-group {
+                gap: 0.45rem !important;
+            }
+
+            .os-btn-cart,
+            .os-btn-orders,
+            .btn-nav-login,
+            .btn-nav-register,
+            .os-account-dropdown-toggle,
+            .btn-nav-logout,
+            .nav-role-badge {
+                height: 36px !important;
+                padding: 0 0.75rem !important;
+                font-size: 0.8125rem !important;
+            }
+
+            .navbar-logo-img {
+                height: 68px !important;
+            }
+        }
+
+        @media (max-width: 991.98px) {
+            .os-navbar-container {
+                display: flex !important;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+
+            .os-nav-col-left {
+                display: flex;
+                align-items: center;
+            }
+
+            /* Hide desktop center and right columns on mobile */
+            .os-nav-col-center,
+            .os-nav-col-right {
+                display: none !important;
+            }
+
+            .os-nav-mobile-controls {
+                display: flex !important;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .os-nav-mobile-drawer {
+                flex-basis: 100%;
+                width: 100%;
+            }
+
+            .os-mobile-drawer-body {
+                padding: 1rem 0 0.5rem;
+                border-top: 1px solid #f1f5f9;
+                margin-top: 0.75rem;
+            }
+
+            .os-mobile-drawer-body .os-nav-link {
+                height: 42px;
+                padding: 0 0.75rem !important;
+                width: 100%;
+            }
+
+            .navbar-logo-img {
+                height: 64px;
+                transform: translateY(1px) scale(1.18);
+            }
+
+            .navbar-brand-custom {
+                height: 42px;
+            }
+        }
+    </style>
+    <script>
+        (function () {
+            var EDGE = 8;
+            document.addEventListener('shown.bs.dropdown', function (event) {
+                var host = event.target.closest && event.target.closest('.os-account-dropdown');
+                var menu = host && host.querySelector('.os-account-menu');
+                if (!menu) { return; }
+                menu.style.removeProperty('--os-menu-shift');
+                var rect = menu.getBoundingClientRect();
+                var width = document.documentElement.clientWidth;
+                var shift = 0;
+                if (rect.right > width - EDGE) { shift = width - EDGE - rect.right; }
+                else if (rect.left < EDGE) { shift = EDGE - rect.left; }
+                if (shift) { menu.style.setProperty('--os-menu-shift', shift + 'px'); }
+            });
+        })();
+    </script>
+
+    <div class="container os-navbar-container">
+        <!-- 1. CỘT TRÁI: Logo thương hiệu OneShop -->
+        <div class="os-nav-col-left">
+            <a class="navbar-brand navbar-brand-custom" th:href="@{/}">
+                <img th:src="@{/images/One.png}" alt="OneShop Logo" class="navbar-logo-img">
+            </a>
+        </div>
+
+        <!-- 2. CỘT GIỮA: Navigation căn chính giữa tuyệt đối trên Desktop -->
+        <div class="os-nav-col-center">
+            <ul class="os-nav-menu">
+                <li><a class="os-nav-link" th:href="@{/}" th:classappend="${currentPath == '/'} ? 'active'" th:attr="aria-current=${currentPath == '/'} ? 'page'">Trang chủ</a></li>
+                <li><a class="os-nav-link" th:href="@{/products}" th:classappend="${currentPath != null and (currentPath == '/products' or #strings.startsWith(currentPath, '/products/'))} ? 'active'" th:attr="aria-current=${currentPath != null and (currentPath == '/products' or #strings.startsWith(currentPath, '/products/'))} ? 'page'">Sản phẩm</a></li>
+                <li><a class="os-nav-link" th:href="@{/stores}" th:classappend="${currentPath != null and (currentPath == '/stores' or #strings.startsWith(currentPath, '/stores/'))} ? 'active'" th:attr="aria-current=${currentPath != null and (currentPath == '/stores' or #strings.startsWith(currentPath, '/stores/'))} ? 'page'">Hệ thống cửa hàng</a></li>
+            </ul>
+        </div>
+
+        <!-- 3. CỘT PHẢI: Nhóm nút hành động căn phải trên Desktop -->
+        <div class="os-nav-col-right">
+            <div class="os-nav-actions-group">
+                <!-- Giỏ hàng (Khách vãng lai & Khách hàng) -->
+                <a class="os-btn-cart" th:href="@{/cart}" sec:authorize="!isAuthenticated() or hasRole('CUSTOMER')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span>Giỏ hàng</span>
+                </a>
+
+                <!-- Chưa đăng nhập: Đăng nhập & Đăng ký -->
+                <a class="btn-nav-login" th:href="@{/login}" sec:authorize="!isAuthenticated()">Đăng nhập</a>
+                <a class="btn-nav-register" th:href="@{/register}" sec:authorize="!isAuthenticated()">Đăng ký</a>
+
+                <!-- Đã đăng nhập: Avatar Tài khoản & Dropdown Menu -->
+                <div class="dropdown dropdown-center os-account-dropdown" sec:authorize="isAuthenticated()">
+                    <button class="os-account-dropdown-toggle dropdown-toggle" type="button" id="userAccountDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false" title="Tài khoản cá nhân">
+                        <span class="os-avatar-circle"
+                              th:with="dispName=${currentUser != null and currentUser.userName != null and !currentUser.userName.isBlank() ? currentUser.userName : (currentUser != null and currentUser.fullName != null and !currentUser.fullName.isBlank() ? currentUser.fullName : #authentication.name)}"
+                              th:text="${#strings.substring(dispName, 0, 1).toUpperCase()}">U</span>
+                        <span class="os-account-name"
+                              th:text="${currentUser != null and currentUser.userName != null and !currentUser.userName.isBlank() ? currentUser.userName : (currentUser != null and currentUser.fullName != null and !currentUser.fullName.isBlank() ? currentUser.fullName : #authentication.name)}">username</span>
+                        <svg class="os-avatar-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <ul class="dropdown-menu os-account-menu" aria-labelledby="userAccountDropdown">
+                        <!-- Dropdown Header: Avatar, Tên người dùng và Email -->
+                        <li class="os-account-menu-header">
+                            <div class="os-avatar-circle os-avatar-lg"
+                                 th:with="dispName=${currentUser != null and currentUser.fullName != null and !currentUser.fullName.isBlank() ? currentUser.fullName : #authentication.name}"
+                                 th:text="${#strings.substring(dispName, 0, 1).toUpperCase()}">U</div>
+                            <div class="overflow-hidden">
+                                <div class="fw-bold text-dark text-truncate"
+                                     th:text="${currentUser != null and currentUser.fullName != null and !currentUser.fullName.isBlank() ? currentUser.fullName : #authentication.name}">
+                                    Tên người dùng
+                                </div>
+                                <div class="text-muted small text-truncate"
+                                     th:text="${currentUser != null ? currentUser.email : #authentication.name}">
+                                    email@example.com
+                                </div>
+                                <div class="mt-1">
+                                    <span class="badge badge-coral-subtle rounded-pill" sec:authorize="hasRole('CUSTOMER')">Khách hàng</span>
+                                    <span class="badge bg-primary-subtle text-primary rounded-pill" sec:authorize="hasRole('STAFF')">Nhân viên</span>
+                                    <span class="badge bg-danger-subtle text-danger rounded-pill" sec:authorize="hasRole('ADMIN')">Quản trị viên</span>
+                                </div>
+                            </div>
+                        </li>
+
+                        <!-- Menu Item: Thông tin cá nhân -->
+                        <li>
+                            <a class="os-account-menu-item" th:href="@{/account}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                <span>Thông tin cá nhân</span>
+                            </a>
+                        </li>
+
+                        <!-- Menu Item: Đơn hàng của tôi (Khách hàng) -->
+                        <li sec:authorize="hasRole('CUSTOMER')">
+                            <a class="os-account-menu-item" th:href="@{/orders}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                                </svg>
+                                <span>Đơn hàng của tôi</span>
+                            </a>
+                        </li>
+
+                        <!-- Menu Item: Khu vực nhân viên (Staff) -->
+                        <li sec:authorize="hasRole('STAFF')">
+                            <a class="os-account-menu-item" th:href="@{/staff}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                                </svg>
+                                <span>Khu vực nhân viên</span>
+                            </a>
+                        </li>
+
+                        <!-- Menu Item: Trang quản trị (Admin) -->
+                        <li sec:authorize="hasRole('ADMIN')">
+                            <a class="os-account-menu-item" th:href="@{/admin}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                </svg>
+                                <span>Trang quản trị</span>
+                            </a>
+                        </li>
+
+                        <li><hr class="dropdown-divider my-1"></li>
+
+                        <!-- Menu Item: Đăng xuất -->
+                        <li>
+                            <form th:action="@{/logout}" method="post" class="m-0 p-0">
+                                <button type="submit" class="os-account-menu-item os-menu-logout">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                        <polyline points="16 17 21 12 16 7"></polyline>
+                                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                                    </svg>
+                                    <span>Đăng xuất</span>
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. NÚT ĐIỀU KHIỂN MOBILE (Hiện trên Tablet/Mobile < 992px) -->
+        <div class="os-nav-mobile-controls">
+            <!-- Nút Giỏ hàng nhanh trên mobile -->
+            <a class="os-mobile-cart-btn" th:href="@{/cart}" sec:authorize="!isAuthenticated() or hasRole('CUSTOMER')" aria-label="Giỏ hàng">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+            </a>
+
+            <!-- Avatar Dropdown trên Mobile (khi đã đăng nhập) -->
+            <div class="dropdown dropdown-center os-account-dropdown" sec:authorize="isAuthenticated()">
+                <button class="os-account-dropdown-toggle dropdown-toggle" type="button" id="mobileUserMenuDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false" aria-label="Tài khoản cá nhân">
+                    <span class="os-avatar-circle"
+                          th:with="dispName=${currentUser != null and currentUser.userName != null and !currentUser.userName.isBlank() ? currentUser.userName : (currentUser != null and currentUser.fullName != null and !currentUser.fullName.isBlank() ? currentUser.fullName : #authentication.name)}"
+                          th:text="${#strings.substring(dispName, 0, 1).toUpperCase()}">U</span>
+                    <span class="os-account-name"
+                              th:text="${currentUser != null and currentUser.userName != null and !currentUser.userName.isBlank() ? currentUser.userName : (currentUser != null and currentUser.fullName != null and !currentUser.fullName.isBlank() ? currentUser.fullName : #authentication.name)}">username</span>
+                    <svg class="os-avatar-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+                <ul class="dropdown-menu os-account-menu" aria-labelledby="mobileUserMenuDropdown">
+                    <li class="os-account-menu-header">
+                        <div class="os-avatar-circle os-avatar-lg"
+                             th:with="dispName=${currentUser != null and currentUser.fullName != null and !currentUser.fullName.isBlank() ? currentUser.fullName : #authentication.name}"
+                             th:text="${#strings.substring(dispName, 0, 1).toUpperCase()}">U</div>
+                        <div class="overflow-hidden">
+                            <div class="fw-bold text-dark text-truncate"
+                                 th:text="${currentUser != null and currentUser.fullName != null and !currentUser.fullName.isBlank() ? currentUser.fullName : #authentication.name}">Tên người dùng</div>
+                            <div class="text-muted small text-truncate" th:text="${currentUser != null ? currentUser.email : #authentication.name}">email@example.com</div>
+                            <div class="mt-1">
+                                <span class="badge badge-coral-subtle rounded-pill" sec:authorize="hasRole('CUSTOMER')">Khách hàng</span>
+                                <span class="badge bg-primary-subtle text-primary rounded-pill" sec:authorize="hasRole('STAFF')">Nhân viên</span>
+                                <span class="badge bg-danger-subtle text-danger rounded-pill" sec:authorize="hasRole('ADMIN')">Quản trị viên</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <a class="os-account-menu-item" th:href="@{/account}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span>Thông tin cá nhân</span>
+                        </a>
+                    </li>
+                    <li sec:authorize="hasRole('CUSTOMER')">
+                        <a class="os-account-menu-item" th:href="@{/orders}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                            </svg>
+                            <span>Đơn hàng của tôi</span>
+                        </a>
+                    </li>
+                    <li sec:authorize="hasRole('STAFF')">
+                        <a class="os-account-menu-item" th:href="@{/staff}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                            </svg>
+                            <span>Khu vực nhân viên</span>
+                        </a>
+                    </li>
+                    <li sec:authorize="hasRole('ADMIN')">
+                        <a class="os-account-menu-item" th:href="@{/admin}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                            <span>Trang quản trị</span>
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider my-1"></li>
+                    <li>
+                        <form th:action="@{/logout}" method="post" class="m-0 p-0">
+                            <button type="submit" class="os-account-menu-item os-menu-logout">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                    <polyline points="16 17 21 12 16 7"></polyline>
+                                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                                </svg>
+                                <span>Đăng xuất</span>
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Hamburger Button mở menu drawer -->
+            <button class="navbar-toggler navbar-toggler-custom" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Mở menu điều hướng">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+
+        <!-- 5. MENU THU GỌN MOBILE (Hiện khi bấm Hamburger trên Mobile < 992px) -->
+        <div class="collapse navbar-collapse os-nav-mobile-drawer" id="mainNav">
+            <div class="os-mobile-drawer-body">
+                <ul class="navbar-nav gap-1 mb-3">
+                    <li class="nav-item">
+                        <a class="nav-link os-nav-link" th:href="@{/}" th:classappend="${currentPath == '/'} ? 'active'" th:attr="aria-current=${currentPath == '/'} ? 'page'">Trang chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link os-nav-link" th:href="@{/products}" th:classappend="${currentPath != null and (currentPath == '/products' or #strings.startsWith(currentPath, '/products/'))} ? 'active'" th:attr="aria-current=${currentPath != null and (currentPath == '/products' or #strings.startsWith(currentPath, '/products/'))} ? 'page'">Sản phẩm</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link os-nav-link" th:href="@{/stores}" th:classappend="${currentPath != null and (currentPath == '/stores' or #strings.startsWith(currentPath, '/stores/'))} ? 'active'" th:attr="aria-current=${currentPath != null and (currentPath == '/stores' or #strings.startsWith(currentPath, '/stores/'))} ? 'page'">Hệ thống cửa hàng</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex flex-column gap-2 pt-3 border-top">
+                    <!-- Giỏ hàng đầy đủ -->
+                    <a class="os-btn-cart justify-content-center" th:href="@{/cart}" sec:authorize="!isAuthenticated() or hasRole('CUSTOMER')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        <span>Giỏ hàng</span>
+                    </a>
+
+                    <!-- Auth buttons (khi chưa đăng nhập) -->
+                    <a class="btn-nav-login justify-content-center" th:href="@{/login}" sec:authorize="!isAuthenticated()">Đăng nhập</a>
+                    <a class="btn-nav-register justify-content-center" th:href="@{/register}" sec:authorize="!isAuthenticated()">Đăng ký</a>
+
+                    <!-- Logged in state trong Drawer -->
+                    <div class="p-3 bg-light rounded-3 d-flex flex-column gap-2" sec:authorize="isAuthenticated()">
+                        <div class="d-flex align-items-center gap-2 pb-2 border-bottom">
+                            <span class="os-avatar-circle"
+                                  th:with="dispName=${currentUser != null and currentUser.userName != null and !currentUser.userName.isBlank() ? currentUser.userName : (currentUser != null and currentUser.fullName != null and !currentUser.fullName.isBlank() ? currentUser.fullName : #authentication.name)}"
+                                  th:text="${#strings.substring(dispName, 0, 1).toUpperCase()}">U</span>
+                            <div class="overflow-hidden">
+                                <div class="fw-bold text-dark text-truncate"
+                                     th:text="${currentUser != null and currentUser.fullName != null and !currentUser.fullName.isBlank() ? currentUser.fullName : #authentication.name}">Tên người dùng</div>
+                                <div class="text-muted small text-truncate" th:text="${currentUser != null ? currentUser.email : #authentication.name}">email@example.com</div>
+                            </div>
+                        </div>
+                        <a class="os-account-menu-item bg-white border" th:href="@{/account}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span>Thông tin cá nhân</span>
+                        </a>
+                        <a class="os-account-menu-item bg-white border" th:href="@{/orders}" sec:authorize="hasRole('CUSTOMER')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                            </svg>
+                            <span>Đơn hàng của tôi</span>
+                        </a>
+                        <a class="nav-role-badge nav-role-staff justify-content-center" th:href="@{/staff}" sec:authorize="hasRole('STAFF')">
+                            <span>Khu vực nhân viên</span>
+                        </a>
+                        <a class="nav-role-badge nav-role-admin justify-content-center" th:href="@{/admin}" sec:authorize="hasRole('ADMIN')">
+                            <span>Quản trị</span>
+                        </a>
+                        <form th:action="@{/logout}" method="post" class="w-100 m-0">
+                            <button type="submit" class="btn-nav-logout w-100 justify-content-center">Đăng xuất</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+  </body>
+</html>

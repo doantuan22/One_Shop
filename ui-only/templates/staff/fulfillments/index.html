@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${fixedType == null} ? 'Đơn cần xử lý của chi nhánh' : 'Đơn cần xử lý · ' + (${fixedType.name() == 'STORE_PICKUP'} ? 'Nhận tại cửa hàng' : 'Giao tận nơi')">Đơn cần xử lý của chi nhánh</title>
+</head>
+<body>
+<div class="os-staff-fulfillments">
+    <div th:replace="~{fragments/components :: pageHeader(${fixedType == null ? (basePath == '/staff/orders' ? 'Đơn hàng của chi nhánh' : 'Đơn cần xử lý của chi nhánh') : (fixedType.name() == 'STORE_PICKUP' ? 'Đơn cần xử lý · nhận tại cửa hàng' : 'Đơn cần xử lý · giao tận nơi')}, (${fixedType == null and basePath == '/staff/orders'} ? 'Các phần giao thuộc chi nhánh được phân công. Mở một dòng để xem chi tiết đơn và xử lý bước tiếp theo.' : 'Mỗi dòng là phần hàng chi nhánh của bạn phải chuẩn bị. Đơn nhiều chi nhánh được tách thành từng phần, mỗi chi nhánh chỉ thấy và xử lý phần của mình.'))}"></div>
+
+    <form method="get" th:action="@{${basePath}}" id="fulfillment-filter" class="os-filter card mb-4"
+          th:classappend="${fixedType == null} ? '' : 'os-filter--fixed'">
+        <div class="card-body">
+            <div class="os-filter-grid os-filter-grid--compact">
+                <div class="os-filter-field"
+                     th:if="${assignedStores != null and assignedStores.size() > 1}">
+                    <label class="form-label" for="f-store">Chi nhánh</label>
+                    <select class="form-select form-select-sm" id="f-store" name="storeId">
+                        <option value="">Tất cả chi nhánh được phân công</option>
+                        <option th:each="s : ${assignedStores}" th:value="${s.id}" th:text="${s.name}"
+                                th:selected="${filter.storeId != null and filter.storeId == s.id}"></option>
+                    </select>
+                </div>
+                <div class="os-filter-field">
+                    <label class="form-label" for="f-q">Khách hàng</label>
+                    <input class="form-control form-control-sm" id="f-q" name="q" type="text" th:value="${customer}"
+                           placeholder="Tên, e-mail hoặc số điện thoại">
+                </div>
+                <div class="os-filter-field">
+                    <label class="form-label" for="f-status">Trạng thái phần giao</label>
+                    <select class="form-select form-select-sm" id="f-status" name="status">
+                        <option value="">Đang xử lý</option>
+                        <option th:each="st : ${statuses}" th:value="${st}"
+                                th:text="${ {'CONFIRMED':'Chờ chuẩn bị','PREPARING':'Đang chuẩn bị','PACKED':'Đã đóng gói','SHIPPING':'Đang giao hàng','READY_FOR_PICKUP':'Sẵn sàng cho khách nhận','COMPLETED':'Hoàn tất','CANCELLED':'Đã hủy','FAILED':'Không thành công'}[st.name()] ?: st }"
+                                th:selected="${filter.status != null and filter.status == st}"></option>
+                    </select>
+                </div>
+                <div class="os-filter-field" th:if="${fixedType == null}">
+                    <label class="form-label" for="f-type">Hình thức</label>
+                    <select class="form-select form-select-sm" id="f-type" name="type">
+                        <option value="">Tất cả</option>
+                        <option value="DELIVERY" th:selected="${filter.type != null and filter.type.name() == 'DELIVERY'}">Giao tận nơi</option>
+                        <option value="STORE_PICKUP" th:selected="${filter.type != null and filter.type.name() == 'STORE_PICKUP'}">Nhận tại cửa hàng</option>
+                    </select>
+                </div>
+                <div class="os-filter-field">
+                    <label class="form-label" for="f-order">Mã đơn</label>
+                    <input class="form-control form-control-sm" id="f-order" name="orderId" type="number" min="1"
+                           th:value="${filter.orderId}">
+                </div>
+                <div class="os-filter-field">
+                    <label class="form-label" for="f-from">Từ ngày</label>
+                    <input class="form-control form-control-sm" id="f-from" name="from" type="date" th:value="${filter.from}">
+                </div>
+                <div class="os-filter-field">
+                    <label class="form-label" for="f-to">Đến ngày</label>
+                    <input class="form-control form-control-sm" id="f-to" name="to" type="date" th:value="${filter.to}">
+                </div>
+                <div class="os-filter-field d-flex align-items-end gap-2 pb-1">
+                    <input type="hidden" name="open" value="true" th:if="${filter.openOnly}">
+                    <button class="btn btn-primary btn-sm flex-shrink-0" type="submit">Áp dụng</button>
+                    <a class="btn btn-outline-secondary btn-sm flex-shrink-0" th:href="@{${basePath}}">Xóa lọc</a>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="os-table-toolbar">
+        <span class="os-muted-text">Tổng số phần giao: <strong id="fulfillment-count" th:text="${queue.totalElements}">0</strong></span>
+        <span class="os-muted-text small" th:if="${filter.openOnly}">Chỉ đang hiện các phần giao chưa hoàn tất; chọn trạng thái cụ thể để xem thêm.</span>
+    </div>
+
+    <div th:replace="~{staff/fulfillments/fragments :: table(${queue.content})}"></div>
+
+    <nav class="os-pagination" th:if="${queue.totalPages > 1}" aria-label="Phân trang phần giao hàng">
+        <span class="os-page-info">
+            Trang <strong th:text="${queue.number + 1}">1</strong> /
+            <strong th:text="${queue.totalPages}">2</strong> ·
+            <span th:text="${queue.totalElements}">0</span> phần giao
+        </span>
+        <ul class="pagination mb-0">
+            <li class="page-item" th:classappend="${queue.first} ? 'disabled'"><a class="page-link"
+                th:href="@{${basePath}(page=${queue.number - 1},storeId=${filter.storeId},status=${filter.status},type=${filter.type},orderId=${filter.orderId},q=${customer},from=${filter.from},to=${filter.to},open=${filter.openOnly})}">Trước</a></li>
+            <li class="page-item" th:classappend="${queue.last} ? 'disabled'"><a class="page-link"
+                th:href="@{${basePath}(page=${queue.number + 1},storeId=${filter.storeId},status=${filter.status},type=${filter.type},orderId=${filter.orderId},q=${customer},from=${filter.from},to=${filter.to},open=${filter.openOnly})}">Sau</a></li>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>

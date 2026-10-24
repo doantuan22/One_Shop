@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chi nhánh</title>
+</head>
+<body>
+<div class="os-page-header mb-4">
+    <div>
+        <h1 class="h3 mb-1">Chi nhánh</h1>
+        <p class="os-muted-text mb-0">Các cửa hàng của chuỗi. Chi nhánh ngừng hoạt động không còn bán hàng nhưng dữ
+            liệu vẫn được giữ.</p>
+    </div>
+    <div class="os-page-header__actions">
+        <a class="btn btn-primary" th:href="@{/admin/stores/new}">Thêm chi nhánh</a>
+    </div>
+</div>
+
+<div class="alert alert-success" th:if="${param.success}"
+     th:text="${param.success[0] == 'created'} ? 'Đã thêm chi nhánh.' : 'Đã cập nhật chi nhánh.'">Đã lưu.</div>
+
+<form method="get" th:action="@{/admin/stores}" class="os-filter card mb-4" id="store-filter">
+    <div class="card-body">
+        <div class="os-filter-grid">
+            <div class="os-filter-field">
+                <label class="form-label" for="stores-q">Tìm kiếm</label>
+                <input id="stores-q" name="q" type="text" class="form-control form-control-sm" th:attr="data-suggest-url=@{/admin/stores/suggest}" th:value="${q}"
+                       placeholder="Mã, tên, địa chỉ...">
+            </div>
+            <div class="os-filter-field">
+                <label class="form-label" for="stores-area">Khu vực</label>
+                <select id="stores-area" name="area" class="form-select form-select-sm">
+                    <option value="">Tất cả khu vực</option>
+                    <option th:each="a : ${areas}" th:value="${a}" th:text="${a}" th:selected="${a == area}">Thủ Đức</option>
+                </select>
+            </div>
+            <div class="os-filter-field">
+                <label class="form-label" for="stores-status">Trạng thái</label>
+                <select id="stores-status" name="status" class="form-select form-select-sm">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="ACTIVE" th:selected="${status != null and status.name() == 'ACTIVE'}">Đang hoạt động</option>
+                    <option value="INACTIVE" th:selected="${status != null and status.name() == 'INACTIVE'}">Ngừng hoạt động</option>
+                </select>
+            </div>
+            <div class="os-filter-field d-flex align-items-end gap-2 pb-1">
+                <button type="submit" class="btn btn-primary btn-sm flex-shrink-0">Áp dụng</button>
+                <a class="btn btn-outline-secondary btn-sm flex-shrink-0" th:href="@{/admin/stores}">Xóa lọc</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div th:replace="~{fragments/components :: dataTable(~{::#store-head}, ~{::#store-body})}"></div>
+
+<nav class="os-pagination" th:if="${stores.totalPages > 1}" aria-label="Phân trang chi nhánh">
+    <span class="os-page-info">
+        <span th:text="${stores.totalElements}">6</span> chi nhánh khớp bộ lọc
+    </span>
+    <ul class="pagination mb-0">
+        <li class="page-item" th:classappend="${stores.first} ? 'disabled'"><a class="page-link"
+            th:href="@{/admin/stores(page=${stores.number - 1}, q=${q == null ? '' : q}, area=${area == null ? '' : area}, status=${status == null ? '' : status})}">Trước</a></li>
+        <li class="page-item" th:classappend="${stores.last} ? 'disabled'"><a class="page-link"
+            th:href="@{/admin/stores(page=${stores.number + 1}, q=${q == null ? '' : q}, area=${area == null ? '' : area}, status=${status == null ? '' : status})}">Sau</a></li>
+    </ul>
+</nav>
+
+<th:block th:remove="all">
+    <thead id="store-head">
+    <tr>
+        <th scope="col" class="os-col-code">Mã</th>
+        <th scope="col">Tên</th>
+        <th scope="col">Khu vực</th>
+        <th scope="col">Địa chỉ &amp; liên hệ</th>
+        <th scope="col">Dịch vụ</th>
+        <th scope="col">Trạng thái</th>
+        <th scope="col" class="os-col-actions text-end">Thao tác</th>
+    </tr>
+    </thead>
+    <tbody id="store-body">
+    <tr th:each="store : ${stores}" th:attr="data-store-id=${store.id}">
+        <td class="os-col-code"><span class="fw-semibold" th:text="${store.code}">OS-THUDUC</span></td>
+        <td class="fw-semibold" th:text="${store.name}">OneShop Thủ Đức</td>
+        <td th:text="${store.area} + ', ' + ${store.provinceCity}">Thủ Đức, TP. Hồ Chí Minh</td>
+        <td>
+            <span class="os-cell-main" th:text="${store.address}">101 Võ Văn Ngân</span>
+            <span class="os-cell-sub" th:text="${store.phone} + ' · ' + ${store.openingHours}">028... · 08:00 - 22:00</span>
+        </td>
+        <td>
+            <span class="badge text-bg-light border" th:if="${store.deliveryEnabled}">Giao hàng</span>
+            <span class="badge text-bg-light border" th:if="${store.pickupEnabled}">Nhận tại cửa hàng</span>
+        </td>
+        <td><span th:replace="~{fragments/components :: statusBadge(${store.status})}"></span></td>
+        <td class="os-col-actions text-end">
+            <div class="table-actions">
+                <a class="btn btn-outline-secondary btn-sm" th:if="${store.status.name() == 'ACTIVE'}"
+                   th:href="@{/admin/store-products(storeId=${store.id})}">Sản phẩm</a>
+                <button type="button" class="btn btn-outline-secondary btn-sm" th:unless="${store.status.name() == 'ACTIVE'}"
+                        disabled title="Chi nhánh ngừng hoạt động">Sản phẩm</button>
+                <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/stores/{id}/edit(id=${store.id})}">Sửa</a>
+            </div>
+        </td>
+    </tr>
+    <tr th:if="${stores.isEmpty()}">
+        <td colspan="7" class="text-center text-secondary py-4">Không có chi nhánh nào khớp bộ lọc.</td>
+    </tr>
+    </tbody>
+</th:block>
+</body>
+</html>

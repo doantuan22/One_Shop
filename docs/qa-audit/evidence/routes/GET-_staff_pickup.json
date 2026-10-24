@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "GET",
-    "method" : "legacyPickup",
-    "controller" : "com.oneshop.controller.staff.StaffFulfillmentController",
-    "path" : "/staff/pickup"
-  },
-  "location" : "http://localhost:57296/login",
-  "executedAt" : "2026-10-24T09:12:23.215170Z",
-  "expected" : 302,
-  "actual" : 302,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/staff/pickup",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 302,
+  "expected" : 302,
+  "executedAt" : "2026-10-24T10:17:37.128055600Z",
+  "location" : "http://localhost:62366/login",
+  "route" : {
+    "path" : "/staff/pickup",
+    "controller" : "com.oneshop.controller.staff.StaffFulfillmentController",
+    "method" : "legacyPickup",
+    "verb" : "GET"
+  }
 }

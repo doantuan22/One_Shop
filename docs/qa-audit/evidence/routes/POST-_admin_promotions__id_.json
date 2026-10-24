@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "POST",
-    "method" : "update",
-    "controller" : "com.oneshop.controller.admin.AdminPromotionController",
-    "path" : "/admin/promotions/{id}"
-  },
-  "location" : "",
-  "executedAt" : "2026-10-24T09:12:17.516563400Z",
-  "expected" : 403,
-  "actual" : 403,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/admin/promotions/999999999",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 403,
+  "expected" : 403,
+  "executedAt" : "2026-10-24T10:17:31.565471100Z",
+  "location" : "",
+  "route" : {
+    "path" : "/admin/promotions/{id}",
+    "controller" : "com.oneshop.controller.admin.AdminPromotionController",
+    "method" : "update",
+    "verb" : "POST"
+  }
 }

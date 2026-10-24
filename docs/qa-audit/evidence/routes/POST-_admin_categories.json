@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "POST",
-    "method" : "create",
-    "controller" : "com.oneshop.controller.admin.AdminCategoryController",
-    "path" : "/admin/categories"
-  },
-  "location" : "",
-  "executedAt" : "2026-10-24T09:12:15.277053500Z",
-  "expected" : 403,
-  "actual" : 403,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/admin/categories",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 403,
+  "expected" : 403,
+  "executedAt" : "2026-10-24T10:17:29.826097300Z",
+  "location" : "",
+  "route" : {
+    "path" : "/admin/categories",
+    "controller" : "com.oneshop.controller.admin.AdminCategoryController",
+    "method" : "create",
+    "verb" : "POST"
+  }
 }

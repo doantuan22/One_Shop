@@ -2,42 +2,95 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
 <body>
-<!--/* Admin layout parts: chain-wide management. Menu items passed `false` are placeholders for later phases. */-->
-<header th:fragment="topbar" class="navbar navbar-dark os-appbar sticky-top px-3">
-    <div class="d-flex align-items-center gap-2">
-        <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#appSidebar"
+<!--/* Admin layout parts: chain-wide management. The look (navy top bar, coral active item) lives in css/admin-ui.css. */-->
+<header th:fragment="topbar" class="navbar navbar-dark os-appbar sticky-top px-3 px-md-4 py-2 border-bottom shadow-sm">
+    <div class="d-flex align-items-center gap-3">
+        <button class="navbar-toggler d-lg-none border-0 p-1 me-1 shadow-none" type="button"
+                data-bs-toggle="offcanvas" data-bs-target="#appSidebar"
                 aria-controls="appSidebar" aria-label="Mở menu">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand mb-0 fw-bold" th:href="@{/admin}">OneShop <span class="fw-normal opacity-75">Admin</span></a>
+
+        <a class="os-brand-title" th:href="@{/admin}">
+            <span class="os-brand-logo-wrap">
+                <img th:src="@{/images/One.png}" alt="OneShop" class="os-appbar-logo">
+            </span>
+            <span class="os-brand-badge">Admin</span>
+        </a>
+
+        <div class="d-none d-md-flex align-items-center ms-2">
+            <span class="os-scope-pill badge os-scope-badge" id="admin-scope-badge">
+                <span class="os-scope-dot"></span>
+                <span>Toàn chuỗi</span>
+            </span>
+        </div>
     </div>
 
-    <span class="badge os-scope-badge" id="admin-scope-badge">Toàn chuỗi</span>
+    <div class="d-flex align-items-center gap-3 ms-auto">
+        <a class="btn-topbar-store d-none d-md-inline-flex" th:href="@{/}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span>Trang bán hàng</span>
+        </a>
 
-    <div class="d-flex align-items-center gap-2 ms-auto">
-        <a class="btn btn-sm os-appbar-link d-none d-md-inline-flex" th:href="@{/}"><svg class="os-appbar-link__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6.5 3.2 2.5h9.6L14 6.5"/><path d="M2 6.5a2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0"/><path d="M3 9v4.5h10V9"/><path d="M6.5 13.5v-3h3v3"/></svg><span>Trang bán hàng</span></a>
-        <span class="text-white small d-none d-md-inline" sec:authentication="name">admin</span>
-        <form th:action="@{/logout}" method="post" class="d-inline">
-            <button type="submit" class="btn btn-light btn-sm">Đăng xuất</button>
-        </form>
+        <div class="dropdown">
+            <button class="btn btn-topbar-user dropdown-toggle" type="button" id="adminUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="user-avatar-circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </span>
+                <span sec:authentication="name">admin</span>
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-end admin-dropdown-menu" aria-labelledby="adminUserDropdown">
+                <li class="admin-dropdown-header">
+                    <div class="text-secondary small" style="font-size: 0.72rem;">Tài khoản quản trị</div>
+                    <div class="fw-bold text-dark text-truncate" sec:authentication="name">admin</div>
+                </li>
+                <li>
+                    <form th:action="@{/logout}" method="post" class="m-0">
+                        <button type="submit" class="dropdown-item d-flex align-items-center gap-2 text-danger">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                <polyline points="16 17 21 12 16 7"/>
+                                <line x1="21" y1="12" x2="9" y2="12"/>
+                            </svg>
+                            <span>Đăng xuất</span>
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
     </div>
 </header>
 
 <div th:fragment="sidebar" class="os-sidebar offcanvas-lg offcanvas-start col-lg-3 col-xl-2 p-0" tabindex="-1"
      id="appSidebar" aria-labelledby="appSidebarLabel">
-    <div class="offcanvas-header border-bottom d-lg-none">
-        <h2 class="offcanvas-title h6 mb-0" id="appSidebarLabel">Menu quản trị</h2>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#appSidebar"
+    <div class="offcanvas-header border-bottom d-lg-none px-3 py-3">
+        <h2 class="offcanvas-title h6 mb-0 fw-bold text-dark" id="appSidebarLabel">Menu quản trị</h2>
+        <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" data-bs-target="#appSidebar"
                 aria-label="Đóng"></button>
     </div>
+
     <div class="offcanvas-body d-block p-3">
-        <section class="os-store-scope mb-3" id="admin-scope" aria-label="Phạm vi quản trị">
-            <div class="os-store-scope__label">Phạm vi quản trị</div>
-            <strong>Toàn chuỗi cửa hàng</strong>
+        <section class="os-store-scope os-store-scope-card mb-3" id="admin-scope" aria-label="Phạm vi quản trị">
+            <div class="os-store-scope__label os-store-scope-card__label">Phạm vi quản trị</div>
+            <div class="os-store-scope-card__value">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff7f50" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="2" y1="12" x2="22" y2="12"/>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                </svg>
+                <strong>Toàn chuỗi cửa hàng</strong>
+            </div>
         </section>
 
         <nav aria-label="Điều hướng quản trị">
-            <ul class="nav nav-pills flex-column gap-1">
+            <ul class="nav nav-pills flex-column">
                 <li th:replace="~{fragments/components :: navItem('/admin', 'Tổng quan', ${currentPath}, true)}"></li>
                 <li th:replace="~{fragments/components :: navItem('/admin/stores', 'Chi nhánh', ${currentPath}, true)}"></li>
                 <li th:replace="~{fragments/components :: navItem('/admin/categories', 'Danh mục', ${currentPath}, true)}"></li>

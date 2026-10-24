@@ -1,7 +1,7 @@
 {
-  "expected" : "success/empty page or controlled 4xx; never 5xx",
-  "request" : "/staff/fulfillments?page=1.5&q=qa-no-match-999",
-  "timestamp" : "2026-10-24T09:12:03.731000500Z",
+  "actual" : 400,
   "actor" : "staff.thuduc@oneshop.vn",
-  "actual" : 400
+  "timestamp" : "2026-10-24T10:17:19.056133700Z",
+  "request" : "/staff/fulfillments?page=1.5&q=qa-no-match-999",
+  "expected" : "success/empty page or controlled 4xx; never 5xx"
 }

@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "POST",
-    "method" : "clear",
-    "controller" : "com.oneshop.controller.client.StoreController",
-    "path" : "/stores/clear"
-  },
-  "location" : "",
-  "executedAt" : "2026-10-24T09:12:24.102776600Z",
-  "expected" : 403,
-  "actual" : 403,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/stores/clear",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 403,
+  "expected" : 403,
+  "executedAt" : "2026-10-24T10:17:37.857231600Z",
+  "location" : "",
+  "route" : {
+    "path" : "/stores/clear",
+    "controller" : "com.oneshop.controller.client.StoreController",
+    "method" : "clear",
+    "verb" : "POST"
+  }
 }

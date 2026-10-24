@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "POST",
-    "method" : "create",
-    "controller" : "com.oneshop.controller.admin.AdminBrandController",
-    "path" : "/admin/brands"
-  },
-  "location" : "",
-  "executedAt" : "2026-10-24T09:12:14.566594800Z",
-  "expected" : 403,
-  "actual" : 403,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/admin/brands",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 403,
+  "expected" : 403,
+  "executedAt" : "2026-10-24T10:17:29.282703500Z",
+  "location" : "",
+  "route" : {
+    "path" : "/admin/brands",
+    "controller" : "com.oneshop.controller.admin.AdminBrandController",
+    "method" : "create",
+    "verb" : "POST"
+  }
 }

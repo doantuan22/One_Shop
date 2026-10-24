@@ -1,14 +1,14 @@
 {
-  "route" : {
-    "verb" : "GET",
-    "method" : "staff",
-    "controller" : "com.oneshop.controller.web.DecoratorController",
-    "path" : "/decorators/staff"
-  },
-  "location" : "http://localhost:57296/login",
-  "executedAt" : "2026-10-24T09:12:21.067970800Z",
-  "expected" : 302,
-  "actual" : 302,
+  "kind" : "anonymous guard/input probe",
   "requestPath" : "/decorators/staff",
-  "kind" : "anonymous guard/input probe"
+  "actual" : 302,
+  "expected" : 302,
+  "executedAt" : "2026-10-24T10:17:35.514786100Z",
+  "location" : "http://localhost:62366/login",
+  "route" : {
+    "path" : "/decorators/staff",
+    "controller" : "com.oneshop.controller.web.DecoratorController",
+    "method" : "staff",
+    "verb" : "GET"
+  }
 }

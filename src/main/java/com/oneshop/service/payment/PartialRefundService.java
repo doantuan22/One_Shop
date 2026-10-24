@@ -162,7 +162,7 @@ public class PartialRefundService {
         refunds.saveAndFlush(row);
         if (!simulate(row)) {
             throw new FulfillmentConflictException(FulfillmentConflictException.INCONSISTENT_FULFILLMENT,
-                    "Hoàn tiền mô phỏng chưa thành công; yêu cầu trả hàng chưa được duyệt, vui lòng thử lại.");
+                    "Hoàn tiền chưa thành công; yêu cầu trả hàng chưa được duyệt, vui lòng thử lại.");
         }
         closeWhenFullyRefunded(lockedOrder, payment, reason);
     }

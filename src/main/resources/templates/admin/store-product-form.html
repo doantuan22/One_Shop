@@ -4,6 +4,7 @@
     <title th:text="${current == null} ? 'Gắn sản phẩm vào chi nhánh' : 'Sửa sản phẩm tại chi nhánh'">Sản phẩm theo chi nhánh</title>
 </head>
 <body>
+<nav class="os-breadcrumb-pill" aria-label="Vị trí trang"><a th:href="@{/admin/store-products}">Sản phẩm theo chi nhánh</a><span class="os-breadcrumb-sep" aria-hidden="true">/</span><strong th:text="${current == null} ? 'Thêm mới' : 'Chỉnh sửa'">Thêm mới</strong></nav>
 <div th:replace="~{fragments/components :: pageHeader(${current == null} ? 'Gắn sản phẩm vào chi nhánh' : 'Sửa sản phẩm tại chi nhánh', 'Tồn kho và trạng thái ở đây chỉ áp dụng cho chi nhánh này. Giá online là một giá chung của sản phẩm, chỉ sửa ở trang Sản phẩm.')}"></div>
 
 <section class="card shadow-sm">

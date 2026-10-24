@@ -110,7 +110,7 @@
     <tr th:each="brand : ${brands}" th:classappend="${brand.id == editId} ? 'table-active'">
         <td class="os-col-thumb">
             <img th:if="${brand.logoUrl}" th:src="${brand.logoUrl}" th:alt="${brand.name}" class="os-brand-logo-sm rounded border">
-            <span class="text-secondary" th:unless="${brand.logoUrl}">—</span>
+            <span class="os-logo-empty" th:unless="${brand.logoUrl}">Trống</span>
         </td>
         <td class="os-col-name fw-semibold" th:text="${brand.name}">Cocoon</td>
         <td class="os-col-desc text-secondary">

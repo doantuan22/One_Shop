@@ -3,35 +3,325 @@
 <head>
     <title>Thông tin cá nhân</title>
     <style>
+        .acc-crumbs {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            margin: 0 0 1.25rem;
+            padding: 0;
+            list-style: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #94a3b8;
+        }
+
+        .acc-crumbs a {
+            color: #64748b;
+            text-decoration: none;
+        }
+
+        .acc-crumbs a:hover {
+            color: #e86638;
+        }
+
+        .acc-crumbs li + li::before {
+            content: "/";
+            margin-right: 0.45rem;
+            color: #cbd5e1;
+        }
+
+        .acc-crumbs [aria-current] {
+            color: #1e293b;
+            font-weight: 650;
+        }
+
+        .acc-head {
+            margin-bottom: 1.75rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .acc-title {
+            margin: 0 0 0.4rem;
+            font-size: clamp(1.6rem, 3.2vw, 2.1rem);
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            line-height: 1.15;
+            color: #0f172a;
+        }
+
+        .acc-desc {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #64748b;
+        }
+
+        .acc-layout {
+            display: grid;
+            grid-template-columns: 300px minmax(0, 1fr);
+            gap: 26px;
+            align-items: start;
+        }
+
+        .acc-main {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+            min-width: 0;
+        }
+
+        .profile-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+        }
+
+        /* ---------- sidebar: identity + navigation in one card ---------- */
+        .acc-side {
+            position: sticky;
+            top: 96px;
+            padding: 1.5rem 1.25rem 1rem;
+        }
+
+        .acc-identity {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding-bottom: 1.25rem;
+            margin-bottom: 0.9rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
         .profile-avatar-circle {
-            width: 80px;
-            height: 80px;
+            width: 76px;
+            height: 76px;
+            margin-bottom: 0.9rem;
             border-radius: 50%;
             background: linear-gradient(135deg, #ff7f50 0%, #e86738 100%);
             color: #ffffff;
-            font-size: 2rem;
+            font-size: 1.9rem;
             font-weight: 700;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.25);
-            border: 3px solid #ffffff;
+            box-shadow: 0 0 0 4px #fff0ea;
         }
 
-        .profile-card {
-            border: 1px solid #f0e6e3;
+        .acc-name {
+            margin: 0 0 0.15rem;
+            max-width: 100%;
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            color: #0f172a;
+            overflow-wrap: anywhere;
+        }
+
+        .acc-email {
+            max-width: 100%;
+            font-size: 0.84rem;
+            color: #64748b;
+            overflow-wrap: anywhere;
+        }
+
+        .acc-role {
+            margin-top: 0.7rem;
+            padding: 0.2rem 0.75rem;
+            border-radius: 999px;
+            background-color: #fff0ea;
+            color: #d65426;
+            border: 1px solid #ffdcd1;
+            font-size: 0.74rem;
+            font-weight: 750;
+        }
+
+        .acc-since {
+            margin-top: 0.6rem;
+            font-size: 0.78rem;
+            color: #94a3b8;
+        }
+
+        .acc-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .profile-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.7rem 0.85rem;
+            border-radius: 10px;
+            color: #475569;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.15s ease, color 0.15s ease;
+        }
+
+        .profile-nav-link svg {
+            flex: none;
+        }
+
+        .profile-nav-link:hover {
+            background-color: #fffaf8;
+            color: #ff7f50;
+        }
+
+        .profile-nav-link:focus-visible {
+            outline: 3px solid rgba(255, 127, 80, 0.45);
+            outline-offset: 1px;
+        }
+
+        .profile-nav-link.active {
+            background-color: #fff5f1;
+            color: #e86638;
+            font-weight: 700;
+        }
+
+        /* ---------- main sections ---------- */
+        .acc-card {
+            padding: 1.5rem 1.75rem;
+        }
+
+        .acc-card__head {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 0.25rem 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .acc-card__title {
+            margin: 0;
+            font-size: 1.08rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            color: #0f172a;
+        }
+
+        .acc-card__sub {
+            margin: 0.15rem 0 0;
+            font-size: 0.84rem;
+            color: #64748b;
+        }
+
+        .acc-count {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #64748b;
+        }
+
+        /* read-only identity */
+        .acc-identity-box {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem 1.5rem;
+            margin: 0 0 1.75rem;
+            padding: 1.1rem 1.25rem;
+            background: #f8fafc;
+            border-radius: 14px;
+        }
+
+        .acc-identity-box dt {
+            margin-bottom: 0.15rem;
+            font-size: 0.7rem;
+            font-weight: 750;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #94a3b8;
+        }
+
+        .acc-identity-box dd {
+            margin: 0;
+            font-size: 0.95rem;
+            font-weight: 650;
+            color: #0f172a;
+            overflow-wrap: anywhere;
+        }
+
+        .acc-identity-note {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* form */
+        .acc-form-title {
+            margin: 0 0 1rem;
+            font-size: 0.74rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #94a3b8;
+        }
+
+        .acc-label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-size: 0.86rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .acc-input {
+            height: 46px;
             border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-            background: #ffffff;
-            overflow: hidden;
+            border: 1.5px solid #e2e8f0;
+            padding: 0 0.95rem;
+            font-size: 0.93rem;
+            font-weight: 500;
+            color: #0f172a;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
 
-        .profile-card-header {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid #f1f5f9;
-            background-color: #ffffff;
+        .acc-input::placeholder {
+            color: #94a3b8;
         }
 
+        .acc-input:hover {
+            border-color: #cbd5e1;
+        }
+
+        .acc-input:focus {
+            border-color: #ff7f50;
+            box-shadow: 0 0 0 3.5px rgba(255, 127, 80, 0.15);
+            outline: 0;
+        }
+
+        .acc-input.is-invalid {
+            border-color: #dc2626;
+            background-image: none;
+            padding-right: 0.95rem;
+        }
+
+        .acc-input.is-invalid:focus {
+            box-shadow: 0 0 0 3.5px rgba(220, 38, 38, 0.15);
+        }
+
+        .acc-error {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.4rem;
+            margin-top: 0.4rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #b91c1c;
+        }
+
+        .acc-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        /* ---------- action button colours: unchanged ---------- */
         .btn-coral-save {
             background: linear-gradient(135deg, #ff7f50 0%, #e86738 100%);
             color: #ffffff !important;
@@ -49,52 +339,211 @@
             color: #ffffff !important;
         }
 
-        .profile-nav-link {
+        .btn-coral-save:focus-visible {
+            outline: 3px solid rgba(255, 127, 80, 0.5);
+            outline-offset: 2px;
+        }
+
+        /* ---------- change password ---------- */
+        .acc-security {
+            display: grid;
+            grid-template-columns: 250px minmax(0, 560px);
+            gap: 2rem 3.5rem;
+            align-items: start;
+        }
+
+        .acc-security__icon {
+            display: inline-grid;
+            place-items: center;
+            width: 40px;
+            height: 40px;
+            margin-bottom: 0.85rem;
+            border-radius: 12px;
+            background: #fff5f1;
+            color: #e86638;
+        }
+
+        .acc-security__intro .acc-card__sub {
+            margin-top: 0.35rem;
+            line-height: 1.55;
+        }
+
+        .acc-field + .acc-field {
+            margin-top: 1.2rem;
+        }
+
+        .acc-pw {
+            position: relative;
+        }
+
+        .acc-pw .acc-input {
+            padding-right: 3.1rem;
+        }
+
+        .acc-pw__toggle {
+            position: absolute;
+            top: 50%;
+            right: 0.4rem;
+            transform: translateY(-50%);
+            display: inline-grid;
+            place-items: center;
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            border: 0;
+            border-radius: 10px;
+            background: transparent;
+            color: #64748b;
+        }
+
+        .acc-pw__toggle:hover {
+            color: #e86638;
+            background: #fff5f1;
+        }
+
+        .acc-pw__toggle:focus-visible {
+            outline: 3px solid rgba(255, 127, 80, 0.45);
+            outline-offset: 1px;
+        }
+
+        .acc-pw__toggle svg[hidden] {
+            display: none;
+        }
+
+        .acc-hint {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            color: #475569;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.15s ease;
+            gap: 0.5rem;
+            margin: 0.5rem 0 0;
+            font-size: 0.82rem;
+            color: #64748b;
         }
 
-        .profile-nav-link:hover {
-            background-color: #fffaf8;
-            color: #ff7f50;
+        .acc-hint__dot {
+            flex: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid #cbd5e1;
+            background: #ffffff;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
         }
 
-        .profile-nav-link.active {
-            background-color: #fffaf8;
-            color: #ff7f50;
-            font-weight: 600;
+        .acc-hint.is-met {
+            color: #15803d;
         }
 
-        .badge-coral-subtle {
-            background-color: #fff0ea;
-            color: #ff7f50;
-            border: 1px solid #ffdcd1;
+        .acc-hint.is-met .acc-hint__dot {
+            border-color: #16a34a;
+            background: #16a34a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center / 9px no-repeat;
+        }
+
+        .acc-actions--form {
+            margin-top: 1.5rem;
+        }
+
+        @media (max-width: 1199.98px) {
+            .acc-security {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 1.25rem;
+            }
+
+            .acc-security__form {
+                max-width: 560px;
+            }
+        }
+
+        @media (max-width: 991.98px) {
+            .acc-layout {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 20px;
+            }
+
+            .acc-side {
+                position: static;
+                padding: 1.1rem;
+            }
+
+            .acc-identity {
+                flex-direction: row;
+                align-items: center;
+                text-align: left;
+                gap: 1rem;
+                padding-bottom: 1rem;
+            }
+
+            .acc-identity > div:last-child {
+                min-width: 0;
+            }
+
+            .profile-avatar-circle {
+                flex: none;
+                margin: 0;
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+
+            .acc-nav {
+                flex-direction: row;
+                gap: 6px;
+            }
+
+            .profile-nav-link {
+                flex: 1 1 0;
+                justify-content: center;
+                gap: 7px;
+                padding: 0.65rem 0.5rem;
+                font-size: 0.84rem;
+                text-align: center;
+            }
+
+        }
+
+        @media (max-width: 575.98px) {
+            .acc-card {
+                padding: 1.2rem 1.1rem;
+                border-radius: 16px;
+            }
+
+            .acc-identity-box {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .acc-nav {
+                flex-direction: column;
+            }
+
+            .profile-nav-link {
+                justify-content: flex-start;
+                text-align: left;
+            }
+
+
+            .acc-actions .btn-coral-save {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
 
-<!-- Breadcrumb -->
-<nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none text-secondary">Trang chủ</a></li>
-        <li class="breadcrumb-item"><a th:href="@{/account}" class="text-decoration-none text-secondary">Tài khoản</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Thông tin cá nhân</li>
+<nav aria-label="breadcrumb">
+    <ol class="acc-crumbs">
+        <li><a th:href="@{/}">Trang chủ</a></li>
+        <li aria-current="page">Thông tin cá nhân</li>
     </ol>
 </nav>
 
-<div th:replace="~{fragments/components :: pageHeader('Thông tin cá nhân', 'Quản lý thông tin tài khoản và cập nhật hồ sơ cá nhân của bạn.')}"></div>
+<header class="acc-head">
+    <h1 class="acc-title">Thông tin cá nhân</h1>
+    <p class="acc-desc">Quản lý hồ sơ và mật khẩu của bạn.</p>
+</header>
 
 <!-- Alert thông báo cập nhật thành công -->
 <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 mb-4" role="alert">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-success flex-shrink-0">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-success flex-shrink-0" aria-hidden="true">
         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
         <polyline points="22 4 12 14.01 9 11.01"></polyline>
     </svg>
@@ -104,210 +553,309 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
 </div>
 
-<div class="row g-4">
-    <!-- CỘT TRÁI: Thẻ hồ sơ tổng quan & điều hướng nhanh -->
-    <div class="col-lg-4">
-        <div class="profile-card text-center p-4 mb-4">
-            <div class="d-flex justify-content-center mb-3">
-                <div class="profile-avatar-circle"
-                     th:text="${accountUser.fullName != null and !accountUser.fullName.isBlank() ? #strings.substring(accountUser.fullName, 0, 1).toUpperCase() : 'U'}">
-                    U
-                </div>
+<div th:if="${param.passwordChanged}" class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 mb-4" role="alert">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-success flex-shrink-0" aria-hidden="true">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+    <div>
+        <strong>Thành công!</strong> Mật khẩu của bạn đã được đổi.
+    </div>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+</div>
+
+<div class="acc-layout">
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="profile-card acc-side">
+        <div class="acc-identity">
+            <div class="profile-avatar-circle" aria-hidden="true"
+                 th:text="${accountUser.fullName != null and !accountUser.fullName.isBlank() ? #strings.substring(accountUser.fullName, 0, 1).toUpperCase() : 'U'}">
+                U
             </div>
-
-            <h2 class="h5 fw-bold mb-1" th:text="${accountUser.fullName != null and !accountUser.fullName.isBlank() ? accountUser.fullName : 'Chưa đặt tên'}">
-                Nguyễn Văn A
-            </h2>
-
-            <div class="text-muted small mb-2" th:text="${accountUser.email}">
-                email@example.com
-            </div>
-
-            <div class="d-flex justify-content-center gap-2 mb-3">
-                <span class="badge badge-coral-subtle px-2 py-1 rounded-pill"
-                      th:text="${accountUser.role != null ? accountUser.role.name : 'Khách hàng'}">
-                    CUSTOMER
+            <div>
+                <h2 class="acc-name" th:text="${accountUser.fullName != null and !accountUser.fullName.isBlank() ? accountUser.fullName : 'Chưa đặt tên'}">
+                    Nguyễn Văn A
+                </h2>
+                <div class="acc-email" th:text="${accountUser.email}">email@example.com</div>
+                <span class="acc-role d-inline-block" th:if="${accountUser.role != null}" th:switch="${accountUser.role.name.name()}">
+                    <span th:case="'CUSTOMER'">Khách hàng</span>
+                    <span th:case="'STAFF'">Nhân viên</span>
+                    <span th:case="'ADMIN'">Quản trị viên</span>
+                    <span th:case="*" th:text="${accountUser.role.name}">Thành viên</span>
                 </span>
-                <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill"
-                      th:if="${accountUser.isActive()}">
-                    Hoạt động
-                </span>
-            </div>
-
-            <hr class="my-3 text-secondary opacity-25">
-
-            <div class="text-start small text-muted">
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Tên đăng nhập:</span>
-                    <strong class="text-dark" th:text="${accountUser.userName != null ? accountUser.userName : 'Chưa thiết lập'}">user123</strong>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Số điện thoại:</span>
-                    <strong class="text-dark" th:text="${accountUser.phone != null and !accountUser.phone.isBlank() ? accountUser.phone : 'Chưa cập nhật'}">0901234567</strong>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <span>Ngày tham gia:</span>
-                    <strong class="text-dark" th:text="${accountUser.createdAt != null ? #temporals.format(accountUser.createdAt, 'dd/MM/yyyy') : '---'}">01/01/2026</strong>
-                </div>
+                <div class="acc-since" th:if="${accountUser.createdAt != null}"
+                     th:text="'Thành viên từ ' + ${#temporals.format(accountUser.createdAt, 'dd/MM/yyyy')}">Thành viên từ 01/01/2026</div>
             </div>
         </div>
 
-        <!-- Menu liên kết nhanh -->
-        <div class="profile-card p-3">
-            <div class="fw-semibold text-dark px-2 mb-2 small text-uppercase tracking-wider">Danh mục tài khoản</div>
-            <a th:href="@{/account}" class="profile-nav-link active">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <nav class="acc-nav" aria-label="Tài khoản">
+            <a th:href="@{/account}" class="profile-nav-link active" aria-current="page">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
                 <span>Thông tin cá nhân</span>
             </a>
             <a th:href="@{/orders}" class="profile-nav-link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
                     <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
                 </svg>
                 <span>Đơn hàng của tôi</span>
             </a>
             <a th:href="@{/cart}" class="profile-nav-link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <circle cx="9" cy="21" r="1"></circle>
                     <circle cx="20" cy="21" r="1"></circle>
                     <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                 </svg>
                 <span>Giỏ hàng</span>
             </a>
-        </div>
-    </div>
+        </nav>
+    </aside>
 
-    <!-- CỘT PHẢI: Form cập nhật thông tin -->
-    <div class="col-lg-8">
-        <div class="profile-card mb-4">
-            <div class="profile-card-header">
-                <h3 class="h5 fw-bold mb-1 text-dark">Chỉnh sửa thông tin</h3>
-                <p class="text-muted small mb-0">Cập nhật họ tên và số điện thoại liên hệ của bạn.</p>
+    <!-- ================= CONTENT ================= -->
+    <div class="acc-main">
+        <section class="profile-card acc-card">
+            <div class="acc-card__head">
+                <div>
+                    <h2 class="acc-card__title">Hồ sơ cá nhân</h2>
+                    <p class="acc-card__sub">Xem thông tin tài khoản và cập nhật họ tên, số điện thoại liên hệ.</p>
+                </div>
             </div>
 
-            <div class="p-4">
-                <form th:action="@{/account}" th:object="${updateAccountRequest}" method="post">
-                    <!-- Thông tin định danh cố định (Chỉ xem) -->
-                    <div class="row g-3 mb-3">
-                        <!-- Email (Cố định - Chỉ xem) -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-dark">Địa chỉ Email</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light text-muted">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                                        <polyline points="22,6 12,13 2,6"></polyline>
-                                    </svg>
-                                </span>
-                                <input type="text" class="form-control bg-light" aria-label="Email" th:value="${accountUser.email}" readonly disabled>
-                                <span class="input-group-text bg-light text-muted small">Cố định</span>
-                            </div>
-                        </div>
+            <!-- Thông tin định danh cố định: chỉ xem -->
+            <dl class="acc-identity-box">
+                <div>
+                    <dt>Email</dt>
+                    <dd th:text="${accountUser.email}">email@example.com</dd>
+                </div>
+                <div>
+                    <dt>Tên đăng nhập</dt>
+                    <dd th:text="${accountUser.userName != null and !accountUser.userName.isBlank() ? accountUser.userName : 'Chưa thiết lập'}">user123</dd>
+                </div>
+                <div class="acc-identity-note">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    <span>Email và tên đăng nhập là thông tin định danh, không thể thay đổi.</span>
+                </div>
+            </dl>
 
-                        <!-- Tên đăng nhập (Cố định - Chỉ xem) -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-dark">Tên đăng nhập (Username)</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light text-muted">@</span>
-                                <input type="text" class="form-control bg-light" aria-label="Tên đăng nhập"
-                                       th:value="${accountUser.userName != null and !accountUser.userName.isBlank() ? accountUser.userName : 'Chưa thiết lập'}"
-                                       readonly disabled>
-                                <span class="input-group-text bg-light text-muted small">Cố định</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-text text-muted mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1 text-secondary">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="16" x2="12" y2="12"></line>
-                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                        </svg>
-                        Email và Tên đăng nhập là các thông tin định danh bất biến của tài khoản, được khóa cố định và không thể thay đổi.
-                    </div>
-
-                    <hr class="my-3 text-secondary opacity-25">
-
-                    <!-- Các trường thông tin cho phép chỉnh sửa -->
-                    <div class="row g-3 mb-4">
-                        <!-- Họ và tên (Cho phép sửa) -->
-                        <div class="col-md-6">
-                            <label for="fullNameInput" class="form-label fw-semibold text-dark">
-                                Họ và tên <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" id="fullNameInput" class="form-control"
-                                   th:field="*{fullName}"
-                                   th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid' : ''"
-                                   placeholder="Nhập họ và tên đầy đủ của bạn" required>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">
-                                Họ và tên không hợp lệ
-                            </div>
-                        </div>
-
-                        <!-- Số điện thoại (Cho phép sửa) -->
-                        <div class="col-md-6">
-                            <label for="phoneInput" class="form-label fw-semibold text-dark">Số điện thoại</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white text-muted">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                                    </svg>
-                                </span>
-                                <input type="text" id="phoneInput" class="form-control"
-                                       th:field="*{phone}"
-                                       th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid' : ''"
-                                       placeholder="Ví dụ: 0901234567">
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}">
-                                    Số điện thoại không hợp lệ
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="d-flex justify-content-end gap-2 pt-2 border-top">
-                        <button type="submit" class="btn btn-coral-save d-inline-flex align-items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                                <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                                <polyline points="7 3 7 8 15 8"></polyline>
+            <form th:action="@{/account}" th:object="${updateAccountRequest}" method="post" id="profile-form">
+                <h3 class="acc-form-title">Thông tin liên hệ</h3>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="fullNameInput" class="acc-label">Họ và tên <span class="text-danger" aria-hidden="true">*</span></label>
+                        <input type="text" id="fullNameInput" class="form-control acc-input"
+                               th:field="*{fullName}"
+                               th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid' : ''"
+                               th:attr="aria-invalid=${#fields.hasErrors('fullName')}, aria-describedby=${#fields.hasErrors('fullName')} ? 'fullNameError' : null"
+                               placeholder="Nhập họ và tên đầy đủ của bạn" required>
+                        <div class="acc-error" id="fullNameError" th:if="${#fields.hasErrors('fullName')}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-top: 0.15rem; flex: none">
+                                <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
                             </svg>
-                            <span>Lưu thay đổi</span>
+                            <span th:errors="*{fullName}">Họ và tên không hợp lệ</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="phoneInput" class="acc-label">Số điện thoại</label>
+                        <input type="text" id="phoneInput" class="form-control acc-input"
+                               th:field="*{phone}"
+                               th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid' : ''"
+                               th:attr="aria-invalid=${#fields.hasErrors('phone')}, aria-describedby=${#fields.hasErrors('phone')} ? 'phoneError' : null"
+                               inputmode="tel" placeholder="Ví dụ: 0901234567">
+                        <div class="acc-error" id="phoneError" th:if="${#fields.hasErrors('phone')}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-top: 0.15rem; flex: none">
+                                <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            <span th:errors="*{phone}">Số điện thoại không hợp lệ</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="acc-actions">
+                    <button type="submit" class="btn btn-coral-save d-inline-flex align-items-center gap-2" id="save-profile">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        <span>Lưu thay đổi</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Đổi mật khẩu -->
+        <section class="profile-card acc-card" id="change-password">
+            <div class="acc-security">
+                <div class="acc-security__intro">
+                    <span class="acc-security__icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                    </span>
+                    <h2 class="acc-card__title">Đổi mật khẩu</h2>
+                    <p class="acc-card__sub">Cập nhật mật khẩu để bảo vệ tài khoản của bạn.</p>
+                </div>
+
+                <form th:action="@{/account/password}" th:object="${changePasswordRequest}" method="post" id="password-form" autocomplete="off" class="acc-security__form">
+                    <div class="acc-field">
+                        <label for="currentPasswordInput" class="acc-label">Mật khẩu hiện tại <span class="text-danger" aria-hidden="true">*</span></label>
+                        <div class="acc-pw">
+                            <input type="password" id="currentPasswordInput" class="form-control acc-input"
+                                   name="currentPassword" autocomplete="current-password"
+                                   th:classappend="${#fields.hasErrors('currentPassword')} ? 'is-invalid' : ''"
+                                   th:attr="aria-invalid=${#fields.hasErrors('currentPassword')}, aria-describedby=${#fields.hasErrors('currentPassword')} ? 'currentPasswordError' : 'currentPasswordHint'"
+                                   required>
+                            <button type="button" class="acc-pw__toggle" data-toggle-password="currentPasswordInput" data-label-show="Hiện mật khẩu hiện tại" data-label-hide="Ẩn mật khẩu hiện tại" aria-label="Hiện mật khẩu hiện tại" aria-pressed="false" title="Hiện mật khẩu hiện tại">
+                            <svg class="icon-show" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            <svg class="icon-hide" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                            </button>
+                        </div>
+                        <div class="acc-error" id="currentPasswordError" th:if="${#fields.hasErrors('currentPassword')}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-top: 0.15rem; flex: none">
+                                <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            <span th:errors="*{currentPassword}">Mật khẩu hiện tại không đúng</span>
+                        </div>
+                    </div>
+                    <div class="acc-field">
+                        <label for="newPasswordInput" class="acc-label">Mật khẩu mới <span class="text-danger" aria-hidden="true">*</span></label>
+                        <div class="acc-pw">
+                            <input type="password" id="newPasswordInput" class="form-control acc-input"
+                                   name="newPassword" autocomplete="new-password" minlength="8" maxlength="72"
+                                   th:classappend="${#fields.hasErrors('newPassword')} ? 'is-invalid' : ''"
+                                   th:attr="aria-invalid=${#fields.hasErrors('newPassword')}, aria-describedby=${#fields.hasErrors('newPassword')} ? 'newPasswordError' : 'newPasswordHint'"
+                                   required>
+                            <button type="button" class="acc-pw__toggle" data-toggle-password="newPasswordInput" data-label-show="Hiện mật khẩu mới" data-label-hide="Ẩn mật khẩu mới" aria-label="Hiện mật khẩu mới" aria-pressed="false" title="Hiện mật khẩu mới">
+                            <svg class="icon-show" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            <svg class="icon-hide" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                            </button>
+                        </div>
+                        <div class="acc-error" id="newPasswordError" th:if="${#fields.hasErrors('newPassword')}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-top: 0.15rem; flex: none">
+                                <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            <span th:text="${#fields.errors('newPassword')[0]}">Mật khẩu không hợp lệ</span>
+                        </div>
+                        <p class="acc-hint" id="newPasswordHint" th:unless="${#fields.hasErrors('newPassword')}">
+                            <span class="acc-hint__dot" id="lengthRule" aria-hidden="true"></span>
+                            <span>Mật khẩu mới phải có từ 8 đến 72 ký tự.</span>
+                        </p>
+                    </div>
+                    <div class="acc-field">
+                        <label for="confirmPasswordInput" class="acc-label">Nhập lại mật khẩu mới <span class="text-danger" aria-hidden="true">*</span></label>
+                        <div class="acc-pw">
+                            <input type="password" id="confirmPasswordInput" class="form-control acc-input"
+                                   name="confirmPassword" autocomplete="new-password" maxlength="72"
+                                   th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''"
+                                   th:attr="aria-invalid=${#fields.hasErrors('confirmPassword')}, aria-describedby=${#fields.hasErrors('confirmPassword')} ? 'confirmPasswordError' : 'confirmPasswordHint'"
+                                   required>
+                            <button type="button" class="acc-pw__toggle" data-toggle-password="confirmPasswordInput" data-label-show="Hiện mật khẩu nhập lại" data-label-hide="Ẩn mật khẩu nhập lại" aria-label="Hiện mật khẩu nhập lại" aria-pressed="false" title="Hiện mật khẩu nhập lại">
+                            <svg class="icon-show" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            <svg class="icon-hide" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                            </button>
+                        </div>
+                        <div class="acc-error" id="confirmPasswordError" th:if="${#fields.hasErrors('confirmPassword')}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-top: 0.15rem; flex: none">
+                                <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            <span th:errors="*{confirmPassword}">Mật khẩu nhập lại không khớp</span>
+                        </div>
+                        <p class="acc-error" id="confirmLive" role="status" aria-live="polite" hidden>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-top: 0.15rem; flex: none">
+                                <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            <span>Mật khẩu nhập lại không khớp.</span>
+                        </p>
+                    </div>
+
+                    <div class="acc-actions acc-actions--form">
+                        <button type="submit" class="btn btn-coral-save d-inline-flex align-items-center gap-2" id="save-password">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            <span>Đổi mật khẩu</span>
                         </button>
                     </div>
                 </form>
             </div>
-        </div>
-
-        <!-- Sổ địa chỉ giao hàng (Nếu có) -->
-        <div class="profile-card" th:if="${addresses != null and !addresses.isEmpty()}">
-            <div class="profile-card-header d-flex justify-content-between align-items-center">
-                <div>
-                    <h3 class="h6 fw-bold mb-0 text-dark">Địa chỉ giao hàng đã lưu</h3>
-                    <small class="text-muted">Các địa chỉ dùng khi đặt hàng giao tận nơi</small>
-                </div>
-                <span class="badge bg-light text-secondary border" th:text="${#lists.size(addresses)} + ' địa chỉ'">1 địa chỉ</span>
-            </div>
-            <div class="p-3">
-                <div class="list-group list-group-flush">
-                    <div class="list-group-item px-2 py-3" th:each="addr : ${addresses}">
-                        <div class="d-flex justify-content-between align-items-start mb-1">
-                            <div class="fw-semibold text-dark">
-                                <span th:text="${addr.receiverName}">Nguyễn Văn A</span>
-                                <span class="badge badge-coral-subtle ms-2" th:if="${addr.defaultAddress}">Mặc định</span>
-                            </div>
-                            <span class="small text-muted" th:text="${addr.receiverPhone}">0901234567</span>
-                        </div>
-                        <div class="small text-secondary" th:text="${addr.addressLine}">
-                            123 Đường ABC, Phường 1, Quận 1, TP. Hồ Chí Minh
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </section>
     </div>
 </div>
 
+<script>
+    (function () {
+        // one click saves once: the label changes while the server answers (the buttons keep their colours)
+        var forms = [
+            ['profile-form', 'save-profile', 'Đang lưu…'],
+            ['password-form', 'save-password', 'Đang đổi…']
+        ];
+        forms.forEach(function (item) {
+            var form = document.getElementById(item[0]);
+            var button = document.getElementById(item[1]);
+            if (!form || !button) return;
+            var sent = false;
+            form.addEventListener('submit', function (event) {
+                if (sent) { event.preventDefault(); return; }
+                sent = true;
+                button.setAttribute('aria-busy', 'true');
+                var label = button.querySelector('span');
+                if (label) label.textContent = item[2];
+            });
+        });
+
+        // show / hide each password on its own; the typed text and the caret stay where they are
+        document.querySelectorAll('[data-toggle-password]').forEach(function (toggle) {
+            toggle.addEventListener('click', function () {
+                var input = document.getElementById(toggle.getAttribute('data-toggle-password'));
+                if (!input) return;
+                var show = input.type === 'password';
+                var start = input.selectionStart, end = input.selectionEnd;
+                input.type = show ? 'text' : 'password';
+                try { input.setSelectionRange(start, end); } catch (e) { /* not supported while hidden */ }
+                input.focus();
+                var label = toggle.getAttribute(show ? 'data-label-hide' : 'data-label-show');
+                toggle.setAttribute('aria-label', label);
+                toggle.setAttribute('title', label);
+                toggle.setAttribute('aria-pressed', show ? 'true' : 'false');
+                toggle.querySelector('.icon-show').hidden = show;
+                toggle.querySelector('.icon-hide').hidden = !show;
+            });
+        });
+
+        // the same 8-72 rule the server applies, shown while typing; the server stays the judge
+        var next = document.getElementById('newPasswordInput');
+        var confirm = document.getElementById('confirmPasswordInput');
+        var hint = document.getElementById('newPasswordHint');
+        var live = document.getElementById('confirmLive');
+        if (next && hint) {
+            next.addEventListener('input', function () {
+                var n = next.value.length;
+                hint.classList.toggle('is-met', n >= 8 && n <= 72);
+            });
+        }
+        if (next && confirm && live) {
+            function checkMatch(strict) {
+                var mismatch = confirm.value.length > 0 && confirm.value !== next.value;
+                live.hidden = !(mismatch && (strict || confirm.dataset.touched === '1'));
+            }
+            confirm.addEventListener('blur', function () { confirm.dataset.touched = '1'; checkMatch(true); });
+            confirm.addEventListener('input', function () { if (confirm.dataset.touched === '1') checkMatch(true); });
+            next.addEventListener('input', function () { if (confirm.dataset.touched === '1') checkMatch(true); });
+        }
+
+        // after a failed attempt, bring the password card into view
+        if (document.querySelector('#change-password .is-invalid')) {
+            document.getElementById('change-password').scrollIntoView({ block: 'center' });
+        }
+    })();
+</script>
 </body>
 </html>

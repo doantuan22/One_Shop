@@ -1,0 +1,226 @@
+/**
+ * OneShop - Bootstrap 5 Core Overrides (Coral Theme #FF7F50)
+ * Base: Soy Esencial UI Palette Re-engineered
+ */
+
+:root {
+  /* ==========================================================
+     1. COLOR PALETTE (TONE MÀU CORAL #FF7F50 - LOGO GỐC)
+     ========================================================== */
+  /* Brand Tokens chuẩn hóa */
+  --brand-primary: #ff7f50;
+  --brand-primary-rgb: 255, 127, 80;
+  --brand-primary-hover: #e86738;
+  --brand-primary-active: #d65426;
+  --brand-primary-light: #fff5f2;
+  --brand-primary-border: #ffd5c7;
+  --brand-primary-contrast: #ffffff;
+  --brand-primary-text: #d65426;
+
+  /* Primary: Cam San Hô Chủ Đạo theo logo One.png */
+  --bs-primary: #ff7f50;
+  --bs-primary-rgb: 255, 127, 80;
+  --bs-primary-hover: #e86738;
+  --bs-primary-active: #d65426;
+
+  /* Secondary: Cam đào / Peach nhẹ nhàng */
+  --bs-secondary: #ffab91;
+  --bs-secondary-rgb: 255, 171, 145;
+  --bs-secondary-hover: #f99577;
+
+  /* Deep Tone: Cam đất đậm dùng cho tiêu đề & text nhấn */
+  --bs-dark-coral: #d65426;
+  --bs-dark-coral-rgb: 191, 54, 12;
+
+  /* Tone nền dịu (Soft Backgrounds & Borders) */
+  --bs-coral-soft: #fff5f2;
+  --bs-coral-light: #ffede6;
+  --bs-coral-border: #ffd5c7;
+
+  /* Hệ màu chức năng */
+  --bs-success: #2e7d32;
+  --bs-warning: #f57c00;
+  --bs-danger: #d32f2f;
+  --bs-info: #0288d1;
+
+  /* Link & Typography */
+  --bs-link-color: var(--bs-primary);
+  --bs-link-hover-color: var(--bs-primary-hover);
+  --bs-body-color: #2c3038;
+  --bs-body-bg: #fcfaf9;
+  --bs-border-color: #f3e5df;
+
+  /* Shadows & Radius */
+  --bs-box-shadow-coral: 0 8px 24px rgba(255, 127, 80, 0.15);
+  --bs-box-shadow-coral-lg: 0 16px 36px rgba(255, 127, 80, 0.22);
+  --bs-radius-sm: 6px;
+  --bs-radius-md: 10px;
+  --bs-radius-lg: 16px;
+  --bs-radius-pill: 50rem;
+}
+
+/* ==========================================================
+   2. BUTTONS (NÚT BẤM)
+   ========================================================== */
+.btn-primary {
+  color: #ffffff !important;
+  background-color: var(--bs-primary) !important;
+  border-color: var(--bs-primary) !important;
+  font-weight: 600;
+  border-radius: var(--bs-radius-md);
+  transition: all 0.25s ease-in-out;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  color: #ffffff !important;
+  background-color: var(--bs-primary-hover) !important;
+  border-color: var(--bs-primary-hover) !important;
+  box-shadow: 0 4px 14px rgba(255, 127, 80, 0.35) !important;
+  transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+  color: var(--bs-primary) !important;
+  border-color: var(--bs-primary) !important;
+  background-color: transparent !important;
+  font-weight: 600;
+  border-radius: var(--bs-radius-md);
+  transition: all 0.25s ease-in-out;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus-visible {
+  color: #ffffff !important;
+  background-color: var(--bs-primary) !important;
+  border-color: var(--bs-primary) !important;
+  box-shadow: 0 4px 14px rgba(255, 127, 80, 0.25) !important;
+}
+
+.btn-secondary {
+  color: #292d32 !important;
+  background-color: var(--bs-secondary) !important;
+  border-color: var(--bs-secondary) !important;
+}
+
+.btn-secondary:hover {
+  background-color: var(--bs-secondary-hover) !important;
+  border-color: var(--bs-secondary-hover) !important;
+}
+
+.btn-soft-coral {
+  color: var(--bs-dark-coral) !important;
+  background-color: var(--bs-coral-soft) !important;
+  border: 1px solid var(--bs-coral-border) !important;
+  font-weight: 600;
+}
+
+.btn-soft-coral:hover {
+  background-color: var(--bs-primary) !important;
+  color: #ffffff !important;
+}
+
+/* ==========================================================
+   3. FORMS & INPUTS (Ô NHẬP LIỆU)
+   ========================================================== */
+.form-control,
+.form-select {
+  border-color: var(--bs-border-color);
+  border-radius: var(--bs-radius-md);
+  padding: 0.65rem 1rem;
+  color: #3e444e;
+  background-color: #ffffff;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--bs-primary-hover) !important;
+  box-shadow: 0 0 0 0.25rem rgba(255, 127, 80, 0.22) !important;
+  outline: 3px solid #1f2937;
+  outline-offset: 2px;
+}
+
+.form-check-input:checked {
+  background-color: var(--bs-primary) !important;
+  border-color: var(--bs-primary) !important;
+}
+
+.form-check-input:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.25rem rgba(255, 127, 80, 0.22);
+}
+
+/* ==========================================================
+   4. BADGES & ALERTS
+   ========================================================== */
+.badge-coral {
+  background-color: var(--bs-coral-soft) !important;
+  color: var(--bs-dark-coral) !important;
+  border: 1px solid var(--bs-coral-border) !important;
+  font-weight: 600;
+  padding: 0.35em 0.7em;
+  border-radius: var(--bs-radius-pill);
+}
+
+.badge-primary {
+  background-color: var(--bs-primary) !important;
+  color: #ffffff !important;
+}
+
+:focus-visible {
+  outline: 3px solid #1f2937;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.alert-coral {
+  background-color: var(--bs-coral-soft);
+  border-color: var(--bs-coral-border);
+  color: var(--bs-dark-coral);
+  border-radius: var(--bs-radius-md);
+}
+
+/* ==========================================================
+   5. PAGINATION & BREADCRUMBS
+   ========================================================== */
+.pagination .page-item.active .page-link {
+  background-color: var(--bs-primary) !important;
+  border-color: var(--bs-primary) !important;
+  color: #ffffff !important;
+}
+
+.pagination .page-link {
+  color: var(--bs-primary);
+  border-color: var(--bs-coral-border);
+  border-radius: var(--bs-radius-sm);
+  margin: 0 3px;
+}
+
+.pagination .page-link:hover {
+  background-color: var(--bs-coral-soft);
+  border-color: var(--bs-primary);
+  color: var(--bs-primary-hover);
+}
+
+.breadcrumb-item a {
+  color: #757575;
+  text-decoration: none;
+}
+
+.breadcrumb-item.active {
+  color: var(--bs-primary);
+  font-weight: 600;
+}

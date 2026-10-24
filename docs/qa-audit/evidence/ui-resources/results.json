@@ -1,0 +1,201 @@
+{
+  "mode": "resources",
+  "results": [
+    {
+      "id": "QA008 Home seed image naturalWidth",
+      "status": "PASS",
+      "actual": {
+        "src": "http://localhost:56056/images/site/categories/category-placeholder.svg",
+        "complete": true,
+        "naturalWidth": 150
+      },
+      "timestamp": "2026-10-24T10:19:19.640Z"
+    },
+    {
+      "id": "QA008 Admin Categories seed image naturalWidth",
+      "status": "PASS",
+      "actual": {
+        "src": "http://localhost:56056/images/site/categories/category-placeholder.svg",
+        "complete": true,
+        "naturalWidth": 150
+      },
+      "timestamp": "2026-10-24T10:19:21.382Z"
+    },
+    {
+      "id": "QA008 failed resource recovers to fallback without error loop",
+      "status": "PASS",
+      "actual": {
+        "src": "http://localhost:56056/images/site/categories/category-placeholder.svg",
+        "naturalWidth": 150
+      },
+      "timestamp": "2026-10-24T10:19:21.690Z"
+    },
+    {
+      "id": "QA008 no broken canonical Cloudinary category reference",
+      "status": "PASS",
+      "actual": "no request to removed broken seed URL",
+      "timestamp": "2026-10-24T10:19:21.691Z"
+    }
+  ],
+  "network": [
+    {
+      "url": "http://localhost:56056/",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "http://localhost:56056/images/One.png",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:56056/images/site/hero/hero-800.webp",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:56056/images/site/categories/category-placeholder.svg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:56056/images/site/categories/category-skincare.webp",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/f_auto,q_auto,w_800/v1791803745/oneshop/seed/categories/tay-trang-va-lam-sach.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/f_auto,q_auto,w_800/v1791803739/oneshop/seed/categories/cham-soc-co-the.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/c_pad,w_800,h_800,b_white,f_auto,q_auto/v1792488130/oneshop/v3/products/vaseline-jelly-cocoa-100.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/c_pad,w_800,h_800,b_white,f_auto,q_auto/v1792488103/oneshop/v3/products/simple-refresh-150.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:56056/login",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "http://localhost:56056/images/One.png",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:56056/admin",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "http://localhost:56056/images/One.png",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect width='7' height='9' x='3' y='3' rx='1'/><rect width='7' height='5' x='14' y='3' rx='1'/><rect width='7' height='9' x='14' y='12' rx='1'/><rect width='7' height='5' x='3' y='16' rx='1'/></svg>",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:56056/admin/categories",
+      "status": 200,
+      "type": "Document"
+    },
+    {
+      "url": "http://localhost:56056/images/One.png",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:56056/images/site/categories/category-skincare.webp",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:56056/images/site/categories/category-placeholder.svg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414'/%3e%3c/svg%3e",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z'/><path d='m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65'/><path d='m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65'/></svg>",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/v1791803739/oneshop/seed/categories/cham-soc-co-the.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "https://res.cloudinary.com/dfyfpuguj/image/upload/v1791803745/oneshop/seed/categories/tay-trang-va-lam-sach.jpg",
+      "status": 200,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:56056/images/qa-intentionally-missing-fallback-test.png",
+      "status": 404,
+      "type": "Image"
+    },
+    {
+      "url": "http://localhost:56056/images/site/categories/category-placeholder.svg",
+      "status": 200,
+      "type": "Image"
+    }
+  ],
+  "errors": [
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Failed to load resource: the server responded with a status of 404 ()"
+  ]
+}
