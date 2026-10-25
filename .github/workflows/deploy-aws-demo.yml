@@ -35,7 +35,7 @@ jobs:
           java-version: '21'
           cache: maven
       - name: Build deployable jar
-        run: ./mvnw -B -DskipTests package
+        run: bash ./mvnw -B -DskipTests package
       - name: Configure short-lived AWS credentials with GitHub OIDC
         uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
         with:
