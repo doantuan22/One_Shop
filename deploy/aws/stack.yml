@@ -309,6 +309,16 @@ Resources:
         Fn::Base64: |
           #!/bin/bash
           set -euxo pipefail
+          # Wait for the Elastic IP association to provide outbound internet before bootstrapping.
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent --connect-timeout 5 --max-time 15 \
+              https://truststore.pki.rds.amazonaws.com/ap-southeast-1/ap-southeast-1-bundle.pem \
+              -o /tmp/rds-ca-bundle.pem; then
+              break
+            fi
+            sleep 5
+          done
+          test -s /tmp/rds-ca-bundle.pem
           dnf install -y java-21-amazon-corretto-headless nginx python3.11 python3.11-pip curl git
           groupadd --system oneshop 2>/dev/null || true
           id oneshop >/dev/null 2>&1 || useradd --system --gid oneshop --home-dir /opt/oneshop --shell /sbin/nologin oneshop
@@ -316,7 +326,7 @@ Resources:
           install -d -o root -g oneshop -m 0750 /etc/oneshop
           install -d -o root -g root -m 0755 /var/www/certbot/.well-known/acme-challenge
           install -o root -g oneshop -m 0640 /dev/null /etc/oneshop/oneshop.env
-          curl -fsSL https://truststore.pki.rds.amazonaws.com/ap-southeast-1/ap-southeast-1-bundle.pem -o /tmp/rds-ca-bundle.pem
+          
           cp /tmp/rds-ca-bundle.pem /etc/pki/ca-trust/source/anchors/aws-rds-ca-bundle.pem
           update-ca-trust extract
           python3.11 - <<'PY'
