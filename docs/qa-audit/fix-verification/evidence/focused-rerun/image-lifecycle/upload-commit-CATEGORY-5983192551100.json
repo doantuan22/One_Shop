@@ -1,7 +1,0 @@
-{
-  "files" : [ "qa-fix/bb4f221e-3c5f-416a-8663-3e817c8f7e48" ],
-  "tasks" : [ ],
-  "database" : "oneshop_fix_20261024_test",
-  "timestamp" : "2026-10-24T03:09:50.158865100Z",
-  "scenario" : "upload-commit-CATEGORY"
-}

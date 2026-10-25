@@ -1,7 +1,0 @@
-{
-  "expected" : "success/empty page or controlled 4xx; never 5xx",
-  "actual" : 400,
-  "actor" : "admin@oneshop.vn",
-  "timestamp" : "2026-10-24T03:06:58.755119600Z",
-  "request" : "/admin/users?page=178956970&q=qa-no-match-999"
-}

@@ -1,7 +1,0 @@
-{
-  "scenario" : "upload-rollback-PRODUCT",
-  "files" : [ ],
-  "tasks" : [ ],
-  "database" : "oneshop_fix_full_20261024_test",
-  "timestamp" : "2026-10-24T03:24:42.016956Z"
-}

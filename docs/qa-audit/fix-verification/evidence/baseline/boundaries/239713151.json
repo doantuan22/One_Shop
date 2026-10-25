@@ -1,7 +1,0 @@
-{
-  "request" : "/admin/orders?page=2147483647&q=qa-no-match-999",
-  "timestamp" : "2026-10-24T02:38:26.841420600Z",
-  "actor" : "admin@oneshop.vn",
-  "actual" : 200,
-  "expected" : "success/empty page or controlled 4xx; never 5xx"
-}

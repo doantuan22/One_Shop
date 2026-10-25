@@ -1,1 +1,0 @@
-{"actual":400,"request":"/admin/inventory?page=2147483646","expected":400,"timestamp":"2026-10-24T02:54:26.649188800Z"}

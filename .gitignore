@@ -31,3 +31,7 @@ backup/
 *.bak
 database/seed_large/images/originals/
 oneshop-seed-images/
+
+# Seed collection tool bytecode
+__pycache__/
+*.pyc

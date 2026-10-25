@@ -1,7 +1,0 @@
-{
-  "actor" : "guest",
-  "actual" : 400,
-  "expected" : "success/empty page or controlled 4xx; never 5xx",
-  "request" : "/products?page=abc",
-  "timestamp" : "2026-10-24T03:17:56.934962200Z"
-}

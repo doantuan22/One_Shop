@@ -1,7 +1,0 @@
-{
-  "request" : "/products?page=1.5&q=qa-no-match-999",
-  "timestamp" : "2026-10-24T02:38:18.788613400Z",
-  "actor" : "guest",
-  "actual" : 400,
-  "expected" : "success/empty page or controlled 4xx; never 5xx"
-}

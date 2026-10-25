@@ -1,7 +1,0 @@
-{
-  "request" : "/staff/inventory-history?page=2147483647&q=qa-no-match-999",
-  "timestamp" : "2026-10-24T02:38:32.322240900Z",
-  "actor" : "staff.thuduc@oneshop.vn",
-  "actual" : 409,
-  "expected" : "success/empty page or controlled 4xx; never 5xx"
-}

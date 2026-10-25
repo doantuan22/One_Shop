@@ -1,7 +1,0 @@
-{
-  "request" : "/products?page=107374181",
-  "timestamp" : "2026-10-24T03:11:51.780294800Z",
-  "actor" : "guest",
-  "actual" : 200,
-  "expected" : "success/empty page or controlled 4xx; never 5xx"
-}

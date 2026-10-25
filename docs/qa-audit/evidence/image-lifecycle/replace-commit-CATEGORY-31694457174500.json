@@ -1,7 +1,0 @@
-{
-  "database" : "oneshop_ui_20261025_test",
-  "timestamp" : "2026-10-24T10:18:21.425249300Z",
-  "scenario" : "replace-commit-CATEGORY",
-  "files" : [ "qa-fix/1d5011d1-07b6-433d-9661-4f36e0fc49ec" ],
-  "tasks" : [ ]
-}

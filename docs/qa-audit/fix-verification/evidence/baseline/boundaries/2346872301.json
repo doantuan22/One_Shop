@@ -1,7 +1,0 @@
-{
-  "request" : "/admin/store-products?page=178956971&q=qa-no-match-999",
-  "timestamp" : "2026-10-24T02:38:24.380334400Z",
-  "actor" : "admin@oneshop.vn",
-  "actual" : 200,
-  "expected" : "success/empty page or controlled 4xx; never 5xx"
-}

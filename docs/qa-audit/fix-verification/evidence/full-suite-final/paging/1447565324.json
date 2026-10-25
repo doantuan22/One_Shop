@@ -1,1 +1,0 @@
-{"timestamp":"2026-10-24T03:24:46.143893500Z","expected":400,"request":"/admin/inventory?page=2147483646","actual":400}

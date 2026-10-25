@@ -1,7 +1,0 @@
-{
-  "actor" : "staff.thuduc@oneshop.vn",
-  "actual" : 400,
-  "expected" : "success/empty page or controlled 4xx; never 5xx",
-  "request" : "/staff/reviews?page=1.5&q=qa-no-match-999",
-  "timestamp" : "2026-10-24T03:18:16.515633700Z"
-}

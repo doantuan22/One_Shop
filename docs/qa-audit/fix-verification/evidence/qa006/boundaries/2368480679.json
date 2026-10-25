@@ -1,7 +1,0 @@
-{
-  "timestamp" : "2026-10-24T02:58:47.715158500Z",
-  "request" : "/admin/reviews?page=2147483647",
-  "expected" : "success/empty page or controlled 4xx; never 5xx",
-  "actual" : 400,
-  "actor" : "admin@oneshop.vn"
-}

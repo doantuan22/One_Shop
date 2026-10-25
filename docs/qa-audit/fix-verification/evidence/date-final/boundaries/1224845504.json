@@ -1,7 +1,0 @@
-{
-  "actor" : "staff.thuduc@oneshop.vn",
-  "actual" : 400,
-  "expected" : "success/empty page or controlled 4xx; never 5xx",
-  "request" : "/staff/inventory-history?page=2147483647",
-  "timestamp" : "2026-10-24T03:18:14.270097600Z"
-}

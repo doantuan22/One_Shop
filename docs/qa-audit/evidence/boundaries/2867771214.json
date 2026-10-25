@@ -1,7 +1,0 @@
-{
-  "actual" : 400,
-  "actor" : "staff.thuduc@oneshop.vn",
-  "timestamp" : "2026-10-24T10:17:19.846460400Z",
-  "request" : "/staff/fulfillments?from=2026-10-25&to=2026-10-24",
-  "expected" : "success/empty page or controlled 4xx; never 5xx"
-}

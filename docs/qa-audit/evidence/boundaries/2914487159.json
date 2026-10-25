@@ -1,7 +1,0 @@
-{
-  "actual" : 200,
-  "actor" : "admin@oneshop.vn",
-  "timestamp" : "2026-10-24T10:17:16.973328600Z",
-  "request" : "/admin/payments?page=107374181&q=qa-no-match-999",
-  "expected" : "success/empty page or controlled 4xx; never 5xx"
-}

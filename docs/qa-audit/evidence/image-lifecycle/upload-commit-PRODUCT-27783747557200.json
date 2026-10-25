@@ -1,7 +1,0 @@
-{
-  "tasks" : [ ],
-  "files" : [ "qa-fix/bf008c8f-1216-40bf-9eba-fedb84058efe" ],
-  "scenario" : "upload-commit-PRODUCT",
-  "timestamp" : "2026-10-24T09:13:10.715099800Z",
-  "database" : "oneshop_returns_20261024_test"
-}

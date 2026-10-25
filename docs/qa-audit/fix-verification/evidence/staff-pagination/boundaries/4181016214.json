@@ -1,7 +1,0 @@
-{
-  "request" : "/admin/inventory?page=107374181",
-  "timestamp" : "2026-10-24T03:11:57.776325900Z",
-  "actor" : "admin@oneshop.vn",
-  "actual" : 200,
-  "expected" : "success/empty page or controlled 4xx; never 5xx"
-}

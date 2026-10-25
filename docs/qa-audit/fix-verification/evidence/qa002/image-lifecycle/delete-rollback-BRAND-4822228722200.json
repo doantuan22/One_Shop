@@ -1,7 +1,0 @@
-{
-  "tasks" : [ ],
-  "files" : [ "qa-fix/old-BRAND" ],
-  "scenario" : "delete-rollback-BRAND",
-  "timestamp" : "2026-10-24T02:50:29.197312900Z",
-  "database" : "oneshop_fix_20261024_test"
-}

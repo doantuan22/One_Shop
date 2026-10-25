@@ -21,7 +21,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * The real-product seed (database/02_seed.sql) against its evidence (docs/seed/products.json): every product in the
+ * The real-product seed (database/02_seed.sql) against its evidence (database/seed-data/products.json): every product in the
  * database has a name/price/size that matches the sourced manifest, at least one https source URL, a verification date,
  * a Cloudinary image of the OneShop namespace and an image credit; demo reviews are marked as simulated data.
  * Read only: it never writes, so it can run on any database built from the two official scripts.
@@ -37,7 +37,7 @@ class RealProductSeedIntegrityTest {
     JdbcTemplate jdbc;
 
     private JsonNode manifest() throws Exception {
-        return MAPPER.readTree(Files.readString(Path.of("docs/seed/products.json")));
+        return MAPPER.readTree(Files.readString(Path.of("database/seed-data/products.json")));
     }
 
     @Test
@@ -47,11 +47,15 @@ class RealProductSeedIntegrityTest {
         Set<String> manifestSkus = new HashSet<>();
         for (JsonNode p : products) {
             manifestSkus.add(p.get("sku").asText());
-            var rows = jdbc.queryForList("select name, price, original_price from dbo.products where sku = ?", p.get("sku").asText());
+            var rows = jdbc.queryForList("select p.name, p.price, p.original_price, p.category_id, b.name brand_name, c.name category_name "
+                    + "from dbo.products p join dbo.brands b on b.brand_id=p.brand_id join dbo.categories c on c.category_id=p.category_id where p.sku = ?", p.get("sku").asText());
             assertThat(rows).as(p.get("sku").asText()).hasSize(1);
             assertThat((String) rows.get(0).get("name")).isEqualTo(p.get("name").asText());
             assertThat((BigDecimal) rows.get(0).get("price")).isEqualByComparingTo(BigDecimal.valueOf(p.get("price").asLong()));
             assertThat(rows.get(0).get("original_price")).as("original_price is left empty (listing prices only)").isNull();
+            assertThat(((Number) rows.get(0).get("category_id")).longValue()).isEqualTo(p.get("cat").asLong());
+            assertThat(rows.get(0).get("category_name")).isEqualTo(p.get("category").asText());
+            assertThat(rows.get(0).get("brand_name")).isEqualTo(p.get("brand").asText());
         }
         Set<String> dbSkus = new HashSet<>(jdbc.queryForList("select sku from dbo.products", String.class));
         assertThat(dbSkus).isEqualTo(manifestSkus);
@@ -61,10 +65,11 @@ class RealProductSeedIntegrityTest {
     @DisplayName("SEED-02 every product carries evidence: https source URLs, a verification date, a match grade and a price that a source supports")
     void everyProductHasEvidence() throws Exception {
         JsonNode doc = manifest();
-        assertThat(doc.get("verified_on").asText()).isEqualTo("2026-10-20");
+        assertThat(doc.get("catalog_revision").asText()).isEqualTo("2026-10-25");
         for (JsonNode p : doc.get("products")) {
             String sku = p.get("sku").asText();
-            assertThat(p.get("verified_on").asText()).as(sku).isEqualTo("2026-10-20");
+            assertThat(java.time.LocalDate.parse(p.get("verified_on").asText()))
+                    .as(sku).isBeforeOrEqualTo(java.time.LocalDate.parse(doc.get("catalog_revision").asText()));
             assertThat(p.get("grade").asText()).as(sku).isIn("A", "B");
             assertThat(p.get("sources")).as(sku).isNotEmpty();
             List<Long> observed = new ArrayList<>();
@@ -87,7 +92,7 @@ class RealProductSeedIntegrityTest {
         assertThat(jdbc.queryForObject("select count(*) from dbo.products p where (select count(*) from dbo.product_images i "
                 + "where i.product_id = p.product_id and i.is_primary = 1) <> 1", Integer.class)).isZero();
         assertThat(jdbc.queryForObject("select count(*) from dbo.product_images where image_url not like 'https://res.cloudinary.com/%' "
-                + "or public_id not like 'oneshop/v3/products/%' or image_url not like '%' + public_id + '%'", Integer.class)).isZero();
+                + "or public_id not like 'oneshop/seed/products/%' or image_url not like '%' + public_id + '%'", Integer.class)).isZero();
         JsonNode credits = MAPPER.readTree(Files.readString(Path.of("src/main/resources/data/image-credits.json")));
         assertThat(credits.get("license").asText()).isEqualTo("CC BY-SA 3.0");
         Set<String> credited = new HashSet<>();
@@ -109,7 +114,8 @@ class RealProductSeedIntegrityTest {
     void simulatedDataIsLabelled() {
         assertThat(jdbc.queryForObject("select count(*) from dbo.reviews where comment not like N'[[]Dữ liệu mô phỏng]%'", Integer.class)).isZero();
         assertThat(jdbc.queryForObject("select count(*) from dbo.review_replies where content not like N'[[]Dữ liệu mô phỏng]%'", Integer.class)).isZero();
-        assertThat(jdbc.queryForObject("select count(*) from dbo.payments where transaction_code is not null and transaction_code not like 'MOCK-SEED-%'",
+        assertThat(jdbc.queryForObject("select count(*) from dbo.payments where transaction_code is not null and "
+                        + "((method='ONLINE' and transaction_code not like 'MOCK-%') or (method in ('COD','PAY_AT_STORE') and transaction_code not like 'PAY-%'))",
                 Integer.class)).isZero();
         assertThat(jdbc.queryForObject("select count(*) from dbo.users u join dbo.roles r on r.role_id = u.role_id where r.name = 'CUSTOMER' "
                 + "and u.email not like '%@example.com'", Integer.class)).as("demo customers use example.com").isZero();

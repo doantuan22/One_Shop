@@ -1,7 +1,0 @@
-{
-  "request" : "/admin/staff-assignments?page=107374182",
-  "timestamp" : "2026-10-24T03:12:00.555213700Z",
-  "actor" : "admin@oneshop.vn",
-  "actual" : 200,
-  "expected" : "success/empty page or controlled 4xx; never 5xx"
-}

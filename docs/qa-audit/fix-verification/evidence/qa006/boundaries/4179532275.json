@@ -1,7 +1,0 @@
-{
-  "timestamp" : "2026-10-24T02:58:50.350542500Z",
-  "request" : "/staff/stock?page=178956970&q=qa-no-match-999",
-  "expected" : "success/empty page or controlled 4xx; never 5xx",
-  "actual" : 400,
-  "actor" : "staff.thuduc@oneshop.vn"
-}

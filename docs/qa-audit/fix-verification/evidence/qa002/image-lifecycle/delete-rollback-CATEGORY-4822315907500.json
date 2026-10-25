@@ -1,7 +1,0 @@
-{
-  "tasks" : [ ],
-  "files" : [ "qa-fix/old-CATEGORY" ],
-  "scenario" : "delete-rollback-CATEGORY",
-  "timestamp" : "2026-10-24T02:50:29.283632200Z",
-  "database" : "oneshop_fix_20261024_test"
-}

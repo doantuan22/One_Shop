@@ -1,7 +1,0 @@
-{
-  "request" : "/staff/reviews?page=107374181",
-  "timestamp" : "2026-10-24T03:12:04.617094200Z",
-  "actor" : "staff.thuduc@oneshop.vn",
-  "actual" : 200,
-  "expected" : "success/empty page or controlled 4xx; never 5xx"
-}

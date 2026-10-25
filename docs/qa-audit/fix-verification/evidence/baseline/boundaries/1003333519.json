@@ -1,7 +1,0 @@
-{
-  "request" : "/admin/payments?status=INVALID",
-  "timestamp" : "2026-10-24T02:38:35.208510600Z",
-  "actor" : "admin@oneshop.vn",
-  "actual" : 200,
-  "expected" : "success/empty page or controlled 4xx; never 5xx"
-}
