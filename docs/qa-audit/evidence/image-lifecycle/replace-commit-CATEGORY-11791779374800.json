@@ -1,7 +1,0 @@
-{
-  "database" : "oneshop_audit2_test",
-  "timestamp" : "2026-10-25T05:33:55.743920300Z",
-  "scenario" : "replace-commit-CATEGORY",
-  "files" : [ "qa-fix/59539256-6392-4e10-85ba-602fab76c1a0" ],
-  "tasks" : [ ]
-}

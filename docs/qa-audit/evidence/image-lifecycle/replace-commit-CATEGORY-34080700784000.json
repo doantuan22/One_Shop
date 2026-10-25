@@ -1,7 +1,0 @@
-{
-  "scenario" : "replace-commit-CATEGORY",
-  "files" : [ "qa-fix/248f1019-32b7-4790-838f-42690785551b" ],
-  "tasks" : [ ],
-  "database" : "oneshop_fixture_20261025_test",
-  "timestamp" : "2026-10-25T11:45:24.669599800Z"
-}

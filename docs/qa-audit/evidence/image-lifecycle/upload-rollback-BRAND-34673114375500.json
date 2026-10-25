@@ -1,7 +1,0 @@
-{
-  "timestamp" : "2026-10-25T11:55:17.083451800Z",
-  "scenario" : "upload-rollback-BRAND",
-  "files" : [ ],
-  "tasks" : [ ],
-  "database" : "oneshop_fixture_20261025_test"
-}

@@ -6,6 +6,6 @@ import java.nio.file.Path;
 final class QaAuditEvidence {
     private QaAuditEvidence() { }
     static Path directory(String name) {
-        return Path.of(System.getProperty("oneshop.qa.evidence-dir", "docs/qa-audit/evidence")).resolve(name);
+        return Path.of(System.getProperty("oneshop.qa.evidence-dir", "target/qa-audit/evidence")).resolve(name);
     }
 }

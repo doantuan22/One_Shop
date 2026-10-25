@@ -1,1 +1,0 @@
-{"timestamp":"2026-10-25T11:55:22.331841500Z","expected":200,"request":"/admin/stores?page=1&q=qa-no-match-999","actual":200}

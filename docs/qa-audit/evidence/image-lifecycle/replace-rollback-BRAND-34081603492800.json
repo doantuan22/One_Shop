@@ -1,7 +1,0 @@
-{
-  "scenario" : "replace-rollback-BRAND",
-  "files" : [ "qa-fix/old-BRAND" ],
-  "tasks" : [ ],
-  "database" : "oneshop_fixture_20261025_test",
-  "timestamp" : "2026-10-25T11:45:25.571634800Z"
-}

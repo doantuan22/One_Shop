@@ -17,7 +17,7 @@ class QaAuditScreenBrowserDatabaseIntegrationTest extends V3RegressionTestSuppor
                 .redirectErrorStream(true).redirectOutput(dir.resolve("node.log").toFile()).start();
         try {
             assertThat(browser.waitFor(300,TimeUnit.SECONDS)).as("Chrome screen audit finished").isTrue();
-            assertThat(browser.exitValue()).as("see docs/qa-audit/evidence/screens/results.json and node.log").isZero();
+            assertThat(browser.exitValue()).as("see target/qa-audit/evidence/screens/results.json and node.log").isZero();
         } finally {if(browser.isAlive())browser.destroyForcibly();}
     }
 }

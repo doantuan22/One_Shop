@@ -3,7 +3,9 @@ import path from 'node:path';
 
 export const APP = process.env.ONESHOP_APP_URL || 'http://127.0.0.1:8095';
 export const DEBUG_URL = process.env.ONESHOP_CDP_URL || 'http://127.0.0.1:9222';
-export const DEMO_PASSWORD = 'OneShop@123';
+// Password of the automated-test fixture accounts (database/test/test_fixture_seed.sql, *_test databases only).
+// For any other database export ONESHOP_DEMO_PASSWORD; no credential of a real deployment belongs in this repository.
+export const DEMO_PASSWORD = process.env.ONESHOP_DEMO_PASSWORD ?? 'OneShop@123';
 
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 

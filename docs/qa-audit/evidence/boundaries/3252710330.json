@@ -1,7 +1,0 @@
-{
-  "timestamp" : "2026-10-25T11:54:07.749071900Z",
-  "request" : "/admin/users?page=abc",
-  "expected" : "success/empty page or controlled 4xx; never 5xx",
-  "actual" : 400,
-  "actor" : "admin@example.com"
-}

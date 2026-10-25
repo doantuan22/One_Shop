@@ -1,7 +1,0 @@
-{
-  "database" : "oneshop_audit2_test",
-  "timestamp" : "2026-10-25T05:33:55.541846900Z",
-  "scenario" : "upload-rollback-CATEGORY",
-  "files" : [ ],
-  "tasks" : [ ]
-}

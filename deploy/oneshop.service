@@ -1,0 +1,30 @@
+# systemd unit for OneShop on a Linux host (Amazon Linux 2023 / Ubuntu) with Java 21.
+# Install: sudo cp deploy/oneshop.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable --now oneshop
+# The jar lives in /opt/oneshop/oneshop.jar; secrets live ONLY in /etc/oneshop/oneshop.env (root:oneshop, mode 640).
+[Unit]
+Description=OneShop (Spring Boot)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=oneshop
+Group=oneshop
+WorkingDirectory=/opt/oneshop
+EnvironmentFile=/etc/oneshop/oneshop.env
+Environment=SPRING_PROFILES_ACTIVE=prod
+Environment=JAVA_OPTS=-XX:MaxRAMPercentage=70 -XX:+ExitOnOutOfMemoryError
+ExecStart=/bin/sh -c 'exec java $JAVA_OPTS -jar /opt/oneshop/oneshop.jar'
+# Spring Boot exits with 143 on SIGTERM after a graceful shutdown
+SuccessExitStatus=143
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=40
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log/oneshop
+
+[Install]
+WantedBy=multi-user.target

@@ -1,7 +1,0 @@
-{
-  "timestamp" : "2026-10-25T11:54:15.977629900Z",
-  "request" : "/staff/fulfillments?status=INVALID",
-  "expected" : "success/empty page or controlled 4xx; never 5xx",
-  "actual" : 400,
-  "actor" : "staff.thuduc@example.com"
-}

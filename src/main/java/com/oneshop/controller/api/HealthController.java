@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
-/** Liveness probe for Render. Intentionally does not touch the database or require login. */
+/** Liveness probe for the load balancer / platform health check. Intentionally does not touch the database or require login. */
 @RestController
 public class HealthController {
 

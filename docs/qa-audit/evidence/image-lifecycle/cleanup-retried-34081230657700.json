@@ -1,7 +1,0 @@
-{
-  "scenario" : "cleanup-retried",
-  "files" : [ ],
-  "tasks" : [ ],
-  "database" : "oneshop_fixture_20261025_test",
-  "timestamp" : "2026-10-25T11:45:25.198775800Z"
-}

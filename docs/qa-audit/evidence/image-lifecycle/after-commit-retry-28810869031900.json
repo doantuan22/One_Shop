@@ -1,7 +1,0 @@
-{
-  "database" : "oneshop_fixture_20261025_test",
-  "timestamp" : "2026-10-25T10:17:34.837363500Z",
-  "scenario" : "after-commit-retry",
-  "files" : [ ],
-  "tasks" : [ ]
-}

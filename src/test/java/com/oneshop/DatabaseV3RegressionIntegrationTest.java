@@ -45,7 +45,7 @@ class DatabaseV3RegressionIntegrationTest extends V3RegressionTestSupport {
     @Test void approvedReviewMigrationIsIdempotentAndPreservesEveryTable()throws Exception{
         assertThat(jdbc.queryForObject("select db_name()",String.class)).endsWith("_test");
         var before=tableChecksums();
-        String migration=Files.readString(Path.of("src/test/resources/db/20261014_be06_review_uniqueness.sql"));
+        String migration=Files.readString(Path.of("database/migrations/V001_review_uniqueness.sql"));
         // the script changes session options (SET NOCOUNT ON, XACT_ABORT ON ...): undo them before the pooled connection is reused
         for(int run=0;run<2;run++)jdbc.execute((org.springframework.jdbc.core.ConnectionCallback<Void>) connection->{
             try(var statement=connection.createStatement()){statement.execute(migration);}

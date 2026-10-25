@@ -42,7 +42,7 @@ public class V3SchemaCompatibilityVerifier implements SmartInitializingSingleton
                 + "(object_id=object_id(N'dbo.order_items') and name=N'discount_amount')", Integer.class);
         if (tables == null || tables != 2 || columns == null || columns != 3) {
             throw new IllegalStateException("V3 schema prerequisite missing: promotion codes. "
-                    + "Stop startup; back up and obtain approval for docs/v3/migration-history/20261025_promotions.sql (an existing database only; a fresh install uses database/01_schema.sql). "
+                    + "Stop startup; back up and obtain approval for database/migrations/V004_promotions.sql (an existing database only; a fresh install uses database/schema/01_schema.sql). "
                     + "No migration was executed automatically.");
         }
     }
@@ -55,7 +55,7 @@ public class V3SchemaCompatibilityVerifier implements SmartInitializingSingleton
                 + " and name=N'UX_payment_refunds_return' and is_unique=1 and has_filter=1 and is_disabled=0", Integer.class);
         if (tables == null || tables != 3 || ledgerKey == null || ledgerKey != 1) {
             throw new IllegalStateException("V3 schema prerequisite missing: post-delivery return flow. "
-                    + "Stop startup; back up and obtain approval for docs/v3/migration-history/20261024_order_returns.sql (an existing database only; a fresh install uses database/01_schema.sql). "
+                    + "Stop startup; back up and obtain approval for database/migrations/V003_order_returns.sql (an existing database only; a fresh install uses database/schema/01_schema.sql). "
                     + "No migration was executed automatically.");
         }
     }
@@ -67,7 +67,7 @@ public class V3SchemaCompatibilityVerifier implements SmartInitializingSingleton
                 + " and is_unique=1 and has_filter=1 and is_disabled=0", Integer.class);
         if (present == null || present != 3) {
             throw new IllegalStateException("V3 schema prerequisite missing: OPEN-10.1 payment_refunds ledger. "
-                    + "Stop startup; back up and obtain approval for docs/v3/migration-history/20261020_open101_payment_refunds.sql (an existing database only; a fresh install uses database/01_schema.sql). "
+                    + "Stop startup; back up and obtain approval for database/migrations/V002_payment_refunds.sql (an existing database only; a fresh install uses database/schema/01_schema.sql). "
                     + "No migration was executed automatically.");
         }
     }
@@ -77,7 +77,7 @@ public class V3SchemaCompatibilityVerifier implements SmartInitializingSingleton
                 || !matches(keys,"UX_reviews_order_item","ORDER_ITEM_IDISNOTNULL",List.of("order_item_id"))
                 || !matches(keys,"UX_reviews_legacy_user_product","ORDER_ITEM_IDISNULL",List.of("user_id","product_id"))) {
             throw new IllegalStateException("V3 schema prerequisite missing: DEC-26 Review filtered unique indexes. "
-                    + "Stop startup; back up and obtain approval for docs/v3/migration-history/20261014_be06_review_uniqueness.sql (an existing database only; a fresh install uses database/01_schema.sql). "
+                    + "Stop startup; back up and obtain approval for database/migrations/V001_review_uniqueness.sql (an existing database only; a fresh install uses database/schema/01_schema.sql). "
                     + "No migration was executed automatically.");
         }
     }

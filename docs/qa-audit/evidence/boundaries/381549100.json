@@ -1,7 +1,0 @@
-{
-  "timestamp" : "2026-10-25T11:54:13.215940700Z",
-  "request" : "/staff/stock?page=107374182",
-  "expected" : "success/empty page or controlled 4xx; never 5xx",
-  "actual" : 200,
-  "actor" : "staff.thuduc@example.com"
-}

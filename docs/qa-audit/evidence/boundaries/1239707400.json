@@ -1,7 +1,0 @@
-{
-  "timestamp" : "2026-10-25T11:54:06.964687900Z",
-  "request" : "/admin/products?page=178956970",
-  "expected" : "success/empty page or controlled 4xx; never 5xx",
-  "actual" : 400,
-  "actor" : "admin@example.com"
-}

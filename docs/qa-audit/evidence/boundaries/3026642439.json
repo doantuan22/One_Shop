@@ -1,7 +1,0 @@
-{
-  "timestamp" : "2026-10-25T11:54:12.861549700Z",
-  "request" : "/admin/payments?page=2147483647&q=qa-no-match-999",
-  "expected" : "success/empty page or controlled 4xx; never 5xx",
-  "actual" : 400,
-  "actor" : "admin@example.com"
-}
