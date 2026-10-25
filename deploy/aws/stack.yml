@@ -313,7 +313,8 @@ Resources:
           for attempt in $(seq 1 60); do
             if curl --fail --silent --connect-timeout 5 --max-time 15 \
               https://truststore.pki.rds.amazonaws.com/ap-southeast-1/ap-southeast-1-bundle.pem \
-              -o /tmp/rds-ca-bundle.pem; then
+              -o /tmp/rds-ca-bundle.pem.tmp; then
+              mv /tmp/rds-ca-bundle.pem.tmp /tmp/rds-ca-bundle.pem
               break
             fi
             sleep 5
