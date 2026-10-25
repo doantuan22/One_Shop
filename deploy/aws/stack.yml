@@ -1,0 +1,546 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: OneShop 15-day class demo - single EC2, private RDS SQL Server Express, SSM, and GitHub OIDC deploy.
+
+Parameters:
+  DbMasterUsername:
+    Type: String
+    Default: oneshopadmin
+    AllowedPattern: '^[A-Za-z][A-Za-z0-9]{1,15}$'
+    Description: RDS master login name. Keep this separate from the application login.
+  DbMasterPassword:
+    Type: String
+    NoEcho: true
+    MinLength: 24
+    MaxLength: 128
+    AllowedPattern: '^[A-Za-z0-9]{24,128}$'
+    Description: Use a unique 24+ character alphanumeric password. Enter it in the CloudFormation console; never put it in this file.
+
+Resources:
+  Vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.42.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: oneshop-demo-vpc
+        - Key: Project
+          Value: OneShop-demo
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: oneshop-demo-igw
+  AttachInternetGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref Vpc
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: 10.42.1.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: oneshop-demo-public
+  PrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: 10.42.16.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: oneshop-demo-private-a
+  PrivateSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: 10.42.17.0/24
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: oneshop-demo-private-b
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: Name
+          Value: oneshop-demo-public-routes
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachInternetGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  PublicSubnetRouteAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: Name
+          Value: oneshop-demo-private-routes-no-nat
+  PrivateSubnetARouteAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetA
+      RouteTableId: !Ref PrivateRouteTable
+  PrivateSubnetBRouteAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetB
+      RouteTableId: !Ref PrivateRouteTable
+
+  AppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Public web only; no SSH. HTTP serves ACME challenges until HTTPS is enabled.
+      VpcId: !Ref Vpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: oneshop-demo-app-sg
+  DatabaseSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Private SQL Server access from the OneShop EC2 only.
+      VpcId: !Ref Vpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 1433
+          ToPort: 1433
+          SourceSecurityGroupId: !Ref AppSecurityGroup
+      SecurityGroupEgress: []
+      Tags:
+        - Key: Name
+          Value: oneshop-demo-db-sg
+
+  ArtifactBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub oneshop-demo-artifacts-${AWS::AccountId}-${AWS::Region}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - Id: ExpireDemoArtifactsAfter15Days
+            Status: Enabled
+            Prefix: artifacts/
+            ExpirationInDays: 15
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 1
+      Tags:
+        - Key: Project
+          Value: OneShop-demo
+  ArtifactBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref ArtifactBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: DenyInsecureTransport
+            Effect: Deny
+            Principal: '*'
+            Action: s3:*
+            Resource:
+              - !GetAtt ArtifactBucket.Arn
+              - !Sub ${ArtifactBucket.Arn}/*
+            Condition:
+              Bool:
+                aws:SecureTransport: false
+
+  AppInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonSSMManagedInstanceCore
+      Policies:
+        - PolicyName: OneShopDemoReadDeployArtifactsAndSecrets
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: ReadReleaseFiles
+                Effect: Allow
+                Action: s3:GetObject
+                Resource: !Sub ${ArtifactBucket.Arn}/artifacts/*
+              - Sid: ReadOnlyRequiredSecureParameters
+                Effect: Allow
+                Action: ssm:GetParameter
+                Resource:
+                  - !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/oneshop/demo/app-env
+                  - !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/oneshop/demo/rds-master-password
+                  - !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/oneshop/demo/seed-password-hash
+                  - !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/oneshop/demo/app-db-password
+                  - !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/oneshop/demo/rds-endpoint
+                  - !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/oneshop/demo/rds-master-username
+              - Sid: DecryptOnlyOneShopSecureParametersThroughParameterStore
+                Effect: Allow
+                Action: kms:Decrypt
+                Resource: '*'
+                Condition:
+                  StringEquals:
+                    kms:ViaService: !Sub ssm.${AWS::Region}.amazonaws.com
+                  StringLike:
+                    kms:EncryptionContext:PARAMETER_ARN: !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/oneshop/demo/*
+      Tags:
+        - Key: Project
+          Value: OneShop-demo
+  AppInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref AppInstanceRole
+
+  GithubOidcProvider:
+    Type: AWS::IAM::OIDCProvider
+    Properties:
+      Url: https://token.actions.githubusercontent.com
+      ClientIdList:
+        - sts.amazonaws.com
+      Tags:
+        - Key: Project
+          Value: OneShop-demo
+  GithubDeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: GitHub Actions deploy role restricted to One_Shop main branch.
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !Ref GithubOidcProvider
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+                token.actions.githubusercontent.com:sub: repo:doantuan22/One_Shop:ref:refs/heads/main
+      Policies:
+        - PolicyName: DeployOneShopMainToSingleInstance
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: UploadReleaseArtifacts
+                Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:AbortMultipartUpload
+                Resource: !Sub ${ArtifactBucket.Arn}/artifacts/*
+              - Sid: RunDeployCommandOnlyOnOneShopInstance
+                Effect: Allow
+                Action: ssm:SendCommand
+                Resource:
+                  - !Sub arn:${AWS::Partition}:ssm:${AWS::Region}::document/AWS-RunShellScript
+                  - !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:instance/${AppInstance}
+              - Sid: ReadCommandResult
+                Effect: Allow
+                Action: ssm:GetCommandInvocation
+                Resource: '*'
+      Tags:
+        - Key: Project
+          Value: OneShop-demo
+
+  AppInstance:
+    Type: AWS::EC2::Instance
+    DependsOn:
+      - PublicRoute
+    Properties:
+      ImageId: '{{resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64}}'
+      InstanceType: t3a.medium
+      CreditSpecification:
+        CPUCredits: standard
+      IamInstanceProfile: !Ref AppInstanceProfile
+      MetadataOptions:
+        HttpEndpoint: enabled
+        HttpTokens: required
+        HttpPutResponseHopLimit: 1
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: false
+          DeviceIndex: '0'
+          SubnetId: !Ref PublicSubnet
+          GroupSet:
+            - !Ref AppSecurityGroup
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: 20
+            VolumeType: gp3
+            Encrypted: true
+            DeleteOnTermination: true
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          set -euxo pipefail
+          # Wait for the Elastic IP association to provide outbound internet before bootstrapping.
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent --connect-timeout 5 --max-time 15 \
+              https://truststore.pki.rds.amazonaws.com/ap-southeast-1/ap-southeast-1-bundle.pem \
+              -o /tmp/rds-ca-bundle.pem.tmp; then
+              mv /tmp/rds-ca-bundle.pem.tmp /tmp/rds-ca-bundle.pem
+              break
+            fi
+            sleep 5
+          done
+          test -s /tmp/rds-ca-bundle.pem
+          dnf install -y java-21-amazon-corretto-headless nginx python3.11 python3.11-pip curl git
+          groupadd --system oneshop 2>/dev/null || true
+          id oneshop >/dev/null 2>&1 || useradd --system --gid oneshop --home-dir /opt/oneshop --shell /sbin/nologin oneshop
+          install -d -o oneshop -g oneshop -m 0750 /opt/oneshop /opt/oneshop/releases
+          install -d -o root -g oneshop -m 0750 /etc/oneshop
+          install -d -o root -g root -m 0755 /var/www/certbot/.well-known/acme-challenge
+          install -o root -g oneshop -m 0640 /dev/null /etc/oneshop/oneshop.env
+          
+          cp /tmp/rds-ca-bundle.pem /etc/pki/ca-trust/source/anchors/aws-rds-ca-bundle.pem
+          update-ca-trust extract
+          python3.11 - <<'PY'
+          import grp, os, re, subprocess
+          bundle = open('/tmp/rds-ca-bundle.pem', encoding='ascii').read()
+          certs = re.findall(r'-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----', bundle, re.S)
+          if not certs:
+              raise SystemExit('RDS CA bundle contains no certificates')
+          store = '/etc/oneshop/rds-truststore.jks'
+          for index, cert in enumerate(certs, start=1):
+              path = f'/tmp/rds-root-{index}.pem'
+              with open(path, 'w', encoding='ascii') as f:
+                  f.write(cert + '\n')
+              subprocess.run(['keytool','-importcert','-noprompt','-storetype','JKS','-keystore',store,'-storepass','changeit','-alias',f'rds-root-{index}','-file',path], check=True, stdout=subprocess.DEVNULL)
+              os.unlink(path)
+          os.chown(store, 0, grp.getgrnam('oneshop').gr_gid)
+          os.chmod(store, 0o640)
+          os.unlink('/tmp/rds-ca-bundle.pem')
+          PY
+          python3.11 -m venv /opt/certbot-venv
+          /opt/certbot-venv/bin/pip install --no-cache-dir --upgrade pip 'certbot>=5.4,<6'
+          cat >/etc/systemd/system/oneshop.service <<'UNIT'
+          [Unit]
+          Description=OneShop Spring Boot application
+          Wants=network-online.target
+          After=network-online.target
+          [Service]
+          Type=simple
+          User=oneshop
+          Group=oneshop
+          WorkingDirectory=/opt/oneshop
+          EnvironmentFile=/etc/oneshop/oneshop.env
+          Environment=SPRING_PROFILES_ACTIVE=prod
+          ExecStartPre=/usr/bin/test -s /opt/oneshop/oneshop.jar
+          ExecStart=/usr/bin/java -XX:MaxRAMPercentage=60 -XX:+ExitOnOutOfMemoryError -jar /opt/oneshop/oneshop.jar
+          SuccessExitStatus=143
+          Restart=on-failure
+          RestartSec=10
+          TimeoutStopSec=40
+          NoNewPrivileges=true
+          PrivateTmp=true
+          ProtectSystem=strict
+          ProtectHome=true
+          [Install]
+          WantedBy=multi-user.target
+          UNIT
+          cat >/etc/nginx/conf.d/oneshop.conf <<'NGINX'
+          server {
+              listen 80 default_server;
+              server_name _;
+              location ^~ /.well-known/acme-challenge/ { root /var/www/certbot; default_type text/plain; }
+              location / { return 503; }
+          }
+          NGINX
+          rm -f /etc/nginx/conf.d/default.conf
+          cat >/usr/local/sbin/enable-oneshop-https <<'HTTPS'
+          #!/bin/bash
+          set -euo pipefail
+          ip="${1:?Usage: enable-oneshop-https PUBLIC_IPV4}"
+          python3.11 -c 'import ipaddress,sys; ipaddress.IPv4Address(sys.argv[1])' "$ip"
+          cert="/etc/letsencrypt/live/$ip/fullchain.pem"
+          key="/etc/letsencrypt/live/$ip/privkey.pem"
+          test -s "$cert" && test -s "$key"
+          cat >/etc/nginx/conf.d/oneshop.conf.new <<NGINX
+          server {
+              listen 80 default_server;
+              server_name $ip;
+              location ^~ /.well-known/acme-challenge/ { root /var/www/certbot; default_type text/plain; }
+              location / { return 301 https://\$host\$request_uri; }
+          }
+          server {
+              listen 443 ssl default_server;
+              server_name $ip;
+              ssl_certificate $cert;
+              ssl_certificate_key $key;
+              ssl_protocols TLSv1.2 TLSv1.3;
+              ssl_session_cache shared:TLS:10m;
+              client_max_body_size 6m;
+              add_header Strict-Transport-Security "max-age=86400" always;
+              location / {
+                  proxy_pass http://127.0.0.1:8080;
+                  proxy_http_version 1.1;
+                  proxy_set_header Host \$host;
+                  proxy_set_header X-Real-IP \$remote_addr;
+                  proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto https;
+                  proxy_set_header X-Forwarded-Host \$host;
+                  proxy_read_timeout 60s;
+              }
+          }
+          NGINX
+          nginx -t
+          mv /etc/nginx/conf.d/oneshop.conf.new /etc/nginx/conf.d/oneshop.conf
+          systemctl reload nginx
+          HTTPS
+          chmod 0750 /usr/local/sbin/enable-oneshop-https
+          chown root:root /usr/local/sbin/enable-oneshop-https
+          cat >/etc/systemd/system/certbot-renew.service <<'UNIT'
+          [Unit]
+          Description=Renew the short-lived OneShop IP TLS certificate
+          [Service]
+          Type=oneshot
+          ExecStart=/opt/certbot-venv/bin/certbot renew --quiet --deploy-hook /usr/bin/systemctl\ reload\ nginx
+          UNIT
+          cat >/etc/systemd/system/certbot-renew.timer <<'UNIT'
+          [Unit]
+          Description=Check OneShop IP certificate renewal every six hours
+          [Timer]
+          OnCalendar=*-*-* 00,06,12,18:17:00
+          RandomizedDelaySec=15m
+          Persistent=true
+          [Install]
+          WantedBy=timers.target
+          UNIT
+          systemctl daemon-reload
+          systemctl enable --now nginx certbot-renew.timer
+          systemctl enable --now amazon-ssm-agent || true
+          nginx -t
+      Tags:
+        - Key: Name
+          Value: oneshop-demo-app
+        - Key: Project
+          Value: OneShop-demo
+        - Key: ExpiresAfterDays
+          Value: '15'
+
+  AppElasticIp:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: oneshop-demo-ip
+        - Key: Project
+          Value: OneShop-demo
+  AppElasticIpAssociation:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      InstanceId: !Ref AppInstance
+      AllocationId: !GetAtt AppElasticIp.AllocationId
+
+  DatabaseSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Private subnets for OneShop SQL Server Express.
+      SubnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+      Tags:
+        - Key: Name
+          Value: oneshop-demo-db-subnets
+  Database:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    Properties:
+      Engine: sqlserver-ex
+      LicenseModel: license-included
+      DBInstanceClass: db.t3.small
+      AllocatedStorage: '20'
+      StorageType: gp3
+      StorageEncrypted: true
+      DBSubnetGroupName: !Ref DatabaseSubnetGroup
+      VPCSecurityGroups:
+        - !Ref DatabaseSecurityGroup
+      MasterUsername: !Ref DbMasterUsername
+      MasterUserPassword: !Ref DbMasterPassword
+      PubliclyAccessible: false
+      MultiAZ: false
+      BackupRetentionPeriod: 1
+      AutoMinorVersionUpgrade: true
+      CopyTagsToSnapshot: true
+      Tags:
+        - Key: Name
+          Value: oneshop-demo-sqlserver
+        - Key: Project
+          Value: OneShop-demo
+        - Key: ExpiresAfterDays
+          Value: '15'
+
+  RdsEndpointParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /oneshop/demo/rds-endpoint
+      Type: String
+      Value: !GetAtt Database.Endpoint.Address
+      Description: Private RDS endpoint for the OneShop class demo.
+      Tags:
+        Project: OneShop-demo
+  RdsMasterUsernameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /oneshop/demo/rds-master-username
+      Type: String
+      Value: !Ref DbMasterUsername
+      Description: RDS master login name; not a password.
+      Tags:
+        Project: OneShop-demo
+Outputs:
+  AppPublicIp:
+    Description: Open HTTPS after the user obtains the short-lived IP certificate and enables TLS.
+    Value: !Ref AppElasticIp
+  AppInstanceId:
+    Description: EC2 instance managed with Systems Manager. SSH is not open.
+    Value: !Ref AppInstance
+  DatabaseEndpoint:
+    Description: Private RDS SQL Server endpoint, accessible only from this VPC.
+    Value: !GetAtt Database.Endpoint.Address
+  DatabasePort:
+    Value: !GetAtt Database.Endpoint.Port
+  ArtifactBucketName:
+    Value: !Ref ArtifactBucket
+  GitHubDeployRoleArn:
+    Value: !GetAtt GithubDeployRole.Arn
+  AppSecurityGroupId:
+    Value: !Ref AppSecurityGroup
