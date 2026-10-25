@@ -1,0 +1,60 @@
+{
+ "id": "QT-14",
+ "title": "Xem dashboard và thống kê chuỗi",
+ "lanes": [
+  "Quản trị viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Quản trị viên"
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Mở /admin, có thể chọn một chi nhánh (storeId)"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "getChainSummary: tổng đơn, phần giao mở, đơn cần xử lý, đang đối soát",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Có chọn một chi nhánh?",
+   "toàn chuỗi",
+   "một chi nhánh",
+   [
+    "getStore: 404 nếu không tồn tại",
+    "Tính số liệu riêng của chi nhánh đó"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "getOverview: số liệu từng chi nhánh (đơn, tồn, nhân viên)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Nạp danh sách chi nhánh cho bộ lọc"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Hiển thị admin/dashboard"
+  ],
+  [
+   "end",
+   "Quản trị viên"
+  ]
+ ]
+}

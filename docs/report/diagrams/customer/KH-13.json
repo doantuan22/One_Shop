@@ -1,0 +1,108 @@
+{
+ "id": "KH-13",
+ "title": "Hủy đơn hàng",
+ "lanes": [
+  "Khách hàng",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Khách hàng"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Bấm Hủy đơn (POST /orders/{id}/cancel)"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Khóa đơn theo khóa chính; kiểm tra thuộc khách",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Đơn tồn tại và thuộc khách?",
+   "có",
+   "không",
+   [
+    "404 Không tìm thấy đơn hàng"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Đơn chưa ở trạng thái CANCELLED?",
+   "chưa",
+   "đã hủy",
+   [
+    "Trả ALREADY_CANCELLED, không đổi gì"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "ONLINE: đối soát kết quả cổng trước khi hủy"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Đang PENDING_PAYMENT?",
+   "không",
+   "có",
+   [
+    "Từ chối nếu cổng UNKNOWN; còn lại hủy, hoàn tồn",
+    "Kết quả CANCELLED"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Trạng thái CONFIRMED (mọi phần còn CONFIRMED)?",
+   "đúng",
+   "không",
+   [
+    "Từ chối: đã chuẩn bị hoặc chờ quản trị viên"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Thanh toán hợp lệ: ONLINE đã PAID, hoặc COD/tại quầy chưa thu?",
+   "đúng",
+   "không",
+   [
+    "Từ chối: trạng thái thanh toán không hợp lệ"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "cancelAndRestore: hủy các phần giao, hoàn tồn CANCEL_ORDER, đóng thanh toán",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "ONLINE đã PAID: mô phỏng hoàn tiền toàn phần (REFUNDED)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển /orders/{id}?cancelled"
+  ],
+  [
+   "end",
+   "Khách hàng"
+  ]
+ ]
+}

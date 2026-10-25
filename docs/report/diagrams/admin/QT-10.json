@@ -1,0 +1,92 @@
+{
+ "id": "QT-10",
+ "title": "Quản lý thanh toán ONLINE: đối soát, chốt cổng, hoàn tiền",
+ "lanes": [
+  "Quản trị viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Quản trị viên"
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Mở /admin/payments, chọn nhóm cần xem"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "getCases và getCaseCounts theo nhóm, từ khóa, ngày",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Mở chi tiết đơn (/admin/payments/{id}), chọn thao tác"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Đơn dùng thanh toán ONLINE?",
+   "có",
+   "không",
+   [
+    "409 Đơn không dùng thanh toán trực tuyến"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Thao tác là kiểm tra lại (recheck)?",
+   "khác",
+   "recheck",
+   [
+    "reconcileLocked (ADMIN_RECHECK)",
+    "Ghi audit nếu trạng thái giữ nguyên"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Thao tác là chốt kết quả cổng?",
+   "hoàn tiền",
+   "chốt cổng",
+   [
+    "Cổng bật, đơn chưa hủy, có lần thanh toán chưa xác định",
+    "Ghi kết quả đã thu hoặc chưa thu vào sổ cái",
+    "reconcileLocked (ADMIN_GATEWAY)"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Đơn đã CANCELLED (hoặc hoàn tiền từng phần lỗi)?",
+   "đúng",
+   "không",
+   [
+    "409 Chỉ hoàn tiền cho đơn đã hủy"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "RefundService.simulate: hoàn tiền toàn phần, ghi sổ hoàn tiền",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Ghi audit ADMIN_REFUND_RETRY, báo kết quả"
+  ],
+  [
+   "end",
+   "Quản trị viên"
+  ]
+ ]
+}

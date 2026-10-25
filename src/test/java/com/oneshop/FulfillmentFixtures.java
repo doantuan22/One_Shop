@@ -32,10 +32,10 @@ final class FulfillmentFixtures {
 
     static final String ALICE = "khachhang1@example.com";
     static final String BOB = "khachhang2@example.com";
-    static final String STAFF_THUDUC = "staff.thuduc@oneshop.vn";
-    static final String STAFF_GOVAP = "staff.govap@oneshop.vn";
-    static final String STAFF_QUAN7 = "staff.quan7@oneshop.vn";
-    static final String STAFF_QUAN10 = "staff.quan10@oneshop.vn";
+    static final String STAFF_THUDUC = "staff.thuduc@example.com";
+    static final String STAFF_GOVAP = "staff.govap@example.com";
+    static final String STAFF_QUAN7 = "staff.quan7@example.com";
+    static final String STAFF_QUAN10 = "staff.quan10@example.com";
     static final String ADDRESS = "12 Đường Thử Nghiệm, Phường 1, Quận 1";
 
     static final String SERUM = "SIMPLE-PURIFY-150";

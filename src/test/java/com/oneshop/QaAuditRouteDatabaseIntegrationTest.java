@@ -52,7 +52,7 @@ class QaAuditRouteDatabaseIntegrationTest extends V3RegressionTestSupport {
                 } else response=send("GET",path,"");
                 if(path.equals("/error")) expected=500;
                 else if(path.matches("/products/[0-9]+"))expected=404;
-                else if(Set.of("/","/health","/login","/register","/products","/products/suggest","/stores","/image-credits").contains(path))expected=200;
+                else if(Set.of("/","/health","/login","/register","/products","/products/suggest","/stores","/image-credits","/forgot-password").contains(path))expected=200;
                 else expected=302;
             }
             String key=route.get("verb")+"-"+route.get("path").toString().replaceAll("[^A-Za-z0-9]","_");
@@ -61,9 +61,9 @@ class QaAuditRouteDatabaseIntegrationTest extends V3RegressionTestSupport {
                             "location",response.headers().firstValue("Location").orElse(""),"kind","anonymous guard/input probe",
                             "executedAt",java.time.Instant.now().toString()));
             assertThat(response.statusCode()).as(route.toString()).isEqualTo(expected);
-            List<String> wrongRoles=path.startsWith("/admin")?List.of("khachhang1@example.com","staff.thuduc@oneshop.vn"):
-                    path.startsWith("/staff")?List.of("khachhang1@example.com","admin@oneshop.vn"):
-                    path.matches("/(cart|checkout|orders|reviews)(/.*)?")?List.of("staff.thuduc@oneshop.vn","admin@oneshop.vn"):List.of();
+            List<String> wrongRoles=path.startsWith("/admin")?List.of("khachhang1@example.com","staff.thuduc@example.com"):
+                    path.startsWith("/staff")?List.of("khachhang1@example.com","admin@example.com"):
+                    path.matches("/(cart|checkout|orders|reviews)(/.*)?")?List.of("staff.thuduc@example.com","admin@example.com"):List.of();
             for(String email:wrongRoles) {
                 var before=checksums();
                 var denied=post?postAs(email,path,"",true):getAs(email,path);

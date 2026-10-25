@@ -1,0 +1,69 @@
+{
+ "id": "QT-03",
+ "title": "Quản lý chi nhánh",
+ "lanes": [
+  "Quản trị viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Quản trị viên"
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Mở /admin/stores; chọn Thêm mới hoặc Sửa chi nhánh"
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Nhập mã, tên, địa chỉ, khu vực, giờ mở, giao/nhận, trạng thái"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Biểu mẫu StoreRequest hợp lệ?",
+   "có",
+   "không",
+   [
+    "Hiển thị lại form kèm lỗi"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Kiểm tra mã chi nhánh đã tồn tại",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Mã chi nhánh chưa dùng (bởi chi nhánh khác)?",
+   "chưa",
+   "đã dùng",
+   [
+    "Báo lỗi 'Mã chi nhánh đã tồn tại'"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Ghi Store với các thuộc tính đã chuẩn hóa",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển hướng /admin/stores?success"
+  ],
+  [
+   "end",
+   "Quản trị viên"
+  ]
+ ]
+}

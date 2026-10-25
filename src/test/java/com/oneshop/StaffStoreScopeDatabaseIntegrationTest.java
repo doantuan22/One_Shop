@@ -35,8 +35,8 @@ import static org.assertj.core.api.Assertions.*;
 @EnabledIf("com.oneshop.DatabaseFoundationIntegrationTest#databaseConfigured")
 @Import(StaffStoreScopeDatabaseIntegrationTest.ScopeProbe.class)
 class StaffStoreScopeDatabaseIntegrationTest {
-    private static final String STAFF = "staff.thuduc@oneshop.vn";
-    private static final String PEER = "staff.govap@oneshop.vn";
+    private static final String STAFF = "staff.thuduc@example.com";
+    private static final String PEER = "staff.govap@example.com";
     private static final String ROOT = "/api/staff/scope-test";
     @Autowired StaffStoreScopeService scope;
     @Autowired JdbcTemplate jdbc;
@@ -123,18 +123,27 @@ class StaffStoreScopeDatabaseIntegrationTest {
         assertThatThrownBy(() -> as(STAFF, "STAFF", () -> scope.requireOrder(null))).isInstanceOf(ResourceNotFoundException.class);
         assertThatThrownBy(() -> as(STAFF, "STAFF", () -> scope.requireStoreProduct(null))).isInstanceOf(ResourceNotFoundException.class);
     }
-    @Test void multipleAssignmentsPreserveOnlyActiveScopeAndResolveFreshAfterRevocation() {
+    @Test void transferredStaffKeepsOnlyTheNewScopeAndResolvesFreshAfterRevocation() {
         long user = staffId(), max = jdbc.queryForObject("select max(assignment_id) from dbo.staff_store_assignments", Long.class);
+        // a Staff works at one Store: a second ACTIVE assignment is rejected by the database
+        assertThatThrownBy(() -> jdbc.update("insert into dbo.staff_store_assignments(user_id,store_id,status,assigned_at) values (?,2,'ACTIVE',SYSDATETIME())", user))
+                .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
         try {
+            // moved from Thủ Đức (1) to Gò Vấp (2); a suspended row at Quận 10 (4) grants nothing
+            jdbc.update("update dbo.staff_store_assignments set status='INACTIVE' where user_id=? and store_id=1", user);
             jdbc.update("insert into dbo.staff_store_assignments(user_id,store_id,status,assigned_at) values (?,2,'ACTIVE',SYSDATETIME()),(?,4,'INACTIVE',SYSDATETIME())", user, user);
-            assertThat(as(STAFF, "STAFF", scope::getAssignedStoreIds)).containsExactlyInAnyOrder(1L, 2L);
+            assertThat(as(STAFF, "STAFF", scope::getAssignedStoreIds)).containsExactly(2L);
             assertThat(as(STAFF, "STAFF", () -> scope.requireOrder(5L)).getStore().getId()).isEqualTo(2L);
             assertThat(as(STAFF, "STAFF", () -> scope.requireStoreProduct(product(2))).getStore().getId()).isEqualTo(2L);
+            assertThatThrownBy(() -> as(STAFF, "STAFF", () -> scope.requireStoreProduct(product(1)))).isInstanceOf(ResourceNotFoundException.class);
             assertThatThrownBy(() -> as(STAFF, "STAFF", () -> scope.requireStoreProduct(product(4)))).isInstanceOf(ResourceNotFoundException.class);
             jdbc.update("update dbo.staff_store_assignments set status='INACTIVE' where assignment_id>? and store_id=2", max);
-            assertThat(as(STAFF, "STAFF", scope::getAssignedStoreIds)).containsExactly(1L);
-            assertThatThrownBy(() -> as(STAFF, "STAFF", () -> scope.requireOrder(5L))).isInstanceOf(ResourceNotFoundException.class);
-        } finally { jdbc.update("delete from dbo.staff_store_assignments where assignment_id>? and user_id=?", max, user); }
+            assertThatThrownBy(() -> as(STAFF, "STAFF", scope::getAssignedStoreIds)).isInstanceOf(AccessDeniedException.class);
+            assertThatThrownBy(() -> as(STAFF, "STAFF", () -> scope.requireOrder(5L))).isInstanceOf(AccessDeniedException.class);
+        } finally {
+            jdbc.update("delete from dbo.staff_store_assignments where assignment_id>? and user_id=?", max, user);
+            jdbc.update("update dbo.staff_store_assignments set status='ACTIVE' where user_id=? and store_id=1", user);
+        }
     }
     @ParameterizedTest @ValueSource(strings = {"query", "form", "body", "path"})
     void forgingStoreIdOnHttpCannotChangeScopeOrExposePeerStock(String source) throws Exception {

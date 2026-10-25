@@ -1,0 +1,69 @@
+{
+ "id": "NV-07",
+ "title": "Xem lịch sử biến động kho",
+ "lanes": [
+  "Nhân viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Nhân viên"
+  ],
+  [
+   "act",
+   "Nhân viên",
+   "Mở /staff/inventory-history, chọn bộ lọc"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Khoảng ngày hợp lệ?",
+   "hợp lệ",
+   "sai",
+   [
+    "Từ chối: khoảng ngày không hợp lệ"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "getMovementLog: nhật ký các chi nhánh được phân công, mới nhất trước",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Nhân viên",
+   "Chọn một mặt hàng (/staff/inventory-history/{id})"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Mặt hàng thuộc chi nhánh được phân công?",
+   "có",
+   "không",
+   [
+    "Từ chối: không thuộc phạm vi chi nhánh"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Đọc lịch sử biến động của StoreProduct (phân trang 20)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Hiển thị staff/stock/history"
+  ],
+  [
+   "end",
+   "Nhân viên"
+  ]
+ ]
+}

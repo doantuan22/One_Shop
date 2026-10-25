@@ -1,0 +1,105 @@
+{
+ "id": "QT-09",
+ "title": "Xử lý ngoại lệ giao hàng thất bại",
+ "lanes": [
+  "Quản trị viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Quản trị viên"
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Mở đơn NEEDS_ATTENTION; chọn giao lại hoặc không giao được, nhập lý do"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Khóa đơn rồi khóa các phần giao (id tăng dần)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Phần giao đang FAILED và đơn NEEDS_ATTENTION?",
+   "đúng",
+   "không",
+   [
+    "409 Đã xử lý hoặc không phải ngoại lệ giao hàng"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Quyết định là giao lại?",
+   "không giao được",
+   "giao lại",
+   [
+    "Kiểm tra hàng ở chi nhánh, chi nhánh ACTIVE, thanh toán hợp lệ",
+    "FAILED → PACKED hoặc READY_FOR_PICKUP; ghi lịch sử",
+    "Tổng hợp lại trạng thái đơn"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Tình trạng hàng đã xác định (không phải UNCONFIRMED)?",
+   "đã xác định",
+   "chưa",
+   [
+    "Chỉ ghi chú; phần giao vẫn FAILED, đơn vẫn NEEDS_ATTENTION"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Đủ điều kiện xác nhận không giao được?",
+   "đủ",
+   "chưa",
+   [
+    "409 Cần xử lý thanh toán trước"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Hàng đã về: hoàn tồn đúng StoreProduct (một lần)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Phần giao → CANCELLED, ghi lịch sử và lý do",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "ONLINE đã PAID: hoàn tiền mô phỏng giá trị phần hàng",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tổng hợp lại trạng thái đơn từ các phần giao",
+   {
+    "db": true
+   }
+  ],
+  [
+   "end",
+   "Quản trị viên"
+  ]
+ ]
+}

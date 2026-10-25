@@ -1,0 +1,13 @@
+{
+  "timestamp" : "2026-10-25T11:55:17.814557300Z",
+  "scenario" : "cleanup-pending",
+  "files" : [ "qa-fix/1679902e-b3dd-4fa4-8b71-18e3226a7172" ],
+  "tasks" : [ {
+    "task_id" : "7DA30B7F-FE8E-45E7-83D6-AE4B3DF17BA8",
+    "public_id" : "qa-fix/1679902e-b3dd-4fa4-8b71-18e3226a7172",
+    "attempts" : 1,
+    "last_error" : "ImageStorageException: simulated provider unavailable",
+    "created_at" : 1792929317810
+  } ],
+  "database" : "oneshop_fixture_20261025_test"
+}

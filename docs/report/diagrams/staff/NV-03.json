@@ -1,0 +1,64 @@
+{
+ "id": "NV-03",
+ "title": "Xem hàng đợi phần giao hàng của chi nhánh",
+ "lanes": [
+  "Nhân viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Nhân viên"
+  ],
+  [
+   "act",
+   "Nhân viên",
+   "Mở /staff/fulfillments (hoặc /delivery, /pickup), chọn bộ lọc"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Chi nhánh được lọc thuộc phạm vi phân công?",
+   "có",
+   "không",
+   [
+    "403 Không được phân công tại chi nhánh này"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Xác định trạng thái (mặc định: đang mở), loại, khoảng ngày"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "searchForStaff trên các chi nhánh được phân công, phân trang 20",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Nạp dòng hàng của các phần giao trong trang",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tính thao tác hợp lệ; phần bị chặn hiện lý do thay cho thao tác"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Hiển thị staff/fulfillments/index"
+  ],
+  [
+   "end",
+   "Nhân viên"
+  ]
+ ]
+}

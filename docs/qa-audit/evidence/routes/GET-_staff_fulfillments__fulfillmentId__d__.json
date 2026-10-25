@@ -1,0 +1,14 @@
+{
+  "expected" : 302,
+  "executedAt" : "2026-10-25T11:54:32.117073300Z",
+  "location" : "http://localhost:60631/login",
+  "route" : {
+    "controller" : "com.oneshop.controller.staff.StaffFulfillmentController",
+    "method" : "detail",
+    "verb" : "GET",
+    "path" : "/staff/fulfillments/{fulfillmentId:\\d+}"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/staff/fulfillments/999999999",
+  "actual" : 302
+}

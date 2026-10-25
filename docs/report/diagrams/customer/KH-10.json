@@ -1,0 +1,136 @@
+{
+ "id": "KH-10",
+ "title": "Đặt hàng (phân bổ nguồn hàng, tạo Order và Fulfillment)",
+ "lanes": [
+  "Khách hàng",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Khách hàng"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Xác nhận đặt hàng (POST /checkout)"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Chọn ≥ 1 dòng; cách nhận, thanh toán, người nhận, địa chỉ hợp lệ?",
+   "có",
+   "không",
+   [
+    "Báo lỗi trên trang thanh toán"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "ONLINE và giao hàng đang được mở?",
+   "mở",
+   "đóng",
+   [
+    "Báo luồng chưa mở (409)"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Khóa giỏ của khách, lấy các dòng đã chọn",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Đủ dòng; sản phẩm còn bán, giá > 0?",
+   "có",
+   "không",
+   [
+    "Báo giỏ đã thay đổi hoặc ngừng bán"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Khóa StoreProduct (id tăng dần) và phân bổ AllocationEngine",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Phân bổ thành công?",
+   "có",
+   "không",
+   [
+    "409 Không phân bổ được"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "COD tách nhiều chi nhánh đã có đồng ý (nếu cần)?",
+   "đạt",
+   "thiếu",
+   [
+    "409 Cần đồng ý tách đơn"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tính tiền hàng từng đơn; khóa và áp mã khuyến mãi",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Tổng tiền và chữ ký kế hoạch còn đúng?",
+   "đúng",
+   "đổi",
+   [
+    "409 Giá hoặc nguồn hàng đã thay đổi"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tạo CheckoutSession; ghi lượt dùng mã",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tạo Order, OrderFulfillment, OrderItem; trừ tồn (ORDER)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Ghi lịch sử; ONLINE: tạo Payment PENDING; xóa dòng khỏi giỏ",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển /checkout/{id}?success=placed"
+  ],
+  [
+   "end",
+   "Khách hàng"
+  ]
+ ]
+}

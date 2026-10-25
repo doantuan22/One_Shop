@@ -65,7 +65,7 @@ import static org.mockito.Mockito.doThrow;
 @EnabledIf("com.oneshop.DatabaseFoundationIntegrationTest#databaseConfigured")
 class PaymentSettlementDatabaseIntegrationTest {
 
-    static final String ADMIN = "admin@oneshop.vn";
+    static final String ADMIN = "admin@example.com";
 
     @Autowired
     PaymentReconciliationService reconciliation;

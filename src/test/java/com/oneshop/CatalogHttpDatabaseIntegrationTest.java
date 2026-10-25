@@ -129,7 +129,7 @@ class CatalogHttpDatabaseIntegrationTest {
     }
 
     private String admin() throws IOException, InterruptedException {
-        return loginCookie("admin@oneshop.vn");
+        return loginCookie("admin@example.com");
     }
 
     private String customer() throws IOException, InterruptedException {
@@ -137,7 +137,7 @@ class CatalogHttpDatabaseIntegrationTest {
     }
 
     private String staff() throws IOException, InterruptedException {
-        return loginCookie("staff.thuduc@oneshop.vn");
+        return loginCookie("staff.thuduc@example.com");
     }
 
     /** CSRF token of a page: the hidden form field and the cookie that must come back with it. */
@@ -195,11 +195,11 @@ class CatalogHttpDatabaseIntegrationTest {
     // ================================================================= TC-02: selected Store
 
     @Test
-    void tc02_aStoreCookieNoLongerSwitchesTheCatalog() throws Exception {
+    void tc02_aSelectedStoreScopesTheCatalogWithAWayBackToTheChain() throws Exception {
         Long goVap = storeId("OS-GOVAP");
         Csrf csrf = csrf("/login", null);
 
-        // the legacy select endpoint still validates and sets the cookie ...
+        // the select endpoint validates the Store and sets the cookie ...
         HttpResponse<String> select = post("/stores/select", FORM, "storeId=" + goVap + "&_csrf=" + csrf.field(),
                 "Cookie", csrf.cookie());
         assertThat(select.statusCode()).isEqualTo(302);
@@ -219,9 +219,11 @@ class CatalogHttpDatabaseIntegrationTest {
     void searchAndFiltersIgnoreAStaleStoreCookie() throws Exception {
         String context = storeCookie(storeId("OS-QUAN10"));
         // CERAVE-HYDRA-236 is not sold at Quận 10: hidden while that Store is chosen, present in the whole chain
-        assertThat(get("/products?q=hydrating", "Cookie", context).body()).doesNotContain("CERAVE-HYDRA-236")
-                .contains("id=\"catalog-store-scope\"");
-        assertThat(get("/products?q=hydrating").body()).contains("CERAVE-HYDRA-236");
+        // (the product card does not print the SKU, so the cards themselves are counted)
+        String atQuan10 = get("/products?q=hydrating", "Cookie", context).body();
+        assertThat(atQuan10).contains("id=\"catalog-store-scope\"");
+        assertThat(count(atQuan10, "<article class=\"pcard\"")).isZero();
+        assertThat(count(get("/products?q=hydrating").body(), "<article class=\"pcard\"")).isPositive();
     }
 
     @Test
@@ -457,8 +459,8 @@ class CatalogHttpDatabaseIntegrationTest {
         assertThat(daNang).contains("OneShop Hải Châu", "Tạm ngừng", "đang tạm ngừng hoạt động");
         assertThat(count(daNang, "name=\"storeId\"")).as("no select form for the INACTIVE Store").isZero();
 
-        // V3: the Store list is a lookup, no Store has a select form
-        assertThat(count(get("/stores").body(), "name=\"storeId\"")).isZero();
+        // only an ACTIVE Store has a "view this Store's products" form: 5 ACTIVE Stores in the seed, the INACTIVE one has none
+        assertThat(count(get("/stores").body(), "name=\"storeId\"")).isEqualTo(5);
         // the Admin still manages it
         assertThat(get("/admin/stores", "Cookie", admin()).body()).contains("OS-HAICHAU", "Ngừng hoạt động");
     }
@@ -468,7 +470,8 @@ class CatalogHttpDatabaseIntegrationTest {
         String html = get("/stores", "Cookie", storeCookie(storeId("OS-QUAN7"))).body();
 
         assertThat(html).doesNotContain("Đang chọn chi nhánh này", "data-store-scope", "Đang mua sắm tại đây");
-        assertThat(count(html, "name=\"storeId\"")).isZero();
+        // one select form per ACTIVE Store, the cookie does not add or remove any
+        assertThat(count(html, "name=\"storeId\"")).isEqualTo(count(get("/stores").body(), "name=\"storeId\""));
     }
 
     // ================================================================= Admin: protected by the backend
@@ -704,7 +707,7 @@ class CatalogHttpDatabaseIntegrationTest {
                 .endsWith("/admin/products/" + serum + "/edit?error=image-storage");
         assertThat(productImageRepository.count()).isEqualTo(images);
         assertThat(get("/admin/products/" + serum + "/edit?error=image-storage", "Cookie", admin()).body())
-                .contains("Không thể làm việc với Cloudinary", "id=\"product-images\"");
+                .contains("Không thể tải ảnh", "id=\"product-images\"");
 
         // the same upload without the CSRF token never reaches the controller
         String noToken = "--" + boundary + "\r\n"

@@ -1,0 +1,7 @@
+{
+  "timestamp" : "2026-10-25T11:54:15.990680700Z",
+  "request" : "/staff/fulfillments?storeId=9223372036854775808",
+  "expected" : "success/empty page or controlled 4xx; never 5xx",
+  "actual" : 400,
+  "actor" : "staff.thuduc@example.com"
+}

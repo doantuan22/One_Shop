@@ -1,0 +1,28 @@
+{
+  "rows" : [ {
+    "image_id" : 11,
+    "is_primary" : false
+  }, {
+    "image_id" : 119,
+    "is_primary" : false
+  }, {
+    "image_id" : 120,
+    "is_primary" : false
+  }, {
+    "image_id" : 121,
+    "is_primary" : false
+  }, {
+    "image_id" : 122,
+    "is_primary" : false
+  }, {
+    "image_id" : 123,
+    "is_primary" : false
+  }, {
+    "image_id" : 124,
+    "is_primary" : true
+  } ],
+  "primary" : 124,
+  "commits" : 6,
+  "timestamp" : "2026-10-25T10:38:27.674800100Z",
+  "writers" : 6
+}

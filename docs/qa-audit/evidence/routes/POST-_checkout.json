@@ -1,0 +1,14 @@
+{
+  "expected" : 403,
+  "executedAt" : "2026-10-25T11:54:30.662866100Z",
+  "location" : "",
+  "route" : {
+    "controller" : "com.oneshop.controller.client.CheckoutController",
+    "method" : "placeOrder",
+    "verb" : "POST",
+    "path" : "/checkout"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/checkout",
+  "actual" : 403
+}

@@ -1,0 +1,70 @@
+{
+ "id": "KH-05",
+ "title": "Xem chi tiết sản phẩm và tình trạng còn hàng theo chi nhánh",
+ "lanes": [
+  "Khách hàng",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Khách hàng"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Mở /products/{id}"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tìm sản phẩm hiển thị (findVisibleById)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Sản phẩm tồn tại và đang hiển thị?",
+   "có",
+   "không",
+   [
+    "Trả 404 Không tìm thấy sản phẩm"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Nạp ảnh sản phẩm và tồn theo từng chi nhánh bán được",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Nạp đánh giá ACTIVE, số lượng và điểm trung bình",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Nếu đã đăng nhập: nạp dòng hàng đã nhận có thể đánh giá",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Dựng trang product/detail"
+  ],
+  [
+   "end",
+   "Khách hàng"
+  ]
+ ]
+}

@@ -1,0 +1,14 @@
+{
+  "expected" : 302,
+  "executedAt" : "2026-10-25T11:54:26.742824700Z",
+  "location" : "http://localhost:60631/login",
+  "route" : {
+    "controller" : "com.oneshop.controller.admin.AdminPaymentController",
+    "method" : "list",
+    "verb" : "GET",
+    "path" : "/admin/payments"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/admin/payments",
+  "actual" : 302
+}

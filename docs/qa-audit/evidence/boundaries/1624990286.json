@@ -1,0 +1,7 @@
+{
+  "timestamp" : "2026-10-25T11:54:14.183124700Z",
+  "request" : "/staff/inventory-history?page=abc",
+  "expected" : "success/empty page or controlled 4xx; never 5xx",
+  "actual" : 400,
+  "actor" : "staff.thuduc@example.com"
+}

@@ -1,0 +1,87 @@
+{
+ "id": "QT-07",
+ "title": "Quản lý tồn kho toàn chuỗi (gắn sản phẩm vào chi nhánh)",
+ "lanes": [
+  "Quản trị viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Quản trị viên"
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Mở /admin/store-products hoặc /admin/inventory, lọc theo chi nhánh"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "searchStoreProducts hoặc searchInventory, kèm thống kê tồn",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Chọn gắn sản phẩm vào chi nhánh hoặc sửa số lượng, trạng thái"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Biểu mẫu StoreProductRequest hợp lệ?",
+   "có",
+   "không",
+   [
+    "Hiển thị lại form kèm lỗi"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Chi nhánh, sản phẩm tồn tại và cặp chưa được gắn?",
+   "đạt",
+   "không",
+   [
+    "Báo lỗi storeId, productId hoặc đã gắn"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tạo StoreProduct với quantity 0, không giá riêng",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Số lượng mới ≥ 0 và ≥ số lượng đang giữ?",
+   "đạt",
+   "sai",
+   [
+    "Báo lỗi tồn kho không hợp lệ"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Cập nhật quantity và ghi InventoryMovement STOCK_ADJUST",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Cập nhật trạng thái bán; chuyển ?success"
+  ],
+  [
+   "end",
+   "Quản trị viên"
+  ]
+ ]
+}

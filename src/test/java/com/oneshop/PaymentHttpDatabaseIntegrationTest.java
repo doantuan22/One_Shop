@@ -53,7 +53,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class PaymentHttpDatabaseIntegrationTest {
 
     private static final String SEED_PASSWORD = "OneShop@123";
-    private static final String ADMIN = "admin@oneshop.vn";
+    private static final String ADMIN = "admin@example.com";
     private static final String FORM = "application/x-www-form-urlencoded";
 
     @LocalServerPort

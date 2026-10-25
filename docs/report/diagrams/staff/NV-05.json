@@ -1,0 +1,98 @@
+{
+ "id": "NV-05",
+ "title": "Xử lý nhận hàng tại cửa hàng và xác minh mã nhận hàng",
+ "lanes": [
+  "Nhân viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Nhân viên"
+  ],
+  [
+   "act",
+   "Nhân viên",
+   "Chuẩn bị xong, bấm 'Sẵn sàng cho khách nhận'"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Kiểm tra phạm vi, khóa đơn và phần giao, cổng thanh toán (như NV-04)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Phần giao PREPARING và chưa có mã nhận hàng?",
+   "có",
+   "không",
+   [
+    "409 Thông tin nhận hàng không nhất quán"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Sinh mã nhận hàng duy nhất trong chi nhánh; READY_FOR_PICKUP",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Nhân viên",
+   "Khách đến, đọc mã; nhân viên nhập mã (complete-pickup)"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Mã chưa bị khóa (dưới 5 lần sai trong 15 phút)?",
+   "chưa khóa",
+   "đang khóa",
+   [
+    "409 Sai quá nhiều lần, thử lại sau 15 phút"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Mã nhập khớp mã nhận hàng?",
+   "khớp",
+   "sai",
+   [
+    "Đếm lần sai, báo lỗi; chưa ghi gì"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Đơn PAY_AT_STORE: ghi nhận thu tiền, đơn PAID",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Ghi pickedUpAt, completedAt; COMPLETED; xóa bộ đếm sai",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tính lại trạng thái đơn từ các phần giao",
+   {
+    "db": true
+   }
+  ],
+  [
+   "end",
+   "Nhân viên"
+  ]
+ ]
+}

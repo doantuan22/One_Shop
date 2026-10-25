@@ -1,0 +1,14 @@
+{
+  "expected" : 403,
+  "executedAt" : "2026-10-25T11:54:26.152479200Z",
+  "location" : "",
+  "route" : {
+    "controller" : "com.oneshop.controller.admin.AdminFulfillmentExceptionController",
+    "method" : "redeliver",
+    "verb" : "POST",
+    "path" : "/admin/orders/{orderId}/fulfillments/{fulfillmentId}/redeliver"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/admin/orders/999999999/fulfillments/999999999/redeliver",
+  "actual" : 403
+}

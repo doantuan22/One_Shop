@@ -1,0 +1,70 @@
+{
+ "id": "KH-12",
+ "title": "Theo dõi đơn hàng",
+ "lanes": [
+  "Khách hàng",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Khách hàng"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Mở /orders, chọn một đơn (/orders/{id})"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Lấy đơn theo id và email của khách",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Đơn thuộc về khách hiện tại?",
+   "có",
+   "không",
+   [
+    "404 Không tìm thấy đơn hàng"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "ONLINE chờ thanh toán đã quá hạn: đối soát, hủy đơn, hoàn tồn",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Nạp sản phẩm, phần giao theo chi nhánh, lịch sử trạng thái",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Nạp khoản hoàn tiền, dòng hàng có thể đánh giá, yêu cầu và điều kiện trả hàng",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tính canCancel theo chính sách; hiển thị orders/detail"
+  ],
+  [
+   "end",
+   "Khách hàng"
+  ]
+ ]
+}

@@ -1,0 +1,14 @@
+{
+  "expected" : 403,
+  "executedAt" : "2026-10-25T11:54:29.529353800Z",
+  "location" : "",
+  "route" : {
+    "controller" : "com.oneshop.controller.admin.AdminStoreController",
+    "method" : "create",
+    "verb" : "POST",
+    "path" : "/admin/stores"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/admin/stores",
+  "actual" : 403
+}

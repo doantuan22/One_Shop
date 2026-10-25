@@ -1,0 +1,84 @@
+{
+ "id": "KH-15",
+ "title": "Đánh giá sản phẩm đã nhận",
+ "lanes": [
+  "Khách hàng",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Khách hàng"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Chọn dòng hàng đã nhận, số sao, nhận xét, Gửi đánh giá"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Có dòng hàng, số sao 1–5, nhận xét hợp lệ?",
+   "có",
+   "không",
+   [
+    "Chuyển ?reviewError=invalid"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tìm khóa dòng hàng thuộc khách; khóa đơn",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Dòng hàng thuộc khách và đơn khớp?",
+   "có",
+   "không",
+   [
+    "404 Không tìm thấy dòng hàng"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Phần giao đã nhận và thanh toán hợp lệ?",
+   "có",
+   "không",
+   [
+    "Báo chỉ đánh giá hàng đã nhận"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Dòng hàng chưa được đánh giá?",
+   "chưa",
+   "rồi",
+   [
+    "Báo đã đánh giá dòng hàng này"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Lưu Review ACTIVE (gắn sản phẩm, dòng hàng, đơn)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển ?reviewed#reviews"
+  ],
+  [
+   "end",
+   "Khách hàng"
+  ]
+ ]
+}

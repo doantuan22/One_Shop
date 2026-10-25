@@ -1,0 +1,42 @@
+{
+  "browser": "Chrome/155.0.8059.85",
+  "mode": "REFUND",
+  "orderIds": [
+    1876
+  ],
+  "fulfillmentIds": [
+    2149
+  ],
+  "trace": [
+    {
+      "step": "00-login-filled",
+      "url": "/login",
+      "title": "Đăng nhập - OneShop | OneShop"
+    },
+    {
+      "step": "01-checkout",
+      "url": "/checkout?cartItemIds=2280&fulfillmentType=DELIVERY&paymentMethod=ONLINE&shippingAddress=1+Nguyen+Trai%2C+TP.+Ho+Chi+Minh&receiverName=Browser+E2E+Customer&receiverPhone=0912345678",
+      "title": "Đặt hàng - OneShop | OneShop"
+    },
+    {
+      "step": "02-created",
+      "url": "/checkout/1612?success=placed",
+      "title": "Đặt hàng thành công - OneShop | OneShop"
+    },
+    {
+      "step": "03-payment-success",
+      "url": "/orders/1876/payments?outcome=CONFIRMED",
+      "title": "Thanh toán đơn hàng #1876 - OneShop | OneShop"
+    },
+    {
+      "step": "04-refund",
+      "url": "/orders/1876?cancelled",
+      "title": "Chi tiết đơn hàng | OneShop"
+    },
+    {
+      "step": "07-customer-final",
+      "url": "/orders/1876",
+      "title": "Chi tiết đơn hàng | OneShop"
+    }
+  ]
+}

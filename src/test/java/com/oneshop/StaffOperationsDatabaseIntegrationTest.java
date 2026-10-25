@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.*;
 @ActiveProfiles("dev")
 @EnabledIf("com.oneshop.DatabaseFoundationIntegrationTest#databaseConfigured")
 class StaffOperationsDatabaseIntegrationTest {
-    private static final String STAFF = "staff.thuduc@oneshop.vn", PEER = "staff.govap@oneshop.vn";
+    private static final String STAFF = "staff.thuduc@example.com", PEER = "staff.govap@example.com";
     @Autowired StaffOperationsService operations;
     @Autowired com.oneshop.service.fulfillment.StaffFulfillmentService fulfillmentService;
     @Autowired JdbcTemplate jdbc;
@@ -203,25 +203,34 @@ class StaffOperationsDatabaseIntegrationTest {
         } finally { jdbc.update("update dbo.staff_store_assignments set status=? where assignment_id=?", assignment.get("status"), assignment.get("assignment_id")); }
         assertThat(scenario.get("/staff/dashboard", cookie).statusCode()).isEqualTo(200);
     }
-    @Test void multipleAssignmentsKeepPerStoreCountsAndRevocationImmediatelyRemovesPeerResources() throws Exception {
+    @Test void transferredStaffSeesOnlyTheNewStoreAndRevocationImmediatelyRemovesItsResources() throws Exception {
         long user = count("select user_id from dbo.users where email=?", STAFF);
         long max = count("select coalesce(max(assignment_id),0) from dbo.staff_store_assignments");
         String cookie = scenario.account(STAFF);
+        // a Staff works at one Store: a second ACTIVE assignment is rejected by the database
+        assertThatThrownBy(() -> jdbc.update("insert into dbo.staff_store_assignments(user_id,store_id,status,assigned_at) values (?,2,'ACTIVE',SYSDATETIME())", user))
+                .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
         try {
+            // moved from Thủ Đức (1) to Gò Vấp (2); a suspended row at Quận 10 (4) grants nothing
+            jdbc.update("update dbo.staff_store_assignments set status='INACTIVE' where user_id=? and store_id=1", user);
             jdbc.update("insert into dbo.staff_store_assignments(user_id,store_id,status,assigned_at) values (?,2,'ACTIVE',SYSDATETIME()),(?,4,'INACTIVE',SYSDATETIME())", user, user);
             var dashboard = as(STAFF, operations::getDashboard);
-            assertThat(dashboard.stores()).extracting(s -> s.store().id()).containsExactlyInAnyOrder(1L, 2L);
+            assertThat(dashboard.stores()).extracting(s -> s.store().id()).containsExactly(2L);
             dashboard.stores().forEach(s -> assertCounts(s, s.store().id()));
             assertDashboardHtml(scenario.get("/staff/dashboard", cookie).body(), dashboard);
-            assertThat(as(STAFF, () -> operations.getOrders(0)).getContent()).extracting(o -> o.order().storeId()).contains(1L, 2L).doesNotContain(4L, 5L);
+            assertThat(as(STAFF, () -> operations.getOrders(0)).getContent()).extracting(o -> o.order().storeId()).contains(2L).doesNotContain(1L, 4L, 5L);
             assertThat(scenario.get("/staff/fulfillments/3", cookie).statusCode()).isEqualTo(200);
+            assertThat(scenario.get("/staff/fulfillments/1", cookie).statusCode()).isEqualTo(403);
             jdbc.update("update dbo.staff_store_assignments set status='INACTIVE' where assignment_id>? and store_id=2", max);
             assertThat(scenario.get("/staff/fulfillments/3", cookie).statusCode()).isEqualTo(403);
-            assertThat(htmlIds(scenario.get("/staff/orders?open=false", cookie).body())).containsExactlyElementsOf(ids(1));
-            assertThat(as(STAFF, operations::getDashboard).stores()).extracting(s -> s.store().id()).containsExactly(1L);
-        } finally { jdbc.update("delete from dbo.staff_store_assignments where assignment_id>? and user_id=?", max, user); }
+            assertThat(scenario.get("/staff/orders?open=false", cookie).statusCode()).isEqualTo(403);
+            assertThatThrownBy(() -> as(STAFF, operations::getDashboard)).isInstanceOf(AccessDeniedException.class);
+        } finally {
+            jdbc.update("delete from dbo.staff_store_assignments where assignment_id>? and user_id=?", max, user);
+            jdbc.update("update dbo.staff_store_assignments set status='ACTIVE' where user_id=? and store_id=1", user);
+        }
     }
-    @ParameterizedTest @ValueSource(strings = {"khachhang1@example.com", "admin@oneshop.vn"})
+    @ParameterizedTest @ValueSource(strings = {"khachhang1@example.com", "admin@example.com"})
     void otherRolesCannotOpenAnyStaffOperationsPage(String email) throws Exception {
         for (String path : List.of("/staff/dashboard", "/staff/orders", "/staff/fulfillments/1"))
             assertThat(scenario.get(path, scenario.account(email)).statusCode()).as(path).isEqualTo(403);

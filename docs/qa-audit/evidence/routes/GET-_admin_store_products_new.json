@@ -1,0 +1,14 @@
+{
+  "expected" : 302,
+  "executedAt" : "2026-10-25T11:54:28.895823300Z",
+  "location" : "http://localhost:60631/login",
+  "route" : {
+    "controller" : "com.oneshop.controller.admin.AdminStoreProductController",
+    "method" : "createForm",
+    "verb" : "GET",
+    "path" : "/admin/store-products/new"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/admin/store-products/new",
+  "actual" : 302
+}

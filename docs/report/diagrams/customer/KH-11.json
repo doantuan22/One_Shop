@@ -1,0 +1,90 @@
+{
+ "id": "KH-11",
+ "title": "Thanh toán trực tuyến qua cổng mô phỏng",
+ "lanes": [
+  "Khách hàng",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Khách hàng"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Mở /orders/{id}/payments, bấm Thanh toán"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Đơn ONLINE, đang chờ thanh toán, còn hạn 15 phút?",
+   "có",
+   "không",
+   [
+    "Báo không còn chờ thanh toán hoặc quá hạn"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Khóa đơn; lấy hoặc tạo Payment PENDING",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Cổng mô phỏng đang bật?",
+   "bật",
+   "tắt",
+   [
+    "Báo cổng thanh toán không bật"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Cổng mô phỏng ghi nhận kết quả vào sổ cái",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "reconcileLocked: xác minh kết quả với sổ cái",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Kết quả SUCCESS và thu trước hạn?",
+   "đúng",
+   "khác",
+   [
+    "Quá hạn/FAILED: hủy, hoàn tồn; UNKNOWN: chờ đối soát"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Payment SUCCESS; đơn PAID và CONFIRMED; ghi lịch sử",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển /orders/{id}/payments?outcome=CONFIRMED"
+  ],
+  [
+   "end",
+   "Khách hàng"
+  ]
+ ]
+}

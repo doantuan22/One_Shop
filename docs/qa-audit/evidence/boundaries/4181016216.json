@@ -1,0 +1,7 @@
+{
+  "timestamp" : "2026-10-25T11:54:09.678261800Z",
+  "request" : "/admin/inventory?page=107374183",
+  "expected" : "success/empty page or controlled 4xx; never 5xx",
+  "actual" : 400,
+  "actor" : "admin@example.com"
+}

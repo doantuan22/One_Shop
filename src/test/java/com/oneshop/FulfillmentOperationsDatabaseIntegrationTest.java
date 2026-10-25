@@ -256,21 +256,33 @@ class FulfillmentOperationsDatabaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("BE04-08 Staff assigned to two Stores sees the Fulfillments of both, and no third")
-    void be04_08_twoAssignments() {
+    @DisplayName("BE04-08 a Staff works at exactly one Store; after a transfer only the new Store's Fulfillments are visible")
+    void be04_08_transferMovesTheWholeScope() {
+        long inThuDuc = data.onlyFulfillment(data.codDelivery("OS-THUDUC", SERUM, 1));
         long inGoVap = data.onlyFulfillment(data.codDelivery("OS-GOVAP", SERUM, 1));
         long inQuan7 = data.onlyFulfillment(data.codDelivery("OS-QUAN7", SHAMPOO, 1));
+        // before: Thủ Đức only
+        assertThat(queue(STAFF_THUDUC, FulfillmentQueueFilter.openWork()).stream()
+                .map(FulfillmentQueueItemResponse::fulfillmentId).toList()).contains(inThuDuc).doesNotContain(inGoVap, inQuan7);
+        // a second ACTIVE assignment is refused by the database (UX_ssa_one_active_store_per_user)
+        assertThatThrownBy(() -> jdbc.update("insert into dbo.staff_store_assignments (user_id, store_id, status) values (2, 2, 'ACTIVE')"))
+                .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
+        // the transfer suspends Thủ Đức and opens Gò Vấp
+        jdbc.update("update dbo.staff_store_assignments set status = 'INACTIVE' where user_id = 2 and store_id = 1");
         jdbc.update("insert into dbo.staff_store_assignments (user_id, store_id, status) values (2, 2, 'ACTIVE')");
         try {
             List<Long> ids = queue(STAFF_THUDUC, FulfillmentQueueFilter.openWork()).stream()
                     .map(FulfillmentQueueItemResponse::fulfillmentId).toList();
-            assertThat(ids).contains(inGoVap).doesNotContain(inQuan7);
+            assertThat(ids).contains(inGoVap).doesNotContain(inThuDuc, inQuan7);
             act(STAFF_THUDUC, inGoVap, FulfillmentAction.PREPARE);
             assertThat(data.fulfillmentStatus(inGoVap)).isEqualTo("PREPARING");
             assertThatThrownBy(() -> act(STAFF_THUDUC, inQuan7, FulfillmentAction.PREPARE))
                     .isInstanceOf(AccessDeniedException.class);
+            assertThatThrownBy(() -> act(STAFF_THUDUC, inThuDuc, FulfillmentAction.PREPARE))
+                    .isInstanceOf(AccessDeniedException.class);
         } finally {
             jdbc.update("delete from dbo.staff_store_assignments where user_id = 2 and store_id = 2");
+            jdbc.update("update dbo.staff_store_assignments set status = 'ACTIVE' where user_id = 2 and store_id = 1");
         }
     }
 

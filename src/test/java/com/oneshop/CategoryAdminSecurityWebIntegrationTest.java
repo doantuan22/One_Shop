@@ -99,7 +99,7 @@ class CategoryAdminSecurityWebIntegrationTest extends AbstractIntegrationTest {
 
         String html = response.body();
         // Table headers and columns
-        assertThat(html).contains("Danh mục dùng chung toàn chuỗi");
+        assertThat(html).contains("<h1 class=\"h3 mb-1\">Danh mục</h1>", "Thêm danh mục");
         assertThat(html).contains("Chăm sóc da");
         assertThat(html).contains("Trang điểm");
 
@@ -113,6 +113,6 @@ class CategoryAdminSecurityWebIntegrationTest extends AbstractIntegrationTest {
         assertThat(html).contains("type=\"file\"");
         assertThat(html).contains("accept=\"image/jpeg,image/png,image/webp\"");
         assertThat(html).contains("enctype=\"multipart/form-data\"");
-        assertThat(html).contains("Dung lượng tối đa: 5MB");
+        assertThat(html).contains("tối đa 5MB");
     }
 }

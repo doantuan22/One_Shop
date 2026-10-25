@@ -1,0 +1,7 @@
+{
+  "timestamp" : "2026-10-25T11:54:11.154601Z",
+  "request" : "/admin/reviews?page=107374183&q=qa-no-match-999",
+  "expected" : "success/empty page or controlled 4xx; never 5xx",
+  "actual" : 400,
+  "actor" : "admin@example.com"
+}

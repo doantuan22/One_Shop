@@ -1,0 +1,72 @@
+{
+ "id": "QT-06",
+ "title": "Quản lý hình ảnh sản phẩm",
+ "lanes": [
+  "Quản trị viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Quản trị viên"
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Mở trang sửa sản phẩm; tải ảnh, chọn ảnh chính hoặc xóa ảnh"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Khóa dòng Product (tuần tự hóa các thao tác ảnh)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Thao tác tải ảnh lên?",
+   "đặt chính / xóa",
+   "tải lên",
+   [
+    "Kiểm tra tệp (≤ 5MB, ảnh); tải lên Cloudinary",
+    "Lưu ProductImage; ảnh đầu tiên là ảnh chính",
+    "Chuyển ?success=image-uploaded"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Thao tác đặt ảnh chính?",
+   "xóa ảnh",
+   "đặt chính",
+   [
+    "Bỏ cờ chính của ảnh cũ, flush; đặt cờ cho ảnh chọn",
+    "Chuyển ?success=image-primary"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Xóa ProductImage; nếu là ảnh chính thì ảnh kế tiếp thành chính",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Xóa ảnh trên Cloudinary sau commit"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển ?success=image-deleted"
+  ],
+  [
+   "end",
+   "Quản trị viên"
+  ]
+ ]
+}

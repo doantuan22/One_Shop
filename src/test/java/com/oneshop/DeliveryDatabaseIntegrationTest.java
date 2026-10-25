@@ -117,8 +117,11 @@ class DeliveryDatabaseIntegrationTest extends V3RegressionTestSupport {
     }
 
     @Test
-    void readScopeSupportsMultipleAssignmentsAndOnlyDeliverySnapshots() throws Exception {
-        long id=cod();assign(STAFF_GOVAP,"OS-THUDUC");
+    void readScopeFollowsTheStaffsCurrentStoreAndOnlyDeliverySnapshots() throws Exception {
+        long id=cod();
+        // the order belongs to Thủ Đức: a Gò Vấp Staff cannot read it until moved there (one Store per Staff)
+        assertThatThrownBy(()->data.asStaff(STAFF_GOVAP,()->staff.getFulfillment(part(id)))).isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        transfer(STAFF_GOVAP,"OS-THUDUC");
         var detail=data.asStaff(STAFF_GOVAP,()->staff.getFulfillment(part(id)));assertThat(detail.summary().fulfillmentType()).isEqualTo(FulfillmentType.DELIVERY);
         assertThat(detail.items()).hasSize(1);assertThat(data.asStaff(STAFF_GOVAP,()->staff.getQueue(FulfillmentQueueFilter.none(),0)).getContent()).anyMatch(f->f.fulfillmentId().equals(part(id)));
     }

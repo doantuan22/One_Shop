@@ -20,7 +20,12 @@ try{
   async function nav(s,url){await call('Page.navigate',{url:`http://localhost:${config.port}${url}`},s);await until(()=>evaluate(s,'document.readyState==="complete"'),'page ready');await pause(100);}
   async function has(s,selector){return evaluate(s,`!!document.querySelector(${JSON.stringify(selector)})`);}
   async function field(s,selector,value){await until(()=>has(s,selector),selector);await evaluate(s,`(()=>{const e=document.querySelector(${JSON.stringify(selector)});e.value=${JSON.stringify(String(value))};e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}));})()`);}
-  async function click(s,selector){console.log("click",selector);await call("Page.bringToFront",{},s);await until(()=>has(s,selector),selector);await evaluate(s,`document.querySelector(${JSON.stringify(selector)}).scrollIntoView({block:'center'})`);await pause(500);const point=await evaluate(s,`(()=>{const e=document.querySelector(${JSON.stringify(selector)});e.scrollIntoView({block:'center'});const r=e.getBoundingClientRect();if(e.disabled)throw new Error('disabled ${selector}');return {x:r.x+r.width/2,y:r.y+r.height/2};})()`);await call('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',clickCount:1,...point},s);await call('Input.dispatchMouseEvent',{type:'mouseReleased',button:'left',clickCount:1,...point},s);await pause(250);}
+  async function click(s,selector){console.log("click",selector);await call("Page.bringToFront",{},s);await until(()=>has(s,selector),selector);
+    // The storefront sets CSS scroll-behavior:smooth, so scrollIntoView() animates and an immediate
+    // getBoundingClientRect() still reports the off-screen position. Force an instant scroll before
+    // measuring, then assert the point really belongs to the target (guard against overlays).
+    const point=await evaluate(s,`(()=>{const e=document.querySelector(${JSON.stringify(selector)});document.documentElement.style.scrollBehavior='auto';e.scrollIntoView({block:'center',inline:'center',behavior:'instant'});const r=e.getBoundingClientRect();if(e.disabled)throw new Error('disabled ${selector}');if(r.top<0||r.bottom>innerHeight)throw new Error('target still outside viewport: '+JSON.stringify({top:r.top,bottom:r.bottom,h:innerHeight}));const x=r.x+r.width/2,y=r.y+r.height/2;const hit=document.elementFromPoint(x,y);if(!hit||!(hit===e||e.contains(hit)))throw new Error('target covered at click point: '+(hit?hit.outerHTML.slice(0,120):'null'));return {x,y};})()`);
+    await call('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',clickCount:1,...point},s);await call('Input.dispatchMouseEvent',{type:'mouseReleased',button:'left',clickCount:1,...point},s);await pause(250);}
   async function submit(s,selector){const old=await evaluate(s,'document.documentElement.outerHTML');await click(s,selector);await until(async()=>await evaluate(s,'document.readyState==="complete" && document.documentElement.outerHTML')!==old,'form response');await pause(150);}
   async function screenshot(s,label){const r=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},s);await writeFile(path.join(config.output,label+'.png'),Buffer.from(r.data,'base64'));trace.push({step:label,url:await evaluate(s,'location.pathname+location.search'),title:await evaluate(s,'document.title')});}
   async function login(email){const s=await tab();await nav(s,'/login');await pause(1200);await field(s,'#identifier',email);await field(s,'#password','OneShop@123');await screenshot(s,'00-login-filled');await submit(s,'form[action="/login"] button[type="submit"]');await until(()=>evaluate(s,'location.pathname!=="/login"'),'login');return s;}
@@ -52,14 +57,32 @@ try{
   if(!orderIds.length)throw new Error('No order links in checkout result');
   const fulfillmentIds=await evaluate(customer,`[...document.querySelectorAll('[data-fulfillment-id]')].map(e=>Number(e.dataset.fulfillmentId))`);
   await screenshot(customer,'02-created');const id=orderIds[0];
-  if(['ONLINE','FAILED','REFUND','REVIEW'].includes(config.mode)){
-    await nav(customer,`/orders/${id}/payments`);const scenario=config.mode==='FAILED'?'FAILED':'SUCCESS';
-    const selector=await evaluate(customer,`(()=>{const f=[...document.querySelectorAll('form')].find(f=>f.querySelector('input[name="scenario"]')?.value===${JSON.stringify(scenario)});if(!f)throw new Error('No gateway scenario');f.id='browser-payment';return '#browser-payment button';})()`);
-    await submit(customer,selector);await screenshot(customer,'03-payment-'+scenario.toLowerCase());
+  if(['ONLINE','REVIEW'].includes(config.mode)){
+    await nav(customer,`/orders/${id}/payments`);
+    await submit(customer,'#start-payment');
+    await until(()=>evaluate(customer,'location.search.includes("outcome=")'),'payment result');
+    await screenshot(customer,'03-payment-success');
+  }
+  if(config.mode==='REFUND'){
+    await nav(customer,`/orders/${id}/payments`);
+    await submit(customer,'#start-payment');
+    await until(()=>evaluate(customer,'location.search.includes("outcome=CONFIRMED")'),'payment success before refund');
+    await screenshot(customer,'03-payment-success');
+  }
+  if(config.mode==='FAILED'){
+    // The customer payment page intentionally exposes only the happy-path "pay" button; the
+    // FAILED/UNKNOWN scenarios have no UI control. Exercise them through the real HTTP endpoint instead,
+    // from the logged-in customer page: its own session cookie and its own CSRF token, no payment status sent.
+    await nav(customer,`/orders/${id}/payments`);
+    const paymentId=await evaluate(customer,`Number(document.querySelector('[data-payment-id]')?.dataset.paymentId)||0`);
+    if(!paymentId)throw new Error('No payment attempt to fail on /orders/'+id+'/payments');
+    const posted=await evaluate(customer,`(async()=>{const token=document.querySelector('input[name="_csrf"]')?.value;if(!token)throw new Error('no csrf token on page');const r=await fetch('/orders/${id}/payments/${paymentId}/simulate',{method:'POST',credentials:'same-origin',redirect:'follow',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'scenario=FAILED&_csrf='+encodeURIComponent(token)});return {status:r.status,url:r.url};})()`);
+    if(posted.status!==200||!posted.url.includes('outcome='))throw new Error('FAILED scenario was not accepted: '+JSON.stringify(posted));
+    await nav(customer,`/orders/${id}/payments`);await screenshot(customer,'03-payment-failed');
   }
   if(config.mode==='REFUND') {await nav(customer,`/orders/${id}`);await submit(customer,`form[action="/orders/${id}/cancel"] button`);await screenshot(customer,'04-refund');}
   if(['PICKUP','ONLINE','REVIEW'].includes(config.mode)){
-    const staff=await login('staff.thuduc@oneshop.vn');const f=fulfillmentIds[0];await nav(staff,`/staff/fulfillments/${f}`);
+    const staff=await login('staff.thuduc@example.com');const f=fulfillmentIds[0];await nav(staff,`/staff/fulfillments/${f}`);
     const actions=config.mode==='PICKUP'?['prepare','ready-for-pickup']:['prepare','pack','ship','complete-delivery'];
     for(const a of actions){await submit(staff,`form[data-action="${a}"] button`);await until(()=>evaluate(staff,'document.readyState==="complete"'),'staff transition');}
     if(config.mode==='PICKUP'){
@@ -71,7 +94,7 @@ try{
     if(config.mode==='REVIEW'){
       await nav(customer,`/orders/${id}`);await field(customer,'form[action="/reviews"] [name="rating"]',5);await field(customer,'form[action="/reviews"] [name="comment"]','BE07 browser review');await submit(customer,'form[action="/reviews"] button');
       await nav(staff,'/staff/reviews');const reviewPath=await evaluate(staff,`[...document.querySelectorAll('a[href]')].map(a=>a.getAttribute('href')).find(x=>x.startsWith('/staff/reviews/') && Number(x.substring(15))>0)`);if(!reviewPath)throw new Error('Review missing from Staff queue');await nav(staff,reviewPath);await field(staff,'#reply','BE07 browser staff reply');await submit(staff,'form[action$="/reply"] button');await screenshot(staff,'05-staff-reply');
-      const admin=await login('admin@oneshop.vn');await nav(admin,'/admin/reviews');const reviewId=Number(reviewPath.split('/').pop());
+      const admin=await login('admin@example.com');await nav(admin,'/admin/reviews');const reviewId=Number(reviewPath.split('/').pop());
       // Moderation goes through the confirm-with-reason modal: Ẩn opens #osReasonModal, a
       // mandatory reason must be typed, then #osReasonConfirm performs the real POST.
       await click(admin,`tr[data-review-id="${reviewId}"] form[action$="/status"] button`);

@@ -1,0 +1,14 @@
+{
+  "expected" : 302,
+  "executedAt" : "2026-10-25T11:54:25.246624400Z",
+  "location" : "http://localhost:60631/login",
+  "route" : {
+    "controller" : "com.oneshop.controller.admin.AdminBrandController",
+    "method" : "list",
+    "verb" : "GET",
+    "path" : "/admin/brands"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/admin/brands",
+  "actual" : 302
+}

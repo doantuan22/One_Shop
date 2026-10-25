@@ -1,0 +1,97 @@
+{
+ "id": "NV-06",
+ "title": "Xem tồn kho chi nhánh và điều chỉnh tồn",
+ "lanes": [
+  "Nhân viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Nhân viên"
+  ],
+  [
+   "act",
+   "Nhân viên",
+   "Mở /staff/stock, tìm và lọc; chọn Điều chỉnh một mặt hàng"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "getStock và stockStats trong các chi nhánh được phân công",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Nhân viên",
+   "Nhập số lượng mới và ghi chú (POST /staff/stock/{id}/adjust)"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Biểu mẫu StockAdjustRequest hợp lệ?",
+   "có",
+   "không",
+   [
+    "400: hiển thị lại form (vẫn trong phạm vi)"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Khóa StoreProduct; lấy chi nhánh thật của dòng đã khóa",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Chi nhánh thuộc phạm vi được phân công?",
+   "có",
+   "không",
+   [
+    "403 Không được phân công điều chỉnh tồn"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Số lượng mới ≥ 0 và ≥ số đang giữ?",
+   "đạt",
+   "sai",
+   [
+    "Báo tồn kho không hợp lệ"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Số lượng mới khác số hiện tại?",
+   "khác",
+   "bằng nhau",
+   [
+    "Không ghi gì; ?success=unchanged"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Cập nhật quantity; ghi InventoryMovement STOCK_ADJUST",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển /staff/inventory-history/{id}?success=adjusted"
+  ],
+  [
+   "end",
+   "Nhân viên"
+  ]
+ ]
+}

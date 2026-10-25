@@ -1,0 +1,7 @@
+{
+  "timestamp" : "2026-10-25T11:54:11.701865200Z",
+  "request" : "/admin/staff-assignments?page=107374181&q=qa-no-match-999",
+  "expected" : "success/empty page or controlled 4xx; never 5xx",
+  "actual" : 200,
+  "actor" : "admin@example.com"
+}

@@ -82,7 +82,7 @@ import static org.mockito.Mockito.when;
 class CatalogDatabaseIntegrationTest {
 
     private static final Pageable FIRST_PAGE = PageRequest.of(0, 50);
-    private static final String ADMIN = "admin@oneshop.vn";
+    private static final String ADMIN = "admin@example.com";
 
     // seed data
     private static final String SERUM = "SIMPLE-PURIFY-150";      // sold at 4 ACTIVE Stores, out of stock at Quận 7
@@ -623,11 +623,14 @@ class CatalogDatabaseIntegrationTest {
         assertThat(productService.getProductImages(serum)).filteredOn(ProductImageResponse::primary)
                 .extracting(ProductImageResponse::id).containsExactly(second.id());
 
-        // deleting removes the file on Cloudinary by its public id and promotes the remaining image
+        // deleting schedules the removal of the Cloudinary file in the same SQL transaction; the file itself is only
+        // deleted after commit (ImageTransactionCoordinator), which this rolled-back test never reaches:
+        // the commit path is covered by QaFixImageLifecycleDatabaseIntegrationTest
         productService.deleteProductImage(serum, second.id());
         entityManager.flush();
         entityManager.clear();
-        verify(cloudinaryService).deleteImage("oneshop/products/serum-2");
+        assertThat(pendingCleanupTasks("oneshop/products/serum-2")).isEqualTo(1);
+        verify(cloudinaryService, never()).deleteImage("oneshop/products/serum-2");
         assertThat(productService.getProductImages(serum)).extracting(ProductImageResponse::id, ProductImageResponse::primary)
                 .containsExactly(org.assertj.core.groups.Tuple.tuple(first.id(), true));
     }
@@ -675,19 +678,27 @@ class CatalogDatabaseIntegrationTest {
         // replacing the logo deletes the previous file on Cloudinary
         productService.uploadBrandLogo(cocoon.getId(), file);
         entityManager.flush();
-        verify(cloudinaryService).deleteImage("oneshop/brands/cocoon-1");
+        // the old file is queued for removal in this transaction and deleted only after commit
+        assertThat(pendingCleanupTasks("oneshop/brands/cocoon-1")).isEqualTo(1);
+        verify(cloudinaryService, never()).deleteImage("oneshop/brands/cocoon-1");
 
         productService.removeBrandLogo(cocoon.getId());
         entityManager.flush();
         entityManager.clear();
-        verify(cloudinaryService).deleteImage("oneshop/brands/cocoon-2");
+        assertThat(pendingCleanupTasks("oneshop/brands/cocoon-2")).isEqualTo(1);
+        verify(cloudinaryService, never()).deleteImage("oneshop/brands/cocoon-2");
         Brand cleared = brandRepository.findById(cocoon.getId()).orElseThrow();
         assertThat(cleared.getLogoUrl()).isNull();
         assertThat(cleared.getLogoPublicId()).isNull();
     }
 
+    private long pendingCleanupTasks(String publicId) {
+        return ((Number) entityManager.createNativeQuery("select count(*) from dbo.image_cleanup_tasks where public_id = ?1")
+                .setParameter(1, publicId).getSingleResult()).longValue();
+    }
+
     @Test
-    void cloudinaryRefusingADeleteKeepsTheImageRow() {
+    void aCloudinaryOutageNeverBlocksDeletingTheImageRow() {
         when(cloudinaryService.uploadImage(any(), eq("products")))
                 .thenReturn(new ImageUploadResult("https://res.cloudinary.com/demo/b.png", "oneshop/products/b"));
         Long serum = productId(SERUM);
@@ -696,7 +707,11 @@ class CatalogDatabaseIntegrationTest {
         entityManager.flush();
         doThrow(new ImageStorageException("Cloudinary unavailable")).when(cloudinaryService).deleteImage("oneshop/products/b");
 
-        assertThatThrownBy(() -> productService.deleteProductImage(serum, image.id()))
-                .isInstanceOf(ImageStorageException.class);
+        // the provider is only called after commit and its failure is journaled for retry
+        // (QaFixImageLifecycleDatabaseIntegrationTest#failedAfterCommitDeleteDoesNotUndoCommittedMetadata),
+        // so the request itself succeeds and the cleanup task is queued
+        productService.deleteProductImage(serum, image.id());
+        entityManager.flush();
+        assertThat(pendingCleanupTasks("oneshop/products/b")).isEqualTo(1);
     }
 }

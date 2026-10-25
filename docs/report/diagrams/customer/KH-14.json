@@ -1,0 +1,92 @@
+{
+ "id": "KH-14",
+ "title": "Yêu cầu trả hàng sau khi nhận",
+ "lanes": [
+  "Khách hàng",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Khách hàng"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Mở /orders/{id}/return, nhập lý do, đính 1–3 ảnh"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Lý do 5–500 ký tự và có 1–3 ảnh?",
+   "có",
+   "không",
+   [
+    "Báo lỗi reason hoặc images"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Khóa đơn; kiểm tra thuộc khách",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Chưa có yêu cầu, đơn COMPLETED, mọi phần đã xong?",
+   "có",
+   "không",
+   [
+    "Từ chối: đã có yêu cầu hoặc đơn chưa hoàn tất"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Còn trong 3 ngày kể từ khi nhận hàng?",
+   "còn hạn",
+   "quá hạn",
+   [
+    "Từ chối: đã quá hạn trả hàng"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Có dòng đã nhận, tiền hàng > 0 và còn đủ để hoàn?",
+   "có",
+   "không",
+   [
+    "Từ chối: không có khoản để hoàn"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Lưu OrderReturn (REQUESTED) và các OrderReturnItem",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tải ảnh lên Cloudinary, lưu OrderReturnImage",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chờ quản trị viên duyệt; đơn không đổi trạng thái"
+  ],
+  [
+   "end",
+   "Khách hàng"
+  ]
+ ]
+}

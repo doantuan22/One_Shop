@@ -1,0 +1,86 @@
+{
+ "id": "QT-02",
+ "title": "Phân công và chuyển chi nhánh cho nhân viên",
+ "lanes": [
+  "Quản trị viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Quản trị viên"
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Mở /admin/staff-assignments, chọn nhân viên và chi nhánh"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Thao tác là chuyển chi nhánh?",
+   "gán / đổi trạng thái",
+   "chuyển",
+   [
+    "Yêu cầu STAFF ACTIVE, chi nhánh đích ACTIVE, đang làm việc nơi khác",
+    "Xóa phân công cũ, tạo phân công ACTIVE mới",
+    "Chuyển /admin/staff-assignments?success"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Khóa dòng User; tìm chi nhánh",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Tài khoản có vai trò STAFF?",
+   "có",
+   "không",
+   [
+    "Báo chỉ STAFF được phân công"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Khi bật: nhân viên và chi nhánh đều ACTIVE?",
+   "có",
+   "không",
+   [
+    "Báo chỉ bật cho đối tượng đang hoạt động"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Nhân viên chưa ACTIVE ở chi nhánh khác?",
+   "chưa",
+   "đã có",
+   [
+    "Báo dùng 'Chuyển chi nhánh'"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tạo hoặc cập nhật phân công (UNIQUE user và store)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển /admin/staff-assignments?success"
+  ],
+  [
+   "end",
+   "Quản trị viên"
+  ]
+ ]
+}

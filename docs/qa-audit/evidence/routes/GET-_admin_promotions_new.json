@@ -1,0 +1,14 @@
+{
+  "expected" : 302,
+  "executedAt" : "2026-10-25T11:54:27.460069200Z",
+  "location" : "http://localhost:60631/login",
+  "route" : {
+    "controller" : "com.oneshop.controller.admin.AdminPromotionController",
+    "method" : "createForm",
+    "verb" : "GET",
+    "path" : "/admin/promotions/new"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/admin/promotions/new",
+  "actual" : 302
+}

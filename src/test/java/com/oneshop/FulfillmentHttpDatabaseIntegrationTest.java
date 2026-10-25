@@ -336,7 +336,8 @@ class FulfillmentHttpDatabaseIntegrationTest {
                 .isEqualTo(302);
         HttpResponse<String> preparing = getAs(ALICE, "/orders/" + order);
         assertThat(preparing.statusCode()).isEqualTo(200);
-        assertThat(preparing.body()).contains("Phần giao theo chi nhánh", "OneShop Thủ Đức")
+        // one Store: the section is titled "Giao nhận"; several Stores: "Phần giao theo chi nhánh" (see be04_66)
+        assertThat(preparing.body()).contains("Giao nhận", "OneShop Thủ Đức")
                 .doesNotContain("os-fulfillment-pickup-code");
 
         assertThat(postAs(STAFF_THUDUC, "/staff/fulfillments/" + fulfillment + "/ready-for-pickup", "").statusCode())

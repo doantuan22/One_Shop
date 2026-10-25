@@ -1,0 +1,74 @@
+{
+ "id": "NV-01",
+ "title": "Đăng nhập khu vực nhân viên và xác định phạm vi chi nhánh",
+ "lanes": [
+  "Nhân viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Nhân viên"
+  ],
+  [
+   "act",
+   "Nhân viên",
+   "Đăng nhập, mở một trang /staff/**"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Tài khoản có vai trò STAFF? (SecurityConfig)",
+   "có",
+   "không",
+   [
+    "Chuyển /login hoặc trả 403"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Interceptor lấy phân công ACTIVE theo email của người đăng nhập",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Ghi danh sách chi nhánh vào thuộc tính request assignedStores"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Có chi nhánh ACTIVE được phân công?",
+   "có",
+   "không",
+   [
+    "Chỉ cho vào /staff (thông báo), URL khác trả 403"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Controller và Service chỉ truy vấn trong các chi nhánh đã phân công",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Khi ghi: requireAssignedStore trên chi nhánh của dòng đã khóa"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Hiển thị dữ liệu thuộc chi nhánh của nhân viên"
+  ],
+  [
+   "end",
+   "Nhân viên"
+  ]
+ ]
+}

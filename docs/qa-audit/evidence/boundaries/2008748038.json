@@ -1,0 +1,7 @@
+{
+  "timestamp" : "2026-10-25T11:54:12.436641600Z",
+  "request" : "/admin/payments?page=1",
+  "expected" : "success/empty page or controlled 4xx; never 5xx",
+  "actual" : 200,
+  "actor" : "admin@example.com"
+}

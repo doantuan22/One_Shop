@@ -1,0 +1,56 @@
+{
+ "id": "KH-16",
+ "title": "Cập nhật thông tin tài khoản",
+ "lanes": [
+  "Khách hàng",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Khách hàng"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Sửa họ tên, số điện thoại, bấm Lưu (POST /account)"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Dữ liệu hợp lệ (UpdateAccountRequest)?",
+   "có",
+   "không",
+   [
+    "Hiển thị lại form kèm lỗi"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "UPDATE users: full_name, phone, updated_at theo email và status ACTIVE",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Đúng một dòng được cập nhật?",
+   "có",
+   "không",
+   [
+    "403 Tài khoản không còn hoạt động"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển hướng /account?success"
+  ],
+  [
+   "end",
+   "Khách hàng"
+  ]
+ ]
+}

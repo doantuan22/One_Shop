@@ -43,8 +43,18 @@ class Phase10IntegrationWebDatabaseTest extends V3RegressionTestSupport {
     }
 
     @Test
-    void revokingOneOfMultipleAssignmentsImmediatelyRemovesPeerReadsAndWritesAcrossAllModules() throws Exception {
-        assign(STAFF_GOVAP,"OS-THUDUC");long id=cod();long sp=data.storeProduct(SERUM,"OS-THUDUC");assertThat(data.asStaff(STAFF_GOVAP,()->staff.getFulfillment(part(id)))).isNotNull();assertThat(data.asStaff(STAFF_GOVAP,()->staffInventory.getStoreProduct(sp))).isNotNull();jdbc.update("update dbo.staff_store_assignments set status='INACTIVE' where user_id=? and store_id=1",userId(STAFF_GOVAP));unchanged(id,()->data.asStaff(STAFF_GOVAP,()->staff.perform(part(id),FulfillmentAction.PREPARE,null)),AccessDeniedException.class);assertThatThrownBy(()->data.asStaff(STAFF_GOVAP,()->staffInventory.getStoreProduct(sp))).isInstanceOf(ResourceNotFoundException.class);assertThat(data.asStaff(STAFF_GOVAP,operations::getDashboard).stores()).allSatisfy(s->assertThat(s.store().id()).isEqualTo(data.storeId("OS-GOVAP")));
+    void revokingTheOnlyAssignmentImmediatelyRemovesReadsAndWritesAcrossAllModules() throws Exception {
+        // a Staff works at exactly one Store: Gò Vấp's Staff is moved to Thủ Đức, then that assignment is revoked
+        long id=cod();long sp=data.storeProduct(SERUM,"OS-THUDUC");
+        assertThatThrownBy(()->data.asStaff(STAFF_GOVAP,()->staff.getFulfillment(part(id)))).isInstanceOf(AccessDeniedException.class);
+        transfer(STAFF_GOVAP,"OS-THUDUC");
+        assertThat(data.asStaff(STAFF_GOVAP,()->staff.getFulfillment(part(id)))).isNotNull();
+        assertThat(data.asStaff(STAFF_GOVAP,()->staffInventory.getStoreProduct(sp))).isNotNull();
+        assertThat(data.asStaff(STAFF_GOVAP,operations::getDashboard).stores()).allSatisfy(s->assertThat(s.store().id()).isEqualTo(data.storeId("OS-THUDUC")));
+        jdbc.update("update dbo.staff_store_assignments set status='INACTIVE' where user_id=? and store_id=1",userId(STAFF_GOVAP));
+        unchanged(id,()->data.asStaff(STAFF_GOVAP,()->staff.perform(part(id),FulfillmentAction.PREPARE,null)),AccessDeniedException.class);
+        assertThatThrownBy(()->data.asStaff(STAFF_GOVAP,()->staffInventory.getStoreProduct(sp))).isInstanceOf(AccessDeniedException.class);
+        assertThatThrownBy(()->data.asStaff(STAFF_GOVAP,operations::getDashboard)).isInstanceOf(AccessDeniedException.class);
     }
 
     @Test

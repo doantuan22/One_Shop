@@ -1,0 +1,104 @@
+{
+ "id": "KH-03",
+ "title": "Quên mật khẩu bằng mã OTP",
+ "lanes": [
+  "Khách hàng",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Khách hàng"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Nhập email tại /forgot-password"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Email thuộc tài khoản ACTIVE?",
+   "có",
+   "không",
+   [
+    "Báo lỗi trường email"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Đã quá 60 giây và dưới 5 mã/giờ?",
+   "đạt",
+   "chưa",
+   [
+    "Báo đợi hoặc quá số lần gửi"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Hủy mã cũ, lưu OTP đã băm (hạn 10 phút)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Gửi email SMTP thành công?",
+   "có",
+   "không",
+   [
+    "Báo lỗi, hoàn tác (không lưu mã)"
+   ]
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Nhập mã OTP 6 chữ số"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Mã còn hạn, đúng chủ và đúng giá trị?",
+   "đúng",
+   "sai",
+   [
+    "Tăng số lần sai hoặc hủy mã, báo lỗi"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Cấp vé ký HMAC-SHA256 gắn với mã và email"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Nhập mật khẩu mới và xác nhận"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Vé hợp lệ và hai mật khẩu khớp?",
+   "đạt",
+   "không",
+   [
+    "Báo lỗi ticket hoặc confirmPassword"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Đánh dấu mã đã dùng, cập nhật password_hash",
+   {
+    "db": true
+   }
+  ],
+  [
+   "end",
+   "Khách hàng"
+  ]
+ ]
+}

@@ -1,0 +1,7 @@
+{
+  "timestamp" : "2026-10-25T11:55:17.217378400Z",
+  "scenario" : "replace-commit-BRAND",
+  "files" : [ "qa-fix/2f8ebd9b-d43b-4277-bee7-410e897177b4" ],
+  "tasks" : [ ],
+  "database" : "oneshop_fixture_20261025_test"
+}

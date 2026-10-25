@@ -30,7 +30,12 @@ Chỉ đặt `DB_TRUST_SERVER_CERTIFICATE=true` cho SQL Server local dùng chứ
 Full suite cần SQL Server và fixture V3. Browser E2E cần Node.js có WebSocket và Chrome tại đường dẫn trong `BrowserV3DatabaseIntegrationTest`; thiếu browser làm suite báo lỗi, không skip để che môi trường.
 
 ```powershell
-# Provision a separate *_test DB with 01_schema.sql, 06_password_reset_otps.sql and the seed wrapper before running tests:
+# Test DB (disposable, empty -> 01_schema.sql refuses an existing DB). Use -f 65001 so the UTF-8 scripts keep Vietnamese text:
+#   sqlcmd -S <host>,<port> -U <user> -P <pw> -C -b -f 65001 -v DatabaseName=oneshop_v3_local_test -i database/01_schema.sql
+#   sqlcmd ... -d oneshop_v3_local_test -i database/06_password_reset_otps.sql
+#   sqlcmd ... -v DatabaseName=oneshop_v3_local_test -i database/test-fixtures/02_test_fixture_seed.sql
+# The suite needs the scenario fixture above (6 Stores, 8 sample Orders). database/02_seed.sql is the real-product demo seed
+# (for the operational DB via the seed wrapper); only RealProductSeedIntegrityTest is written for that one.
 mvn -B '-Doneshop.test.db=oneshop_v3_local_test' test
 mvn -B '-Doneshop.test.db=oneshop_v3_local_test' clean package
 ```

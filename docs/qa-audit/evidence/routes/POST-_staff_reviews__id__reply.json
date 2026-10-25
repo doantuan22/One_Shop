@@ -1,0 +1,14 @@
+{
+  "expected" : 403,
+  "executedAt" : "2026-10-25T11:54:32.739321500Z",
+  "location" : "",
+  "route" : {
+    "controller" : "com.oneshop.controller.staff.StaffReviewController",
+    "method" : "reply",
+    "verb" : "POST",
+    "path" : "/staff/reviews/{id}/reply"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/staff/reviews/999999999/reply",
+  "actual" : 403
+}

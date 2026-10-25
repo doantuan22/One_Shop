@@ -1,0 +1,67 @@
+{
+ "id": "NV-02",
+ "title": "Xem dashboard chi nhánh được phân công",
+ "lanes": [
+  "Nhân viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Nhân viên"
+  ],
+  [
+   "act",
+   "Nhân viên",
+   "Mở /staff"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Có chi nhánh ACTIVE được phân công?",
+   "có",
+   "không",
+   [
+    "Hiển thị thông báo chưa được phân công"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Đếm phần giao theo chi nhánh và trạng thái",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tách: đang mở, chờ nhận, đang giao, bị chặn thanh toán, thất bại"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Đếm mặt hàng sắp hết và hết hàng của từng chi nhánh",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Lấy 5 phần giao đang mở gần nhất",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Hiển thị staff/dashboard"
+  ],
+  [
+   "end",
+   "Nhân viên"
+  ]
+ ]
+}

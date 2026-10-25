@@ -12,7 +12,7 @@ class DatabaseV3RegressionIntegrationTest extends V3RegressionTestSupport {
 
     @Test void all23TablesHaveTrustedConstraintsAndHibernateOnlyValidates(){
         assertThat(ddl).isEqualTo("validate");
-        assertThat(count("select count(*) from sys.tables where is_ms_shipped=0")).isEqualTo(29);
+        assertThat(count("select count(*) from sys.tables where is_ms_shipped=0")).isEqualTo(30);
         assertThat(count("select count(*) from sys.foreign_keys where is_disabled=1 or is_not_trusted=1")).isZero();
         assertThat(count("select count(*) from sys.check_constraints where is_disabled=1 or is_not_trusted=1")).isZero();
         Integer violations=jdbc.execute((org.springframework.jdbc.core.ConnectionCallback<Integer>) connection->{
@@ -45,8 +45,12 @@ class DatabaseV3RegressionIntegrationTest extends V3RegressionTestSupport {
     @Test void approvedReviewMigrationIsIdempotentAndPreservesEveryTable()throws Exception{
         assertThat(jdbc.queryForObject("select db_name()",String.class)).endsWith("_test");
         var before=tableChecksums();
-        String migration=Files.readString(Path.of("docs/v3/migration-history/20261014_be06_review_uniqueness.sql"));
-        jdbc.execute(migration);jdbc.execute(migration);
+        String migration=Files.readString(Path.of("src/test/resources/db/20261014_be06_review_uniqueness.sql"));
+        // the script changes session options (SET NOCOUNT ON, XACT_ABORT ON ...): undo them before the pooled connection is reused
+        for(int run=0;run<2;run++)jdbc.execute((org.springframework.jdbc.core.ConnectionCallback<Void>) connection->{
+            try(var statement=connection.createStatement()){statement.execute(migration);}
+            finally{try(var reset=connection.createStatement()){reset.execute("SET NOCOUNT OFF; SET XACT_ABORT OFF;");}}
+            return null;});
         assertThat(tableChecksums()).isEqualTo(before);
         assertThat(count("select count(*) from sys.indexes where object_id=object_id('dbo.reviews') and name in ('UX_reviews_order_item','UX_reviews_legacy_user_product') and is_unique=1 and has_filter=1 and is_disabled=0")).isEqualTo(2);
         assertThat(count("select count(*) from sys.key_constraints where parent_object_id=object_id('dbo.reviews') and name='UQ_reviews_user_product'")).isZero();

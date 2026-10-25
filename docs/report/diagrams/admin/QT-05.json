@@ -1,0 +1,89 @@
+{
+ "id": "QT-05",
+ "title": "Quản lý sản phẩm và giá bán",
+ "lanes": [
+  "Quản trị viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Quản trị viên"
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Mở /admin/products, lọc; chọn Thêm mới hoặc Sửa"
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Nhập SKU, tên, giá online, giá gốc, danh mục, thương hiệu, trạng thái"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Biểu mẫu ProductRequest hợp lệ?",
+   "có",
+   "không",
+   [
+    "Hiển thị lại form kèm lỗi"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Kiểm tra SKU đã tồn tại",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "SKU chưa dùng (bởi sản phẩm khác)?",
+   "chưa",
+   "đã dùng",
+   [
+    "Báo lỗi 'Mã SKU đã tồn tại'"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Giá ≥ 0, ACTIVE thì giá > 0, giá gốc ≥ giá bán?",
+   "đạt",
+   "sai",
+   [
+    "Báo lỗi price hoặc originalPrice"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Danh mục và thương hiệu tồn tại?",
+   "có",
+   "không",
+   [
+    "Báo lỗi categoryId hoặc brandId"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Lưu Product (ngừng bán bằng trạng thái, không xóa)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tạo mới: chuyển trang sửa để thêm ảnh; sửa: về danh sách"
+  ],
+  [
+   "end",
+   "Quản trị viên"
+  ]
+ ]
+}

@@ -1,0 +1,84 @@
+{
+ "id": "KH-02",
+ "title": "Đăng nhập và đăng xuất",
+ "lanes": [
+  "Khách hàng",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Khách hàng"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Nhập email hoặc tên đăng nhập và mật khẩu"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Form đăng nhập hợp lệ?",
+   "có",
+   "không",
+   [
+    "Hiển thị lại form"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tìm user theo email (có '@') hoặc user_name",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Tồn tại, tài khoản ACTIVE, mật khẩu BCrypt khớp?",
+   "đúng",
+   "sai",
+   [
+    "Báo 'Sai tài khoản hoặc mật khẩu'"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Sinh JWT, ghi cookie HttpOnly ONESHOP_TOKEN"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển hướng: ADMIN → /admin, STAFF → /staff, CUSTOMER → /"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Gửi các request tiếp theo kèm cookie"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Filter nạp lại user và vai trò từ CSDL theo user_id",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Chọn Đăng xuất (POST /logout)"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Xóa cookie JWT, chuyển /login?logout"
+  ],
+  [
+   "end",
+   "Khách hàng"
+  ]
+ ]
+}

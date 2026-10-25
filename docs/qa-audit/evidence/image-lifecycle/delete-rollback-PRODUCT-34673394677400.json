@@ -1,0 +1,7 @@
+{
+  "timestamp" : "2026-10-25T11:55:17.362993600Z",
+  "scenario" : "delete-rollback-PRODUCT",
+  "files" : [ "qa-fix/old-PRODUCT" ],
+  "tasks" : [ ],
+  "database" : "oneshop_fixture_20261025_test"
+}

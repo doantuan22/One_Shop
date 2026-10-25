@@ -1,0 +1,84 @@
+{
+ "id": "KH-17",
+ "title": "Đổi mật khẩu",
+ "lanes": [
+  "Khách hàng",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Khách hàng"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Nhập mật khẩu hiện tại, mật khẩu mới, xác nhận"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Biểu mẫu hợp lệ (độ dài, không trống)?",
+   "có",
+   "không",
+   [
+    "Hiển thị lỗi, xóa trắng các ô mật khẩu"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tải user ACTIVE theo email",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Mật khẩu hiện tại khớp BCrypt?",
+   "khớp",
+   "sai",
+   [
+    "Báo lỗi currentPassword"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Mật khẩu mới trùng ô xác nhận?",
+   "khớp",
+   "không",
+   [
+    "Báo lỗi confirmPassword"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Mật khẩu mới khác mật khẩu hiện tại?",
+   "khác",
+   "trùng",
+   [
+    "Báo lỗi newPassword"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "UPDATE password_hash (BCrypt)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển hướng /account?passwordChanged"
+  ],
+  [
+   "end",
+   "Khách hàng"
+  ]
+ ]
+}

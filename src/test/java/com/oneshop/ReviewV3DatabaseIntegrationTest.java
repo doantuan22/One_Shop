@@ -144,17 +144,21 @@ class ReviewV3DatabaseIntegrationTest extends ReviewV3TestSupport {
         assertThat(count("select count(*) from dbo.review_replies where review_id=?", id)).isZero();
     }
 
-    @Test void multipleStoreAssignmentsAllowOnlyThoseStores() {
+    @Test void staffRepliesOnlyForTheStoreTheyCurrentlyWorkAt() {
         long order = partiallyReceived(true), a = submit(item(order, "OS-THUDUC")).id();
         receive(order, "OS-GOVAP");
         long b = submit(item(order, "OS-GOVAP")).id();
-        assign(STAFF_QUAN7, "OS-THUDUC");
+        // works at Quận 7: neither review belongs to that Store
+        assertThatThrownBy(() -> reply(STAFF_QUAN7, a, "Chưa được giao")).isInstanceOf(AccessDeniedException.class);
+        // moved to Thủ Đức: only the Thủ Đức review is theirs
+        transfer(STAFF_QUAN7, "OS-THUDUC");
         reply(STAFF_QUAN7, a, "Nguồn A");
         assertThatThrownBy(() -> reply(STAFF_QUAN7, b, "Chưa được giao")).isInstanceOf(AccessDeniedException.class);
-        assign(STAFF_QUAN7, "OS-GOVAP");
+        // moved to Gò Vấp: the Gò Vấp review is theirs, the Thủ Đức one is no longer listed
+        transfer(STAFF_QUAN7, "OS-GOVAP");
         reply(STAFF_QUAN7, b, "Nguồn B");
         assertThat(data.asStaff(STAFF_QUAN7, () -> reviews.getStaffReviews(0)).getContent())
-                .extracting(r -> r.id()).contains(a, b);
+                .extracting(r -> r.id()).contains(b).doesNotContain(a);
     }
 
     @Test void inactiveStoreOrStaffAccountCannotReply() {

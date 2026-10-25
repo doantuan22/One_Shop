@@ -1,0 +1,75 @@
+{
+ "id": "KH-04",
+ "title": "Xem danh sách, tìm kiếm và lọc sản phẩm",
+ "lanes": [
+  "Khách hàng",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Khách hàng"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Mở /products, nhập từ khóa, chọn danh mục, thương hiệu"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "SelectedStoreInterceptor đọc chi nhánh đã chọn từ cookie"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Tham số phân trang hợp lệ?",
+   "hợp lệ",
+   "sai",
+   [
+    "Từ chối yêu cầu (lỗi tham số phân trang)"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Đã chọn chi nhánh để xem?",
+   "chưa chọn",
+   "đã chọn",
+   [
+    "getStoreCatalog: hàng bán được của chi nhánh",
+    "Truy vấn sản phẩm ACTIVE và tồn của chi nhánh"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "getChainCatalog: tìm sản phẩm ACTIVE theo từ khóa, danh mục, thương hiệu",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Nạp ảnh chính và các chi nhánh còn hàng của cả trang",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Dựng trang product/list; tải danh mục, thương hiệu để lọc"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Xem kết quả, đổi bộ lọc hoặc trang"
+  ],
+  [
+   "end",
+   "Khách hàng"
+  ]
+ ]
+}

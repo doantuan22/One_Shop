@@ -1,0 +1,1179 @@
+{
+  "results": [
+    {
+      "id": "guest /",
+      "status": "PASS",
+      "detail": {
+        "url": "/",
+        "title": "Mỹ phẩm chính hãng, một giá online toàn hệ thống | OneShop",
+        "forms": [
+          {
+            "action": "/products",
+            "method": "get"
+          }
+        ],
+        "buttons": 2
+      },
+      "time": "2026-10-25T11:54:35.669Z"
+    },
+    {
+      "id": "guest /login",
+      "status": "PASS",
+      "detail": {
+        "url": "/login",
+        "title": "Đăng nhập - OneShop | OneShop",
+        "forms": [
+          {
+            "action": "/login",
+            "method": "post"
+          }
+        ],
+        "buttons": 3
+      },
+      "time": "2026-10-25T11:54:36.397Z"
+    },
+    {
+      "id": "guest /register",
+      "status": "PASS",
+      "detail": {
+        "url": "/register",
+        "title": "Đăng ký - OneShop | OneShop",
+        "forms": [
+          {
+            "action": "/register",
+            "method": "post"
+          }
+        ],
+        "buttons": 3
+      },
+      "time": "2026-10-25T11:54:36.877Z"
+    },
+    {
+      "id": "guest /products",
+      "status": "PASS",
+      "detail": {
+        "url": "/products",
+        "title": "Mỹ phẩm & Chăm sóc sắc đẹp - OneShop | OneShop",
+        "forms": [
+          {
+            "action": "/products",
+            "method": "get"
+          }
+        ],
+        "buttons": 4
+      },
+      "time": "2026-10-25T11:54:37.407Z"
+    },
+    {
+      "id": "guest /products?q=khongtimthayqa999",
+      "status": "PASS",
+      "detail": {
+        "url": "/products?q=khongtimthayqa999",
+        "title": "Mỹ phẩm & Chăm sóc sắc đẹp - OneShop | OneShop",
+        "forms": [
+          {
+            "action": "/products",
+            "method": "get"
+          }
+        ],
+        "buttons": 2
+      },
+      "time": "2026-10-25T11:54:37.892Z"
+    },
+    {
+      "id": "guest /products?page=1",
+      "status": "PASS",
+      "detail": {
+        "url": "/products?page=1",
+        "title": "Mỹ phẩm & Chăm sóc sắc đẹp - OneShop | OneShop",
+        "forms": [
+          {
+            "action": "/products",
+            "method": "get"
+          }
+        ],
+        "buttons": 3
+      },
+      "time": "2026-10-25T11:54:38.437Z"
+    },
+    {
+      "id": "guest /products?categoryId=1&brandId=1",
+      "status": "PASS",
+      "detail": {
+        "url": "/products?categoryId=1&brandId=1",
+        "title": "Mỹ phẩm & Chăm sóc sắc đẹp - OneShop | OneShop",
+        "forms": [
+          {
+            "action": "/products",
+            "method": "get"
+          }
+        ],
+        "buttons": 2
+      },
+      "time": "2026-10-25T11:54:39.017Z"
+    },
+    {
+      "id": "guest /products/1",
+      "status": "PASS",
+      "detail": {
+        "url": "/products/1",
+        "title": "Kem dưỡng ẩm CeraVe Moisturising Cream 340g - OneShop | OneShop",
+        "forms": [],
+        "buttons": 1
+      },
+      "time": "2026-10-25T11:54:39.658Z"
+    },
+    {
+      "id": "guest /stores",
+      "status": "PASS",
+      "detail": {
+        "url": "/stores",
+        "title": "Hệ thống cửa hàng - OneShop | OneShop",
+        "forms": [
+          {
+            "action": "/stores/select",
+            "method": "post"
+          },
+          {
+            "action": "/stores/select",
+            "method": "post"
+          },
+          {
+            "action": "/stores/select",
+            "method": "post"
+          },
+          {
+            "action": "/stores/select",
+            "method": "post"
+          },
+          {
+            "action": "/stores/select",
+            "method": "post"
+          }
+        ],
+        "buttons": 6
+      },
+      "time": "2026-10-25T11:54:40.163Z"
+    },
+    {
+      "id": "guest /stores?provinceCity=invalid",
+      "status": "PASS",
+      "detail": {
+        "url": "/stores?provinceCity=invalid",
+        "title": "Hệ thống cửa hàng - OneShop | OneShop",
+        "forms": [],
+        "buttons": 1
+      },
+      "time": "2026-10-25T11:54:40.636Z"
+    },
+    {
+      "id": "guest /image-credits",
+      "status": "PASS",
+      "detail": {
+        "url": "/image-credits",
+        "title": "Ghi công hình ảnh sản phẩm - OneShop | OneShop",
+        "forms": [],
+        "buttons": 1
+      },
+      "time": "2026-10-25T11:54:41.113Z"
+    },
+    {
+      "id": "catalog browser title decodes entities /products",
+      "status": "PASS",
+      "detail": "Mỹ phẩm & Chăm sóc sắc đẹp - OneShop | OneShop",
+      "time": "2026-10-25T11:54:41.474Z"
+    },
+    {
+      "id": "catalog browser title decodes entities /products?q=CeraVe",
+      "status": "PASS",
+      "detail": "Mỹ phẩm & Chăm sóc sắc đẹp - OneShop | OneShop",
+      "time": "2026-10-25T11:54:41.810Z"
+    },
+    {
+      "id": "guest search form native submission",
+      "status": "PASS",
+      "detail": "/products",
+      "time": "2026-10-25T11:54:42.479Z"
+    },
+    {
+      "id": "customer login",
+      "status": "PASS",
+      "detail": "/",
+      "time": "2026-10-25T11:54:43.352Z"
+    },
+    {
+      "id": "customer /account",
+      "status": "PASS",
+      "detail": {
+        "url": "/account",
+        "title": "Thông tin cá nhân | OneShop",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/account",
+            "method": "post"
+          },
+          {
+            "action": "/account/password",
+            "method": "post"
+          }
+        ],
+        "buttons": 11
+      },
+      "time": "2026-10-25T11:54:43.848Z"
+    },
+    {
+      "id": "customer /orders",
+      "status": "PASS",
+      "detail": {
+        "url": "/orders",
+        "title": "Đơn hàng của tôi | OneShop",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/logout",
+            "method": "post"
+          }
+        ],
+        "buttons": 6
+      },
+      "time": "2026-10-25T11:54:44.340Z"
+    },
+    {
+      "id": "customer /cart",
+      "status": "PASS",
+      "detail": {
+        "url": "/cart",
+        "title": "Giỏ hàng - OneShop | OneShop",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/logout",
+            "method": "post"
+          }
+        ],
+        "buttons": 6
+      },
+      "time": "2026-10-25T11:54:44.823Z"
+    },
+    {
+      "id": "profile blank name rejected without write",
+      "status": "PASS",
+      "detail": "server validation rendered",
+      "time": "2026-10-25T11:54:45.451Z"
+    },
+    {
+      "id": "customer logout",
+      "status": "PASS",
+      "detail": "authenticated cookie cleared",
+      "time": "2026-10-25T11:54:46.388Z"
+    },
+    {
+      "id": "staff login",
+      "status": "PASS",
+      "detail": "/staff",
+      "time": "2026-10-25T11:54:47.223Z"
+    },
+    {
+      "id": "staff /account",
+      "status": "PASS",
+      "detail": {
+        "url": "/account",
+        "title": "Thông tin cá nhân | OneShop",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/account",
+            "method": "post"
+          },
+          {
+            "action": "/account/password",
+            "method": "post"
+          }
+        ],
+        "buttons": 11
+      },
+      "time": "2026-10-25T11:54:47.729Z"
+    },
+    {
+      "id": "staff /staff/dashboard",
+      "status": "PASS",
+      "detail": {
+        "url": "/staff/dashboard",
+        "title": "Tổng quan chi nhánh | OneShop Staff",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          }
+        ],
+        "buttons": 4
+      },
+      "time": "2026-10-25T11:54:48.318Z"
+    },
+    {
+      "id": "staff /staff/fulfillments",
+      "status": "PASS",
+      "detail": {
+        "url": "/staff/fulfillments",
+        "title": "Đơn cần xử lý của chi nhánh | OneShop Staff",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/staff/fulfillments",
+            "method": "get"
+          }
+        ],
+        "buttons": 5
+      },
+      "time": "2026-10-25T11:54:48.906Z"
+    },
+    {
+      "id": "staff /staff/fulfillments/delivery",
+      "status": "PASS",
+      "detail": {
+        "url": "/staff/fulfillments/delivery",
+        "title": "Đơn cần xử lý · Giao tận nơi | OneShop Staff",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/staff/fulfillments/delivery",
+            "method": "get"
+          }
+        ],
+        "buttons": 5
+      },
+      "time": "2026-10-25T11:54:49.471Z"
+    },
+    {
+      "id": "staff /staff/fulfillments/pickup",
+      "status": "PASS",
+      "detail": {
+        "url": "/staff/fulfillments/pickup",
+        "title": "Đơn cần xử lý · Nhận tại cửa hàng | OneShop Staff",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/staff/fulfillments/pickup",
+            "method": "get"
+          }
+        ],
+        "buttons": 5
+      },
+      "time": "2026-10-25T11:54:49.997Z"
+    },
+    {
+      "id": "staff /staff/stock",
+      "status": "PASS",
+      "detail": {
+        "url": "/staff/stock",
+        "title": "Tồn kho chi nhánh | OneShop Staff",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock",
+            "method": "get"
+          },
+          {
+            "action": "/staff/stock/13/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/25/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/3/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/5/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/31/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/14/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/42/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/44/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/2/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/40/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/35/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/47/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/29/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/11/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/8/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/16/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/10/adjust",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/1/adjust",
+            "method": "post"
+          }
+        ],
+        "buttons": 77
+      },
+      "time": "2026-10-25T11:54:50.544Z"
+    },
+    {
+      "id": "staff /staff/stock/1/adjust",
+      "status": "PASS",
+      "detail": {
+        "url": "/staff/stock/1/adjust",
+        "title": "Điều chỉnh tồn kho | OneShop Staff",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/staff/stock/1/adjust",
+            "method": "post"
+          }
+        ],
+        "buttons": 5
+      },
+      "time": "2026-10-25T11:54:51.050Z"
+    },
+    {
+      "id": "staff /staff/inventory-history",
+      "status": "PASS",
+      "detail": {
+        "url": "/staff/inventory-history",
+        "title": "Nhật ký biến động tồn | OneShop Staff",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/staff/inventory-history",
+            "method": "get"
+          }
+        ],
+        "buttons": 7
+      },
+      "time": "2026-10-25T11:54:51.648Z"
+    },
+    {
+      "id": "staff /staff/inventory-history/1",
+      "status": "PASS",
+      "detail": {
+        "url": "/staff/inventory-history/1",
+        "title": "Lịch sử biến động tồn kho | OneShop Staff",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          }
+        ],
+        "buttons": 4
+      },
+      "time": "2026-10-25T11:54:52.163Z"
+    },
+    {
+      "id": "staff /staff/reviews",
+      "status": "PASS",
+      "detail": {
+        "url": "/staff/reviews",
+        "title": "Đánh giá của chi nhánh | OneShop Staff",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/staff/reviews/2/reply",
+            "method": "post"
+          },
+          {
+            "action": "/staff/reviews/1/reply",
+            "method": "post"
+          }
+        ],
+        "buttons": 6
+      },
+      "time": "2026-10-25T11:54:52.751Z"
+    },
+    {
+      "id": "staff logout",
+      "status": "PASS",
+      "detail": "authenticated cookie cleared",
+      "time": "2026-10-25T11:54:53.713Z"
+    },
+    {
+      "id": "admin login",
+      "status": "PASS",
+      "detail": "/admin",
+      "time": "2026-10-25T11:54:54.570Z"
+    },
+    {
+      "id": "admin /account",
+      "status": "PASS",
+      "detail": {
+        "url": "/account",
+        "title": "Thông tin cá nhân | OneShop",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/account",
+            "method": "post"
+          },
+          {
+            "action": "/account/password",
+            "method": "post"
+          }
+        ],
+        "buttons": 11
+      },
+      "time": "2026-10-25T11:54:55.048Z"
+    },
+    {
+      "id": "admin /admin",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin",
+        "title": "Tổng quan toàn chuỗi | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin",
+            "method": "get"
+          }
+        ],
+        "buttons": 11
+      },
+      "time": "2026-10-25T11:54:55.594Z"
+    },
+    {
+      "id": "admin /admin/users",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/users",
+        "title": "Người dùng | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/users",
+            "method": "get"
+          }
+        ],
+        "buttons": 5
+      },
+      "time": "2026-10-25T11:54:56.101Z"
+    },
+    {
+      "id": "admin /admin/users/new",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/users/new",
+        "title": "Quản lý người dùng | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/users",
+            "method": "post"
+          }
+        ],
+        "buttons": 5
+      },
+      "time": "2026-10-25T11:54:56.602Z"
+    },
+    {
+      "id": "admin /admin/users/7/edit",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/users/7/edit",
+        "title": "Quản lý người dùng | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/users/7",
+            "method": "post"
+          }
+        ],
+        "buttons": 5
+      },
+      "time": "2026-10-25T11:54:57.066Z"
+    },
+    {
+      "id": "admin /admin/stores",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/stores",
+        "title": "Chi nhánh | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/stores",
+            "method": "get"
+          }
+        ],
+        "buttons": 6
+      },
+      "time": "2026-10-25T11:54:57.581Z"
+    },
+    {
+      "id": "admin /admin/stores/new",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/stores/new",
+        "title": "Thêm chi nhánh | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/stores",
+            "method": "post"
+          }
+        ],
+        "buttons": 5
+      },
+      "time": "2026-10-25T11:54:58.063Z"
+    },
+    {
+      "id": "admin /admin/stores/1/edit",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/stores/1/edit",
+        "title": "Sửa chi nhánh | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/stores/1",
+            "method": "post"
+          }
+        ],
+        "buttons": 5
+      },
+      "time": "2026-10-25T11:54:58.541Z"
+    },
+    {
+      "id": "admin /admin/products",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/products",
+        "title": "Sản phẩm / SKU | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/products",
+            "method": "get"
+          }
+        ],
+        "buttons": 5
+      },
+      "time": "2026-10-25T11:54:59.096Z"
+    },
+    {
+      "id": "admin /admin/products/new",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/products/new",
+        "title": "Thêm sản phẩm | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/products",
+            "method": "post"
+          }
+        ],
+        "buttons": 5
+      },
+      "time": "2026-10-25T11:54:59.578Z"
+    },
+    {
+      "id": "admin /admin/products/1/edit",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/products/1/edit",
+        "title": "Sửa sản phẩm | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/products/1",
+            "method": "post"
+          },
+          {
+            "action": "/admin/products/1/images",
+            "method": "post"
+          },
+          {
+            "action": "/admin/products/1/images/1/delete",
+            "method": "post"
+          }
+        ],
+        "buttons": 7
+      },
+      "time": "2026-10-25T11:55:00.062Z"
+    },
+    {
+      "id": "admin /admin/categories",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/categories",
+        "title": "Danh mục | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/categories",
+            "method": "post"
+          }
+        ],
+        "buttons": 8
+      },
+      "time": "2026-10-25T11:55:01.017Z"
+    },
+    {
+      "id": "admin /admin/categories/1/edit",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/categories/1/edit",
+        "title": "Danh mục | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/categories/1",
+            "method": "post"
+          },
+          {
+            "action": "/admin/categories/1/image/delete",
+            "method": "post"
+          }
+        ],
+        "buttons": 9
+      },
+      "time": "2026-10-25T11:55:01.523Z"
+    },
+    {
+      "id": "admin /admin/brands",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/brands",
+        "title": "Thương hiệu | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/brands",
+            "method": "post"
+          }
+        ],
+        "buttons": 8
+      },
+      "time": "2026-10-25T11:55:02.012Z"
+    },
+    {
+      "id": "admin /admin/brands/1/edit",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/brands/1/edit",
+        "title": "Thương hiệu | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/brands/1",
+            "method": "post"
+          },
+          {
+            "action": "/admin/brands/1/logo",
+            "method": "post"
+          }
+        ],
+        "buttons": 9
+      },
+      "time": "2026-10-25T11:55:02.503Z"
+    },
+    {
+      "id": "admin /admin/store-products",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/store-products",
+        "title": "Sản phẩm theo chi nhánh | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/store-products",
+            "method": "get"
+          }
+        ],
+        "buttons": 5
+      },
+      "time": "2026-10-25T11:55:03.023Z"
+    },
+    {
+      "id": "admin /admin/store-products/new",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/store-products/new",
+        "title": "Gắn sản phẩm vào chi nhánh | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/store-products",
+            "method": "post"
+          }
+        ],
+        "buttons": 5
+      },
+      "time": "2026-10-25T11:55:03.509Z"
+    },
+    {
+      "id": "admin /admin/store-products/1/edit",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/store-products/1/edit",
+        "title": "Sửa sản phẩm tại chi nhánh | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/store-products/1",
+            "method": "post"
+          }
+        ],
+        "buttons": 5
+      },
+      "time": "2026-10-25T11:55:04.003Z"
+    },
+    {
+      "id": "admin /admin/staff-assignments",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/staff-assignments",
+        "title": "Phân công nhân viên | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/staff-assignments",
+            "method": "get"
+          },
+          {
+            "action": "/admin/staff-assignments/1/status",
+            "method": "post"
+          },
+          {
+            "action": "/admin/staff-assignments/2/status",
+            "method": "post"
+          },
+          {
+            "action": "/admin/staff-assignments/3/status",
+            "method": "post"
+          },
+          {
+            "action": "/admin/staff-assignments/4/status",
+            "method": "post"
+          },
+          {
+            "action": "/admin/staff-assignments/5/status",
+            "method": "post"
+          },
+          {
+            "action": "/admin/staff-assignments",
+            "method": "post"
+          },
+          {
+            "action": "/admin/staff-assignments/transfer",
+            "method": "post"
+          }
+        ],
+        "buttons": 22
+      },
+      "time": "2026-10-25T11:55:04.506Z"
+    },
+    {
+      "id": "admin /admin/inventory",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/inventory",
+        "title": "Tồn kho toàn chuỗi | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/inventory",
+            "method": "get"
+          }
+        ],
+        "buttons": 5
+      },
+      "time": "2026-10-25T11:55:05.039Z"
+    },
+    {
+      "id": "admin /admin/orders",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/orders",
+        "title": "Đơn hàng toàn hệ thống | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/orders",
+            "method": "get"
+          }
+        ],
+        "buttons": 5
+      },
+      "time": "2026-10-25T11:55:05.564Z"
+    },
+    {
+      "id": "admin /admin/orders/1",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/orders/1",
+        "title": "Chi tiết đơn hàng | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          }
+        ],
+        "buttons": 4
+      },
+      "time": "2026-10-25T11:55:06.119Z"
+    },
+    {
+      "id": "admin /admin/payments",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/payments",
+        "title": "Thanh toán trực tuyến | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/payments",
+            "method": "get"
+          }
+        ],
+        "buttons": 5
+      },
+      "time": "2026-10-25T11:55:06.676Z"
+    },
+    {
+      "id": "admin /admin/reviews",
+      "status": "PASS",
+      "detail": {
+        "url": "/admin/reviews",
+        "title": "Đánh giá | OneShop Admin",
+        "forms": [
+          {
+            "action": "/logout",
+            "method": "post"
+          },
+          {
+            "action": "/admin/reviews",
+            "method": "get"
+          },
+          {
+            "action": "/admin/reviews/3/status",
+            "method": "post"
+          },
+          {
+            "action": "/admin/reviews/2/status",
+            "method": "post"
+          },
+          {
+            "action": "/admin/reviews/1/status",
+            "method": "post"
+          }
+        ],
+        "buttons": 8
+      },
+      "time": "2026-10-25T11:55:07.203Z"
+    },
+    {
+      "id": "category modal open/cancel/invalid submit/reopen",
+      "status": "PASS",
+      "detail": "cancel made no request; empty submit refused",
+      "time": "2026-10-25T11:55:09.324Z"
+    },
+    {
+      "id": "brand modal open/cancel/invalid submit/reopen",
+      "status": "PASS",
+      "detail": "cancel made no request; empty submit refused",
+      "time": "2026-10-25T11:55:11.419Z"
+    },
+    {
+      "id": "admin user filter and reset",
+      "status": "PASS",
+      "detail": "10",
+      "time": "2026-10-25T11:55:12.432Z"
+    },
+    {
+      "id": "admin logout",
+      "status": "PASS",
+      "detail": "authenticated cookie cleared",
+      "time": "2026-10-25T11:55:13.397Z"
+    },
+    {
+      "id": "seed category image resource resolves",
+      "status": "PASS",
+      "detail": "no failed requests for seeded category image",
+      "time": "2026-10-25T11:55:13.397Z"
+    }
+  ],
+  "runtimeErrors": [
+    "Failed to load resource: the server responded with a status of 404 ()"
+  ],
+  "networkFailures": [
+    {
+      "url": "http://localhost:60631/favicon.ico",
+      "status": 404,
+      "type": "Other"
+    }
+  ]
+}

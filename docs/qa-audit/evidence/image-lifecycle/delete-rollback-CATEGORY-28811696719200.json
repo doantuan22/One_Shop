@@ -1,0 +1,7 @@
+{
+  "database" : "oneshop_fixture_20261025_test",
+  "timestamp" : "2026-10-25T10:17:35.664424300Z",
+  "scenario" : "delete-rollback-CATEGORY",
+  "files" : [ "qa-fix/old-CATEGORY" ],
+  "tasks" : [ ]
+}

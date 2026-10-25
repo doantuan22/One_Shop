@@ -66,7 +66,7 @@ class CheckoutV3DatabaseIntegrationTest {
 
     static final String ALICE = "khachhang1@example.com";
     static final String BOB = "khachhang2@example.com";
-    static final String STAFF_THU_DUC = "staff.thuduc@oneshop.vn";
+    static final String STAFF_THU_DUC = "staff.thuduc@example.com";
 
     // SKUs of the seed (looked up by SKU, never by id)
     static final String SERUM = "SIMPLE-PURIFY-150";      // Thu Duc only (+ Hai Chau, inactive)

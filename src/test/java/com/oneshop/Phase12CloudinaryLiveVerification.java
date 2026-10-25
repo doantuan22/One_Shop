@@ -52,7 +52,7 @@ class Phase12CloudinaryLiveVerification {
         try {
             byte[] png=Base64.getDecoder().decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=");
             var scenario=new Phase9IntegrationScenario(jdbc,"http://localhost:"+port);
-            String cookie=scenario.account("admin@oneshop.vn");
+            String cookie=scenario.account("admin@example.com");
             var page=scenario.get("/admin/products/"+product+"/edit",cookie);
             assertThat(page.statusCode()).isEqualTo(200);
             var csrf=Pattern.compile("name=\"_csrf\" value=\"([^\"]+)\"").matcher(page.body());assertThat(csrf.find()).isTrue();
@@ -109,7 +109,7 @@ class Phase12CloudinaryLiveVerification {
         assertThat(properties.isConfigured()).as("Live credentials required").isTrue();
         var originalBrands = jdbc.queryForList("select * from dbo.brands order by brand_id");
         var scenario = new Phase9IntegrationScenario(jdbc, "http://localhost:" + port);
-        String cookie = scenario.account("admin@oneshop.vn");
+        String cookie = scenario.account("admin@example.com");
 
         var brandReq = new com.oneshop.dto.request.BrandRequest();
         brandReq.setName("PH12-LIVE-BRAND-" + UUID.randomUUID().toString().substring(0, 8));
@@ -192,7 +192,7 @@ class Phase12CloudinaryLiveVerification {
     @Test void tc19LiveUploadRejectsInvalidFileAndOversizedFile() throws Exception {
         assertThat(properties.isConfigured()).as("Live credentials required").isTrue();
         var scenario = new Phase9IntegrationScenario(jdbc, "http://localhost:" + port);
-        String cookie = scenario.account("admin@oneshop.vn");
+        String cookie = scenario.account("admin@example.com");
 
         // SVG file disguised as PNG -> rejected
         byte[] svgBytes = "<svg xmlns=\"http://www.w3.org/2000/svg\"><circle r=\"10\"/></svg>".getBytes(StandardCharsets.UTF_8);

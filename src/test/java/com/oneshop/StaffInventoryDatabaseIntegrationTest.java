@@ -43,7 +43,7 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("dev")
 @EnabledIf("com.oneshop.DatabaseFoundationIntegrationTest#databaseConfigured")
 class StaffInventoryDatabaseIntegrationTest {
-    private static final String STAFF = "staff.thuduc@oneshop.vn", PEER = "staff.govap@oneshop.vn";
+    private static final String STAFF = "staff.thuduc@example.com", PEER = "staff.govap@example.com";
     @Autowired StaffInventoryService inventory;
     @Autowired StoreProductRepository products;
     @Autowired JdbcTemplate jdbc;
@@ -235,22 +235,34 @@ class StaffInventoryDatabaseIntegrationTest {
             assertThat(scenario.snapshot()).isEqualTo(before);
         } finally { jdbc.update("update dbo.staff_store_assignments set status=? where assignment_id=?", assignment.get("status"), assignment.get("assignment_id")); }
     }
-    @Test void multipleActiveAssignmentsAllowOnlyTheirStockAndRevocationBlocksFurtherWrites() throws Exception {
+    @Test void transferredStaffUsesOnlyTheNewStoresStockAndRevocationBlocksFurtherWrites() throws Exception {
         long user = scalar("select user_id from dbo.users where email=?", STAFF), max = scalar("select coalesce(max(assignment_id),0) from dbo.staff_store_assignments");
-        long peer = stock(2); String cookie = scenario.account(STAFF);
+        long own = stock(1), peer = stock(2); String cookie = scenario.account(STAFF);
+        // a Staff works at one Store: a second ACTIVE assignment is rejected by the database
+        assertThatThrownBy(() -> jdbc.update("insert into dbo.staff_store_assignments(user_id,store_id,status,assigned_at) values (?,2,'ACTIVE',SYSDATETIME())", user))
+                .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
         try {
+            // moved from Thủ Đức (1) to Gò Vấp (2); a suspended row at Quận 10 (4) grants nothing
+            jdbc.update("update dbo.staff_store_assignments set status='INACTIVE' where user_id=? and store_id=1", user);
             jdbc.update("insert into dbo.staff_store_assignments(user_id,store_id,status,assigned_at) values (?,2,'ACTIVE',SYSDATETIME()),(?,4,'INACTIVE',SYSDATETIME())", user, user);
-            assertThat(as(STAFF, () -> inventory.getStock(0)).getContent()).extracting(s -> s.storeId()).contains(1L, 2L).doesNotContain(4L, 5L);
-            assertThat(adjust(peer, quantity(peer) + 1, "Assigned both")).isTrue();
+            assertThat(as(STAFF, () -> inventory.getStock(0)).getContent()).extracting(s -> s.storeId()).contains(2L).doesNotContain(1L, 4L, 5L);
+            assertThat(adjust(peer, quantity(peer) + 1, "New workplace")).isTrue();
             assertThat(history(peer).get(0)).containsEntry("staff_id", user);
+            var beforeOld = scenario.snapshot();
+            assertThat(scenario.get(historyPath(own), cookie).statusCode()).isEqualTo(404);
+            assertThat(scenario.post(cookie, adjustPath(own), "newQuantity=1&note=Old+store&store_id=1").statusCode()).isEqualTo(403);
+            assertThat(scenario.snapshot()).isEqualTo(beforeOld);
             jdbc.update("update dbo.staff_store_assignments set status='INACTIVE' where assignment_id>? and store_id=2", max);
             var before = scenario.snapshot();
-            assertThat(scenario.get(historyPath(peer), cookie).statusCode()).isEqualTo(404);
+            assertThat(scenario.get(historyPath(peer), cookie).statusCode()).isEqualTo(403);
             assertThat(scenario.post(cookie, adjustPath(peer), "newQuantity=1&note=Revoked&store_id=2").statusCode()).isEqualTo(403);
             assertThat(scenario.snapshot()).isEqualTo(before);
-        } finally { jdbc.update("delete from dbo.staff_store_assignments where assignment_id>? and user_id=?", max, user); }
+        } finally {
+            jdbc.update("delete from dbo.staff_store_assignments where assignment_id>? and user_id=?", max, user);
+            jdbc.update("update dbo.staff_store_assignments set status='ACTIVE' where user_id=? and store_id=1", user);
+        }
     }
-    @ParameterizedTest @ValueSource(strings = {"khachhang1@example.com", "admin@oneshop.vn"})
+    @ParameterizedTest @ValueSource(strings = {"khachhang1@example.com", "admin@example.com"})
     void customerAndAdminCannotUseStaffInventoryRoutes(String email) throws Exception {
         String cookie = scenario.account(email); var before = scenario.snapshot();
         for (String path : List.of("/staff/stock", "/staff/inventory-history", adjustPath(stock(1)), historyPath(stock(1))))
@@ -264,7 +276,7 @@ class StaffInventoryDatabaseIntegrationTest {
         long product = scalar("select product_id from dbo.store_products where store_product_id=?", id);
         var page = scenario.get("/products/" + product, ""); assertThat(page.statusCode()).isEqualTo(200);
         assertThat(page.body()).doesNotContain("data-field=\"exact-quantity\"", "id=\"current-quantity\"", "data-movement-id");
-        var admin = scenario.get("/admin/store-products/" + id + "/edit", scenario.account("admin@oneshop.vn"));
+        var admin = scenario.get("/admin/store-products/" + id + "/edit", scenario.account("admin@example.com"));
         assertThat(admin.statusCode()).isEqualTo(200); assertThat(admin.body()).contains("name=\"quantity\"", "value=\"" + quantity(id) + "\"");
     }
     @Test void stockFormsRequireCsrfForCookieBearerAndEncodedPaths() throws Exception {

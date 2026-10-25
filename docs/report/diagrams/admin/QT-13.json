@@ -1,0 +1,59 @@
+{
+ "id": "QT-13",
+ "title": "Kiểm duyệt đánh giá",
+ "lanes": [
+  "Quản trị viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Quản trị viên"
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Mở /admin/reviews, lọc theo từ khóa, trạng thái, đã phản hồi"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "getReviews và stats (tổng, chưa phản hồi, đang ẩn)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Chọn Ẩn hoặc Hiện một đánh giá"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Đánh giá tồn tại?",
+   "có",
+   "không",
+   [
+    "404 Không tìm thấy đánh giá"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Khóa dòng đánh giá, đặt status ACTIVE hoặc HIDDEN",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển /admin/reviews?success"
+  ],
+  [
+   "end",
+   "Quản trị viên"
+  ]
+ ]
+}

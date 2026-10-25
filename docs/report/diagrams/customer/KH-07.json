@@ -1,0 +1,90 @@
+{
+ "id": "KH-07",
+ "title": "Thêm sản phẩm vào giỏ hàng",
+ "lanes": [
+  "Khách hàng",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Khách hàng"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Bấm 'Thêm vào giỏ' (productId, quantity)"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Dữ liệu hợp lệ, có productId hoặc storeProductId?",
+   "có",
+   "không",
+   [
+    "Trả 400, hiển thị giỏ kèm lỗi"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tìm sản phẩm hiển thị (findVisibleById)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Sản phẩm đang bán và giá > 0?",
+   "có",
+   "không",
+   [
+    "Báo sản phẩm không còn bán"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Khóa giỏ của khách hoặc tạo giỏ mới; tìm dòng hiện có",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tính tồn bán được toàn chuỗi (tổng StoreProduct)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Tồn > 0 và số lượng sau cộng ≤ tồn?",
+   "đủ",
+   "thiếu",
+   [
+    "Báo hết hàng hoặc không đủ hàng"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tạo hoặc cộng dồn CartItem (saveAndFlush)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển hướng /cart?success=added"
+  ],
+  [
+   "end",
+   "Khách hàng"
+  ]
+ ]
+}

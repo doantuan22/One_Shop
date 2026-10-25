@@ -72,14 +72,16 @@ class StaffFulfillmentOperationsDatabaseIntegrationTest extends V3RegressionTest
         long id=cod();revoke("ASSIGNMENT");assertThat(getAs(STAFF_THUDUC,"/staff/fulfillments").statusCode()).isEqualTo(403);var before=state(id);assertThat(postAs(STAFF_THUDUC,"/staff/fulfillments/"+part(id)+"/prepare","storeId=1",true).statusCode()).isEqualTo(403);assertThat(state(id)).isEqualTo(before);
     }
 
-    @ParameterizedTest @ValueSource(strings = {"khachhang1@example.com", "admin@oneshop.vn"})
+    @ParameterizedTest @ValueSource(strings = {"khachhang1@example.com", "admin@example.com"})
     void otherRolesCannotReachNewQueueOrMutateOrders(String email) throws Exception {
         long id=cod();assertThat(getAs(email,"/staff/fulfillments").statusCode()).isEqualTo(403);var before=state(id);assertThat(postAs(email,"/staff/fulfillments/"+part(id)+"/prepare","",true).statusCode()).isEqualTo(403);assertThat(state(id)).isEqualTo(before);
     }
 
     @Test
-    void multipleAssignmentsAllowPeerPickupThenRevocationBlocksTheNextMutationImmediately() throws Exception {
-        assign(STAFF_GOVAP,"OS-THUDUC");long id=pickup(PaymentMethod.PAY_AT_STORE,false);assertThat(postAs(STAFF_GOVAP,"/staff/fulfillments/"+part(id)+"/prepare","",true).statusCode()).isEqualTo(302);jdbc.update("update dbo.staff_store_assignments set status='INACTIVE' where user_id=? and store_id=?",userId(STAFF_GOVAP),data.storeId("OS-THUDUC"));unchanged(id,()->data.asStaff(STAFF_GOVAP,()->staff.perform(part(id),FulfillmentAction.MARK_READY,null)),AccessDeniedException.class);
+    void transferredStaffMayPrepareAtTheNewStoreThenRevocationBlocksTheNextMutationImmediately() throws Exception {
+        long id=pickup(PaymentMethod.PAY_AT_STORE,false);
+        assertThat(postAs(STAFF_GOVAP,"/staff/fulfillments/"+part(id)+"/prepare","",true).statusCode()).isEqualTo(403);
+        transfer(STAFF_GOVAP,"OS-THUDUC");assertThat(postAs(STAFF_GOVAP,"/staff/fulfillments/"+part(id)+"/prepare","",true).statusCode()).isEqualTo(302);jdbc.update("update dbo.staff_store_assignments set status='INACTIVE' where user_id=? and store_id=?",userId(STAFF_GOVAP),data.storeId("OS-THUDUC"));unchanged(id,()->data.asStaff(STAFF_GOVAP,()->staff.perform(part(id),FulfillmentAction.MARK_READY,null)),AccessDeniedException.class);
     }
 
     @Test

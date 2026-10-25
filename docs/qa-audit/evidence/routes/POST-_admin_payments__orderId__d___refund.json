@@ -1,0 +1,14 @@
+{
+  "expected" : 403,
+  "executedAt" : "2026-10-25T11:54:26.600601300Z",
+  "location" : "",
+  "route" : {
+    "controller" : "com.oneshop.controller.admin.AdminPaymentController",
+    "method" : "refund",
+    "verb" : "POST",
+    "path" : "/admin/payments/{orderId:\\d+}/refund"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/admin/payments/999999999/refund",
+  "actual" : 403
+}

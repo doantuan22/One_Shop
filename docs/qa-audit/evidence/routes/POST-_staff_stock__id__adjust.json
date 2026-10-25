@@ -1,0 +1,14 @@
+{
+  "expected" : 403,
+  "executedAt" : "2026-10-25T11:54:33.112915400Z",
+  "location" : "",
+  "route" : {
+    "controller" : "com.oneshop.controller.staff.StaffStockController",
+    "method" : "adjust",
+    "verb" : "POST",
+    "path" : "/staff/stock/{id}/adjust"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/staff/stock/999999999/adjust",
+  "actual" : 403
+}

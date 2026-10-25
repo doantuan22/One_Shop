@@ -1,0 +1,87 @@
+{
+ "id": "KH-09",
+ "title": "Xem trước đơn hàng và áp mã khuyến mãi",
+ "lanes": [
+  "Khách hàng",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Khách hàng"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Chọn dòng hàng trong giỏ, mở /checkout"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Các dòng chọn thuộc giỏ và còn mua được?",
+   "có",
+   "không",
+   [
+    "Quay lại trang giỏ kèm lý do"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Nạp người nhận, địa chỉ gần nhất; mặc định giao hàng + COD",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Cách nhận, địa chỉ và chi nhánh nhận hợp lệ?",
+   "hợp lệ",
+   "không",
+   [
+    "Hiển thị 'problem' trên trang thanh toán"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Phân bổ thử nguồn hàng theo tồn các chi nhánh",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Phân bổ thành công?",
+   "có",
+   "không",
+   [
+    "Hiển thị lý do thiếu hàng"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Liệt kê mã khuyến mãi dùng được; kiểm tra mã khách nhập",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tính tổng = tiền hàng − giảm + phí giao × số đơn; tạo chữ ký kế hoạch"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Hiển thị trang checkout/index"
+  ],
+  [
+   "end",
+   "Khách hàng"
+  ]
+ ]
+}

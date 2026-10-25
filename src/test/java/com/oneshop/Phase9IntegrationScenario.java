@@ -14,7 +14,7 @@ import java.util.regex.*;
 final class Phase9IntegrationScenario {
     static final String CUSTOMER = "khachhang1@example.com";
     static final String OTHER_CUSTOMER = "khachhang2@example.com";
-    static final Map<Long, String> STAFF = Map.of(1L, "staff.thuduc@oneshop.vn", 2L, "staff.govap@oneshop.vn", 4L, "staff.quan10@oneshop.vn");
+    static final Map<Long, String> STAFF = Map.of(1L, "staff.thuduc@example.com", 2L, "staff.govap@example.com", 4L, "staff.quan10@example.com");
     static final List<String> TABLES = List.of("checkout_sessions", "orders", "order_items", "payments",
             "order_status_history", "inventory_movements", "store_products", "cart_items", "carts");
     private static final String FORGED = "userId=6&storeId=5&amount=1&method=COD&paymentMethod=COD&status=FAILED"
@@ -256,7 +256,7 @@ final class Phase9IntegrationScenario {
     }
     void csrfAndRoles() throws Exception {
         try (var ignored = cleanup()) {
-            Mixed f = mixed(); var before = snapshot(); String owner = account(CUSTOMER), staff = account(STAFF.get(1L)), admin = account("admin@oneshop.vn");
+            Mixed f = mixed(); var before = snapshot(); String owner = account(CUSTOMER), staff = account(STAFF.get(1L)), admin = account("admin@example.com");
             var paths = Map.of("/orders/" + f.b + "/payments/attempts", owner,
                     "/staff/orders/delivery/" + f.a + "/prepare", staff, "/staff/orders/pickup/" + f.c + "/prepare", account(STAFF.get(4L)));
             for (var entry : paths.entrySet()) {

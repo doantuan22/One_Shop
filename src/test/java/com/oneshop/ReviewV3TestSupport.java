@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         "oneshop.checkout.online-enabled=true", "oneshop.payment.timeout-worker-enabled=false"})
 @ActiveProfiles("dev")
 abstract class ReviewV3TestSupport {
-    static final String ADMIN = "admin@oneshop.vn";
+    static final String ADMIN = "admin@example.com";
     @Autowired JdbcTemplate jdbc;
     @Autowired ReviewService reviews;
     @Autowired AdminReviewService adminReviews;
@@ -148,6 +148,19 @@ abstract class ReviewV3TestSupport {
 
     void reply(String email, long review, String text) {
         data.asStaff(email, () -> { reviews.reply(review, text); return null; });
+    }
+
+    /**
+     * A Staff works at exactly one Store (unique ACTIVE assignment per user): "moving" the Staff suspends the current
+     * assignment and opens the new one. The base class restores every assignment row after the test.
+     */
+    void transfer(String email, String store) {
+        jdbc.update("update dbo.staff_store_assignments set status='INACTIVE' where status='ACTIVE' "
+                + "and user_id=(select user_id from dbo.users where email=?)", email);
+        int reopened = jdbc.update("update dbo.staff_store_assignments set status='ACTIVE' "
+                + "where user_id=(select user_id from dbo.users where email=?) "
+                + "and store_id=(select store_id from dbo.stores where code=?)", email, store);
+        if (reopened == 0) assign(email, store);
     }
 
     void assign(String email, String store) {

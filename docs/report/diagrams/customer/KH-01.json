@@ -1,0 +1,89 @@
+{
+ "id": "KH-01",
+ "title": "Đăng ký tài khoản",
+ "lanes": [
+  "Khách hàng",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Khách hàng"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Nhập email, tên đăng nhập, họ tên, mật khẩu"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Dữ liệu qua Bean Validation?",
+   "có",
+   "không",
+   [
+    "Hiển thị lại form kèm lỗi"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Tên đăng nhập đúng mẫu, mật khẩu ≤ 72 byte?",
+   "đúng",
+   "sai",
+   [
+    "Báo lỗi userName hoặc password"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Kiểm tra email, tên đăng nhập đã tồn tại",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Email và tên đăng nhập chưa dùng?",
+   "chưa dùng",
+   "đã dùng",
+   [
+    "Báo lỗi email hoặc userName"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Mã hóa BCrypt, gán vai trò CUSTOMER"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Lưu bản ghi users (saveAndFlush)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Vi phạm ràng buộc UNIQUE do đăng ký đồng thời?",
+   "không",
+   "có",
+   [
+    "Báo lỗi email hoặc tên đã dùng"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển hướng /login?registered"
+  ],
+  [
+   "end",
+   "Khách hàng"
+  ]
+ ]
+}

@@ -1,0 +1,14 @@
+{
+  "expected" : 302,
+  "executedAt" : "2026-10-25T11:54:29.675422300Z",
+  "location" : "http://localhost:60631/login",
+  "route" : {
+    "controller" : "com.oneshop.controller.admin.AdminUserController",
+    "method" : "suggest",
+    "verb" : "GET",
+    "path" : "/admin/users/suggest"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/admin/users/suggest",
+  "actual" : 302
+}

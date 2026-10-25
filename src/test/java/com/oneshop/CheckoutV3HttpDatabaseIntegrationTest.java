@@ -237,7 +237,7 @@ class CheckoutV3HttpDatabaseIntegrationTest {
         HttpResponse<String> refused = postAs(ALICE, "/checkout", common);
         assertThat(refused.statusCode()).isEqualTo(400);
         assertThat(refused.body()).contains("COD_SPLIT_CONSENT_REQUIRED", "id=\"cod-split\"", "splitCodConsent",
-                "os-order-split-amounts", "Phí giao hàng đơn này", "Thanh toán khi nhận đơn này", "2 đơn");
+                "os-order-split-amounts", "Phí giao hàng:", "Thanh toán khi nhận:", "đơn hàng độc lập");
         assertThat(jdbc.queryForObject("select count(*) from dbo.orders", Long.class)).isEqualTo(ordersBefore);
 
         Matcher signature = Pattern.compile("name=\"planSignature\" value=\"([^\"]+)\"").matcher(refused.body());

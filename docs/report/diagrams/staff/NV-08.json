@@ -1,0 +1,101 @@
+{
+ "id": "NV-08",
+ "title": "Xử lý hàng khách trả (nhập lại kho hoặc xử lý)",
+ "lanes": [
+  "Nhân viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Nhân viên"
+  ],
+  [
+   "act",
+   "Nhân viên",
+   "Mở /staff/returns; xem dòng hàng đã duyệt của chi nhánh"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Liệt kê OrderReturnItem của các chi nhánh được phân công",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Nhân viên",
+   "Chọn Nhập lại kho hoặc Xử lý, nhập ghi chú"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Lựa chọn hợp lệ và ghi chú ≤ 400 ký tự?",
+   "có",
+   "không",
+   [
+    "Báo lỗi action hoặc note"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Chi nhánh của dòng hàng thuộc phạm vi phân công?",
+   "có",
+   "không",
+   [
+    "403 Không được phân công"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Khóa đơn rồi khóa dòng hàng trả",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Dòng còn PENDING và yêu cầu đã APPROVED?",
+   "đúng",
+   "không",
+   [
+    "409 Đã xử lý hoặc chưa được duyệt"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Ghi disposition, người xử lý, thời điểm",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Nhập lại kho (RESTOCKED)?",
+   "xử lý ngoài",
+   "nhập kho",
+   [
+    "restoreReturnedItem: cộng tồn, ghi RETURN_ORDER",
+    "Hết dòng PENDING thì yêu cầu COMPLETED"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Hết dòng PENDING thì yêu cầu COMPLETED; không đổi tồn, tiền",
+   {
+    "db": true
+   }
+  ],
+  [
+   "end",
+   "Nhân viên"
+  ]
+ ]
+}

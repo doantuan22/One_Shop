@@ -1,0 +1,108 @@
+{
+ "id": "NV-04",
+ "title": "Xử lý phần giao tận nơi (chuẩn bị, đóng gói, giao, hoàn tất, thất bại)",
+ "lanes": [
+  "Nhân viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Nhân viên"
+  ],
+  [
+   "act",
+   "Nhân viên",
+   "Mở /staff/fulfillments/{id}, chọn một thao tác"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Xác định chi nhánh của phần giao",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Chi nhánh thuộc phạm vi được phân công?",
+   "có",
+   "không",
+   [
+    "403 Không được phân công xử lý phần giao này"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Khóa Order rồi khóa Fulfillment; kiểm tra lại chi nhánh trên dòng đã khóa",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Đơn không bị hủy, chờ thanh toán, cần xử lý; thanh toán đã xác nhận?",
+   "có",
+   "không",
+   [
+    "409 Bị chặn bởi đơn hàng hoặc thanh toán"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Thao tác hợp loại và trạng thái hiện tại đúng điểm xuất phát?",
+   "đúng",
+   "không",
+   [
+    "409 Trạng thái đã thay đổi, tải lại trang"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Dữ liệu kèm theo hợp lệ (mã vận đơn, lý do)?",
+   "hợp lệ",
+   "sai",
+   [
+    "Báo lỗi mã vận đơn hoặc lý do"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Giao thành công đơn COD: ghi nhận thu tiền, đơn PAID",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Ghi trạng thái mới và lịch sử của phần giao",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "OrderStatusAggregator.recompute: tính lại trạng thái đơn",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển /staff/fulfillments/{id}"
+  ],
+  [
+   "end",
+   "Nhân viên"
+  ]
+ ]
+}

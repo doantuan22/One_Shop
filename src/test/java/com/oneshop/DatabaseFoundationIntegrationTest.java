@@ -89,10 +89,10 @@ class DatabaseFoundationIntegrationTest {
     @Test
     @Transactional(readOnly = true)
     void all23TablesAreMappedAndEveryRepositoryCanReadItsSeedData() {
-        assertThat(entityManager.getMetamodel().getEntities()).hasSize(28);
+        assertThat(entityManager.getMetamodel().getEntities()).hasSize(29);
 
         Map<String, JpaRepository> repositories = beanFactory.getBeansOfType(JpaRepository.class);
-        assertThat(repositories).hasSize(28);
+        assertThat(repositories).hasSize(29);
         // findAll converts every column, including all enum columns, so a wrong mapping fails here
         repositories.forEach((name, repository) -> assertThat(repository.findAll()).as(name).isNotNull());
     }

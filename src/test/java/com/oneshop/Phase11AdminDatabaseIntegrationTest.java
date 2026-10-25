@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.*;
         properties = {"app.jwt.secret=test-only-secret-test-only-secret-1234567890","oneshop.checkout.online-enabled=true","oneshop.payment.timeout-worker-enabled=false"})
 @ActiveProfiles("dev")
 class Phase11AdminDatabaseIntegrationTest {
-    private static final String ADMIN = "admin@oneshop.vn", STAFF = "staff.thuduc@oneshop.vn";
+    private static final String ADMIN = "admin@example.com", STAFF = "staff.thuduc@example.com";
     private static final String CUSTOMER = Phase9IntegrationScenario.CUSTOMER;
     private static final Map<String, String> IDS = Map.of(
             "users", "user_id", "stores", "store_id", "staff_store_assignments", "assignment_id",
@@ -191,14 +191,39 @@ class Phase11AdminDatabaseIntegrationTest {
         assertThat(jdbc.queryForObject("select assigned_at from dbo.staff_store_assignments where assignment_id=?", Object.class, id)).isEqualTo(assignedAt);
         assertThat(scalar("select count(*) from dbo.staff_store_assignments where user_id=? and store_id=1", user(STAFF))).isEqualTo(1);
     }
-    @Test void multipleAssignmentsAndStoreChangeDoNotTrustBrowserSelector() throws Exception {
+    @Test void aStaffWorksAtOneStoreAndTheBrowserSelectorIsNotTrusted() throws Exception {
         String staff = scenario.account(STAFF); long id = assignment();
-        assertThat(post("/admin/staff-assignments", "userId=" + user(STAFF) + "&storeId=2&status=ACTIVE").statusCode()).isEqualTo(302);
-        var html = scenario.get("/staff/stock?storeId=5", staff + "; ONESHOP_STORE=5").body();
-        assertThat(ids(html, "data-store-id")).contains(1L, 2L).doesNotContain(5L);
+        // a second ACTIVE workplace is refused (the Admin must use "Chuyển chi nhánh"): the form is shown again, nothing changes
+        var before = rows("staff_store_assignments");
+        assertThat(post("/admin/staff-assignments", "userId=" + user(STAFF) + "&storeId=2&status=ACTIVE").statusCode()).isEqualTo(200);
+        assertThat(rows("staff_store_assignments").equals(before)).isTrue();
+        assertThat(scalar("select count(*) from dbo.staff_store_assignments where user_id=? and status='ACTIVE'", user(STAFF))).isEqualTo(1);
+        // a forged Store in the query string or cookie never widens the scope
+        var html = scenario.get("/staff/stock?storeId=5&store_id=2", staff + "; ONESHOP_STORE=5").body();
+        assertThat(ids(html, "data-store-id")).contains(1L).doesNotContain(2L, 5L);
+        // once the only assignment is suspended the Staff has no Store at all
         assertThat(post("/admin/staff-assignments/" + id + "/status", "status=INACTIVE").statusCode()).isEqualTo(302);
-        html = scenario.get("/staff/stock", staff).body();
-        assertThat(ids(html, "data-store-id")).contains(2L).doesNotContain(1L);
+        assertThat(scenario.get("/staff/stock", staff).statusCode()).isEqualTo(403);
+    }
+    @Test void adminTransferMovesTheStaffToTheOtherStoreInOneStep() throws Exception {
+        String staff = scenario.account(STAFF); long id = assignment();
+        var original = jdbc.queryForMap("select * from dbo.staff_store_assignments where assignment_id=?", id);
+        try {
+            assertThat(post("/admin/staff-assignments/transfer", "userId=" + user(STAFF) + "&storeId=2").statusCode()).isEqualTo(302);
+            assertThat(scalar("select count(*) from dbo.staff_store_assignments where user_id=? and status='ACTIVE'", user(STAFF))).isEqualTo(1);
+            assertThat(scalar("select store_id from dbo.staff_store_assignments where user_id=? and status='ACTIVE'", user(STAFF))).isEqualTo(2);
+            var html = scenario.get("/staff/stock?storeId=1", staff + "; ONESHOP_STORE=1").body();
+            assertThat(ids(html, "data-store-id")).contains(2L).doesNotContain(1L);
+            // transferring to the Store the Staff already works at is refused
+            assertThat(post("/admin/staff-assignments/transfer", "userId=" + user(STAFF) + "&storeId=2").statusCode()).isEqualTo(200);
+        } finally {
+            // the transfer removes the old workplace row; put the original fixture row back exactly
+            jdbc.update("delete from dbo.staff_store_assignments where user_id=?", user(STAFF));
+            var columns = new ArrayList<>(original.keySet());
+            jdbc.update("SET IDENTITY_INSERT dbo.staff_store_assignments ON; insert into dbo.staff_store_assignments("
+                    + String.join(",", columns) + ") values (" + String.join(",", columns.stream().map(c -> "?").toList())
+                    + "); SET IDENTITY_INSERT dbo.staff_store_assignments OFF", columns.stream().map(original::get).toArray());
+        }
     }
     @Test void assignmentsRejectCustomerAdminInactiveStaffAndInactiveStore() throws Exception {
         long staff = user(STAFF);
@@ -248,7 +273,7 @@ class Phase11AdminDatabaseIntegrationTest {
         var before = rows("users");
         assertThat(post("/admin/users/" + id, userForm(id, "CUSTOMER", "ACTIVE")).statusCode()).isEqualTo(200);
         assertThat(post("/admin/users/" + id, userForm(id, "ADMIN", "INACTIVE")).statusCode()).isEqualTo(200);
-        assertThat(post("/admin/users/" + id, userForm(id, "ADMIN", "ACTIVE").replace("email=admin%40oneshop.vn", "email=other%40example.com")).statusCode()).isEqualTo(200);
+        assertThat(post("/admin/users/" + id, userForm(id, "ADMIN", "ACTIVE").replace("email=admin%40example.com", "email=other%40example.com")).statusCode()).isEqualTo(200);
         assertThat(post("/admin/users/" + id, userForm(id, "ADMIN", "ACTIVE") + "&password=Phase11@123").statusCode()).isEqualTo(200);
         assertThat(rows("users").equals(before)).isTrue();
     }

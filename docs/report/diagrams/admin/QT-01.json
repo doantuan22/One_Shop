@@ -1,0 +1,81 @@
+{
+ "id": "QT-01",
+ "title": "Quản lý tài khoản người dùng",
+ "lanes": [
+  "Quản trị viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Quản trị viên"
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Mở /admin/users, lọc theo vai trò, trạng thái, từ khóa"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "searchUsers: lọc và phân trang 20 dòng",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Chọn Thêm mới hoặc Sửa, gửi biểu mẫu"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Biểu mẫu AdminUserRequest hợp lệ?",
+   "có",
+   "không",
+   [
+    "Hiển thị lại form kèm lỗi"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Thao tác tạo mới?",
+   "tạo mới",
+   "sửa",
+   [
+    "Sửa: email giữ nguyên, không đổi mật khẩu, không tự khóa hay bỏ quyền ADMIN",
+    "Rời STAFF thì vô hiệu phân công; lưu User",
+    "Chuyển /admin/users?success"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Email, tên đăng nhập chưa dùng; mật khẩu ≥ 8 ký tự, ≤ 72 byte?",
+   "đạt",
+   "không",
+   [
+    "Báo lỗi email, userName hoặc password"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Mã hóa BCrypt, gán vai trò và trạng thái, lưu User",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển /admin/users?success"
+  ],
+  [
+   "end",
+   "Quản trị viên"
+  ]
+ ]
+}

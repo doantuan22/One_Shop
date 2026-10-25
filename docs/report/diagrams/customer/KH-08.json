@@ -1,0 +1,95 @@
+{
+ "id": "KH-08",
+ "title": "Cập nhật số lượng và xóa sản phẩm trong giỏ hàng",
+ "lanes": [
+  "Khách hàng",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Khách hàng"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Đổi số lượng hoặc bấm xóa một dòng hàng"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Thao tác là cập nhật số lượng?",
+   "cập nhật",
+   "xóa",
+   [
+    "Khóa giỏ, tìm dòng hàng của khách, xóa CartItem",
+    "Chuyển /cart?success=removed"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Số lượng ≥ 1?",
+   "có",
+   "không",
+   [
+    "Báo số lượng tối thiểu là 1"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Khóa giỏ, tìm dòng hàng thuộc giỏ của khách",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Tìm thấy dòng hàng trong giỏ của khách?",
+   "có",
+   "không",
+   [
+    "404 Không tìm thấy trong giỏ"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Sản phẩm còn hiển thị và giá > 0?",
+   "có",
+   "không",
+   [
+    "Báo không còn bán, gợi ý xóa"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Số lượng ≤ tồn toàn chuỗi?",
+   "đủ",
+   "thiếu",
+   [
+    "Báo hết hàng hoặc không đủ"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Cập nhật quantity của CartItem",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển hướng /cart?success=updated"
+  ],
+  [
+   "end",
+   "Khách hàng"
+  ]
+ ]
+}

@@ -150,7 +150,7 @@ class PaymentDatabaseIntegrationTest extends V3RegressionTestSupport {
     }
 
     @ParameterizedTest
-        @ValueSource(strings = {"guest", "staff.thuduc@oneshop.vn", "admin@oneshop.vn"})
+        @ValueSource(strings = {"guest", "staff.thuduc@example.com", "admin@example.com"})
     void clientPaymentRoutesAreCustomerOnly(String email) throws Exception {
         long id=online();String actor=email.equals("guest")?null:email;assertThat(getAs(actor,"/orders/"+id+"/payments").statusCode()).isEqualTo(actor==null?302:403);
         assertThat(data.orderStatus(id)).isEqualTo("PENDING_PAYMENT");

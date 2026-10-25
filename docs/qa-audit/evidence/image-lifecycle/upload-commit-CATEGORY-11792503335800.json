@@ -1,0 +1,7 @@
+{
+  "database" : "oneshop_audit2_test",
+  "timestamp" : "2026-10-25T05:33:56.472065100Z",
+  "scenario" : "upload-commit-CATEGORY",
+  "files" : [ "qa-fix/5362f039-d7e9-48f6-9fa7-0d94eb049b6e" ],
+  "tasks" : [ ]
+}

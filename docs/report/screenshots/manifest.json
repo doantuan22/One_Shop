@@ -1,0 +1,1962 @@
+{
+ "C01": {
+  "group": "customer",
+  "role": "guest",
+  "url": "/",
+  "title": "Giao diện trang chủ (phần đầu trang)",
+  "tableTitle": "Mô tả các thành phần giao diện trang chủ (phần đầu trang)",
+  "width": 1280,
+  "height": 1150,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Dải thông tin đầu trang",
+    "desc": "Thông báo một giá online chung cho toàn hệ thống và liên kết nhanh tới trang tra cứu cửa hàng, nhận tại cửa hàng."
+   },
+   {
+    "label": "Thanh điều hướng",
+    "desc": "Cho phép truy cập các khu vực chính: Trang chủ, Sản phẩm, Hệ thống cửa hàng."
+   },
+   {
+    "label": "Giỏ hàng",
+    "desc": "Mở giỏ hàng của khách (chỉ vai trò khách hàng đã đăng nhập mới vào được)."
+   },
+   {
+    "label": "Đăng nhập",
+    "desc": "Chuyển tới trang đăng nhập bằng email hoặc tên đăng nhập."
+   },
+   {
+    "label": "Đăng ký",
+    "desc": "Chuyển tới biểu mẫu tạo tài khoản khách hàng."
+   },
+   {
+    "label": "Banner giới thiệu",
+    "desc": "Thông điệp thương hiệu của cửa hàng mỹ phẩm OneShop."
+   },
+   {
+    "label": "Ô tìm kiếm sản phẩm",
+    "desc": "Nhập từ khóa (tên hoặc SKU) rồi bấm Tìm để xem danh sách sản phẩm phù hợp."
+   },
+   {
+    "label": "Danh mục sản phẩm",
+    "desc": "Hiển thị các danh mục đang hoạt động; chọn một ô để lọc sản phẩm theo danh mục."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:31:29.990Z"
+ },
+ "C02": {
+  "group": "customer",
+  "role": "guest",
+  "url": "/",
+  "title": "Giao diện trang chủ (sản phẩm nổi bật và thương hiệu)",
+  "tableTitle": "Mô tả các thành phần giao diện trang chủ (sản phẩm và thương hiệu)",
+  "width": 1280,
+  "height": 1511,
+  "y": 1588,
+  "notes": [
+   {
+    "label": "Khu vực sản phẩm",
+    "desc": "Danh sách 8 sản phẩm còn hàng được chọn ngẫu nhiên theo giờ, cùng một giá online ở mọi chi nhánh."
+   },
+   {
+    "label": "Liên kết Xem tất cả",
+    "desc": "Chuyển tới trang danh sách sản phẩm đầy đủ."
+   },
+   {
+    "label": "Thẻ sản phẩm",
+    "desc": "Hiển thị ảnh, tên, giá; bấm vào để xem chi tiết sản phẩm."
+   },
+   {
+    "label": "Nút Đăng nhập để mua",
+    "desc": "Khách chưa đăng nhập được yêu cầu đăng nhập trước khi thêm vào giỏ."
+   },
+   {
+    "label": "Khu vực thương hiệu",
+    "desc": "Các thương hiệu đang hoạt động kèm số sản phẩm; chọn để lọc sản phẩm theo thương hiệu."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:31:35.877Z"
+ },
+ "C03": {
+  "group": "customer",
+  "role": "guest",
+  "url": "/",
+  "title": "Giao diện trang chủ (hệ thống cửa hàng và chân trang)",
+  "tableTitle": "Mô tả các thành phần giao diện trang chủ (cửa hàng và chân trang)",
+  "width": 1280,
+  "height": 1277,
+  "y": 3098,
+  "notes": [
+   {
+    "label": "Khu vực hệ thống cửa hàng",
+    "desc": "Giới thiệu các chi nhánh đang hoạt động, địa chỉ, giờ mở cửa và dịch vụ giao tận nơi hoặc nhận tại cửa hàng."
+   },
+   {
+    "label": "Liên kết Xem tất cả cửa hàng",
+    "desc": "Chuyển tới trang tra cứu cửa hàng."
+   },
+   {
+    "label": "Khối kêu gọi hành động",
+    "desc": "Mô tả ba bước mua hàng và nút Mua sắm ngay dẫn tới danh sách sản phẩm."
+   },
+   {
+    "label": "Chân trang",
+    "desc": "Liên kết khám phá, tài khoản, thông tin liên hệ và ghi công hình ảnh."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:31:41.674Z"
+ },
+ "C04": {
+  "group": "customer",
+  "role": "guest",
+  "url": "/login",
+  "title": "Giao diện đăng nhập",
+  "tableTitle": "Mô tả các thành phần giao diện đăng nhập",
+  "width": 1280,
+  "height": 900,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Biểu mẫu đăng nhập",
+    "desc": "Khung nhập thông tin xác thực; gửi bằng phương thức POST có mã CSRF."
+   },
+   {
+    "label": "Ô email hoặc tên đăng nhập",
+    "desc": "Nhập email (có ký tự @) hoặc tên đăng nhập của tài khoản."
+   },
+   {
+    "label": "Ô mật khẩu",
+    "desc": "Nhập mật khẩu của tài khoản."
+   },
+   {
+    "label": "Liên kết Quên mật khẩu",
+    "desc": "Mở luồng đặt lại mật khẩu bằng mã OTP gửi qua email."
+   },
+   {
+    "label": "Nút Đăng nhập",
+    "desc": "Gửi biểu mẫu; thành công thì chuyển theo vai trò (quản trị /admin, nhân viên /staff, khách hàng /)."
+   },
+   {
+    "label": "Liên kết Đăng ký",
+    "desc": "Chuyển tới biểu mẫu tạo tài khoản mới."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:31:43.883Z"
+ },
+ "C05": {
+  "group": "customer",
+  "role": "guest",
+  "url": "/register",
+  "title": "Giao diện đăng ký tài khoản",
+  "tableTitle": "Mô tả các thành phần giao diện đăng ký tài khoản",
+  "width": 1280,
+  "height": 1000,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Biểu mẫu đăng ký",
+    "desc": "Khung nhập thông tin tài khoản khách hàng mới."
+   },
+   {
+    "label": "Ô họ và tên",
+    "desc": "Nhập họ tên đầy đủ (bắt buộc)."
+   },
+   {
+    "label": "Ô tên đăng nhập",
+    "desc": "Từ 4 đến 30 ký tự gồm chữ, số, dấu _ và dấu chấm, không chứa @."
+   },
+   {
+    "label": "Ô email",
+    "desc": "Email duy nhất, dùng để đăng nhập và nhận mã OTP."
+   },
+   {
+    "label": "Ô số điện thoại",
+    "desc": "Số điện thoại liên hệ (không bắt buộc)."
+   },
+   {
+    "label": "Ô mật khẩu",
+    "desc": "Mật khẩu tối đa 72 byte; được mã hóa BCrypt khi lưu."
+   },
+   {
+    "label": "Nút Đăng ký tài khoản",
+    "desc": "Gửi biểu mẫu để tạo tài khoản với vai trò khách hàng."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:31:46.193Z"
+ },
+ "C06": {
+  "group": "customer",
+  "role": "guest",
+  "url": "/forgot-password",
+  "title": "Giao diện quên mật khẩu (bước gửi mã OTP)",
+  "tableTitle": "Mô tả các thành phần giao diện quên mật khẩu",
+  "width": 1280,
+  "height": 800,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Biểu mẫu yêu cầu mã OTP",
+    "desc": "Khung nhập email của tài khoản cần đặt lại mật khẩu."
+   },
+   {
+    "label": "Ô email",
+    "desc": "Email của tài khoản đang hoạt động."
+   },
+   {
+    "label": "Nút Gửi mã OTP",
+    "desc": "Gửi mã 6 chữ số, có hiệu lực 10 phút, tới email đã nhập."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:31:48.390Z"
+ },
+ "C07": {
+  "group": "customer",
+  "role": "guest",
+  "url": "/products",
+  "title": "Giao diện danh sách sản phẩm, tìm kiếm và bộ lọc",
+  "tableTitle": "Mô tả các thành phần giao diện danh sách sản phẩm",
+  "width": 1280,
+  "height": 2090,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Thanh điều hướng",
+    "desc": "Điều hướng giữa các khu vực chính của website."
+   },
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Cho biết đang xem danh mục sản phẩm của hệ thống."
+   },
+   {
+    "label": "Ô tìm kiếm",
+    "desc": "Tìm theo tên hoặc SKU sản phẩm."
+   },
+   {
+    "label": "Nút Tìm kiếm",
+    "desc": "Áp dụng từ khóa và bộ lọc."
+   },
+   {
+    "label": "Bộ lọc danh mục",
+    "desc": "Thu hẹp danh sách theo danh mục."
+   },
+   {
+    "label": "Bộ lọc thương hiệu",
+    "desc": "Thu hẹp danh sách theo thương hiệu."
+   },
+   {
+    "label": "Thẻ sản phẩm",
+    "desc": "Ảnh, tên, giá online và tình trạng còn hàng; bấm để xem chi tiết."
+   },
+   {
+    "label": "Phân trang",
+    "desc": "Chuyển giữa các trang kết quả (12 sản phẩm mỗi trang)."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:31:52.595Z"
+ },
+ "C08": {
+  "group": "customer",
+  "role": "customer",
+  "url": "/products/1",
+  "title": "Giao diện chi tiết sản phẩm",
+  "tableTitle": "Mô tả các thành phần giao diện chi tiết sản phẩm",
+  "width": 1280,
+  "height": 1530,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Thanh điều hướng",
+    "desc": "Điều hướng, hiển thị tài khoản khách đang đăng nhập và giỏ hàng."
+   },
+   {
+    "label": "Ảnh sản phẩm",
+    "desc": "Ảnh chính của sản phẩm lưu trên Cloudinary."
+   },
+   {
+    "label": "Tên sản phẩm",
+    "desc": "Tên đầy đủ của sản phẩm."
+   },
+   {
+    "label": "Khối giá và tình trạng",
+    "desc": "Giá online duy nhất, tình trạng còn hàng toàn hệ thống."
+   },
+   {
+    "label": "Thêm vào giỏ hàng",
+    "desc": "Chọn số lượng và thêm sản phẩm vào giỏ (chỉ khi đã đăng nhập)."
+   },
+   {
+    "label": "Kiểm tra tại cửa hàng",
+    "desc": "Tình trạng còn hàng của sản phẩm tại từng chi nhánh (chỉ để tham khảo, giá vẫn là giá online chung)."
+   },
+   {
+    "label": "Mô tả sản phẩm",
+    "desc": "Thông tin giới thiệu sản phẩm."
+   },
+   {
+    "label": "Đánh giá của khách hàng",
+    "desc": "Số đánh giá, điểm trung bình và danh sách nhận xét đã hiển thị."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:38:29.695Z"
+ },
+ "C10": {
+  "group": "customer",
+  "role": "customer",
+  "url": "/cart",
+  "title": "Giao diện giỏ hàng",
+  "tableTitle": "Mô tả các thành phần giao diện giỏ hàng",
+  "width": 1280,
+  "height": 830,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề giỏ hàng",
+    "desc": "Cho biết số sản phẩm đang có trong giỏ của tài khoản."
+   },
+   {
+    "label": "Chọn tất cả sản phẩm",
+    "desc": "Chọn hoặc bỏ chọn mọi dòng hàng mua được để đặt hàng."
+   },
+   {
+    "label": "Tóm tắt đơn hàng",
+    "desc": "Số mặt hàng, số lượng và tiền các dòng đã chọn, tạm tính cả giỏ."
+   },
+   {
+    "label": "Số lượng",
+    "desc": "Tăng hoặc giảm số lượng; hệ thống kiểm tra theo tổng tồn toàn chuỗi."
+   },
+   {
+    "label": "Nút xóa dòng hàng",
+    "desc": "Xóa dòng hàng khỏi giỏ của khách."
+   },
+   {
+    "label": "Hộp chọn dòng hàng",
+    "desc": "Chọn dòng hàng muốn đặt; dòng hết hàng hoặc ngừng bán không chọn được."
+   },
+   {
+    "label": "Nút Đặt hàng sản phẩm đã chọn",
+    "desc": "Chuyển các dòng đã chọn tới trang xác nhận đặt hàng."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:00.057Z"
+ },
+ "C11": {
+  "group": "customer",
+  "role": "customer",
+  "url": "/checkout?cartItemIds=30",
+  "title": "Giao diện xác nhận đặt hàng",
+  "tableTitle": "Mô tả các thành phần giao diện xác nhận đặt hàng",
+  "width": 1280,
+  "height": 1700,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề xác nhận đơn hàng",
+    "desc": "Số sản phẩm đang đặt và thông báo hệ thống tự phân bổ nguồn hàng từ các chi nhánh."
+   },
+   {
+    "label": "Sản phẩm đã chọn mua",
+    "desc": "Các dòng hàng đã chọn với đơn giá online chung và số lượng."
+   },
+   {
+    "label": "Tóm tắt thanh toán",
+    "desc": "Số đơn tạo thành, số phần giao, tiền hàng, phí giao hàng và tổng cộng."
+   },
+   {
+    "label": "Giao hàng tận nơi",
+    "desc": "Hình thức nhận hàng chuyển phát tới địa chỉ khách; phí 30.000 đ mỗi đơn."
+   },
+   {
+    "label": "Thanh toán khi nhận hàng (COD)",
+    "desc": "Thu tiền mặt khi giao hàng."
+   },
+   {
+    "label": "Nút Xác nhận đặt hàng",
+    "desc": "Gửi yêu cầu tạo đơn; hệ thống kiểm tra lại giá, tồn kho và nguồn hàng."
+   },
+   {
+    "label": "Nhận tại cửa hàng",
+    "desc": "Khách đến lấy tại chi nhánh đủ toàn bộ sản phẩm; miễn phí giao hàng."
+   },
+   {
+    "label": "Thanh toán trực tuyến",
+    "desc": "Thanh toán qua cổng mô phỏng trong 15 phút kể từ khi tạo đơn."
+   },
+   {
+    "label": "Tên người nhận",
+    "desc": "Người nhận hàng, được lưu cùng đơn."
+   },
+   {
+    "label": "Địa chỉ nhận hàng",
+    "desc": "Địa chỉ giao hàng chi tiết, được kiểm tra khi đặt đơn giao tận nơi."
+   },
+   {
+    "label": "Nút Cập nhật nguồn hàng",
+    "desc": "Tính lại kế hoạch phân bổ theo cách nhận, thanh toán và địa chỉ đã chọn."
+   },
+   {
+    "label": "Mã khuyến mãi",
+    "desc": "Chọn hoặc nhập mã; mã chỉ giảm tiền hàng, không giảm phí giao hàng."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:05.913Z"
+ },
+ "C12": {
+  "group": "customer",
+  "role": "customer",
+  "url": "/checkout/1",
+  "title": "Giao diện kết quả đặt hàng",
+  "tableTitle": "Mô tả các thành phần giao diện kết quả đặt hàng",
+  "width": 1280,
+  "height": 1300,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Thông báo đặt hàng thành công",
+    "desc": "Mã phiên đặt hàng, thời gian đặt, số đơn và số phần giao, tổng thanh toán."
+   },
+   {
+    "label": "Thẻ đơn hàng",
+    "desc": "Từng đơn được tạo: sản phẩm, trạng thái, cách nhận, thanh toán, người nhận và thành tiền."
+   },
+   {
+    "label": "Phần giao hàng",
+    "desc": "Chi nhánh cung cấp hàng cho từng phần giao và trạng thái của phần đó."
+   },
+   {
+    "label": "Nút Xem chi tiết đơn hàng",
+    "desc": "Mở trang chi tiết và theo dõi đơn."
+   },
+   {
+    "label": "Nút Tiếp tục mua sắm",
+    "desc": "Quay lại danh sách sản phẩm."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:09.972Z"
+ },
+ "C13": {
+  "group": "customer",
+  "role": "customer",
+  "url": "/orders",
+  "title": "Giao diện lịch sử đơn hàng",
+  "tableTitle": "Mô tả các thành phần giao diện lịch sử đơn hàng",
+  "width": 1280,
+  "height": 1500,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Đầu trang đơn hàng",
+    "desc": "Tiêu đề và tổng số đơn của khách."
+   },
+   {
+    "label": "Thẻ đơn hàng",
+    "desc": "Tóm tắt một đơn: mã, thời gian, trạng thái, sản phẩm và tổng tiền."
+   },
+   {
+    "label": "Dòng sản phẩm",
+    "desc": "Ảnh, tên và số lượng sản phẩm trong đơn."
+   },
+   {
+    "label": "Thông tin đơn",
+    "desc": "Hình thức nhận, phương thức và trạng thái thanh toán."
+   },
+   {
+    "label": "Chân thẻ đơn",
+    "desc": "Tổng tiền và liên kết xem chi tiết đơn hàng."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:13.110Z"
+ },
+ "C14": {
+  "group": "customer",
+  "role": "customer",
+  "url": "/orders/13",
+  "title": "Giao diện chi tiết đơn hàng nhiều chi nhánh (phần đầu)",
+  "tableTitle": "Mô tả các thành phần giao diện chi tiết đơn hàng",
+  "width": 1280,
+  "height": 1260,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Đường dẫn",
+    "desc": "Quay lại trang chủ hoặc danh sách đơn hàng."
+   },
+   {
+    "label": "Tiêu đề và trạng thái đơn",
+    "desc": "Mã đơn của khách, thời điểm đặt, hình thức nhận, trạng thái đơn và tổng thanh toán."
+   },
+   {
+    "label": "Sản phẩm đã đặt",
+    "desc": "Danh sách dòng hàng với đơn giá, số lượng và thành tiền."
+   },
+   {
+    "label": "Thanh toán",
+    "desc": "Tiền hàng, phí giao hàng, tổng đơn, phương thức và trạng thái thanh toán."
+   },
+   {
+    "label": "Phần giao theo chi nhánh",
+    "desc": "Mỗi chi nhánh xử lý một phần giao riêng với trạng thái, mã vận đơn và sản phẩm của phần đó."
+   },
+   {
+    "label": "Thông tin giao hàng",
+    "desc": "Người nhận và địa chỉ giao hàng."
+   },
+   {
+    "label": "Lịch sử đơn hàng",
+    "desc": "Dòng thời gian các lần thay đổi trạng thái đơn."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:17.177Z"
+ },
+ "C15": {
+  "group": "customer",
+  "role": "customer",
+  "url": "/orders/13",
+  "title": "Giao diện chi tiết đơn hàng (đánh giá sản phẩm)",
+  "tableTitle": "Mô tả các thành phần giao diện đánh giá sản phẩm trong đơn hàng",
+  "width": 1280,
+  "height": 1263,
+  "y": 1260,
+  "notes": [
+   {
+    "label": "Khối đánh giá sản phẩm",
+    "desc": "Chỉ hiển thị cho dòng hàng đã nhận và thanh toán hợp lệ; mỗi dòng hàng đánh giá một lần."
+   },
+   {
+    "label": "Chọn số sao",
+    "desc": "Số sao từ 1 đến 5 (bắt buộc)."
+   },
+   {
+    "label": "Nhận xét",
+    "desc": "Nội dung nhận xét không bắt buộc."
+   },
+   {
+    "label": "Nút Gửi đánh giá",
+    "desc": "Lưu đánh giá ở trạng thái hiển thị gắn với dòng hàng đã mua."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:21.332Z"
+ },
+ "C16": {
+  "group": "customer",
+  "role": "customer",
+  "url": "/orders/1",
+  "title": "Giao diện chi tiết đơn hàng đã hoàn tất (trả hàng)",
+  "tableTitle": "Mô tả các thành phần giao diện chi tiết đơn hàng đã hoàn tất",
+  "width": 1280,
+  "height": 1700,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Thanh toán",
+    "desc": "Phương thức, trạng thái thanh toán và các khoản thu."
+   },
+   {
+    "label": "Giao nhận",
+    "desc": "Trạng thái từng phần giao, chi nhánh xử lý và mã vận đơn."
+   },
+   {
+    "label": "Lịch sử đơn hàng",
+    "desc": "Các thay đổi trạng thái của đơn."
+   },
+   {
+    "label": "Nút Yêu cầu trả hàng",
+    "desc": "Mở biểu mẫu trả hàng khi còn trong 3 ngày kể từ lúc nhận."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:24.950Z"
+ },
+ "C17": {
+  "group": "customer",
+  "role": "customer",
+  "url": "/orders/1/return",
+  "title": "Giao diện yêu cầu trả hàng",
+  "tableTitle": "Mô tả các thành phần giao diện yêu cầu trả hàng",
+  "width": 1280,
+  "height": 1000,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Liên kết Quay lại đơn hàng",
+    "desc": "Trở về chi tiết đơn."
+   },
+   {
+    "label": "Ô lý do trả hàng",
+    "desc": "Nhập lý do từ 5 đến 500 ký tự."
+   },
+   {
+    "label": "Chọn ảnh minh chứng",
+    "desc": "Đính kèm từ 1 đến 3 ảnh; ảnh được tải lên Cloudinary."
+   },
+   {
+    "label": "Nút Gửi yêu cầu",
+    "desc": "Lưu yêu cầu ở trạng thái chờ quản trị viên duyệt."
+   },
+   {
+    "label": "Nút Hủy",
+    "desc": "Bỏ biểu mẫu và quay lại đơn."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:26.925Z"
+ },
+ "C18": {
+  "group": "customer",
+  "role": "customer",
+  "url": "/orders/13/payments",
+  "title": "Giao diện thanh toán đơn hàng trực tuyến",
+  "tableTitle": "Mô tả các thành phần giao diện thanh toán đơn hàng",
+  "width": 1280,
+  "height": 1200,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề thanh toán",
+    "desc": "Mã đơn, nguồn hàng và nhãn cổng thanh toán mô phỏng (Sandbox)."
+   },
+   {
+    "label": "Thông báo cổng thanh toán",
+    "desc": "Cho biết kết quả chỉ được ghi nhận khi hệ thống xác minh qua cổng; nút trên trình duyệt không đổi trạng thái."
+   },
+   {
+    "label": "Thông tin giao dịch đơn hàng",
+    "desc": "Tổng tiền, phương thức, trạng thái thanh toán và trạng thái xử lý đơn."
+   },
+   {
+    "label": "Lịch sử giao dịch",
+    "desc": "Các lần thanh toán với trạng thái, mã giao dịch mô phỏng, số tiền và thời điểm."
+   },
+   {
+    "label": "Liên kết Xem lần đặt hàng",
+    "desc": "Quay lại kết quả đặt hàng."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:29.677Z"
+ },
+ "C19": {
+  "group": "customer",
+  "role": "customer",
+  "url": "/account",
+  "title": "Giao diện thông tin tài khoản",
+  "tableTitle": "Mô tả các thành phần giao diện thông tin tài khoản",
+  "width": 1280,
+  "height": 1170,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Thẻ hồ sơ",
+    "desc": "Ảnh đại diện chữ cái, họ tên, email, vai trò và liên kết nhanh."
+   },
+   {
+    "label": "Biểu mẫu hồ sơ",
+    "desc": "Sửa họ tên và số điện thoại; email và tên đăng nhập chỉ xem."
+   },
+   {
+    "label": "Menu tài khoản",
+    "desc": "Liên kết tới thông tin cá nhân, đơn hàng của tôi và giỏ hàng."
+   },
+   {
+    "label": "Nút Lưu thay đổi",
+    "desc": "Cập nhật hồ sơ của chính tài khoản đang đăng nhập."
+   },
+   {
+    "label": "Biểu mẫu đổi mật khẩu",
+    "desc": "Nhập mật khẩu hiện tại, mật khẩu mới và xác nhận."
+   },
+   {
+    "label": "Nút Đổi mật khẩu",
+    "desc": "Đổi mật khẩu khi mật khẩu hiện tại đúng, hai lần nhập khớp và khác mật khẩu cũ."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:32.384Z"
+ },
+ "A01": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin",
+  "title": "Giao diện dashboard quản trị",
+  "tableTitle": "Mô tả các thành phần giao diện dashboard quản trị",
+  "width": 1280,
+  "height": 1150,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Thanh tiêu đề quản trị",
+    "desc": "Hiển thị phạm vi quản trị, liên kết tới trang bán hàng, tài khoản đang đăng nhập và nút Đăng xuất."
+   },
+   {
+    "label": "Phạm vi quản trị",
+    "desc": "Cho biết đang xem toàn chuỗi cửa hàng."
+   },
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Tổng quan toàn chuỗi cùng mô tả ngắn."
+   },
+   {
+    "label": "Menu quản trị",
+    "desc": "Liên kết tới các chức năng: tổng quan, chi nhánh, danh mục, thương hiệu, sản phẩm, sản phẩm theo chi nhánh, phân công nhân viên, tồn kho, đơn hàng, thanh toán, khuyến mãi, trả hàng, đánh giá và người dùng."
+   },
+   {
+    "label": "Chỉ số và lối tắt cần xử lý",
+    "desc": "Các chỉ số: đơn hàng, phần giao đang xử lý, đơn cần quản trị viên xử lý, thanh toán chờ đối soát, SKU hết hàng; kèm các nút lối tắt tới đơn và thanh toán cần xử lý."
+   },
+   {
+    "label": "Bộ lọc theo chi nhánh",
+    "desc": "Thu hẹp số liệu theo một chi nhánh hoặc xem toàn chuỗi."
+   },
+   {
+    "label": "Bảng số liệu theo chi nhánh",
+    "desc": "Đơn, đơn cần xử lý, hoàn tất, đã hủy, SKU sắp hết, hết hàng, nhân viên và lối tắt Đơn hàng / Khác của từng chi nhánh."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:35.718Z"
+ },
+ "A02": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/users",
+  "title": "Giao diện quản lý người dùng",
+  "tableTitle": "Mô tả các thành phần giao diện quản lý người dùng",
+  "width": 1280,
+  "height": 1219,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Danh sách tài khoản người dùng."
+   },
+   {
+    "label": "Nút Tạo tài khoản",
+    "desc": "Mở biểu mẫu tạo tài khoản mới."
+   },
+   {
+    "label": "Ô tìm kiếm",
+    "desc": "Tìm theo họ tên, email hoặc tên đăng nhập."
+   },
+   {
+    "label": "Bộ lọc vai trò",
+    "desc": "Lọc theo vai trò khách hàng, nhân viên hoặc quản trị viên."
+   },
+   {
+    "label": "Bộ lọc trạng thái",
+    "desc": "Lọc theo tài khoản hoạt động hoặc bị khóa."
+   },
+   {
+    "label": "Nút Áp dụng",
+    "desc": "Áp dụng bộ lọc."
+   },
+   {
+    "label": "Bảng người dùng",
+    "desc": "Họ tên, email, vai trò, trạng thái của từng tài khoản."
+   },
+   {
+    "label": "Nút Sửa",
+    "desc": "Mở biểu mẫu cập nhật tài khoản."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:38.015Z"
+ },
+ "A03": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/users/new",
+  "title": "Giao diện tạo tài khoản người dùng",
+  "tableTitle": "Mô tả các thành phần giao diện tạo tài khoản người dùng",
+  "width": 1280,
+  "height": 900,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Biểu mẫu tài khoản",
+    "desc": "Nhập thông tin định danh, vai trò và trạng thái."
+   },
+   {
+    "label": "Ô email",
+    "desc": "Email duy nhất; không đổi được sau khi tạo."
+   },
+   {
+    "label": "Ô tên đăng nhập",
+    "desc": "Tên đăng nhập tùy chọn, đúng mẫu quy định."
+   },
+   {
+    "label": "Ô họ và tên",
+    "desc": "Họ tên người dùng."
+   },
+   {
+    "label": "Chọn vai trò",
+    "desc": "Khách hàng, nhân viên hoặc quản trị viên."
+   },
+   {
+    "label": "Chọn trạng thái",
+    "desc": "Hoạt động hoặc khóa tài khoản."
+   },
+   {
+    "label": "Ô mật khẩu",
+    "desc": "Mật khẩu ban đầu (ít nhất 8 ký tự, tối đa 72 byte)."
+   },
+   {
+    "label": "Nút Lưu",
+    "desc": "Tạo tài khoản."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:39.560Z"
+ },
+ "A04": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/staff-assignments",
+  "title": "Giao diện phân công nhân viên cho chi nhánh",
+  "tableTitle": "Mô tả các thành phần giao diện phân công nhân viên",
+  "width": 1280,
+  "height": 924,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Danh sách phân công nhân viên theo chi nhánh."
+   },
+   {
+    "label": "Nút Tạo Staff mới",
+    "desc": "Mở biểu mẫu tạo tài khoản nhân viên."
+   },
+   {
+    "label": "Nút Gán nhân viên",
+    "desc": "Mở hộp thoại gán nhân viên vào chi nhánh."
+   },
+   {
+    "label": "Ô tìm kiếm",
+    "desc": "Tìm theo tên hoặc email nhân viên, tên chi nhánh."
+   },
+   {
+    "label": "Bộ lọc chi nhánh",
+    "desc": "Xem phân công của một chi nhánh."
+   },
+   {
+    "label": "Bảng phân công",
+    "desc": "Nhân viên, chi nhánh, trạng thái, ngày phân công."
+   },
+   {
+    "label": "Nút Chuyển chi nhánh",
+    "desc": "Chuyển nhân viên sang chi nhánh khác trong một bước."
+   },
+   {
+    "label": "Nút Tạm đình chỉ",
+    "desc": "Vô hiệu phân công; nhân viên mất phạm vi dữ liệu của chi nhánh."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:41.317Z"
+ },
+ "A05": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/stores",
+  "title": "Giao diện quản lý chi nhánh",
+  "tableTitle": "Mô tả các thành phần giao diện quản lý chi nhánh",
+  "width": 1280,
+  "height": 940,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Danh sách chi nhánh của chuỗi."
+   },
+   {
+    "label": "Nút Thêm chi nhánh",
+    "desc": "Mở biểu mẫu thêm chi nhánh."
+   },
+   {
+    "label": "Ô tìm kiếm",
+    "desc": "Tìm theo mã, tên, địa chỉ, khu vực."
+   },
+   {
+    "label": "Bộ lọc khu vực",
+    "desc": "Lọc chi nhánh theo khu vực."
+   },
+   {
+    "label": "Bộ lọc trạng thái",
+    "desc": "Hoạt động hoặc ngừng hoạt động."
+   },
+   {
+    "label": "Bảng chi nhánh",
+    "desc": "Mã, tên, địa chỉ, dịch vụ giao/nhận và trạng thái."
+   },
+   {
+    "label": "Nút Sản phẩm",
+    "desc": "Xem sản phẩm đang gắn với chi nhánh."
+   },
+   {
+    "label": "Nút Sửa",
+    "desc": "Cập nhật thông tin chi nhánh."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:43.389Z"
+ },
+ "A06": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/stores/new",
+  "title": "Giao diện thêm chi nhánh",
+  "tableTitle": "Mô tả các thành phần giao diện thêm chi nhánh",
+  "width": 1280,
+  "height": 900,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Ô mã chi nhánh",
+    "desc": "Mã duy nhất của chi nhánh."
+   },
+   {
+    "label": "Ô tên chi nhánh",
+    "desc": "Tên hiển thị cho khách."
+   },
+   {
+    "label": "Ô địa chỉ",
+    "desc": "Địa chỉ chi nhánh."
+   },
+   {
+    "label": "Ô tỉnh/thành",
+    "desc": "Dùng để lọc khi khách tra cứu."
+   },
+   {
+    "label": "Ô khu vực",
+    "desc": "Quận/huyện hoặc khu vực."
+   },
+   {
+    "label": "Ô giờ mở cửa",
+    "desc": "Giờ mở cửa hiển thị cho khách."
+   },
+   {
+    "label": "Hộp chọn giao tận nơi",
+    "desc": "Cho phép chi nhánh cung cấp hàng cho đơn giao tận nơi."
+   },
+   {
+    "label": "Hộp chọn nhận tại cửa hàng",
+    "desc": "Cho phép khách nhận hàng tại chi nhánh."
+   },
+   {
+    "label": "Trạng thái",
+    "desc": "Hoạt động hoặc ngừng hoạt động."
+   },
+   {
+    "label": "Nút Thêm chi nhánh",
+    "desc": "Lưu chi nhánh mới."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:44.892Z"
+ },
+ "A07": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/categories",
+  "title": "Giao diện quản lý danh mục",
+  "tableTitle": "Mô tả các thành phần giao diện quản lý danh mục",
+  "width": 1280,
+  "height": 1039,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Danh sách danh mục sản phẩm."
+   },
+   {
+    "label": "Nút Thêm danh mục",
+    "desc": "Mở biểu mẫu thêm danh mục."
+   },
+   {
+    "label": "Bảng danh mục",
+    "desc": "Ảnh, tên, mô tả và trạng thái của danh mục."
+   },
+   {
+    "label": "Nút Sửa",
+    "desc": "Sửa danh mục và thay ảnh."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:46.966Z"
+ },
+ "A08": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/brands",
+  "title": "Giao diện quản lý thương hiệu",
+  "tableTitle": "Mô tả các thành phần giao diện quản lý thương hiệu",
+  "width": 1280,
+  "height": 1229,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Danh sách thương hiệu."
+   },
+   {
+    "label": "Nút Thêm thương hiệu",
+    "desc": "Mở biểu mẫu thêm thương hiệu."
+   },
+   {
+    "label": "Bảng thương hiệu",
+    "desc": "Tên, mô tả, trạng thái của thương hiệu."
+   },
+   {
+    "label": "Nút Sửa",
+    "desc": "Sửa thương hiệu và logo."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:49.219Z"
+ },
+ "A09": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/products",
+  "title": "Giao diện quản lý sản phẩm",
+  "tableTitle": "Mô tả các thành phần giao diện quản lý sản phẩm",
+  "width": 1280,
+  "height": 1500,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Danh sách sản phẩm theo SKU."
+   },
+   {
+    "label": "Nút Thêm sản phẩm",
+    "desc": "Mở biểu mẫu thêm sản phẩm."
+   },
+   {
+    "label": "Ô tìm kiếm",
+    "desc": "Tìm theo tên hoặc SKU."
+   },
+   {
+    "label": "Bộ lọc danh mục",
+    "desc": "Lọc theo danh mục."
+   },
+   {
+    "label": "Bộ lọc thương hiệu",
+    "desc": "Lọc theo thương hiệu."
+   },
+   {
+    "label": "Bộ lọc trạng thái",
+    "desc": "Đang bán, ngừng bán."
+   },
+   {
+    "label": "Bảng sản phẩm",
+    "desc": "Ảnh, SKU, tên, giá bán online, danh mục, thương hiệu và trạng thái."
+   },
+   {
+    "label": "Nút Chi nhánh bán",
+    "desc": "Xem các chi nhánh đang bán sản phẩm."
+   },
+   {
+    "label": "Nút Sửa",
+    "desc": "Sửa thông tin và giá của sản phẩm."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:53.315Z"
+ },
+ "A10": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/products/1/edit",
+  "title": "Giao diện sửa sản phẩm và quản lý hình ảnh",
+  "tableTitle": "Mô tả các thành phần giao diện sửa sản phẩm",
+  "width": 1280,
+  "height": 1052,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Biểu mẫu sản phẩm",
+    "desc": "SKU, tên, giá bán online, giá gốc, danh mục, thương hiệu, mô tả và trạng thái."
+   },
+   {
+    "label": "Chọn ảnh",
+    "desc": "Chọn tệp ảnh (tối đa 5MB) để tải lên Cloudinary."
+   },
+   {
+    "label": "Nút Tải lên",
+    "desc": "Thêm ảnh; ảnh đầu tiên tự là ảnh chính."
+   },
+   {
+    "label": "Ô giá bán online",
+    "desc": "Một giá duy nhất cho mọi chi nhánh; phải lớn hơn 0 khi đang bán."
+   },
+   {
+    "label": "Ô giá gốc",
+    "desc": "Giá gốc, không thấp hơn giá bán."
+   },
+   {
+    "label": "Nút Xóa ảnh",
+    "desc": "Xóa ảnh khỏi sản phẩm và Cloudinary."
+   },
+   {
+    "label": "Trạng thái",
+    "desc": "Đang bán hoặc ngừng bán (sản phẩm không bị xóa)."
+   },
+   {
+    "label": "Nút Lưu thay đổi",
+    "desc": "Cập nhật sản phẩm."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:55.432Z"
+ },
+ "A11": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/store-products",
+  "title": "Giao diện sản phẩm theo chi nhánh",
+  "tableTitle": "Mô tả các thành phần giao diện sản phẩm theo chi nhánh",
+  "width": 1280,
+  "height": 1500,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Danh sách sản phẩm và tồn kho theo từng chi nhánh."
+   },
+   {
+    "label": "Nút Gắn sản phẩm vào chi nhánh",
+    "desc": "Mở biểu mẫu gắn sản phẩm cho chi nhánh."
+   },
+   {
+    "label": "Bộ lọc chi nhánh",
+    "desc": "Xem tồn của một chi nhánh."
+   },
+   {
+    "label": "Ô tìm kiếm",
+    "desc": "Tìm theo SKU hoặc tên sản phẩm."
+   },
+   {
+    "label": "Bộ lọc trạng thái",
+    "desc": "Lọc theo trạng thái bán."
+   },
+   {
+    "label": "Bảng sản phẩm theo chi nhánh",
+    "desc": "Chi nhánh, sản phẩm, số lượng, đang giữ và trạng thái."
+   },
+   {
+    "label": "Nút Sửa",
+    "desc": "Điều chỉnh số lượng và trạng thái."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:34:59.011Z"
+ },
+ "A12": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/store-products/new",
+  "title": "Giao diện gắn sản phẩm vào chi nhánh",
+  "tableTitle": "Mô tả các thành phần giao diện gắn sản phẩm vào chi nhánh",
+  "width": 1280,
+  "height": 900,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Chọn chi nhánh",
+    "desc": "Chi nhánh sẽ bán sản phẩm."
+   },
+   {
+    "label": "Chọn sản phẩm",
+    "desc": "Sản phẩm cần gắn (mỗi cặp chi nhánh, sản phẩm chỉ một lần)."
+   },
+   {
+    "label": "Số lượng ban đầu",
+    "desc": "Tồn mở bán, được ghi thành biến động kho."
+   },
+   {
+    "label": "Trạng thái bán",
+    "desc": "Đang bán hoặc ngừng bán tại chi nhánh."
+   },
+   {
+    "label": "Ghi chú",
+    "desc": "Ghi chú cho biến động kho."
+   },
+   {
+    "label": "Nút Gắn sản phẩm",
+    "desc": "Lưu bản ghi sản phẩm theo chi nhánh."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:00.551Z"
+ },
+ "A13": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/inventory",
+  "title": "Giao diện tồn kho toàn chuỗi",
+  "tableTitle": "Mô tả các thành phần giao diện tồn kho toàn chuỗi",
+  "width": 1280,
+  "height": 1500,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Tồn kho của toàn chuỗi."
+   },
+   {
+    "label": "Bộ lọc chi nhánh",
+    "desc": "Xem tồn của một chi nhánh."
+   },
+   {
+    "label": "Ô tìm kiếm",
+    "desc": "Tìm theo SKU, sản phẩm hoặc chi nhánh."
+   },
+   {
+    "label": "Bộ lọc mức tồn",
+    "desc": "Hết hàng, sắp hết hoặc đủ hàng."
+   },
+   {
+    "label": "Sắp xếp",
+    "desc": "Theo tên hoặc số lượng."
+   },
+   {
+    "label": "Bảng tồn kho",
+    "desc": "Số lượng tồn của từng sản phẩm tại từng chi nhánh."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:04.183Z"
+ },
+ "A14": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/orders",
+  "title": "Giao diện quản lý đơn hàng",
+  "tableTitle": "Mô tả các thành phần giao diện quản lý đơn hàng",
+  "width": 1280,
+  "height": 1500,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Đơn hàng toàn hệ thống."
+   },
+   {
+    "label": "Nút Cần Admin xử lý",
+    "desc": "Chỉ xem đơn cần quản trị viên xử lý (ngoại lệ giao hàng, thanh toán)."
+   },
+   {
+    "label": "Chỉ số tổng",
+    "desc": "Tổng số đơn khớp bộ lọc, số đơn trang hiện tại, chi nhánh đang lọc."
+   },
+   {
+    "label": "Bộ lọc đơn hàng",
+    "desc": "Lọc theo chi nhánh, từ khóa, trạng thái đơn, trạng thái thanh toán, hình thức nhận và khoảng ngày."
+   },
+   {
+    "label": "Bảng đơn hàng",
+    "desc": "Mã đơn, khách hàng, chi nhánh cấp hàng, phần giao, hình thức, thanh toán, trạng thái và tổng tiền."
+   },
+   {
+    "label": "Nút Chi tiết",
+    "desc": "Mở chi tiết đơn hàng."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:08.477Z"
+ },
+ "A15": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/orders/13",
+  "title": "Giao diện chi tiết đơn hàng của quản trị viên",
+  "tableTitle": "Mô tả các thành phần giao diện chi tiết đơn hàng của quản trị viên",
+  "width": 1280,
+  "height": 2230,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Nút Tất cả đơn hàng",
+    "desc": "Quay lại danh sách đơn."
+   },
+   {
+    "label": "Nút Xử lý thanh toán",
+    "desc": "Mở trang thanh toán của đơn ONLINE."
+   },
+   {
+    "label": "Tiêu đề đơn hàng",
+    "desc": "Mã đơn, trạng thái hiện tại và các thông tin tóm tắt."
+   },
+   {
+    "label": "Thông tin chung và nhận hàng",
+    "desc": "Trạng thái đơn, thanh toán, nơi cấp hàng, người nhận và địa chỉ giao hàng."
+   },
+   {
+    "label": "Sản phẩm đã đặt",
+    "desc": "Các dòng hàng và chi nhánh nguồn."
+   },
+   {
+    "label": "Phần giao theo chi nhánh",
+    "desc": "Trạng thái từng phần giao của đơn."
+   },
+   {
+    "label": "Thanh toán",
+    "desc": "Phương thức, trạng thái và các lần thanh toán."
+   },
+   {
+    "label": "Lịch sử trạng thái",
+    "desc": "Mọi thay đổi trạng thái đơn và người thực hiện."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:12.052Z"
+ },
+ "A16": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/payments?view=all",
+  "title": "Giao diện quản lý thanh toán trực tuyến",
+  "tableTitle": "Mô tả các thành phần giao diện quản lý thanh toán trực tuyến",
+  "width": 1280,
+  "height": 1000,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Thanh toán trực tuyến."
+   },
+   {
+    "label": "Nhóm xử lý",
+    "desc": "Cần xử lý, chờ đối soát, đang chờ thanh toán, đã thanh toán, đã hoàn tiền, thất bại hoặc hủy, tất cả; kèm số lượng từng nhóm."
+   },
+   {
+    "label": "Ô tìm kiếm",
+    "desc": "Tìm theo mã đơn hoặc khách hàng."
+   },
+   {
+    "label": "Nút Áp dụng",
+    "desc": "Áp dụng bộ lọc và khoảng ngày."
+   },
+   {
+    "label": "Bảng ca thanh toán",
+    "desc": "Đơn, khách hàng, kết quả xác minh, trạng thái hoàn tiền, nhóm xử lý."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:14.384Z"
+ },
+ "A17": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/payments/8",
+  "title": "Giao diện chi tiết thanh toán của một đơn",
+  "tableTitle": "Mô tả các thành phần giao diện chi tiết thanh toán",
+  "width": 1280,
+  "height": 1360,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Nút Danh sách thanh toán",
+    "desc": "Quay lại danh sách ca thanh toán."
+   },
+   {
+    "label": "Tiêu đề",
+    "desc": "Mã đơn đang xử lý thanh toán."
+   },
+   {
+    "label": "Các lần thanh toán",
+    "desc": "Từng lần thanh toán với trạng thái sổ cái, số tiền và hoàn tiền."
+   },
+   {
+    "label": "Các phần giao",
+    "desc": "Trạng thái từng phần giao của đơn."
+   },
+   {
+    "label": "Lịch sử trạng thái đơn",
+    "desc": "Các lần đối soát và thay đổi trạng thái."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:16.782Z"
+ },
+ "A18": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/returns",
+  "title": "Giao diện yêu cầu trả hàng của quản trị viên",
+  "tableTitle": "Mô tả các thành phần giao diện yêu cầu trả hàng của quản trị viên",
+  "width": 1280,
+  "height": 900,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Quy tắc trả hàng: trong 3 ngày, tiền hàng hoàn ngay khi duyệt, hàng hoàn chuyển cho nhân viên chi nhánh đã giao."
+   },
+   {
+    "label": "Bộ lọc trạng thái",
+    "desc": "Tất cả, Chờ duyệt (kèm số lượng), Đã duyệt, Từ chối, Hoàn tất."
+   },
+   {
+    "label": "Danh sách yêu cầu",
+    "desc": "Trạng thái rỗng khi chưa có yêu cầu trả hàng nào; khi có, mỗi dòng cho mở chi tiết để duyệt hoặc từ chối."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:18.309Z"
+ },
+ "A19": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/promotions",
+  "title": "Giao diện quản lý khuyến mãi",
+  "tableTitle": "Mô tả các thành phần giao diện quản lý khuyến mãi",
+  "width": 1280,
+  "height": 900,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Danh sách mã khuyến mãi."
+   },
+   {
+    "label": "Nút Thêm mã khuyến mãi",
+    "desc": "Mở biểu mẫu tạo mã."
+   },
+   {
+    "label": "Ô tìm kiếm",
+    "desc": "Tìm theo mã hoặc tên."
+   },
+   {
+    "label": "Bộ lọc trạng thái",
+    "desc": "Lọc theo trạng thái áp dụng."
+   },
+   {
+    "label": "Bảng khuyến mãi",
+    "desc": "Mã, loại giảm, điều kiện, lượt dùng, thời gian và trạng thái."
+   },
+   {
+    "label": "Nút Sửa",
+    "desc": "Cập nhật mã."
+   },
+   {
+    "label": "Nút Xóa",
+    "desc": "Xóa mã chưa từng được dùng."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:19.862Z"
+ },
+ "A20": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/promotions/new",
+  "title": "Giao diện thêm mã khuyến mãi",
+  "tableTitle": "Mô tả các thành phần giao diện thêm mã khuyến mãi",
+  "width": 1280,
+  "height": 1010,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Ô mã",
+    "desc": "3 đến 30 ký tự A-Z, 0-9, _ hoặc -; duy nhất."
+   },
+   {
+    "label": "Ô tên",
+    "desc": "Tên hiển thị cho khách."
+   },
+   {
+    "label": "Loại giảm",
+    "desc": "Giảm theo phần trăm hoặc theo số tiền."
+   },
+   {
+    "label": "Giá trị giảm",
+    "desc": "Phần trăm nguyên 1-100 hoặc số đồng nguyên."
+   },
+   {
+    "label": "Mức giảm tối đa",
+    "desc": "Chỉ dùng cho giảm theo phần trăm."
+   },
+   {
+    "label": "Tiền hàng tối thiểu",
+    "desc": "Điều kiện áp dụng theo tiền hàng."
+   },
+   {
+    "label": "Tổng lượt dùng",
+    "desc": "Không nhỏ hơn số lượt đã dùng."
+   },
+   {
+    "label": "Lượt dùng mỗi khách",
+    "desc": "Giới hạn số lần một khách dùng mã."
+   },
+   {
+    "label": "Thời gian bắt đầu",
+    "desc": "Thời điểm bắt đầu áp dụng."
+   },
+   {
+    "label": "Nút Lưu",
+    "desc": "Lưu mã khuyến mãi."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:21.956Z"
+ },
+ "A21": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/reviews",
+  "title": "Giao diện kiểm duyệt đánh giá",
+  "tableTitle": "Mô tả các thành phần giao diện kiểm duyệt đánh giá",
+  "width": 1280,
+  "height": 910,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Đánh giá của khách hàng."
+   },
+   {
+    "label": "Ô tìm kiếm",
+    "desc": "Tìm theo khách hàng hoặc sản phẩm."
+   },
+   {
+    "label": "Bộ lọc trạng thái",
+    "desc": "Đang hiển thị hoặc đã ẩn."
+   },
+   {
+    "label": "Bộ lọc phản hồi",
+    "desc": "Đã hoặc chưa được nhân viên phản hồi."
+   },
+   {
+    "label": "Bảng đánh giá",
+    "desc": "Khách hàng, sản phẩm, số sao, nhận xét, phản hồi và trạng thái."
+   },
+   {
+    "label": "Nút Ẩn",
+    "desc": "Ẩn đánh giá khỏi trang sản phẩm (quản trị viên chỉ kiểm duyệt)."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:23.799Z"
+ },
+ "S01": {
+  "group": "staff",
+  "role": "staff",
+  "url": "/staff",
+  "title": "Giao diện dashboard nhân viên",
+  "tableTitle": "Mô tả các thành phần giao diện dashboard nhân viên",
+  "width": 1280,
+  "height": 1140,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Thanh tiêu đề",
+    "desc": "Hiển thị chi nhánh được phân công, tài khoản và nút Đăng xuất."
+   },
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Tổng quan chi nhánh được phân công."
+   },
+   {
+    "label": "Menu nhân viên",
+    "desc": "Liên kết tới tổng quan, đơn cần xử lý, giao tận nơi, nhận tại cửa hàng, tồn kho, hàng khách trả, đánh giá và nhật ký biến động tồn."
+   },
+   {
+    "label": "Thẻ chi nhánh",
+    "desc": "Số phần giao đang mở, chờ nhận, đang giao, bị chặn, thất bại và tồn thấp của chi nhánh được phân công."
+   },
+   {
+    "label": "Liên kết Xem tất cả phần giao",
+    "desc": "Mở hàng đợi đầy đủ."
+   },
+   {
+    "label": "Bảng phần giao đang xử lý",
+    "desc": "Các phần giao mới nhất của chi nhánh, kèm thao tác tiếp theo hợp lệ."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:27.142Z"
+ },
+ "S02": {
+  "group": "staff",
+  "role": "staff",
+  "url": "/staff/fulfillments?open=false",
+  "title": "Giao diện hàng đợi phần giao hàng",
+  "tableTitle": "Mô tả các thành phần giao diện hàng đợi phần giao hàng",
+  "width": 1280,
+  "height": 1330,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Hàng đợi phần giao của chi nhánh."
+   },
+   {
+    "label": "Ô tìm khách hàng",
+    "desc": "Tìm theo tên, email hoặc người nhận."
+   },
+   {
+    "label": "Bộ lọc trạng thái",
+    "desc": "Trạng thái phần giao."
+   },
+   {
+    "label": "Bộ lọc loại",
+    "desc": "Giao tận nơi hoặc nhận tại cửa hàng."
+   },
+   {
+    "label": "Ô mã đơn",
+    "desc": "Tìm đúng một đơn."
+   },
+   {
+    "label": "Nút Áp dụng",
+    "desc": "Áp dụng bộ lọc."
+   },
+   {
+    "label": "Bảng phần giao",
+    "desc": "Phần giao, đơn, loại, trạng thái, thanh toán, khách và thao tác."
+   },
+   {
+    "label": "Nút thao tác",
+    "desc": "Thao tác hợp lệ tiếp theo của phần giao (khác nhau theo trạng thái)."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:29.776Z"
+ },
+ "S03": {
+  "group": "staff",
+  "role": "staff",
+  "url": "/staff/fulfillments/pickup",
+  "title": "Giao diện hàng đợi nhận tại cửa hàng",
+  "tableTitle": "Mô tả các thành phần giao diện hàng đợi nhận tại cửa hàng",
+  "width": 1280,
+  "height": 900,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Phần giao nhận tại cửa hàng của chi nhánh."
+   },
+   {
+    "label": "Bộ lọc",
+    "desc": "Lọc theo từ khóa, trạng thái, mã đơn, khoảng ngày."
+   },
+   {
+    "label": "Bảng phần giao",
+    "desc": "Các phần nhận tại cửa hàng cần xử lý."
+   },
+   {
+    "label": "Nút xác nhận nhận hàng",
+    "desc": "Xác nhận bàn giao khi khách đưa đúng mã nhận hàng."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:31.341Z"
+ },
+ "S04": {
+  "group": "staff",
+  "role": "staff",
+  "url": "/staff/fulfillments/5",
+  "title": "Giao diện chi tiết phần giao đang giao (giao tận nơi)",
+  "tableTitle": "Mô tả các thành phần giao diện chi tiết phần giao tận nơi",
+  "width": 1280,
+  "height": 1556,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Nút Danh sách phần giao hàng",
+    "desc": "Quay lại hàng đợi."
+   },
+   {
+    "label": "Tiêu đề",
+    "desc": "Phần giao và đơn hàng tương ứng."
+   },
+   {
+    "label": "Sản phẩm của phần giao",
+    "desc": "Chỉ các dòng hàng do chi nhánh này cung cấp."
+   },
+   {
+    "label": "Nút Xác nhận giao thành công",
+    "desc": "Hoàn tất phần giao; với đơn COD ghi nhận thu tiền."
+   },
+   {
+    "label": "Ô lý do thất bại",
+    "desc": "Bắt buộc 5-500 ký tự khi báo giao không thành công."
+   },
+   {
+    "label": "Nút Giao hàng không thành công",
+    "desc": "Đặt phần giao FAILED; đơn chuyển NEEDS_ATTENTION chờ quản trị viên."
+   },
+   {
+    "label": "Lịch sử phần giao",
+    "desc": "Các thay đổi trạng thái của phần giao và người thực hiện."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:34.179Z"
+ },
+ "S05": {
+  "group": "staff",
+  "role": "staff",
+  "url": "/staff/fulfillments/6",
+  "title": "Giao diện chi tiết phần giao nhận tại cửa hàng (xác minh mã)",
+  "tableTitle": "Mô tả các thành phần giao diện xác minh mã nhận hàng",
+  "width": 1280,
+  "height": 1575,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề",
+    "desc": "Phần giao nhận tại cửa hàng."
+   },
+   {
+    "label": "Ô mã nhận hàng",
+    "desc": "Nhập mã khách đọc; sai 5 lần thì khóa 15 phút."
+   },
+   {
+    "label": "Nút Xác nhận khách đã nhận hàng",
+    "desc": "Hoàn tất phần giao khi mã đúng; đơn thanh toán tại cửa hàng ghi nhận thu tiền."
+   },
+   {
+    "label": "Ô lý do",
+    "desc": "Lý do khi khách không nhận hàng."
+   },
+   {
+    "label": "Nút Khách không nhận hàng",
+    "desc": "Đặt phần giao FAILED chờ quản trị viên xử lý."
+   },
+   {
+    "label": "Lịch sử phần giao",
+    "desc": "Các thay đổi trạng thái của phần giao."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:37.006Z"
+ },
+ "S06": {
+  "group": "staff",
+  "role": "staff",
+  "url": "/staff/stock",
+  "title": "Giao diện tồn kho chi nhánh",
+  "tableTitle": "Mô tả các thành phần giao diện tồn kho chi nhánh",
+  "width": 1280,
+  "height": 1500,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Tồn kho của chi nhánh được phân công."
+   },
+   {
+    "label": "Liên kết Nhật ký biến động tồn",
+    "desc": "Mở nhật ký biến động kho."
+   },
+   {
+    "label": "Thẻ thống kê tồn",
+    "desc": "Số SKU tại chi nhánh, số mặt hàng sắp hết (1 đến 5) và hết hàng còn bán."
+   },
+   {
+    "label": "Ô tìm kiếm",
+    "desc": "Tìm theo SKU hoặc tên sản phẩm."
+   },
+   {
+    "label": "Bộ lọc mức tồn",
+    "desc": "Hết hàng, sắp hết, đủ hàng."
+   },
+   {
+    "label": "Sắp xếp",
+    "desc": "Theo tên hoặc số lượng tồn."
+   },
+   {
+    "label": "Bảng tồn kho",
+    "desc": "Sản phẩm, SKU, số lượng, đang giữ và trạng thái."
+   },
+   {
+    "label": "Nút Điều chỉnh tồn",
+    "desc": "Mở biểu mẫu điều chỉnh số lượng."
+   },
+   {
+    "label": "Nút Lịch sử",
+    "desc": "Xem lịch sử biến động của sản phẩm."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:41.076Z"
+ },
+ "S07": {
+  "group": "staff",
+  "role": "staff",
+  "url": "/staff/stock/1/adjust",
+  "title": "Giao diện điều chỉnh tồn kho",
+  "tableTitle": "Mô tả các thành phần giao diện điều chỉnh tồn kho",
+  "width": 1280,
+  "height": 900,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề",
+    "desc": "Sản phẩm đang điều chỉnh tồn."
+   },
+   {
+    "label": "Liên kết Tồn kho chi nhánh",
+    "desc": "Quay lại bảng tồn kho."
+   },
+   {
+    "label": "Ô số lượng mới",
+    "desc": "Số lượng tồn mới (không âm, không thấp hơn số đang giữ)."
+   },
+   {
+    "label": "Ô ghi chú",
+    "desc": "Lý do điều chỉnh, ghi vào biến động kho."
+   },
+   {
+    "label": "Nút Lưu điều chỉnh",
+    "desc": "Lưu và ghi biến động STOCK_ADJUST."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:42.627Z"
+ },
+ "S08": {
+  "group": "staff",
+  "role": "staff",
+  "url": "/staff/inventory-history",
+  "title": "Giao diện nhật ký biến động tồn",
+  "tableTitle": "Mô tả các thành phần giao diện nhật ký biến động tồn",
+  "width": 1280,
+  "height": 1500,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Nhật ký biến động tồn của chi nhánh."
+   },
+   {
+    "label": "Ô tìm kiếm",
+    "desc": "Tìm theo SKU, sản phẩm, ghi chú hoặc mã đơn."
+   },
+   {
+    "label": "Bộ lọc loại biến động",
+    "desc": "Đặt hàng, hủy đơn, điều chỉnh, hàng trả..."
+   },
+   {
+    "label": "Bộ lọc nhân viên",
+    "desc": "Nhân viên đã ghi nhận."
+   },
+   {
+    "label": "Từ ngày",
+    "desc": "Giới hạn khoảng ngày."
+   },
+   {
+    "label": "Bảng nhật ký",
+    "desc": "Thời điểm, sản phẩm, loại, số lượng trước/sau, người thực hiện, ghi chú."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:48.855Z"
+ },
+ "S09": {
+  "group": "staff",
+  "role": "staff",
+  "url": "/staff/inventory-history/1",
+  "title": "Giao diện lịch sử biến động tồn của một sản phẩm",
+  "tableTitle": "Mô tả các thành phần giao diện lịch sử biến động của sản phẩm",
+  "width": 1280,
+  "height": 900,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề",
+    "desc": "Lịch sử biến động của sản phẩm tại chi nhánh."
+   },
+   {
+    "label": "Liên kết Nhật ký chung",
+    "desc": "Quay lại nhật ký toàn chi nhánh."
+   },
+   {
+    "label": "Nút Điều chỉnh tồn",
+    "desc": "Mở biểu mẫu điều chỉnh."
+   },
+   {
+    "label": "Bảng biến động",
+    "desc": "Các lần biến động của sản phẩm."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:50.428Z"
+ },
+ "S10": {
+  "group": "staff",
+  "role": "staff",
+  "url": "/staff/returns",
+  "title": "Giao diện hàng khách trả",
+  "tableTitle": "Mô tả các thành phần giao diện hàng khách trả",
+  "width": 1280,
+  "height": 900,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Dòng hàng trả đã được quản trị viên duyệt cho chi nhánh."
+   },
+   {
+    "label": "Danh sách dòng hàng trả",
+    "desc": "Mỗi dòng cho phép chọn nhập lại kho hoặc xử lý; trạng thái rỗng khi chưa có hàng trả."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:51.940Z"
+ },
+ "S11": {
+  "group": "staff",
+  "role": "staff",
+  "url": "/staff/reviews",
+  "title": "Giao diện đánh giá của chi nhánh",
+  "tableTitle": "Mô tả các thành phần giao diện đánh giá của chi nhánh",
+  "width": 1280,
+  "height": 1000,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Đánh giá từ hàng đã giao của chi nhánh; mỗi đánh giá có một phản hồi, có thể sửa lại."
+   },
+   {
+    "label": "Thẻ đánh giá",
+    "desc": "Sản phẩm, số sao, đơn và phần giao nguồn, nhận xét của khách và trạng thái phản hồi."
+   },
+   {
+    "label": "Nhãn Đã phản hồi",
+    "desc": "Cho biết nhân viên đã trả lời đánh giá."
+   },
+   {
+    "label": "Nút Xem / sửa phản hồi",
+    "desc": "Mở ô nhập để trả lời hoặc sửa phản hồi."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:54.063Z"
+ },
+ "S12": {
+  "group": "staff",
+  "role": "staff",
+  "url": "/staff/reviews/1",
+  "title": "Giao diện chi tiết đánh giá và phản hồi",
+  "tableTitle": "Mô tả các thành phần giao diện chi tiết đánh giá",
+  "width": 1280,
+  "height": 900,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Liên kết Đánh giá của chi nhánh",
+    "desc": "Quay lại danh sách đánh giá."
+   },
+   {
+    "label": "Ô phản hồi",
+    "desc": "Nội dung phản hồi của nhân viên chi nhánh nguồn."
+   },
+   {
+    "label": "Nút Lưu phản hồi",
+    "desc": "Lưu phản hồi (mỗi đánh giá một phản hồi)."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:35:55.585Z"
+ },
+ "C09": {
+  "group": "customer",
+  "role": "guest",
+  "url": "/stores",
+  "title": "Giao diện tra cứu hệ thống cửa hàng",
+  "tableTitle": "Mô tả các thành phần giao diện tra cứu cửa hàng",
+  "width": 1280,
+  "height": 1250,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Đầu trang tra cứu",
+    "desc": "Tiêu đề và mô tả về mạng lưới cửa hàng; chứa bộ lọc tỉnh/thành và khu vực."
+   },
+   {
+    "label": "Thẻ chi nhánh",
+    "desc": "Tên, khu vực, trạng thái hoạt động, địa chỉ, giờ mở cửa và dịch vụ của một chi nhánh."
+   },
+   {
+    "label": "Nhãn trạng thái",
+    "desc": "Cho biết chi nhánh đang hoạt động hay tạm ngưng (chi nhánh tạm ngưng không chọn được)."
+   },
+   {
+    "label": "Dịch vụ của chi nhánh",
+    "desc": "Cho biết chi nhánh hỗ trợ giao tận nơi, nhận tại cửa hàng hoặc cả hai."
+   },
+   {
+    "label": "Nút Xem sản phẩm tại cửa hàng",
+    "desc": "Lưu chi nhánh đã chọn vào cookie và chuyển tới danh sách sản phẩm theo tồn của chi nhánh."
+   }
+  ],
+  "capturedAt": "2026-10-25T03:36:08.141Z"
+ }
+}

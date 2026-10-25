@@ -1,0 +1,78 @@
+{
+ "id": "QT-12",
+ "title": "Quản lý khuyến mãi",
+ "lanes": [
+  "Quản trị viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Quản trị viên"
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Mở /admin/promotions; chọn Tạo, Sửa hoặc Xóa mã"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Thao tác là xóa?",
+   "tạo / sửa",
+   "xóa",
+   [
+    "Khóa dòng mã khuyến mãi",
+    "Đã có lượt dùng thì báo lỗi, gợi ý Ngừng áp dụng; chưa thì xóa",
+    "Chuyển ?success"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Biểu mẫu PromotionRequest hợp lệ?",
+   "có",
+   "không",
+   [
+    "Hiển thị lại form kèm lỗi"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Mã 3–30 ký tự đúng mẫu và chưa tồn tại (khi tạo)?",
+   "đạt",
+   "không",
+   [
+    "Báo lỗi trường code"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Giá trị giảm, mức trần, hạn kết thúc, số lượt hợp lệ?",
+   "hợp lệ",
+   "sai",
+   [
+    "Báo lỗi trường tương ứng"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Lưu Promotion (khi sửa: khóa dòng trước)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển hướng về danh sách"
+  ],
+  [
+   "end",
+   "Quản trị viên"
+  ]
+ ]
+}

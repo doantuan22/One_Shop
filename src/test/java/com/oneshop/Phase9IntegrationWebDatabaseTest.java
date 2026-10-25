@@ -43,8 +43,10 @@ class Phase9IntegrationWebDatabaseTest extends V3RegressionTestSupport {
     }
 
     @Test
-    void multipleAssignmentsAllowOnlyActiveStoreAndUseAuthenticatedActor() throws Exception {
-        assign(STAFF_GOVAP,"OS-THUDUC");long id=cod();data.asStaff(STAFF_GOVAP,()->staff.perform(part(id),FulfillmentAction.PREPARE,null));assertThat(count("select count(*) from dbo.order_fulfillment_status_history where fulfillment_id=? and changed_by_user_id=?",part(id),userId(STAFF_GOVAP))).isEqualTo(1);jdbc.update("update dbo.staff_store_assignments set status='INACTIVE' where user_id=? and store_id=1",userId(STAFF_GOVAP));unchanged(id,()->data.asStaff(STAFF_GOVAP,()->staff.perform(part(id),FulfillmentAction.PACK,null)),AccessDeniedException.class);
+    void transferredStaffActsOnlyAtTheNewStoreAndUsesAuthenticatedActor() throws Exception {
+        long id=cod();
+        assertThatThrownBy(()->data.asStaff(STAFF_GOVAP,()->staff.perform(part(id),FulfillmentAction.PREPARE,null))).isInstanceOf(AccessDeniedException.class);
+        transfer(STAFF_GOVAP,"OS-THUDUC");data.asStaff(STAFF_GOVAP,()->staff.perform(part(id),FulfillmentAction.PREPARE,null));assertThat(count("select count(*) from dbo.order_fulfillment_status_history where fulfillment_id=? and changed_by_user_id=?",part(id),userId(STAFF_GOVAP))).isEqualTo(1);jdbc.update("update dbo.staff_store_assignments set status='INACTIVE' where user_id=? and store_id=1",userId(STAFF_GOVAP));unchanged(id,()->data.asStaff(STAFF_GOVAP,()->staff.perform(part(id),FulfillmentAction.PACK,null)),AccessDeniedException.class);
     }
 
     @ParameterizedTest @CsvSource({"DELIVERY,PAY_AT_STORE", "STORE_PICKUP,COD"})

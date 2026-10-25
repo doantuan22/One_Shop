@@ -1,0 +1,7 @@
+{
+  "database" : "oneshop_audit2_test",
+  "timestamp" : "2026-10-25T05:33:55.955446200Z",
+  "scenario" : "delete-rollback-BRAND",
+  "files" : [ "qa-fix/old-BRAND" ],
+  "tasks" : [ ]
+}

@@ -1,0 +1,14 @@
+{
+  "expected" : 403,
+  "executedAt" : "2026-10-25T11:54:28.240495500Z",
+  "location" : "",
+  "route" : {
+    "controller" : "com.oneshop.controller.admin.AdminReviewController",
+    "method" : "reply",
+    "verb" : "POST",
+    "path" : "/admin/reviews/{id}/reply"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/admin/reviews/999999999/reply",
+  "actual" : 403
+}

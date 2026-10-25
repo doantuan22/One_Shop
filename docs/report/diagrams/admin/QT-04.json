@@ -1,0 +1,77 @@
+{
+ "id": "QT-04",
+ "title": "Quản lý danh mục và thương hiệu",
+ "lanes": [
+  "Quản trị viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Quản trị viên"
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Mở /admin/categories hoặc /admin/brands; nhập tên, mô tả, trạng thái"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Biểu mẫu hợp lệ?",
+   "có",
+   "không",
+   [
+    "Hiển thị lại form kèm lỗi"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Kiểm tra tên đã tồn tại",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Tên chưa dùng (bởi bản ghi khác)?",
+   "chưa",
+   "đã dùng",
+   [
+    "Báo lỗi tên danh mục hoặc thương hiệu đã tồn tại"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Lưu Category hoặc Brand (khi sửa: khóa dòng trước)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Nếu có tệp: tải lên Cloudinary, lưu URL và public_id",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Xóa ảnh cũ trên Cloudinary sau commit"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển hướng ?success=created hoặc updated"
+  ],
+  [
+   "end",
+   "Quản trị viên"
+  ]
+ ]
+}

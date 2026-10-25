@@ -19,7 +19,7 @@ class QaFixPagingHttpDatabaseIntegrationTest extends V3RegressionTestSupport {
                         String.valueOf(page>=0&&(long)page*size>Integer.MAX_VALUE?400:200)});
         }
         return inputs.stream().map(i->DynamicTest.dynamicTest(i[0]+"?"+i[1],()->{
-            String actor=i[0].startsWith("/admin")?ADMIN:i[0].startsWith("/staff")?"staff.thuduc@oneshop.vn":null;
+            String actor=i[0].startsWith("/admin")?ADMIN:i[0].startsWith("/staff")?"staff.thuduc@example.com":null;
             var response=getAs(actor,i[0]+"?"+i[1]);int expected=Integer.parseInt(i[2]);
             var dir=QaAuditEvidence.directory("paging");java.nio.file.Files.createDirectories(dir);
             new com.fasterxml.jackson.databind.ObjectMapper().writeValue(dir.resolve(Integer.toUnsignedString((i[0]+i[1]).hashCode())+".json").toFile(),

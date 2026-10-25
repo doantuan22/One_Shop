@@ -68,11 +68,11 @@ import static org.mockito.Mockito.reset;
 @EnabledIf("com.oneshop.DatabaseFoundationIntegrationTest#databaseConfigured")
 class PartialRefundDatabaseIntegrationTest {
 
-    static final String ADMIN = "admin@oneshop.vn";
+    static final String ADMIN = "admin@example.com";
     static final String ALICE = "khachhang1@example.com";
     static final String BOB = "khachhang2@example.com";
-    static final String STAFF_THUDUC = "staff.thuduc@oneshop.vn";
-    static final String STAFF_GOVAP = "staff.govap@oneshop.vn";
+    static final String STAFF_THUDUC = "staff.thuduc@example.com";
+    static final String STAFF_GOVAP = "staff.govap@example.com";
     static final String SERUM = "SIMPLE-PURIFY-150";
     static final String SHAMPOO = "VASELINE-LIP-ORIG-48";
 

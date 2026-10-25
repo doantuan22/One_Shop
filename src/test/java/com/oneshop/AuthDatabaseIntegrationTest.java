@@ -45,9 +45,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class AuthDatabaseIntegrationTest {
 
     private static final String SEED_PASSWORD = "OneShop@123";
-    private static final String ADMIN = "admin@oneshop.vn";
-    private static final String STAFF_THU_DUC = "staff.thuduc@oneshop.vn";
-    private static final String STAFF_GO_VAP = "staff.govap@oneshop.vn";
+    private static final String ADMIN = "admin@example.com";
+    private static final String STAFF_THU_DUC = "staff.thuduc@example.com";
+    private static final String STAFF_GO_VAP = "staff.govap@example.com";
     private static final String CUSTOMER = "khachhang1@example.com";
 
     @PersistenceContext

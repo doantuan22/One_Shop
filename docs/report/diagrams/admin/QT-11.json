@@ -1,0 +1,89 @@
+{
+ "id": "QT-11",
+ "title": "Duyệt hoặc từ chối yêu cầu trả hàng",
+ "lanes": [
+  "Quản trị viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Quản trị viên"
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Mở /admin/returns/{id}, xem lý do, ảnh, dòng hàng"
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Chọn Duyệt hoặc Từ chối (kèm lý do)"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Thao tác là duyệt?",
+   "duyệt",
+   "từ chối",
+   [
+    "Lý do từ chối 5–400 ký tự",
+    "Khóa đơn và yêu cầu, còn REQUESTED",
+    "Ghi REJECTED, người duyệt, ghi chú"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Khóa đơn rồi khóa yêu cầu trả hàng",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Yêu cầu còn ở trạng thái REQUESTED?",
+   "còn",
+   "đã xử lý",
+   [
+    "409 Đã được xử lý trước đó"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "refundReturn: ghi PaymentRefund (RETURN) và mô phỏng hoàn tiền",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Mô phỏng hoàn tiền thành công?",
+   "có",
+   "không",
+   [
+    "Hoàn tác giao dịch; báo thử lại"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Đặt APPROVED, ghi người duyệt và thời điểm",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển hướng về chi tiết yêu cầu"
+  ],
+  [
+   "end",
+   "Quản trị viên"
+  ]
+ ]
+}

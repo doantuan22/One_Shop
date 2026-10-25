@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 @EnabledIf("com.oneshop.DatabaseFoundationIntegrationTest#databaseConfigured")
 class AdminAttentionAndPaymentCasesDatabaseIntegrationTest {
 
-    static final String ADMIN = "admin@oneshop.vn";
+    static final String ADMIN = "admin@example.com";
     static final String ALICE = "khachhang1@example.com";
     static final String SERUM = "SIMPLE-PURIFY-150";
     static final String TONER = "CERAVE-HYDRA-236";
@@ -384,7 +384,7 @@ class AdminAttentionAndPaymentCasesDatabaseIntegrationTest {
     @Test
     @DisplayName("ADM-11 only an administrator can read the console and the Dashboard numbers")
     void onlyAdmins() {
-        for (String[] who : new String[][] {{ALICE, "ROLE_CUSTOMER"}, {"staff.thuduc@oneshop.vn", "ROLE_STAFF"}}) {
+        for (String[] who : new String[][] {{ALICE, "ROLE_CUSTOMER"}, {"staff.thuduc@example.com", "ROLE_STAFF"}}) {
             try {
                 data.asRole(who[0], who[1], () -> adminPayments.getCases(PaymentCaseCategory.ATTENTION, null, 0));
                 throw new AssertionError("role " + who[1] + " must not read the payment console");

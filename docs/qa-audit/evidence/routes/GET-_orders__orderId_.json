@@ -1,0 +1,14 @@
+{
+  "expected" : 302,
+  "executedAt" : "2026-10-25T11:54:31.522555400Z",
+  "location" : "http://localhost:60631/login",
+  "route" : {
+    "controller" : "com.oneshop.controller.client.CustomerOrderController",
+    "method" : "detail",
+    "verb" : "GET",
+    "path" : "/orders/{orderId}"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/orders/999999999",
+  "actual" : 302
+}

@@ -1,0 +1,14 @@
+{
+  "expected" : 302,
+  "executedAt" : "2026-10-25T11:54:32.987805900Z",
+  "location" : "http://localhost:60631/login",
+  "route" : {
+    "controller" : "com.oneshop.controller.staff.StaffReviewController",
+    "method" : "list",
+    "verb" : "GET",
+    "path" : "/staff/reviews"
+  },
+  "kind" : "anonymous guard/input probe",
+  "requestPath" : "/staff/reviews",
+  "actual" : 302
+}

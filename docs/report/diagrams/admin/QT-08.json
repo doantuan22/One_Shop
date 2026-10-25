@@ -1,0 +1,80 @@
+{
+ "id": "QT-08",
+ "title": "Quản lý đơn hàng toàn chuỗi",
+ "lanes": [
+  "Quản trị viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Quản trị viên"
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Mở /admin/orders, chọn bộ lọc"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Khoảng ngày hợp lệ (SqlDayRange)?",
+   "hợp lệ",
+   "sai",
+   [
+    "Từ chối: khoảng ngày không hợp lệ"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Chỉ xem đơn cần xử lý (attention)?",
+   "không",
+   "có",
+   [
+    "Lấy đơn NEEDS_ATTENTION và chờ thanh toán quá hạn",
+    "Hiển thị danh sách đơn cần xử lý"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "searchAdmin theo bộ lọc, phân trang 20; kèm số phần giao và chi nhánh",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Chọn một đơn (/admin/orders/{id})"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Đơn tồn tại?",
+   "có",
+   "không",
+   [
+    "404 Không tìm thấy đơn hàng"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Nạp chi tiết, ngoại lệ giao hàng, hoàn tiền, yêu cầu trả hàng",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Hiển thị trang admin/order-detail"
+  ],
+  [
+   "end",
+   "Quản trị viên"
+  ]
+ ]
+}

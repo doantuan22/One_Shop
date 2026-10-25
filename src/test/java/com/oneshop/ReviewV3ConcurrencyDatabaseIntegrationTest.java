@@ -50,9 +50,12 @@ class ReviewV3ConcurrencyDatabaseIntegrationTest extends ReviewV3TestSupport {
     }
 
     @Test void twoStaffRepliesSerializeIntoOneOfficialRow() throws Exception {
-        assign(STAFF_GOVAP, "OS-THUDUC");
         for (int round = 0; round < 3; round++) {
+            // the Gò Vấp Staff completes the Gò Vấp part at its own Store ...
+            transfer(STAFF_GOVAP, "OS-GOVAP");
             long order = partiallyReceived(false), id = submit(item(order, "OS-THUDUC")).id();
+            // ... and is then moved to Thủ Đức, so two Staff of the same Store reply at once (each Staff works at one Store)
+            transfer(STAFF_GOVAP, "OS-THUDUC");
             var outcomes = race(() -> { reply(STAFF_THUDUC, id, "Nhân viên A"); return null; },
                     () -> { reply(STAFF_GOVAP, id, "Nhân viên B"); return null; });
             assertThat(outcomes).containsExactly("ok", "ok");

@@ -1,0 +1,72 @@
+{
+ "id": "NV-09",
+ "title": "Phản hồi đánh giá của khách",
+ "lanes": [
+  "Nhân viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Nhân viên"
+  ],
+  [
+   "act",
+   "Nhân viên",
+   "Mở /staff/reviews, chọn một đánh giá, nhập phản hồi"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "getStaffReviews: đánh giá ACTIVE có nguồn hàng thuộc chi nhánh được phân công",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Khóa dòng Review theo id",
+   {
+    "db": true
+   }
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Đánh giá ACTIVE, nguồn hàng đã nhận, chi nhánh nguồn thuộc phạm vi?",
+   "có",
+   "không",
+   [
+    "403 Không được phân công xử lý đánh giá"
+   ]
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Nội dung phản hồi hợp lệ (ReviewContent.reply)?",
+   "có",
+   "không",
+   [
+    "Chuyển ?replyError=invalid"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tạo hoặc cập nhật ReviewReply (một phản hồi cho mỗi đánh giá)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển /staff/reviews?replied"
+  ],
+  [
+   "end",
+   "Nhân viên"
+  ]
+ ]
+}

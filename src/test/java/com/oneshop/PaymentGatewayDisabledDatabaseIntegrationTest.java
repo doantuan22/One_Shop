@@ -95,7 +95,7 @@ class PaymentGatewayDisabledDatabaseIntegrationTest {
                     .isInstanceOfSatisfying(PaymentConflictException.class,
                             ex -> assertThat(ex.getCode()).isEqualTo(PaymentConflictException.GATEWAY_DISABLED));
         }
-        assertThatThrownBy(() -> data.asRole("admin@oneshop.vn", "ROLE_ADMIN",
+        assertThatThrownBy(() -> data.asRole("admin@example.com", "ROLE_ADMIN",
                 () -> adminPayments.settleGateway(order, true))).isInstanceOf(PaymentConflictException.class);
         assertThat(data.orderStatus(order)).isEqualTo("PENDING_PAYMENT");
         assertThat(data.payments(order).get(0).get("paid_at")).isNull();

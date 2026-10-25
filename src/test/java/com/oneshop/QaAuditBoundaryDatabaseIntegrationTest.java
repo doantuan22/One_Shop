@@ -23,8 +23,8 @@ class QaAuditBoundaryDatabaseIntegrationTest extends V3RegressionTestSupport {
                     "from=invalid&to=invalid","from=2026-10-25&to=2026-10-24","status=INVALID","storeId=9223372036854775808"))
                 cases.add(new String[]{route,params});
         return cases.stream().map(input->DynamicTest.dynamicTest(input[0]+"?"+input[1],()->{
-            String path=input[0]+"?"+input[1];String actor=path.startsWith("/admin")?"admin@oneshop.vn":
-                    path.startsWith("/staff")?"staff.thuduc@oneshop.vn":null;
+            String path=input[0]+"?"+input[1];String actor=path.startsWith("/admin")?"admin@example.com":
+                    path.startsWith("/staff")?"staff.thuduc@example.com":null;
             var response=getAs(actor,path);
             Path dir=QaAuditEvidence.directory("boundaries");Files.createDirectories(dir);
             String key=Integer.toUnsignedString(path.hashCode());

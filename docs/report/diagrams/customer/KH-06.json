@@ -1,0 +1,61 @@
+{
+ "id": "KH-06",
+ "title": "Tra cứu và chọn chi nhánh",
+ "lanes": [
+  "Khách hàng",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Khách hàng"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Mở /stores, chọn tỉnh/thành và khu vực"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "findStores: lọc chi nhánh theo tỉnh/thành, khu vực",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Hiển thị danh sách chi nhánh, giờ mở cửa, hỗ trợ giao/nhận"
+  ],
+  [
+   "act",
+   "Khách hàng",
+   "Bấm chọn một chi nhánh (POST /stores/select)"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Chi nhánh tồn tại và ACTIVE?",
+   "có",
+   "không",
+   [
+    "Chuyển /stores?error=unavailable"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Ghi cookie chi nhánh đã chọn"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Chuyển về returnTo nếu là đường dẫn nội bộ, mặc định /products"
+  ],
+  [
+   "end",
+   "Khách hàng"
+  ]
+ ]
+}
