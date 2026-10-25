@@ -17,6 +17,11 @@ cleanup() {
 trap cleanup EXIT
 
 aws ssm get-parameter --name /oneshop/demo/app-env --with-decryption --query Parameter.Value --output text > "$tmp_env"
+# The JDBC URL pins the RDS listener certificate hostname. Drop legacy environment overrides,
+# while retaining the truststore settings used to validate the RDS certificate chain.
+if grep -q '^DB_JDBC_OPTIONS=.*hostNameInCertificate=' "$tmp_env"; then
+  sed -i -E '/^DB_JDBC_OPTIONS=/ { s/(^|;)hostNameInCertificate=[^;]*//g; s/^DB_JDBC_OPTIONS=;/DB_JDBC_OPTIONS=/; s/;;+/;/g; }' "$tmp_env"
+fi
 grep -q '^DB_HOST=' "$tmp_env"
 grep -q '^DB_USERNAME=' "$tmp_env"
 grep -q '^DB_PASSWORD=' "$tmp_env"
