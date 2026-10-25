@@ -320,7 +320,7 @@ Resources:
             sleep 5
           done
           test -s /tmp/rds-ca-bundle.pem
-          dnf install -y java-21-amazon-corretto-headless nginx python3.11 python3.11-pip curl git
+          dnf install -y java-21-amazon-corretto-headless nginx python3.11 python3.11-pip git
           groupadd --system oneshop 2>/dev/null || true
           id oneshop >/dev/null 2>&1 || useradd --system --gid oneshop --home-dir /opt/oneshop --shell /sbin/nologin oneshop
           install -d -o oneshop -g oneshop -m 0750 /opt/oneshop /opt/oneshop/releases
