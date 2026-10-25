@@ -4,11 +4,11 @@ This runbook is for the course project only. It publishes the current demo catal
 
 ## Layout and cost controls
 
-- One Amazon Linux 2023 EC2 `t3a.medium` serves the Spring app behind Nginx. It has an Elastic IP, encrypted 20 GiB gp3 disk, SSM access, and no inbound SSH.
-- Amazon RDS SQL Server Express `db.t3.small` uses encrypted 20 GiB gp3 storage, one AZ, one day of backups, and private subnets. Port 1433 accepts connections only from the app security group.
+- One Amazon Linux 2023 EC2 `t3.small` serves the Spring app behind Nginx. It has 2 GiB RAM, an Elastic IP, encrypted 20 GiB gp3 disk, SSM access, and no inbound SSH.
+- Amazon RDS SQL Server Express `db.t3.micro` uses encrypted 20 GiB gp3 storage, one AZ, one day of backups, and private subnets. Port 1433 accepts connections only from the app security group. This preserves the SQL Server engine used by the existing seed.
 - There is no NAT Gateway, load balancer, or purchased domain. HTTPS uses a short-lived Let's Encrypt certificate for the Elastic IP.
 - GitHub Actions uses OIDC credentials restricted to `doantuan22/One_Shop` on `main`. Release jars are immutable S3 objects and expire after 15 days.
-- Budget about USD 50–60 for 15 days from the estimate already reviewed. Actual AWS billing can differ because of region pricing, taxes, credits, transfer, or time running. Resource tags are reminders, not automatic expiry. Delete the stack before day 15 if the demo should stop then.
+- These EC2 and RDS instance classes are eligible for the AWS Free plan. Free plan access uses AWS credits and has service limits; it is not an unlimited free tier. The `db.t3.micro` SQL Server Express instance is intentionally small and suited to a light student demo, not production traffic. Other resources such as public IPv4, EBS/RDS storage, snapshots, data transfer, and taxes may still consume credits. Resource tags are reminders, not automatic expiry. Delete the stack before day 15 if the demo should stop then.
 
 ## 1. Create the AWS stack
 

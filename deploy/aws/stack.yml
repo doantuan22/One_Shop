@@ -284,7 +284,7 @@ Resources:
       - PublicRoute
     Properties:
       ImageId: '{{resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64}}'
-      InstanceType: t3a.medium
+      InstanceType: t3.small
       CreditSpecification:
         CPUCredits: standard
       IamInstanceProfile: !Ref AppInstanceProfile
@@ -309,12 +309,12 @@ Resources:
         Fn::Base64: |
           #!/bin/bash
           set -euxo pipefail
-          # Wait for the Elastic IP association to provide outbound internet before bootstrapping.
+          # The Elastic IP is associated after this instance is created. Wait for its
+          # outbound route before package installs and certificate downloads begin.
           for attempt in $(seq 1 60); do
             if curl --fail --silent --connect-timeout 5 --max-time 15 \
               https://truststore.pki.rds.amazonaws.com/ap-southeast-1/ap-southeast-1-bundle.pem \
-              -o /tmp/rds-ca-bundle.pem.tmp; then
-              mv /tmp/rds-ca-bundle.pem.tmp /tmp/rds-ca-bundle.pem
+              -o /tmp/rds-ca-bundle.pem; then
               break
             fi
             sleep 5
@@ -327,7 +327,6 @@ Resources:
           install -d -o root -g oneshop -m 0750 /etc/oneshop
           install -d -o root -g root -m 0755 /var/www/certbot/.well-known/acme-challenge
           install -o root -g oneshop -m 0640 /dev/null /etc/oneshop/oneshop.env
-          
           cp /tmp/rds-ca-bundle.pem /etc/pki/ca-trust/source/anchors/aws-rds-ca-bundle.pem
           update-ca-trust extract
           python3.11 - <<'PY'
@@ -486,7 +485,7 @@ Resources:
     Properties:
       Engine: sqlserver-ex
       LicenseModel: license-included
-      DBInstanceClass: db.t3.small
+      DBInstanceClass: db.t3.micro
       AllocatedStorage: '20'
       StorageType: gp3
       StorageEncrypted: true
