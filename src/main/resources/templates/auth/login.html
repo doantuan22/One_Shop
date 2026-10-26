@@ -92,8 +92,11 @@
             transition: color 0.3s ease;
         }
 
-        .form-control-icon {
+        /* ui-system.css loads later and sets .form-control { min-height: 40px }, which made the field 40px tall while the
+           icon is centred for 48px (4px too low): a higher specificity and a fixed height keep one shared centre */
+        .input-group-custom .form-control-icon {
             padding-left: 2.75rem !important;
+            height: 48px;
             min-height: 48px;
             border-radius: 14px;
             border: 1px solid #f0e6e3;
@@ -229,6 +232,12 @@
             background: transparent;
         }
 
+        /* Edge draws its own reveal button inside a password field: ours is the only one */
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear {
+            display: none;
+        }
+
         .pw-toggle svg[hidden] {
             display: none;
         }
@@ -339,7 +348,7 @@
                            th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
                            autocomplete="current-password"
                            required>
-                    <button type="button" class="pw-toggle" data-toggle="password" data-show="Hiện mật khẩu" data-hide="Ẩn mật khẩu" aria-label="Hiện mật khẩu" aria-pressed="false" title="Hiện mật khẩu"><svg class="i-show" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg class="i-hide" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg></button>
+                    <button type="button" class="pw-toggle" data-toggle="password" data-show="Hiện mật khẩu" data-hide="Ẩn mật khẩu" aria-label="Hiện mật khẩu" title="Hiện mật khẩu"><svg class="i-show" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg class="i-hide" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg></button>
                     <div class="invalid-feedback">
                         <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Vui lòng nhập mật khẩu</span>
                         <span th:unless="${#fields.hasErrors('password')}">Vui lòng nhập mật khẩu</span>
@@ -391,24 +400,6 @@
     })();
 </script>
 
-<script>
-    (function () {
-        document.querySelectorAll('[data-toggle]').forEach(function (toggle) {
-            toggle.addEventListener('click', function () {
-                var input = document.getElementById(toggle.getAttribute('data-toggle'));
-                if (!input) return;
-                var show = input.type === 'password';
-                input.type = show ? 'text' : 'password';
-                var label = toggle.getAttribute(show ? 'data-hide' : 'data-show');
-                toggle.setAttribute('aria-label', label);
-                toggle.setAttribute('title', label);
-                toggle.setAttribute('aria-pressed', show ? 'true' : 'false');
-                toggle.querySelector('.i-show').hidden = show;
-                toggle.querySelector('.i-hide').hidden = !show;
-                input.focus();
-            });
-        });
-    })();
-</script>
+<script th:src="@{/js/password-toggle.js}" defer></script>
 </body>
 </html>

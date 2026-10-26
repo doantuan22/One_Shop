@@ -352,6 +352,14 @@
         <span th:case="*">Hệ thống đã ghi nhận yêu cầu.</span>
     </div>
 
+    <div class="alert alert-warning border-0 rounded-4 shadow-sm py-2 px-3 mb-4 small" id="payment-gateway-off" th:if="${paymentOrder.payable() and !paymentOrder.gatewayEnabled}">
+        Cổng thanh toán hiện chưa hoạt động nên chưa thể thanh toán đơn này. Đơn sẽ tự động hủy khi hết hạn thanh toán.
+    </div>
+
+    <div class="alert alert-warning border-0 rounded-4 shadow-sm py-2 px-3 mb-4 small" id="payment-in-doubt" th:if="${paymentOrder.payable() and !paymentOrder.reconciling and paymentOrder.ledgerState == 'IN_DOUBT'}">
+        Cổng thanh toán chưa xác nhận kết quả của lần thanh toán trước. Hệ thống đang đối soát, vui lòng chưa thanh toán lại.
+    </div>
+
     <div class="alert alert-warning border-0 rounded-4 shadow-sm py-2 px-3 mb-4 small" id="payment-reconciling" th:if="${paymentOrder.reconciling}">
         Kết quả thanh toán đang được đối soát. Trong thời gian này bạn chưa thể thanh toán lại hoặc hủy đơn hàng.
     </div>
@@ -414,7 +422,7 @@
                 </div>
             </div>
 
-            <div class="mt-4 pt-3 border-top" data-pay-action th:if="${paymentOrder.payable() and !paymentOrder.reconciling}">
+            <div class="mt-4 pt-3 border-top" data-pay-action th:if="${paymentOrder.payable() and !paymentOrder.reconciling and paymentOrder.gatewayEnabled and (paymentOrder.ledgerState == null or paymentOrder.ledgerState == 'AWAITING')}">
                 <form method="post" th:action="@{/orders/{id}/payments/attempts(id=${paymentOrder.orderId})}">
                     <button id="start-payment" class="btn-start-pay" type="submit">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">

@@ -102,16 +102,6 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public PaymentResponse markOnlinePaymentSuccess(String customerEmail, Long orderId, Long paymentId) {
-        throw browserConfirmationRefused();
-    }
-
-    @Override
-    public PaymentResponse markOnlinePaymentFailed(String customerEmail, Long orderId, Long paymentId) {
-        throw browserConfirmationRefused();
-    }
-
-    @Override
     @Transactional(propagation = Propagation.MANDATORY)
     public PaymentResponse recordCodCollected(Order order) {
         if (order == null || order.getId() == null || order.getFulfillmentType() != FulfillmentType.DELIVERY
@@ -270,11 +260,6 @@ public class PaymentServiceImpl implements PaymentService {
 
     /** Reference made by the backend for the mock gateway; the browser never supplies it. */
     private static String mockReference() { return MockLedger.newReference(); }
-
-    private static BadRequestException browserConfirmationRefused() {
-        return new BadRequestException("Kết quả thanh toán chỉ được xác nhận qua cổng thanh toán của hệ thống; "
-                + "thao tác này từ trình duyệt không được chấp nhận.");
-    }
 
     private static String storeLabel(Order order) {
         if (order.getStore() != null) {

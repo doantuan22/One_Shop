@@ -17,15 +17,6 @@ public interface PaymentService {
     PaymentResponse createOnlinePaymentAttempt(String customerEmail, Long orderId);
 
     /**
-     * Closed since V3: a payment result is never taken from the browser (DEC-21). Always refused; the verified result
-     * path through the mock payment gateway is BE-05.
-     */
-    PaymentResponse markOnlinePaymentSuccess(String customerEmail, Long orderId, Long paymentId);
-
-    /** Closed since V3, see {@link #markOnlinePaymentSuccess}. */
-    PaymentResponse markOnlinePaymentFailed(String customerEmail, Long orderId, Long paymentId);
-
-    /**
      * Creates the single PENDING attempt of an ONLINE Order that checkout has just created, for the whole
      * {@code total_amount}, with a backend-made mock transaction reference. Caller owns the transaction; nothing is
      * collected and no result is simulated here.

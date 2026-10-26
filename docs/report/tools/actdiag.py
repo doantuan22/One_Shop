@@ -22,10 +22,32 @@ SIDE_W = 150
 COLORS = ["#eef3fb", "#f5f5f5", "#fbf3ea", "#eef7ee"]
 
 
+def _split_long(word, width_px):
+    """Break a word that is wider than the box, preferably after URL punctuation (/ ? & = _ . , : ;)."""
+    parts = []
+    while FONT.getlength(word) > width_px:
+        k = 1
+        while k < len(word) and FONT.getlength(word[:k + 1]) <= width_px:
+            k += 1
+        cut = max((i + 1 for i, c in enumerate(word[:k]) if c in "/?&=_.,:;"), default=k)
+        if cut < k * 0.4:
+            cut = k
+        parts.append(word[:cut])
+        word = word[cut:]
+    parts.append(word)
+    return parts
+
+
 def wrap(text, width_px):
-    words, lines, cur = text.split(), [], ""
-    for w in words:
-        trial = (cur + " " + w).strip()
+    lines, cur = [], ""
+    # pieces produced by _split_long must not be re-joined with a space, so track them
+    pieces = []
+    for w in text.split():
+        sub = _split_long(w, width_px)
+        for i, sp in enumerate(sub):
+            pieces.append((sp, i > 0))
+    for w, glue in pieces:
+        trial = (cur + ("" if glue else " ") + w).strip() if cur else w
         if FONT.getlength(trial) <= width_px:
             cur = trial
         else:

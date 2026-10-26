@@ -415,6 +415,12 @@
             outline-offset: 1px;
         }
 
+        /* Edge draws its own reveal button inside a password field: ours is the only one */
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear {
+            display: none;
+        }
+
         .acc-pw__toggle svg[hidden] {
             display: none;
         }
@@ -721,7 +727,7 @@
                                    th:classappend="${#fields.hasErrors('currentPassword')} ? 'is-invalid' : ''"
                                    th:attr="aria-invalid=${#fields.hasErrors('currentPassword')}, aria-describedby=${#fields.hasErrors('currentPassword')} ? 'currentPasswordError' : 'currentPasswordHint'"
                                    required>
-                            <button type="button" class="acc-pw__toggle" data-toggle-password="currentPasswordInput" data-label-show="Hiện mật khẩu hiện tại" data-label-hide="Ẩn mật khẩu hiện tại" aria-label="Hiện mật khẩu hiện tại" aria-pressed="false" title="Hiện mật khẩu hiện tại">
+                            <button type="button" class="acc-pw__toggle" data-toggle-password="currentPasswordInput" data-label-show="Hiện mật khẩu hiện tại" data-label-hide="Ẩn mật khẩu hiện tại" aria-label="Hiện mật khẩu hiện tại" title="Hiện mật khẩu hiện tại">
                             <svg class="icon-show" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                             <svg class="icon-hide" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
                             </button>
@@ -741,7 +747,7 @@
                                    th:classappend="${#fields.hasErrors('newPassword')} ? 'is-invalid' : ''"
                                    th:attr="aria-invalid=${#fields.hasErrors('newPassword')}, aria-describedby=${#fields.hasErrors('newPassword')} ? 'newPasswordError' : 'newPasswordHint'"
                                    required>
-                            <button type="button" class="acc-pw__toggle" data-toggle-password="newPasswordInput" data-label-show="Hiện mật khẩu mới" data-label-hide="Ẩn mật khẩu mới" aria-label="Hiện mật khẩu mới" aria-pressed="false" title="Hiện mật khẩu mới">
+                            <button type="button" class="acc-pw__toggle" data-toggle-password="newPasswordInput" data-label-show="Hiện mật khẩu mới" data-label-hide="Ẩn mật khẩu mới" aria-label="Hiện mật khẩu mới" title="Hiện mật khẩu mới">
                             <svg class="icon-show" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                             <svg class="icon-hide" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
                             </button>
@@ -765,7 +771,7 @@
                                    th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''"
                                    th:attr="aria-invalid=${#fields.hasErrors('confirmPassword')}, aria-describedby=${#fields.hasErrors('confirmPassword')} ? 'confirmPasswordError' : 'confirmPasswordHint'"
                                    required>
-                            <button type="button" class="acc-pw__toggle" data-toggle-password="confirmPasswordInput" data-label-show="Hiện mật khẩu nhập lại" data-label-hide="Ẩn mật khẩu nhập lại" aria-label="Hiện mật khẩu nhập lại" aria-pressed="false" title="Hiện mật khẩu nhập lại">
+                            <button type="button" class="acc-pw__toggle" data-toggle-password="confirmPasswordInput" data-label-show="Hiện mật khẩu nhập lại" data-label-hide="Ẩn mật khẩu nhập lại" aria-label="Hiện mật khẩu nhập lại" title="Hiện mật khẩu nhập lại">
                             <svg class="icon-show" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                             <svg class="icon-hide" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
                             </button>
@@ -799,6 +805,8 @@
     </div>
 </div>
 
+<script th:src="@{/js/password-toggle.js}" defer></script>
+
 <script>
     (function () {
         // one click saves once: the label changes while the server answers (the buttons keep their colours)
@@ -817,25 +825,6 @@
                 button.setAttribute('aria-busy', 'true');
                 var label = button.querySelector('span');
                 if (label) label.textContent = item[2];
-            });
-        });
-
-        // show / hide each password on its own; the typed text and the caret stay where they are
-        document.querySelectorAll('[data-toggle-password]').forEach(function (toggle) {
-            toggle.addEventListener('click', function () {
-                var input = document.getElementById(toggle.getAttribute('data-toggle-password'));
-                if (!input) return;
-                var show = input.type === 'password';
-                var start = input.selectionStart, end = input.selectionEnd;
-                input.type = show ? 'text' : 'password';
-                try { input.setSelectionRange(start, end); } catch (e) { /* not supported while hidden */ }
-                input.focus();
-                var label = toggle.getAttribute(show ? 'data-label-hide' : 'data-label-show');
-                toggle.setAttribute('aria-label', label);
-                toggle.setAttribute('title', label);
-                toggle.setAttribute('aria-pressed', show ? 'true' : 'false');
-                toggle.querySelector('.icon-show').hidden = show;
-                toggle.querySelector('.icon-hide').hidden = !show;
             });
         });
 

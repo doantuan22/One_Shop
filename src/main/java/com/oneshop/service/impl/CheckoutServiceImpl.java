@@ -95,7 +95,7 @@ public class CheckoutServiceImpl implements CheckoutService {
             "Có sản phẩm đã chọn không còn trong giỏ hàng của bạn. Vui lòng kiểm tra lại giỏ hàng.";
     private static final String NOTE_CONFIRMED = "Hệ thống tự xác nhận đơn hợp lệ";
     private static final String NOTE_FULFILLMENT = "Phân bổ phần hàng cho chi nhánh khi tạo đơn";
-    private static final String PHONE_PATTERN = "^[0-9+ ]{8,20}$";
+    private static final String PHONE_PATTERN = PlaceOrderRequest.RECEIVER_PHONE_REGEX;
 
     private final CartService cartService;
     private final StoreAllocationService allocationService;
@@ -184,7 +184,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         List<AllocationDemand> demands = selection.items().stream()
                 .map(item -> new AllocationDemand(item.productId(), item.quantity())).toList();
-        boolean onlineEnabled = checkoutProperties.isOnlineEnabled();
+        boolean onlineEnabled = onlineOpen();
         String deliveryBlocked = deliveryBlockedReason();
         List<PickupStoreOption> pickupStores = allocationService.pickupStoresCovering(demands).stream()
                 .map(store -> new PickupStoreOption(store.getId(), store.getName(), store.getAddress())).toList();
@@ -594,13 +594,21 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     /** Flows that stay closed until their business decision / dependency exists (fail closed). */
     private void requireOpenFlow(PlaceOrderRequest request) {
-        if (request.paymentMethod() == PaymentMethod.ONLINE && !checkoutProperties.isOnlineEnabled()) {
+        if (request.paymentMethod() == PaymentMethod.ONLINE && !onlineOpen()) {
             throw new CheckoutConflictException(CheckoutConflictException.CODE_ONLINE_CHECKOUT_DISABLED,
                     "Thanh toán trực tuyến tạm thời chưa mở. Vui lòng chọn phương thức thanh toán khác.");
         }
         if (request.fulfillmentType() == FulfillmentType.DELIVERY && deliveryBlockedReason() != null) {
             throw deliveryPolicyPending();
         }
+    }
+
+    /**
+     * ONLINE checkout is open only while the payment gateway can actually settle it: the switch is on AND the mock
+     * gateway is enabled. Otherwise an Order would be created, its stock deducted, and the customer could never pay it.
+     */
+    private boolean onlineOpen() {
+        return checkoutProperties.isOnlineEnabled() && paymentProperties.isMockGatewayEnabled();
     }
 
     private CheckoutConflictException deliveryPolicyPending() {

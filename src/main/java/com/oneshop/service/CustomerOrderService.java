@@ -9,6 +9,10 @@ public interface CustomerOrderService {
     java.util.Map<Long, OrderListInfo> getOrderItems(String customerEmail);
     OrderDetailResponse getOrder(String customerEmail, Long orderId);
 
-    /** Idempotent cancellation of the authenticated customer's own unpaid, not-yet-prepared Order. */
-    void cancelOrder(String customerEmail, Long orderId);
+    /**
+     * Idempotent cancellation of the authenticated customer's own unpaid, not-yet-prepared Order.
+     *
+     * @return what happened, so the caller can tell the customer when the simulated refund still has to be retried
+     */
+    com.oneshop.service.payment.CustomerOrderCancellationService.Result cancelOrder(String customerEmail, Long orderId);
 }

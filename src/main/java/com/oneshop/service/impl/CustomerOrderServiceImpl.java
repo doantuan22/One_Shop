@@ -84,18 +84,17 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     @Transactional
     @PreAuthorize("hasRole('CUSTOMER') and #email == authentication.name")
-    public void cancelOrder(String email, Long id) {
+    public CustomerOrderCancellationService.Result cancelOrder(String email, Long id) {
         User customer = requireCustomer(email);
         if (cancellationService != null) {
-            cancellationService.cancel(customer, id);
-            return;
+            return cancellationService.cancel(customer, id);
         }
         if (id == null) throw new ResourceNotFoundException("Không tìm thấy đơn hàng của bạn.");
         // PK-only Order lock, identical lock order to payment/fulfillment. Scope is checked before child reads/writes.
         var order = orders.findByIdForUpdate(id)
                 .filter(o -> o.getUser().getId().equals(customer.getId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đơn hàng của bạn."));
-        if (order.getOrderStatus() == OrderStatus.CANCELLED) return;
+        if (order.getOrderStatus() == OrderStatus.CANCELLED) return CustomerOrderCancellationService.Result.ALREADY_CANCELLED;
         if (order.getOrderStatus() == OrderStatus.PROCESSING || order.getOrderStatus() == OrderStatus.SHIPPING
                 || order.getOrderStatus() == OrderStatus.PARTIALLY_COMPLETED
                 || order.getOrderStatus() == OrderStatus.COMPLETED) {
@@ -115,5 +114,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         payments.closePendingForCustomerCancellation(order);
         inventory.restoreForCancelledOrder(order, "Hoàn tồn do khách hủy đơn - Order #" + id);
         stateMachine.cancelByCustomer(order, customer);
+        return CustomerOrderCancellationService.Result.CANCELLED;
     }
 }

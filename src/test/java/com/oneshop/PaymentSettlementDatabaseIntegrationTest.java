@@ -270,15 +270,13 @@ class PaymentSettlementDatabaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("BE05-06 a browser can never set a payment result: the old routes refuse and change nothing")
+    @DisplayName("BE05-06 a browser can never set a payment result: there is no route or operation that takes one")
     void be05_06_browserResultRefused() {
         long order = data.onlinePickup("OS-THUDUC", SERUM, 1);
         long attempt = data.attemptId(order);
 
-        assertThatThrownBy(() -> paymentService.markOnlinePaymentSuccess(ALICE, order, attempt))
-                .isInstanceOf(BadRequestException.class);
-        assertThatThrownBy(() -> paymentService.markOnlinePaymentFailed(ALICE, order, attempt))
-                .isInstanceOf(BadRequestException.class);
+        assertThat(com.oneshop.service.PaymentService.class.getMethods())
+                .noneMatch(method -> method.getName().startsWith("markOnlinePayment"));
 
         assertThat(data.orderStatus(order)).isEqualTo("PENDING_PAYMENT");
         assertThat(data.payment(attempt).get("status")).isEqualTo("PENDING");

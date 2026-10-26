@@ -122,7 +122,7 @@ Các kịch bản 1–2 và COD/Pickup/Online đã chạy bằng Chrome thật t
 
 ## 9. Thanh toán ONLINE và worker
 
-Hệ thống chỉ có cổng thanh toán **mô phỏng** (không tiền thật). Vì vậy `prod` mặc định đóng ONLINE checkout và tắt cổng mô phỏng; chỉ mua COD / nhận tại cửa hàng. Chỉ cho một deployment **demo** mới đặt `ONESHOP_CHECKOUT_ONLINE_ENABLED=true` và `ONESHOP_PAYMENT_MOCK_GATEWAY_ENABLED=true` (đã chạy thử luồng ONLINE/FAILED/REFUND ✔). Nếu mở ONLINE, cân nhắc `ONESHOP_PAYMENT_TIMEOUT_WORKER_ENABLED=true` để đơn chưa thanh toán sau 15 phút tự hủy và hoàn tồn; chỉ chạy **một** instance có worker (nhiều instance cùng bật worker chưa được kiểm chứng).
+Hệ thống chỉ có cổng thanh toán **mô phỏng** (không tiền thật). Vì vậy `prod` mặc định đóng ONLINE checkout và tắt cổng mô phỏng; chỉ mua COD / nhận tại cửa hàng. Chỉ cho một deployment **demo** mới đặt `ONESHOP_CHECKOUT_ONLINE_ENABLED=true` và `ONESHOP_PAYMENT_MOCK_GATEWAY_ENABLED=true` (đã chạy thử luồng ONLINE/FAILED/REFUND ✔). ONLINE chỉ thực sự mở khi **cả hai** biến trên cùng bằng `true` (thiếu một biến thì tùy chọn thanh toán trực tuyến bị đóng, tránh tạo đơn mà khách không thể thanh toán). Khi mở ONLINE, nên đặt thêm `ONESHOP_PAYMENT_TIMEOUT_WORKER_ENABLED=true`: nếu không, đơn ONLINE bị bỏ quên vẫn giữ tồn kho cho đến khi chủ đơn mở trang đơn/thanh toán hoặc quản trị viên đối soát trong `/admin/payments`. Chỉ chạy **một** instance có worker (nhiều instance cùng bật worker chưa được kiểm chứng).
 
 ## 10. Nâng cấp schema và dữ liệu có sẵn
 

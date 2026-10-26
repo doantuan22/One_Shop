@@ -1036,6 +1036,12 @@
         <div class="small fw-semibold">Đơn đã hủy. Tồn kho đã được hoàn về chi nhánh của đơn.</div>
     </div>
 
+    <div class="alert alert-warning border-0 rounded-4 shadow-sm py-3 px-4 mb-4 small fw-semibold" id="cancel-refund-pending"
+         th:if="${param.cancelled != null and param.refund != null and ost == 'CANCELLED'}">
+        Đơn đã hủy và tồn kho đã hoàn lại, nhưng khoản hoàn tiền chưa xử lý xong. Quản trị viên sẽ thử hoàn tiền lại;
+        bạn có thể theo dõi trạng thái ở mục hoàn tiền của đơn.
+    </div>
+
     <div class="alert alert-success border-0 rounded-4 shadow-sm py-3 px-4 mb-4 d-flex align-items-center gap-2"
          th:if="${param.returned != null and orderReturn != null}">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0" aria-hidden="true">

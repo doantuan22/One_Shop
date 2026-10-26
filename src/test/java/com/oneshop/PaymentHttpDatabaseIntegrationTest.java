@@ -224,13 +224,13 @@ class PaymentHttpDatabaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("BE05-53 the old browser success / failure routes change nothing")
+    @DisplayName("BE05-53 the old browser success / failure routes are gone and change nothing")
     void be05_53_oldRoutesRefused() throws Exception {
         long order = data.onlinePickup("OS-THUDUC", SERUM, 1);
         String base = "/orders/" + order + "/payments/" + data.attemptId(order);
 
-        assertThat(postAs(ALICE, base + "/success", "").statusCode()).isEqualTo(400);
-        assertThat(postAs(ALICE, base + "/failure", "").statusCode()).isEqualTo(400);
+        assertThat(postAs(ALICE, base + "/success", "").statusCode()).isIn(404, 405);
+        assertThat(postAs(ALICE, base + "/failure", "").statusCode()).isIn(404, 405);
 
         assertThat(data.orderStatus(order)).isEqualTo("PENDING_PAYMENT");
         assertThat(data.payments(order).get(0).get("status")).isEqualTo("PENDING");

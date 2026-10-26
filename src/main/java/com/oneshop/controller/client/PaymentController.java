@@ -19,7 +19,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
 
-/** Controlled internal demo: dedicated success/failure operations, no client-supplied statuses or amounts. */
+/**
+ * Controlled internal demo: the browser only asks the gateway to enact a scenario; a payment status, amount or time is
+ * never taken from it, and there is no endpoint that marks a payment successful or failed.
+ */
 @Controller
 @RequestMapping("/orders/{orderId}/payments")
 public class PaymentController {
@@ -64,18 +67,6 @@ public class PaymentController {
         return "redirect:/orders/" + orderId + "/payments?outcome=" + outcome.name();
     }
 
-    @PostMapping("/{paymentId}/success")
-    public String success(@PathVariable Long orderId, @PathVariable Long paymentId, Principal principal) {
-        paymentService.markOnlinePaymentSuccess(principal.getName(), orderId, paymentId);
-        return redirect(orderId);
-    }
-
-    @PostMapping("/{paymentId}/failure")
-    public String failure(@PathVariable Long orderId, @PathVariable Long paymentId, Principal principal) {
-        paymentService.markOnlinePaymentFailed(principal.getName(), orderId, paymentId);
-        return redirect(orderId);
-    }
-
     @ExceptionHandler(DataAccessException.class)
     public ModelAndView databaseError(DataAccessException ex) {
         ModelAndView view = new ModelAndView("error-message");
@@ -86,9 +77,5 @@ public class PaymentController {
                 ? "Đơn hàng đang được xử lý. Vui lòng tải lại trang và thử lại."
                 : "Không thể lưu kết quả thanh toán. Vui lòng tải lại trang và thử lại.");
         return view;
-    }
-
-    private static String redirect(Long orderId) {
-        return "redirect:/orders/" + orderId + "/payments";
     }
 }

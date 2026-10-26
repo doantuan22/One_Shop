@@ -80,6 +80,9 @@ public class CustomerOrderController {
     }
     @PostMapping("/{orderId}/cancel")
     public String cancel(@PathVariable Long orderId, Principal principal) {
-        orders.cancelOrder(principal.getName(), orderId); return "redirect:/orders/" + orderId + "?cancelled";
+        var result = orders.cancelOrder(principal.getName(), orderId);
+        // the order is cancelled either way; only a refund that still has to be retried is worth a second notice
+        return "redirect:/orders/" + orderId + (result == com.oneshop.service.payment.CustomerOrderCancellationService
+                .Result.CANCELLED_REFUND_FAILED ? "?cancelled&refund=pending" : "?cancelled");
     }
 }

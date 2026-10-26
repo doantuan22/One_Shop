@@ -65,6 +65,29 @@ class PaymentWebIntegrationTest extends AbstractIntegrationTest {
                 "/orders/10/payments/20/success", "/orders/10/payments/20/failure");
     }
 
+    private OrderPaymentResponse pending(boolean gatewayEnabled, String ledgerState) {
+        return new OrderPaymentResponse(10L, 3L, "OneShop Thủ Đức", new BigDecimal("200000"), PaymentMethod.ONLINE,
+                OrderPaymentStatus.UNPAID, OrderStatus.PENDING_PAYMENT,
+                List.of(new PaymentResponse(20L, 10L, PaymentMethod.ONLINE, new BigDecimal("200000"),
+                        PaymentStatus.PENDING, "MOCK-1", null, LocalDateTime.now())),
+                LocalDateTime.now().plusMinutes(10), false, gatewayEnabled, ledgerState, false);
+    }
+
+    @Test
+    void payButtonIsOfferedOnlyWhenTheGatewayCanAnswer() throws Exception {
+        when(payments.getOrderPayments(EMAIL, 10L)).thenReturn(pending(true, "AWAITING"));
+        var body = get(PATH, "Cookie", cookie(RoleName.CUSTOMER)).body();
+        assertThat(body).contains("id=\"start-payment\"").doesNotContain("payment-gateway-off", "payment-in-doubt");
+
+        when(payments.getOrderPayments(EMAIL, 10L)).thenReturn(pending(false, "AWAITING"));
+        body = get(PATH, "Cookie", cookie(RoleName.CUSTOMER)).body();
+        assertThat(body).contains("id=\"payment-gateway-off\"").doesNotContain("id=\"start-payment\"");
+
+        when(payments.getOrderPayments(EMAIL, 10L)).thenReturn(pending(true, "IN_DOUBT"));
+        body = get(PATH, "Cookie", cookie(RoleName.CUSTOMER)).body();
+        assertThat(body).contains("id=\"payment-in-doubt\"").doesNotContain("id=\"start-payment\"");
+    }
+
     @Test
     void formsUsePrincipalAndIgnoreAllClientPaymentData() throws Exception {
         String cookie = cookie(RoleName.CUSTOMER);
@@ -74,17 +97,17 @@ class PaymentWebIntegrationTest extends AbstractIntegrationTest {
         when(reconciliation.simulate(EMAIL, 10L, 20L, com.oneshop.service.payment.PaymentReconciliationService.SimulatedResult.SUCCESS))
                 .thenReturn(com.oneshop.service.payment.PaymentOutcome.CONFIRMED);
         assertThat(postAs(cookie, "/attempts", forged).statusCode()).isEqualTo(302);
-        assertThat(postAs(cookie, "/20/success", forged).statusCode()).isEqualTo(302);
-        assertThat(postAs(cookie, "/20/failure", forged).statusCode()).isEqualTo(302);
+        // the old "mark success / failure" routes no longer exist
+        assertThat(postAs(cookie, "/20/success", forged).statusCode()).isIn(404, 405);
+        assertThat(postAs(cookie, "/20/failure", forged).statusCode()).isIn(404, 405);
         verify(payments).createOnlinePaymentAttempt(EMAIL, 10L);
-        verify(payments).markOnlinePaymentSuccess(EMAIL, 10L, 20L);
-        verify(payments).markOnlinePaymentFailed(EMAIL, 10L, 20L);
+        verifyNoMoreInteractions(payments);
     }
 
     @Test
     void csrfIsRequiredOnEveryWrite() throws Exception {
         String cookie = cookie(RoleName.CUSTOMER);
-        for (String suffix : List.of("/attempts", "/20/success", "/20/failure")) {
+        for (String suffix : List.of("/attempts", "/20/simulate")) {
             assertThat(post(PATH + suffix, "application/x-www-form-urlencoded", "", "Cookie", cookie).statusCode()).isEqualTo(403);
         }
         verifyNoInteractions(payments);
@@ -95,7 +118,7 @@ class PaymentWebIntegrationTest extends AbstractIntegrationTest {
         for (RoleName role : List.of(RoleName.STAFF, RoleName.ADMIN)) {
             String cookie = cookie(role);
             assertThat(get(PATH, "Cookie", cookie).statusCode()).isEqualTo(403);
-            for (String suffix : List.of("/attempts", "/20/success", "/20/failure")) {
+            for (String suffix : List.of("/attempts", "/20/simulate")) {
                 assertThat(postAs(cookie, suffix, "").statusCode()).isEqualTo(403);
             }
         }

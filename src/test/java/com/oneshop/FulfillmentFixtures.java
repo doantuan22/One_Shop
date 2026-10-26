@@ -151,7 +151,7 @@ final class FulfillmentFixtures {
 
     // ---------------------------------------------------------------- orders
 
-    private long addToCart(String email, String sku, int quantity) {
+    long addToCart(String email, String sku, int quantity) {
         carts.findByUserEmail(email).ifPresent(c -> cartItems.deleteAll(cartItems.findByCartId(c.getId())));
         cartService.addItem(email, AddCartItemRequest.forProduct(productId(sku), quantity));
         return cartId(email, sku);

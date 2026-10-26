@@ -613,10 +613,9 @@ class CheckoutV3DatabaseIntegrationTest {
         long orderId = place(ALICE, delivery(lines.values(), PaymentMethod.ONLINE)).orders().get(0).orderId();
         long paymentId = jdbc.queryForObject("select payment_id from dbo.payments where order_id = ?", Long.class, orderId);
 
-        assertThatThrownBy(() -> paymentService.markOnlinePaymentSuccess(ALICE, orderId, paymentId))
-                .isInstanceOf(BadRequestException.class);
-        assertThatThrownBy(() -> paymentService.markOnlinePaymentFailed(ALICE, orderId, paymentId))
-                .isInstanceOf(BadRequestException.class);
+        // there is no service operation that takes a payment result from the caller (the routes are gone as well)
+        assertThat(com.oneshop.service.PaymentService.class.getMethods())
+                .noneMatch(method -> method.getName().startsWith("markOnlinePayment"));
 
         assertThat(orderRow(orderId).get("order_status")).isEqualTo("PENDING_PAYMENT");
         assertThat(jdbc.queryForObject("select status from dbo.payments where payment_id = ?", String.class, paymentId))

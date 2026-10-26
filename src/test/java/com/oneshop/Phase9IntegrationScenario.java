@@ -228,8 +228,8 @@ final class Phase9IntegrationScenario {
             state(f.a, "COMPLETED", "PAID"); state(f.b, "CANCELLED", "FAILED"); state(f.c, "READY_FOR_PICKUP", "UNPAID");
             var before = snapshot();
             for (String action : List.of("prepare", "ready", "complete")) check(post(account(STAFF.get(2L)), "/staff/orders/pickup/" + f.b + "/" + action, "pickupCode=WRONG999").statusCode() == 400, "cancelled fulfillment rejected");
-            check(post(account(CUSTOMER), "/orders/" + f.b + "/payments/" + payment + "/success", "").statusCode() == 400, "failed final no success");
-            check(post(account(CUSTOMER), "/orders/" + f.b + "/payments/" + payment + "/failure", "").statusCode() == 302, "failure repeat idempotent");
+            check(post(account(CUSTOMER), "/orders/" + f.b + "/payments/" + payment + "/success", "").statusCode() == 404, "no route marks a payment successful");
+            check(post(account(CUSTOMER), "/orders/" + f.b + "/payments/" + payment + "/failure", "").statusCode() == 404, "no route marks a payment failed");
             check(snapshot().equals(before), "failure repeat no duplicate restore"); pickupComplete(f, f.c, 4);
         }
     }

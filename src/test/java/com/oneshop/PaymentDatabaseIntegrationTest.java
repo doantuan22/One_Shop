@@ -78,7 +78,7 @@ class PaymentDatabaseIntegrationTest extends V3RegressionTestSupport {
     @Test
     void orderNoLongerPendingCannotCompletePayment() throws Exception {
         long id=online();settle(id,true);act(id,FulfillmentAction.PREPARE);var before=state(id);
-        assertThatThrownBy(()->paymentService.markOnlinePaymentSuccess(ALICE,id,data.attemptId(id))).isInstanceOf(BadRequestException.class);assertThat(state(id)).isEqualTo(before);
+        assertThat(payment.simulate(ALICE,id,data.attemptId(id),PaymentReconciliationService.SimulatedResult.SUCCESS)).isEqualTo(com.oneshop.service.payment.PaymentOutcome.ALREADY_PAID);assertThat(state(id)).isEqualTo(before);
     }
 
     @ParameterizedTest

@@ -70,8 +70,7 @@ class PaymentServiceTest {
     @Test
     void aBrowserCanNeitherConfirmNorFailAPayment() {
         // DEC-21: the result of a payment is never taken from the browser; BE-05 verifies it through the mock gateway
-        assertThatThrownBy(() -> service.markOnlinePaymentSuccess("alice@test", 10L, 20L)).isInstanceOf(BadRequestException.class);
-        assertThatThrownBy(() -> service.markOnlinePaymentFailed("alice@test", 10L, 20L)).isInstanceOf(BadRequestException.class);
+        assertThat(PaymentService.class.getMethods()).noneMatch(method -> method.getName().startsWith("markOnlinePayment"));
         assertThat(payment.getStatus()).isEqualTo(PaymentStatus.PENDING);
         assertThat(order.getPaymentStatus()).isEqualTo(OrderPaymentStatus.UNPAID);
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PENDING_PAYMENT);
@@ -96,8 +95,6 @@ class PaymentServiceTest {
         order.setPaymentMethod(method);
         order.setOrderStatus(OrderStatus.CONFIRMED);
         assertThatThrownBy(() -> service.createOnlinePaymentAttempt("alice@test", 10L)).isInstanceOf(BadRequestException.class);
-        assertThatThrownBy(() -> service.markOnlinePaymentSuccess("alice@test", 10L, 20L)).isInstanceOf(BadRequestException.class);
-        assertThatThrownBy(() -> service.markOnlinePaymentFailed("alice@test", 10L, 20L)).isInstanceOf(BadRequestException.class);
         assertThat(order.getPaymentStatus()).isEqualTo(OrderPaymentStatus.UNPAID);
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.CONFIRMED);
         verifyNoInteractions(inventory, history);
@@ -116,20 +113,20 @@ class PaymentServiceTest {
 
     @Test
     void inconsistentAmountOrMethodDoesNotChangeState() {
+        when(payments.findFirstByOrderIdAndStatusOrderByIdAsc(10L, PaymentStatus.PENDING)).thenReturn(Optional.of(payment));
         payment.setAmount(BigDecimal.ONE);
-        assertThatThrownBy(() -> service.markOnlinePaymentFailed("alice@test", 10L, 20L)).isInstanceOf(BadRequestException.class);
+        assertThatThrownBy(() -> service.createOnlinePaymentAttempt("alice@test", 10L)).isInstanceOf(BadRequestException.class);
         payment.setAmount(order.getTotalAmount());
         payment.setMethod(PaymentMethod.COD);
-        assertThatThrownBy(() -> service.markOnlinePaymentSuccess("alice@test", 10L, 20L)).isInstanceOf(BadRequestException.class);
+        assertThatThrownBy(() -> service.createOnlinePaymentAttempt("alice@test", 10L)).isInstanceOf(BadRequestException.class);
         assertThat(payment.getStatus()).isEqualTo(PaymentStatus.PENDING);
         verifyNoInteractions(inventory, history);
     }
 
     @Test
-    void nonPayableOrderCannotCompleteAPendingAttempt() {
+    void nonPayableOrderCannotStartAnAttempt() {
         order.setOrderStatus(OrderStatus.CANCELLED);
-        assertThatThrownBy(() -> service.markOnlinePaymentSuccess("alice@test", 10L, 20L)).isInstanceOf(BadRequestException.class);
-        assertThatThrownBy(() -> service.markOnlinePaymentFailed("alice@test", 10L, 20L)).isInstanceOf(BadRequestException.class);
+        assertThatThrownBy(() -> service.createOnlinePaymentAttempt("alice@test", 10L)).isInstanceOf(BadRequestException.class);
         assertThat(payment.getStatus()).isEqualTo(PaymentStatus.PENDING);
     }
 }

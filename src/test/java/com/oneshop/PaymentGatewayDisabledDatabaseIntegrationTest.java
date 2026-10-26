@@ -1,5 +1,10 @@
 package com.oneshop;
 
+import com.oneshop.config.PaymentProperties;
+import com.oneshop.dto.request.PlaceOrderRequest;
+import com.oneshop.entity.FulfillmentType;
+import com.oneshop.entity.PaymentMethod;
+import com.oneshop.exception.CheckoutConflictException;
 import com.oneshop.exception.PaymentConflictException;
 import com.oneshop.repository.CartItemRepository;
 import com.oneshop.repository.CartRepository;
@@ -12,6 +17,8 @@ import com.oneshop.service.payment.AdminPaymentService;
 import com.oneshop.service.payment.PaymentReconciliationService;
 import com.oneshop.service.payment.PaymentReconciliationService.SimulatedResult;
 import com.oneshop.service.payment.PaymentTimeoutService;
+import java.util.List;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -62,6 +69,8 @@ class PaymentGatewayDisabledDatabaseIntegrationTest {
     StoreProductRepository storeProductRepository;
     @Autowired
     JdbcTemplate jdbc;
+    @Autowired
+    PaymentProperties properties;
 
     private SeedGuardV3 guard;
     private FulfillmentFixtures data;
@@ -79,6 +88,7 @@ class PaymentGatewayDisabledDatabaseIntegrationTest {
 
     @AfterEach
     void restore() {
+        properties.setMockGatewayEnabled(false); // this class runs with the gateway off
         if (remembered) {
             guard.restore();
         }
@@ -87,8 +97,12 @@ class PaymentGatewayDisabledDatabaseIntegrationTest {
     @Test
     @DisplayName("BE05-58 with the gateway off nobody can settle a payment; the timeout still cancels")
     void be05_58_gatewayDisabled() {
+        // an ONLINE order can only be placed while the gateway is on; the gateway is then switched off (a restart
+        // with another configuration) and nobody can settle that order any more
+        properties.setMockGatewayEnabled(true);
         long order = data.onlinePickup("OS-THUDUC", SERUM, 2);
         long attempt = data.attemptId(order);
+        properties.setMockGatewayEnabled(false);
 
         for (SimulatedResult scenario : SimulatedResult.values()) {
             assertThatThrownBy(() -> reconciliation.simulate(ALICE, order, attempt, scenario))
@@ -106,6 +120,26 @@ class PaymentGatewayDisabledDatabaseIntegrationTest {
 
         assertThat(data.orderStatus(order)).isEqualTo("CANCELLED");
         assertThat(data.cancelRestores(order)).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("ONLINE checkout stays closed while the gateway is off: no order is created that nobody could pay")
+    void onlineCheckoutClosedWhileGatewayOff() {
+        data.isolate(SERUM, "OS-THUDUC", 21);
+        long line = data.addToCart(ALICE, SERUM, 1);
+        long store = data.storeId("OS-THUDUC");
+        long ordersBefore = jdbc.queryForObject("select count(*) from dbo.orders", Long.class);
+
+        boolean offered = data.asRole(ALICE, "ROLE_CUSTOMER", () -> checkoutService.preview(ALICE, List.of(line),
+                FulfillmentType.STORE_PICKUP, PaymentMethod.ONLINE, store, null, null).onlineEnabled());
+        assertThat(offered).isFalse();
+
+        assertThatThrownBy(() -> data.asRole(ALICE, "ROLE_CUSTOMER", () -> checkoutService.placeOrder(ALICE,
+                new PlaceOrderRequest(List.of(line), FulfillmentType.STORE_PICKUP, PaymentMethod.ONLINE,
+                        "Người Nhận", "0912345678", null, store, false, null, null))))
+                .isInstanceOfSatisfying(CheckoutConflictException.class, ex -> assertThat(ex.getCode())
+                        .isEqualTo(CheckoutConflictException.CODE_ONLINE_CHECKOUT_DISABLED));
+        assertThat(jdbc.queryForObject("select count(*) from dbo.orders", Long.class)).isEqualTo(ordersBefore);
     }
 
     private boolean paymentPageSimulation(long order) {

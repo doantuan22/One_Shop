@@ -35,13 +35,19 @@ public record PlaceOrderRequest(
         @NotBlank(message = "Vui lòng nhập tên người nhận")
         @Size(max = 150, message = "Tên người nhận tối đa 150 ký tự") String receiverName,
         @NotBlank(message = "Vui lòng nhập số điện thoại người nhận")
-        @Pattern(regexp = "^[0-9+ ]{8,20}$", message = "Số điện thoại không hợp lệ") String receiverPhone,
+        @Pattern(regexp = PlaceOrderRequest.RECEIVER_PHONE_REGEX, message = "Số điện thoại không hợp lệ") String receiverPhone,
         @Size(max = 500, message = "Địa chỉ tối đa 500 ký tự") String shippingAddress,
         Long pickupStoreId,
         Boolean splitCodConsent,
         String planSignature,
         BigDecimal expectedTotal,
         @Size(max = 50, message = "Mã khuyến mãi tối đa 50 ký tự") String promotionCode) {
+
+    /**
+     * 8 to 20 characters of digits and spaces, with an optional leading {@code +}, and at least 8 digits (so a value
+     * such as "++++++++" is refused).
+     */
+    public static final String RECEIVER_PHONE_REGEX = "^(?=(?:\\D*\\d){8})(?=.{8,20}$)\\+?[0-9 ]+$";
 
     /** The request without a promotion code. */
     public PlaceOrderRequest(List<Long> cartItemIds, FulfillmentType fulfillmentType, PaymentMethod paymentMethod,

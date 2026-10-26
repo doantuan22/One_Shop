@@ -100,55 +100,6 @@
                             th:attr="data-bs-target='#adjust-modal-' + ${item.storeProductId}">Điều chỉnh tồn</button>
                     <a class="btn btn-outline-secondary btn-sm"
                        th:href="@{/staff/inventory-history/{id}(id=${item.storeProductId})}">Lịch sử</a>
-
-                    <!--/* inline modal: the same audited POST as the dedicated adjust page */-->
-                    <div class="modal fade" th:id="'adjust-modal-' + ${item.storeProductId}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h2 class="modal-title h6 mb-0">Điều chỉnh tồn ·
-                                        <span th:text="${item.sku}">SKU</span></h2>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
-                                </div>
-                                <form th:action="@{/staff/stock/{id}/adjust(id=${item.storeProductId})}" method="post">
-                                    <div class="modal-body">
-                                        <p class="mb-2 small text-secondary">
-                                            <span th:text="${item.productName}">Tên sản phẩm</span> ·
-                                            chi nhánh <span th:text="${item.storeName}">OneShop Thủ Đức</span> ·
-                                            giá online chung
-                                            <span th:replace="~{fragments/components :: price(${item.price})}"></span>
-                                        </p>
-                                        <p class="mb-2">Tồn hiện tại:
-                                            <strong th:text="${item.quantity}">40</strong></p>
-                                        <label class="form-label" th:for="'newQuantity-' + ${item.storeProductId}">Số lượng
-                                            kiểm đếm thực tế</label>
-                                        <input class="form-control" th:id="'newQuantity-' + ${item.storeProductId}"
-                                               name="newQuantity" type="number" min="0" max="2147483647"
-                                               th:value="${item.quantity}" required data-qty-input>
-                                        <div class="os-qty-preview mt-2" data-qty-preview
-                                             th:attr="data-qty-before=${item.quantity}">
-                                            <span>Sau lưu:</span>
-                                            <strong data-qty-after th:text="${item.quantity}">40</strong>
-                                            <span class="badge ms-1" data-qty-delta>không đổi</span>
-                                            <div class="form-text d-none" data-qty-warned
-                                                 data-qty-warned-text="Khớp số lượng hiện tại: hệ thống không ghi biến động mới."></div>
-                                        </div>
-                                        <label class="form-label mt-3" th:for="'note-' + ${item.storeProductId}">Lý do
-                                            điều chỉnh</label>
-                                        <textarea class="form-control" th:id="'note-' + ${item.storeProductId}"
-                                                  name="note" maxlength="500" rows="2" required></textarea>
-                                        <div class="form-text">Chỉ ghi nhận khi số lượng thay đổi; lý do lưu vào nhật ký
-                                            biến động và hiện trên lịch sử của SKU.</div>
-                                    </div>
-                                    <div class="modal-footer py-2">
-                                        <button type="button" class="btn btn-outline-secondary btn-sm"
-                                                data-bs-dismiss="modal">Hủy</button>
-                                        <button type="submit" class="btn btn-primary btn-sm">Lưu điều chỉnh</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
                 </td>
             </tr>
             <tr th:if="${stock.isEmpty()}">
@@ -159,6 +110,57 @@
             </tbody>
         </table>
     </div>
+
+    <th:block th:each="item : ${stock.content}">
+        <!--/* inline modals live outside the table: the sticky actions cell (z-index) would put them under the backdrop */-->
+        <div class="modal fade" th:id="'adjust-modal-' + ${item.storeProductId}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title h6 mb-0">Điều chỉnh tồn ·
+                            <span th:text="${item.sku}">SKU</span></h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                    </div>
+                    <form th:action="@{/staff/stock/{id}/adjust(id=${item.storeProductId})}" method="post">
+                        <div class="modal-body">
+                            <p class="mb-2 small text-secondary">
+                                <span th:text="${item.productName}">Tên sản phẩm</span> ·
+                                chi nhánh <span th:text="${item.storeName}">OneShop Thủ Đức</span> ·
+                                giá online chung
+                                <span th:replace="~{fragments/components :: price(${item.price})}"></span>
+                            </p>
+                            <p class="mb-2">Tồn hiện tại:
+                                <strong th:text="${item.quantity}">40</strong></p>
+                            <label class="form-label" th:for="'newQuantity-' + ${item.storeProductId}">Số lượng
+                                kiểm đếm thực tế</label>
+                            <input class="form-control" th:id="'newQuantity-' + ${item.storeProductId}"
+                                   name="newQuantity" type="number" min="0" max="2147483647"
+                                   th:value="${item.quantity}" required data-qty-input>
+                            <div class="os-qty-preview mt-2" data-qty-preview
+                                 th:attr="data-qty-before=${item.quantity}">
+                                <span>Sau lưu:</span>
+                                <strong data-qty-after th:text="${item.quantity}">40</strong>
+                                <span class="badge ms-1" data-qty-delta>không đổi</span>
+                                <div class="form-text d-none" data-qty-warned
+                                     data-qty-warned-text="Khớp số lượng hiện tại: hệ thống không ghi biến động mới."></div>
+                            </div>
+                            <label class="form-label mt-3" th:for="'note-' + ${item.storeProductId}">Lý do
+                                điều chỉnh</label>
+                            <textarea class="form-control" th:id="'note-' + ${item.storeProductId}"
+                                      name="note" maxlength="500" rows="2" required></textarea>
+                            <div class="form-text">Chỉ ghi nhận khi số lượng thay đổi; lý do lưu vào nhật ký
+                                biến động và hiện trên lịch sử của SKU.</div>
+                        </div>
+                        <div class="modal-footer py-2">
+                            <button type="button" class="btn btn-outline-secondary btn-sm"
+                                    data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Lưu điều chỉnh</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </th:block>
 
     <nav class="os-pagination" th:if="${stock.totalPages > 1}" aria-label="Phân trang tồn kho chi nhánh">
         <span class="os-page-info">
