@@ -14,15 +14,29 @@ public class PaymentWorkerStatusLogger {
 
     private final PaymentProperties payment;
     private final CheckoutProperties checkout;
+    private final PayosProperties payos;
 
-    public PaymentWorkerStatusLogger(PaymentProperties payment, CheckoutProperties checkout) {
+    public PaymentWorkerStatusLogger(PaymentProperties payment, CheckoutProperties checkout, PayosProperties payos) {
         this.payment = payment;
         this.checkout = checkout;
+        this.payos = payos;
     }
 
     @EventListener(ApplicationReadyEvent.class)
     public void report() {
-        if (checkout.isOnlineEnabled() && !payment.isMockGatewayEnabled()) {
+        if (payment.getProvider() == com.oneshop.entity.PaymentProvider.PAYOS) {
+            String problem = payos.problem();
+            if (problem != null) {
+                log.error("Payment provider is PAYOS but it is not usable: {}. ONLINE checkout stays CLOSED and no payment "
+                        + "link can be created.", problem);
+            } else if (checkout.isOnlineEnabled()) {
+                log.info("Payment provider is PAYOS (real money). Webhook: {}/api/payments/payos/webhook. Simulation is disabled.",
+                        payos.origin());
+            } else {
+                log.warn("Payment provider is PAYOS and configured, but ONLINE checkout is switched off "
+                        + "(ONESHOP_CHECKOUT_ONLINE_ENABLED=false): customers cannot pay online yet.");
+            }
+        } else if (checkout.isOnlineEnabled() && !payment.isMockGatewayEnabled()) {
             log.warn("ONLINE checkout is switched on but the mock payment gateway is OFF: ONLINE stays CLOSED, because "
                     + "an order placed now could never be paid. Enable ONESHOP_PAYMENT_MOCK_GATEWAY_ENABLED too, or "
                     + "switch ONLINE checkout off.");
@@ -30,7 +44,8 @@ public class PaymentWorkerStatusLogger {
         if (payment.isTimeoutWorkerEnabled()) {
             log.info("Payment timeout worker is ON (every {} ms): overdue unpaid ONLINE Orders are cancelled and restocked.",
                     payment.getTimeoutScanIntervalMs());
-        } else if (checkout.isOnlineEnabled() && payment.isMockGatewayEnabled()) {
+        } else if (checkout.isOnlineEnabled() && (payment.isMockGatewayEnabled()
+                || payment.getProvider() == com.oneshop.entity.PaymentProvider.PAYOS)) {
             log.warn("Payment timeout worker is OFF (default) while ONLINE checkout is open: unpaid ONLINE Orders keep their "
                     + "stock until an administrator re-checks them in /admin/payments, or until the worker is enabled with "
                     + "ONESHOP_PAYMENT_TIMEOUT_WORKER_ENABLED=true.");

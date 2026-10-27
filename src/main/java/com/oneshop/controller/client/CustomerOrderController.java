@@ -21,6 +21,14 @@ public class CustomerOrderController {
     private final CustomerOrderReturnService returns;
     private final com.oneshop.service.PaymentService payments;
     private final com.oneshop.service.payment.PaymentReconciliationService reconciliation;
+    private com.oneshop.service.payment.PaymentEvidenceRefresher refresher;
+
+    /** Present only with a real gateway: the provider is asked (no lock held) before the order is cancelled for non-payment. */
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    void setRefresher(com.oneshop.service.payment.PaymentEvidenceRefresher refresher) {
+        this.refresher = refresher;
+    }
+
     public CustomerOrderController(CustomerOrderService orders, OrderTransitionPolicy policy, ReviewService reviews,
                                    OrderRefundViewService refundView, CustomerOrderReturnService returns,
                                    com.oneshop.service.PaymentService payments,
@@ -55,12 +63,13 @@ public class CustomerOrderController {
         if (order.paymentMethod() == com.oneshop.entity.PaymentMethod.ONLINE
                 && order.orderStatus() == com.oneshop.entity.OrderStatus.PENDING_PAYMENT) {
             var paymentInfo = payments.getOrderPayments(principal.getName(), orderId);
-            if (paymentInfo.expired()) {
-                // the 15 minutes are over: cancel the unpaid order and give the stock back now
+            if (paymentInfo.expired() && (refresher == null || refresher.refresh(orderId))) {
+                // the 15 minutes are over (and, with real money, the provider confirmed the state): cancel the unpaid
+                // order and give the stock back now
                 reconciliation.reconcile(orderId, com.oneshop.service.payment.PaymentReconciliationService.Trigger.TIMEOUT_SCAN);
                 detail = orders.getOrder(principal.getName(), orderId);
                 order = detail.order();
-            } else {
+            } else if (!paymentInfo.expired()) {
                 model.addAttribute("paymentInfo", paymentInfo);
             }
         }
@@ -80,9 +89,18 @@ public class CustomerOrderController {
     }
     @PostMapping("/{orderId}/cancel")
     public String cancel(@PathVariable Long orderId, Principal principal) {
+        if (refresher != null && !refresher.refresh(orderId)) {
+            // the cancel button is not proof that no money moved: with real money, ask the provider first
+            throw new com.oneshop.exception.PaymentConflictException(
+                    com.oneshop.exception.PaymentConflictException.GATEWAY_UNAVAILABLE,
+                    "Chưa xác minh được trạng thái thanh toán với payOS nên chưa thể hủy đơn. Vui lòng thử lại sau ít phút.");
+        }
         var result = orders.cancelOrder(principal.getName(), orderId);
         // the order is cancelled either way; only a refund that still has to be retried is worth a second notice
-        return "redirect:/orders/" + orderId + (result == com.oneshop.service.payment.CustomerOrderCancellationService
-                .Result.CANCELLED_REFUND_FAILED ? "?cancelled&refund=pending" : "?cancelled");
+        return "redirect:/orders/" + orderId + switch (result) {
+            case CANCELLED_REFUND_FAILED -> "?cancelled&refund=pending";
+            case CANCELLED_REFUND_REQUESTED -> "?cancelled&refund=requested";
+            default -> "?cancelled";
+        };
     }
 }

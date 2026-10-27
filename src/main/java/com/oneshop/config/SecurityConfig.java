@@ -41,7 +41,9 @@ public class SecurityConfig {
             // catalog, Store Finder and the choice of the Store being browsed are open to guests (Roadmap V2 5)
             "/", "/login", "/register", "/forgot-password/**", "/forgot-password", "/products/**", "/stores/**", "/image-credits", "/health", "/error",
             "/css/**", "/js/**", "/images/**", "/vendor/**", "/favicon.ico",
-            "/api/auth/**"
+            "/api/auth/**",
+            // payOS server-to-server webhook: no login, authenticated by its HMAC signature (verified before any processing)
+            "/api/payments/payos/webhook"
     };
 
     @Bean
@@ -89,7 +91,8 @@ public class SecurityConfig {
                         // so a form on a page opened earlier (another tab, the Back button) was refused with 403.
                         // The token is still required and checked on every write, and cleared on logout.
                         .sessionAuthenticationStrategy(new NullAuthenticatedSessionStrategy())
-                        .ignoringRequestMatchers(bearerRequest, paths.matcher("/api/auth/**")))
+                        .ignoringRequestMatchers(bearerRequest, paths.matcher("/api/auth/**"),
+                                paths.matcher("/api/payments/payos/webhook")))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)

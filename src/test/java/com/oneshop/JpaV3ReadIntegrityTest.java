@@ -74,17 +74,17 @@ class JpaV3ReadIntegrityTest {
     private ReviewReplyRepository reviewReplyRepository;
 
     @Test
-    @DisplayName("V3 Metamodel and Repositories count must be exactly 29")
+    @DisplayName("V3 Metamodel and Repositories count must be exactly 30")
     @Transactional(readOnly = true)
     void all23EntitiesAndRepositoriesExist() {
         assertThat(entityManager.getMetamodel().getEntities())
-                .as("All 29 mapped V3 tables must be registered in JPA metamodel")
-                .hasSize(29);
+                .as("All 30 mapped V3 tables must be registered in JPA metamodel")
+                .hasSize(30);
 
         Map<String, JpaRepository> repositories = beanFactory.getBeansOfType(JpaRepository.class);
         assertThat(repositories)
-                .as("All 29 mapped tables must have corresponding Spring Data JPA repositories")
-                .hasSize(29);
+                .as("All 30 mapped tables must have corresponding Spring Data JPA repositories")
+                .hasSize(30);
 
         repositories.forEach((name, repo) -> {
             List<?> all = repo.findAll();

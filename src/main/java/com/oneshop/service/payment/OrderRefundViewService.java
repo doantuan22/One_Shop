@@ -85,7 +85,8 @@ public class OrderRefundViewService {
                 .map(r -> new OrderRefundSummaryResponse.Line(r.getId(), r.getRequestedAt(), label(r.getComponent()),
                         r.getFulfillment() == null ? null : r.getFulfillment().getId(), r.getAmount(), r.getStatus(),
                         r.getReason(), withActors ? actor(r) : null)).toList();
-        BigDecimal refunded = lines.stream().filter(l -> l.status() == PaymentRefundStatus.SIMULATED_REFUNDED)
+        BigDecimal refunded = lines.stream().filter(l -> l.status() == PaymentRefundStatus.SIMULATED_REFUNDED
+                        || l.status() == PaymentRefundStatus.REFUNDED)
                 .map(OrderRefundSummaryResponse.Line::amount).reduce(BigDecimal.ZERO, BigDecimal::add);
         boolean closedWithUndelivered = order.getOrderStatus() == OrderStatus.COMPLETED && !undeliverable.isEmpty();
         return new OrderRefundSummaryResponse(collected, refunded, collected.subtract(refunded), lines, undeliverable,

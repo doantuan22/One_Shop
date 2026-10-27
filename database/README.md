@@ -4,13 +4,13 @@ Microsoft SQL Server, collation `Vietnamese_100_CI_AI`. Hibernate only **validat
 
 ```text
 database/
-├── schema/01_schema.sql             Fresh install: creates the database and all 30 tables, constraints and indexes
+├── schema/01_schema.sql             Fresh install: creates the database and all 31 tables, constraints and indexes
 ├── seed/
 │   ├── 01_reference_data.sql        EVERY environment: the 3 roles (idempotent)
 │   ├── 02_bootstrap_admin.sql       PRODUCTION: the first administrator, from a BCrypt hash (idempotent)
 │   ├── 20_demo_data.sql             DEMO ONLY: catalog, branches, demo accounts, stock, one promotion
 │   └── 99_validate_demo_data.sql    Read-only checks of the demo data
-├── migrations/                      Existing databases only: V001…V008 (re-runnable) and rollback/
+├── migrations/                      Existing databases only: V001…V009 (re-runnable) and rollback/
 └── test/test_fixture_seed.sql       Automated tests only: scenario fixture (6 branches, 8 sample orders)
 ```
 
@@ -31,7 +31,7 @@ Demo accounts (`seed/20_demo_data.sql`) share the password whose hash you pass i
 
 ## Existing database
 
-`migrations/V001…V008` bring a V3-era database up to the current schema. Every script is re-runnable, non-destructive and refuses to run in a system database; V007 stops (changing nothing) if duplicate primary images exist. Run them in order, on a backed-up database, with `sqlcmd -b -f 65001 -d <db> -i <file>`.
+`migrations/V001…V009` bring a V3-era database up to the current schema. Every script is re-runnable, non-destructive and refuses to run in a system database; V007 stops (changing nothing) if duplicate primary images exist. Run them in order, on a backed-up database, with `sqlcmd -b -f 65001 -d <db> -i <file>`.
 
 | Script | Adds |
 |---|---|
@@ -43,8 +43,9 @@ Demo accounts (`seed/20_demo_data.sql`) share the password whose hash you pass i
 | V006 | `image_cleanup_tasks` (Cloudinary clean-up journal) |
 | V007 | unique primary image per Product (stops on duplicates) |
 | V008 | `password_reset_otps` (forgot-password codes) |
+| V009 | payOS real payments: provider columns on `payments`, `payment_provider_events` (webhook de-duplication), real-refund evidence on `payment_refunds` (see `docs/PAYOS_INTEGRATION.md`) |
 
-The application checks the critical ones at start-up (`V3SchemaCompatibilityVerifier`) and refuses to start rather than run on a schema that is too old. `migrations/rollback/` holds the two approved downgrades (R001 reviews, R002 refund ledger); they need a verified backup and a separate approval. The one-off V2 → V3 conversion (Product/StoreProduct split, Fulfillments) is **not** in this folder; it exists only in git history, and a V2 database must first be taken to V3 with it.
+The application checks the critical ones at start-up (`V3SchemaCompatibilityVerifier`) and refuses to start rather than run on a schema that is too old. `migrations/rollback/` holds the approved downgrades (R001 reviews, R002 refund ledger, R009 payOS: refuses while PAYOS payments or real refunds exist); they need a verified backup and a separate approval. The one-off V2 → V3 conversion (Product/StoreProduct split, Fulfillments) is **not** in this folder; it exists only in git history, and a V2 database must first be taken to V3 with it.
 
 ## Verified equivalence (2026-10-25)
 

@@ -12,7 +12,23 @@ import java.util.List;
  */
 public interface PaymentGateway {
 
-    /** False in production: no simulated payment result can be produced. */
+    /** Which provider this gateway speaks for: the {@code payments.provider} it writes and reads. */
+    default com.oneshop.entity.PaymentProvider provider() {
+        return com.oneshop.entity.PaymentProvider.MOCK;
+    }
+
+    /** True while ONLINE checkout can really be settled by this gateway (configured and permitted). */
+    default boolean onlineAvailable() {
+        return enabled();
+    }
+
+    /**
+     * The verified collection is applied to the attempt: {@code SUCCESS} at {@code at}. Called by the reconciliation
+     * engine under the Order lock, only for the attempt the verification named.
+     */
+    void applyCollected(Payment attempt, LocalDateTime at);
+
+    /** True only for the simulated gateway while it is permitted: false in production and whenever real money is used. */
     boolean enabled();
 
     /** The gateway's answer about the money of the Order, derived from its ledger rows only. */

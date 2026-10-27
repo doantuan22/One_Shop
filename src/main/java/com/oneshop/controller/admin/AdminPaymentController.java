@@ -26,9 +26,16 @@ public class AdminPaymentController {
 
     private final OrderRefundViewService refundView;
 
-    public AdminPaymentController(AdminPaymentService payments, OrderRefundViewService refundView) {
+    private final com.oneshop.service.payment.ManualRefundService manualRefunds;
+    private final org.springframework.beans.factory.ObjectProvider<com.oneshop.service.payment.PaymentEvidenceRefresher> refresher;
+
+    public AdminPaymentController(AdminPaymentService payments, OrderRefundViewService refundView,
+                                  com.oneshop.service.payment.ManualRefundService manualRefunds,
+                                  org.springframework.beans.factory.ObjectProvider<com.oneshop.service.payment.PaymentEvidenceRefresher> refresher) {
         this.payments = payments;
         this.refundView = refundView;
+        this.manualRefunds = manualRefunds;
+        this.refresher = refresher;
     }
 
     /**
@@ -60,11 +67,17 @@ public class AdminPaymentController {
     public String detail(@PathVariable Long orderId, Model model) {
         model.addAttribute("paymentCase", payments.getCase(orderId));
         model.addAttribute("refund", refundView.forAdmin(orderId));
+        model.addAttribute("realRefunds", manualRefunds.pending(orderId));
         return "admin/payments/detail";
     }
 
     @PostMapping("/{orderId:\\d+}/recheck")
     public String recheck(@PathVariable Long orderId) {
+        var provider = refresher.getIfAvailable();
+        if (provider != null && !provider.refresh(orderId)) {
+            // real money: never decide from stale evidence when the provider could not be asked
+            return "redirect:/admin/payments/" + orderId + "?result=" + PaymentOutcome.RECONCILING.name();
+        }
         PaymentOutcome outcome = payments.recheck(orderId);
         return "redirect:/admin/payments/" + orderId + "?result=" + outcome.name();
     }
@@ -79,6 +92,18 @@ public class AdminPaymentController {
     @PostMapping("/{orderId:\\d+}/refund")
     public String refund(@PathVariable Long orderId) {
         RefundService.Result result = payments.retryRefund(orderId);
+        return "redirect:/admin/payments/" + orderId + "?refund=" + result.name();
+    }
+
+    /**
+     * Records that a REAL refund was paid out of the bank. The amount is the requested one; the administrator supplies
+     * the bank transaction code (evidence) and an optional note. Only this makes the refund REFUNDED.
+     */
+    @PostMapping("/{orderId:\\d+}/real-refunds/{refundId:\\d+}/confirm")
+    public String confirmRealRefund(@PathVariable Long orderId, @PathVariable Long refundId,
+                                    @RequestParam("evidenceReference") String evidenceReference,
+                                    @RequestParam(value = "note", required = false) String note) {
+        var result = manualRefunds.confirm(orderId, refundId, evidenceReference, note);
         return "redirect:/admin/payments/" + orderId + "?refund=" + result.name();
     }
 

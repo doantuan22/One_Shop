@@ -1243,7 +1243,7 @@
                         <span class="sub">
                             <span th:text="${#temporals.format(line.at, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</span>
                             &middot;
-                            <th:block th:switch="${line.status.name()}"><span th:case="'SIMULATED_REFUNDED'">Đã hoàn</span><span th:case="'PENDING_SIMULATION'">Đang hoàn</span><span th:case="*">Hoàn thất bại, đang chờ xử lý</span></th:block>
+                            <th:block th:switch="${line.status.name()}"><span th:case="'SIMULATED_REFUNDED'">Đã hoàn</span><span th:case="'REFUNDED'">Đã hoàn</span><span th:case="'PENDING_SIMULATION'">Đang hoàn</span><span th:case="'MANUAL_REQUESTED'">Đang chờ hoàn tiền</span><span th:case="*">Hoàn thất bại, đang chờ xử lý</span></th:block>
                             <span th:if="${line.reason}" th:text="'&middot; ' + ${line.reason}"></span>
                         </span>
                         <span class="sub text-end" th:if="${line.actor != null}" th:text="${line.actor}"></span>

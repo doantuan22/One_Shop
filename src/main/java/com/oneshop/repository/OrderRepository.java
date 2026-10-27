@@ -123,9 +123,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     /** A collected payment whose simulated refund failed or never finished. */
     String REFUND_OPEN = "(exists (select 1 from Payment p where p.order = o and p.status = com.oneshop.entity.PaymentStatus.SUCCESS"
             + " and p.refundStatus in (com.oneshop.entity.PaymentRefundStatus.SIMULATION_FAILED,"
-            + " com.oneshop.entity.PaymentRefundStatus.PENDING_SIMULATION))"
+            + " com.oneshop.entity.PaymentRefundStatus.PENDING_SIMULATION, com.oneshop.entity.PaymentRefundStatus.MANUAL_REQUESTED))"
             + " or exists (select 1 from PaymentRefund r where r.order = o and r.status in ("
-            + "com.oneshop.entity.PaymentRefundStatus.SIMULATION_FAILED, com.oneshop.entity.PaymentRefundStatus.PENDING_SIMULATION)))";
+            + "com.oneshop.entity.PaymentRefundStatus.SIMULATION_FAILED, com.oneshop.entity.PaymentRefundStatus.PENDING_SIMULATION,"
+            + " com.oneshop.entity.PaymentRefundStatus.MANUAL_REQUESTED)))";
     /** An attempt the gateway answered UNKNOWN to (MockLedger marks it with the ~UNKNOWN suffix while still PENDING). */
     String IN_DOUBT = "exists (select 1 from Payment p where p.order = o and p.status = com.oneshop.entity.PaymentStatus.PENDING"
             + " and p.transactionCode like '%~UNKNOWN')";

@@ -43,6 +43,14 @@ public class PaymentTimeoutService {
         this.deadlines = deadlines;
     }
 
+    private PaymentEvidenceRefresher refresher;
+
+    /** Present only with a real gateway: its answer is fetched (no lock held) before an Order may be cancelled. */
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    void setRefresher(PaymentEvidenceRefresher refresher) {
+        this.refresher = refresher;
+    }
+
     public ScanResult scan() {
         LocalDateTime cutoff = deadlines.expiredBefore();
         int batch = properties.getScanBatchSize();
@@ -58,6 +66,11 @@ public class PaymentTimeoutService {
             for (Long id : ids) {
                 examined++;
                 try {
+                    if (refresher != null && !refresher.refresh(id)) {
+                        failed++; // the provider could not answer: never cancel on stale evidence, retry next scan
+                        afterId = id;
+                        continue;
+                    }
                     PaymentOutcome outcome = reconciliation.reconcile(id, PaymentReconciliationService.Trigger.TIMEOUT_SCAN);
                     if (changes(outcome)) {
                         changed++;

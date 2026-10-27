@@ -19,6 +19,7 @@ import java.util.List;
  * loses nothing: every answer is derived from the {@code payments} rows.
  */
 @Component
+@org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(name = "oneshop.payment.provider", havingValue = "MOCK", matchIfMissing = true)
 public class MockPaymentGateway implements PaymentGateway {
 
     private final PaymentProperties properties;
@@ -42,7 +43,8 @@ public class MockPaymentGateway implements PaymentGateway {
     @Override
     public GatewayVerification verify(Order order, List<Payment> attempts) {
         // An inconsistent persisted ledger is uncertain evidence, never a collected/not-collected conclusion.
-        List<Payment> online = attempts.stream().filter(p -> p.getMethod() == PaymentMethod.ONLINE).toList();
+        List<Payment> online = attempts.stream().filter(p -> p.getMethod() == PaymentMethod.ONLINE
+                && p.getProvider() != com.oneshop.entity.PaymentProvider.PAYOS).toList();
         if (online.stream().anyMatch(p -> order == null || order.getId() == null || order.getTotalAmount() == null
                 || p.getOrder() == null || !order.getId().equals(p.getOrder().getId()) || p.getAmount() == null
                 || p.getAmount().compareTo(order.getTotalAmount()) != 0)) {
@@ -73,6 +75,13 @@ public class MockPaymentGateway implements PaymentGateway {
         }
         String reference = online.isEmpty() ? null : MockLedger.reference(online.get(0).getTransactionCode());
         return new GatewayVerification(GatewayVerification.Result.NOT_PAID, reference, null);
+    }
+
+    @Override
+    public void applyCollected(Payment attempt, LocalDateTime at) {
+        attempt.setStatus(com.oneshop.entity.PaymentStatus.SUCCESS);
+        attempt.setPaidAt(at.withNano(0));
+        attempt.setTransactionCode(MockLedger.reference(attempt.getTransactionCode()));
     }
 
     @Override

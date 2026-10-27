@@ -608,7 +608,16 @@ public class CheckoutServiceImpl implements CheckoutService {
      * gateway is enabled. Otherwise an Order would be created, its stock deducted, and the customer could never pay it.
      */
     private boolean onlineOpen() {
-        return checkoutProperties.isOnlineEnabled() && paymentProperties.isMockGatewayEnabled();
+        boolean gatewayOpen = gateway != null ? gateway.onlineAvailable() : paymentProperties.isMockGatewayEnabled();
+        return checkoutProperties.isOnlineEnabled() && gatewayOpen;
+    }
+
+    private com.oneshop.service.payment.PaymentGateway gateway;
+
+    /** The configured gateway decides whether ONLINE can be settled: the mock when enabled, payOS when configured. */
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    void setGateway(com.oneshop.service.payment.PaymentGateway gateway) {
+        this.gateway = gateway;
     }
 
     private CheckoutConflictException deliveryPolicyPending() {

@@ -119,6 +119,9 @@ final class SeedGuardV3 {
         jdbc.update("delete from dbo.order_return_items where return_id in "
                 + "(select return_id from dbo.order_returns where order_id > ?)", maxOrder);
         jdbc.update("delete from dbo.order_returns where order_id > ?", maxOrder);
+        // payOS webhook journal of those payments (it points at the payment)
+        jdbc.update("delete from dbo.payment_provider_events where payment_id in "
+                + "(select payment_id from dbo.payments where order_id > ?)", maxOrder);
         jdbc.update("delete from dbo.payments where order_id > ?", maxOrder);
         // promotion uses of the checkouts above, and the uses they spent (usage rows are put back to the remembered count)
         jdbc.update("delete from dbo.promotion_usages where checkout_id > ?", maxCheckout);

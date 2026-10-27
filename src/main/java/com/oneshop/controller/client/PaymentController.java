@@ -4,6 +4,8 @@ import com.oneshop.dto.response.PaymentResponse;
 import com.oneshop.service.PaymentService;
 import com.oneshop.service.payment.PaymentOutcome;
 import com.oneshop.service.payment.PaymentReconciliationService;
+import com.oneshop.service.payment.payos.PayosPaymentFlow;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -29,15 +31,28 @@ public class PaymentController {
     private final PaymentService paymentService;
     private final PaymentReconciliationService reconciliation;
 
-    public PaymentController(PaymentService paymentService, PaymentReconciliationService reconciliation) {
+    private final ObjectProvider<PayosPaymentFlow> payos;
+
+    public PaymentController(PaymentService paymentService, PaymentReconciliationService reconciliation,
+                             ObjectProvider<PayosPaymentFlow> payos) {
         this.paymentService = paymentService;
         this.reconciliation = reconciliation;
+        this.payos = payos;
     }
 
     @GetMapping
     public String view(@PathVariable Long orderId, Principal principal, Model model) {
         var info = paymentService.getOrderPayments(principal.getName(), orderId);
-        if (info.expired() && info.orderStatus() == com.oneshop.entity.OrderStatus.PENDING_PAYMENT) {
+        PayosPaymentFlow flow = payos.getIfAvailable();
+        if (flow != null && info.orderStatus() == com.oneshop.entity.OrderStatus.PENDING_PAYMENT) {
+            // real money: ask payOS (no lock held) before showing or deciding anything, so a missed webhook is recovered
+            try {
+                flow.sync(orderId, PaymentReconciliationService.Trigger.CUSTOMER_RETURN);
+            } catch (RuntimeException ex) {
+                // the page still renders the stored state; nothing is decided from a failed query
+            }
+            info = paymentService.getOrderPayments(principal.getName(), orderId);
+        } else if (flow == null && info.expired() && info.orderStatus() == com.oneshop.entity.OrderStatus.PENDING_PAYMENT) {
             // the 15 minutes are over: cancel the unpaid order and give the stock back now, then show the real state
             reconciliation.reconcile(orderId, PaymentReconciliationService.Trigger.TIMEOUT_SCAN);
             info = paymentService.getOrderPayments(principal.getName(), orderId);
@@ -48,6 +63,15 @@ public class PaymentController {
 
     @PostMapping("/attempts")
     public String start(@PathVariable Long orderId, Principal principal) {
+        PayosPaymentFlow flow = payos.getIfAvailable();
+        if (flow != null) {
+            // real payment: create (or reuse) the payOS link and send the customer to its hosted checkout page
+            String url = flow.start(principal.getName(), orderId).checkoutUrl();
+            if (url == null || !url.startsWith("https://")) {
+                return "redirect:/orders/" + orderId + "/payments";
+            }
+            return "redirect:" + url;
+        }
         PaymentResponse attempt = paymentService.createOnlinePaymentAttempt(principal.getName(), orderId);
         // Demo gateway: pressing "pay" always succeeds; the ledger is still verified server side.
         PaymentOutcome outcome = reconciliation.simulate(principal.getName(), orderId, attempt.paymentId(),

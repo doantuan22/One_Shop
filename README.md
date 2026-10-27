@@ -52,7 +52,7 @@ Full suite cần SQL Server, Node.js và Chrome (thiếu browser làm test báo 
 | `ONESHOP_PAYMENT_MOCK_GATEWAY_ENABLED` | true ở dev, false ở prod |
 | `ONESHOP_PAYMENT_TIMEOUT_WORKER_ENABLED` | **false** (chỉ bật chủ động): worker ghi dữ liệu (hủy đơn ONLINE quá 15 phút, hoàn tồn). Khi tắt, đơn quá hạn hiện ở Admin → Thanh toán → "Cần xử lý" |
 
-Không có biến để Hibernate tạo/sửa schema. ONLINE dùng cổng thanh toán MÔ PHỎNG phía server; production giữ ONLINE đóng. Triển khai AWS: [docs/AWS_DEPLOYMENT.md](docs/AWS_DEPLOYMENT.md).
+Không có biến để Hibernate tạo/sửa schema. ONLINE dùng cổng thanh toán MÔ PHỎNG phía server (`ONESHOP_PAYMENT_PROVIDER=MOCK`, mặc định) hoặc payOS thật (`PAYOS`, xem [docs/PAYOS_INTEGRATION.md](docs/PAYOS_INTEGRATION.md)); production giữ ONLINE đóng cho đến khi cấu hình payOS hợp lệ. Triển khai AWS: [docs/AWS_DEPLOYMENT.md](docs/AWS_DEPLOYMENT.md).
 
 ## Đường dẫn và quyền
 
@@ -64,7 +64,7 @@ Không có biến để Hibernate tạo/sửa schema. ONLINE dùng cổng thanh 
 | `/admin/**` | ADMIN |
 | `/api/auth/login`, `/api/auth/register` | JSON auth; registration luôn CUSTOMER |
 
-SiteMesh dùng ba decorator Client/Staff/Admin; `/decorators/**` không gọi trực tiếp. Staff thao tác Fulfillment, không sửa trạng thái tổng Order. Payment/refund là mô phỏng, không tích hợp ngân hàng thật.
+SiteMesh dùng ba decorator Client/Staff/Admin; `/decorators/**` không gọi trực tiếp. Staff thao tác Fulfillment, không sửa trạng thái tổng Order. Với `MOCK`, payment/refund là mô phỏng. Với `PAYOS`, tiền thu là thật và hoàn tiền là quy trình THỦ CÔNG có bằng chứng (không có payout tự động).
 
 ## Tài liệu
 

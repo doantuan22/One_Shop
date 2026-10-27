@@ -22,9 +22,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Simulated, whole refund of money the gateway verifiably collected (BE-05 task D). Never a bank refund, never
- * partial, never per Fulfillment. The collected {@code SUCCESS} row is kept as evidence; the refund is recorded in its
- * own refund columns:
+ * Whole refund of money the gateway verifiably collected (BE-05 task D). The collected {@code SUCCESS} row is kept as
+ * evidence; the refund is recorded in its own refund columns.
+ *
+ * <p><b>Simulated</b> (MOCK payments): never a bank refund; {@link RefundSimulator} always answers "done".
+ * <p><b>Real</b> (PAYOS payments): the simulator is never consulted. The refund is only <em>requested</em>
+ * ({@code MANUAL_REQUESTED}); an administrator pays it from the bank and confirms it with the bank transaction code
+ * ({@link ManualRefundService}), and only that confirmation makes it {@code REFUNDED}. Cancelling a payOS link is not
+ * a refund.
+ *
+ * <pre>
  *
  * <pre>
  * NONE -> PENDING_SIMULATION -> SIMULATED_REFUNDED     (orders.payment_status = REFUNDED)
@@ -40,8 +47,12 @@ public class RefundService {
     private static final Logger log = LoggerFactory.getLogger(RefundService.class);
 
     public enum Result {
-        /** at least one collected payment was refunded now */
+        /** at least one collected payment was refunded now (simulation) */
         REFUNDED,
+        /** a real refund is now owed; an administrator must pay it and confirm it with evidence */
+        REFUND_REQUESTED,
+        /** the real refund was already requested / paid earlier: nothing new */
+        ALREADY_REQUESTED,
         /** everything collected was already refunded: no side effect */
         ALREADY_REFUNDED,
         /** the simulation failed; recorded as SIMULATION_FAILED, a retry is allowed */
@@ -72,9 +83,15 @@ public class RefundService {
             return Result.NOT_APPLICABLE;
         }
         boolean refundedNow = false;
+        boolean requestedNow = false;
+        boolean alreadyRequested = false;
         boolean failed = false;
         for (Payment row : collected) {
             if (row.getRefundStatus() == PaymentRefundStatus.SIMULATED_REFUNDED) {
+                continue;
+            }
+            if (row.getRefundStatus().isReal()) {
+                alreadyRequested = true;
                 continue;
             }
             if (ledger.findByPaymentId(row.getId()).stream().anyMatch(r -> r.getComponent() != PaymentRefundComponent.WHOLE_ORDER
@@ -87,6 +104,15 @@ public class RefundService {
             row.setRefundRequestedAt(now);
             row.setRefundAmount(row.getAmount());
             row.setRefundReason(OrderStatusWriter.abbreviate(reason));
+            if (row.isPayos()) {
+                // real money: never simulated, never marked refunded here
+                row.setRefundStatus(PaymentRefundStatus.MANUAL_REQUESTED);
+                row.setRefundedAt(null);
+                payments.saveAndFlush(row);
+                writeLedger(lockedOrder, row);
+                requestedNow = true;
+                continue;
+            }
             payments.saveAndFlush(row);
             try {
                 simulator.simulate(row);
@@ -102,14 +128,48 @@ public class RefundService {
             payments.saveAndFlush(row);
             writeLedger(lockedOrder, row);
         }
-        if (!failed) {
+        if (!failed && !requestedNow && !alreadyRequested) {
             lockedOrder.setPaymentStatus(OrderPaymentStatus.REFUNDED);
             orders.saveAndFlush(lockedOrder);
         }
         if (failed) {
             return Result.SIMULATION_FAILED;
         }
+        if (requestedNow) {
+            return Result.REFUND_REQUESTED;
+        }
+        if (alreadyRequested && !refundedNow) {
+            return Result.ALREADY_REQUESTED;
+        }
         return refundedNow ? Result.REFUNDED : Result.ALREADY_REFUNDED;
+    }
+
+    /**
+     * Money that reached a payOS link but is not the Order's collected payment (a partial or excess transfer, or a
+     * second link of an Order that is already paid / cancelled): the amount received is owed back. One real refund
+     * request per Payment (the whole-Order ledger key), amount = what payOS received. Returns how many were created.
+     *
+     * @param exceptPaymentId the attempt that is the Order's collected payment, or {@code null}
+     */
+    @Transactional(propagation = Propagation.MANDATORY)
+    public int requestUnmatchedMoney(Order lockedOrder, List<Payment> rows, Long exceptPaymentId) {
+        int created = 0;
+        for (Payment row : rows) {
+            if (!row.isPayos() || row.getStatus() == PaymentStatus.SUCCESS || row.getId().equals(exceptPaymentId)
+                    || row.getProviderAmountPaid() == null || row.getProviderAmountPaid() <= 0
+                    || row.getRefundStatus() != PaymentRefundStatus.NONE) {
+                continue;
+            }
+            LocalDateTime now = LocalDateTime.now().withNano(0);
+            row.setRefundStatus(PaymentRefundStatus.MANUAL_REQUESTED);
+            row.setRefundRequestedAt(now);
+            row.setRefundAmount(java.math.BigDecimal.valueOf(row.getProviderAmountPaid()));
+            row.setRefundReason("Nhận tiền không khớp đơn hàng; hoàn lại số tiền đã nhận");
+            payments.saveAndFlush(row);
+            writeLedger(lockedOrder, row);
+            created++;
+        }
+        return created;
     }
 
     /** Mirrors the whole-Order refund of a Payment in the refund ledger (one row per Payment, updated on a retry). */
@@ -133,8 +193,9 @@ public class RefundService {
     /** Collected ONLINE rows whose refund is not finished (for the Admin list and the retry). */
     public boolean hasUnfinishedRefund(Long orderId) {
         return payments.findByOrderIdOrderByIdAsc(orderId).stream().anyMatch(p ->
-                p.getStatus() == PaymentStatus.SUCCESS && p.getMethod() == PaymentMethod.ONLINE
+                p.getMethod() == PaymentMethod.ONLINE && (p.getStatus() == PaymentStatus.SUCCESS || p.isPayos())
                         && (p.getRefundStatus() == PaymentRefundStatus.SIMULATION_FAILED
-                        || p.getRefundStatus() == PaymentRefundStatus.PENDING_SIMULATION));
+                        || p.getRefundStatus() == PaymentRefundStatus.PENDING_SIMULATION
+                        || p.getRefundStatus() == PaymentRefundStatus.MANUAL_REQUESTED));
     }
 }

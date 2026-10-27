@@ -13,6 +13,8 @@ public class PaymentConflictException extends BadRequestException {
     public static final String GATEWAY_DISABLED = "GATEWAY_DISABLED";
     public static final String NOT_A_PAYMENT_CASE = "NOT_A_PAYMENT_CASE";
     public static final String NOTHING_TO_REFUND = "NOTHING_TO_REFUND";
+    /** the payment provider could not be reached or did not answer: the result is unknown, nothing was changed */
+    public static final String GATEWAY_UNAVAILABLE = "GATEWAY_UNAVAILABLE";
 
     private final String code;
 

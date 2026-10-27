@@ -27,6 +27,19 @@ public class PaymentProperties {
      * Admin gateway console are refused, so nothing in production can settle a payment by a button.
      */
     private boolean mockGatewayEnabled = true;
+    /**
+     * Which gateway settles ONLINE payments: MOCK (simulation: dev/test) or PAYOS (real money). With PAYOS the
+     * simulation endpoints are refused whatever {@code mock-gateway-enabled} says.
+     */
+    private com.oneshop.entity.PaymentProvider provider = com.oneshop.entity.PaymentProvider.MOCK;
+
+    public com.oneshop.entity.PaymentProvider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(com.oneshop.entity.PaymentProvider provider) {
+        this.provider = provider == null ? com.oneshop.entity.PaymentProvider.MOCK : provider;
+    }
 
     public int getPendingTimeoutMinutes() {
         return pendingTimeoutMinutes;

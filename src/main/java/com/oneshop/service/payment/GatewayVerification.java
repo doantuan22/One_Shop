@@ -6,10 +6,16 @@ import java.time.LocalDateTime;
  * What the gateway answers about the money of one Order: never the browser's claim.
  *
  * @param reference  gateway reference the answer is about (may be {@code null} when there is no attempt)
+ * @param paymentId  the {@code payments} row the answer is about when the provider names one (payOS); else {@code null}
  * @param capturedAt server time of the collection for {@link Result#SUCCESS}; the submission time for
  *                   {@link Result#UNKNOWN} when known; otherwise {@code null}
  */
-public record GatewayVerification(Result result, String reference, LocalDateTime capturedAt) {
+public record GatewayVerification(Result result, String reference, LocalDateTime capturedAt, Long paymentId) {
+
+    public GatewayVerification(Result result, String reference, LocalDateTime capturedAt) {
+        this(result, reference, capturedAt, null);
+    }
+
 
     public enum Result {
         /** money collected at {@code capturedAt} */

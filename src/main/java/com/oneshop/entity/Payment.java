@@ -62,9 +62,66 @@ public class Payment extends CreatedAtEntity {
     @Column(name = "refund_reason", length = 500)
     private String refundReason;
 
+    /** {@code null} for COD / PAY_AT_STORE; MOCK for the simulated gateway; PAYOS for the real hosted checkout. */
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private PaymentProvider provider;
+
+    @Column(name = "provider_order_code")
+    private Long providerOrderCode;
+
+    @Column(name = "provider_link_id", length = 64)
+    private String providerLinkId;
+
+    @Column(name = "checkout_url", length = 500)
+    private String checkoutUrl;
+
+    /** Last status payOS reported for the link: evidence, never taken from a browser. */
+    @Column(name = "provider_status", length = 20)
+    private String providerStatus;
+
+    @Column(name = "provider_amount_paid")
+    private Long providerAmountPaid;
+
+    @Column(name = "provider_reference", length = 100)
+    private String providerReference;
+
+    /** When the bank recorded the money (converted to the server zone); not when a webhook arrived. */
+    @Column(name = "provider_paid_at")
+    private LocalDateTime providerPaidAt;
+
+    @Column(name = "expires_at")
+    private LocalDateTime expiresAt;
+
+    @Column(name = "last_synced_at")
+    private LocalDateTime lastSyncedAt;
+
     public Long getId() {
         return id;
     }
+
+    public PaymentProvider getProvider() { return provider; }
+    public void setProvider(PaymentProvider provider) { this.provider = provider; }
+    public Long getProviderOrderCode() { return providerOrderCode; }
+    public void setProviderOrderCode(Long providerOrderCode) { this.providerOrderCode = providerOrderCode; }
+    public String getProviderLinkId() { return providerLinkId; }
+    public void setProviderLinkId(String providerLinkId) { this.providerLinkId = providerLinkId; }
+    public String getCheckoutUrl() { return checkoutUrl; }
+    public void setCheckoutUrl(String checkoutUrl) { this.checkoutUrl = checkoutUrl; }
+    public String getProviderStatus() { return providerStatus; }
+    public void setProviderStatus(String providerStatus) { this.providerStatus = providerStatus; }
+    public Long getProviderAmountPaid() { return providerAmountPaid; }
+    public void setProviderAmountPaid(Long providerAmountPaid) { this.providerAmountPaid = providerAmountPaid; }
+    public String getProviderReference() { return providerReference; }
+    public void setProviderReference(String providerReference) { this.providerReference = providerReference; }
+    public LocalDateTime getProviderPaidAt() { return providerPaidAt; }
+    public void setProviderPaidAt(LocalDateTime providerPaidAt) { this.providerPaidAt = providerPaidAt; }
+    public LocalDateTime getExpiresAt() { return expiresAt; }
+    public void setExpiresAt(LocalDateTime expiresAt) { this.expiresAt = expiresAt; }
+    public LocalDateTime getLastSyncedAt() { return lastSyncedAt; }
+    public void setLastSyncedAt(LocalDateTime lastSyncedAt) { this.lastSyncedAt = lastSyncedAt; }
+
+    public boolean isPayos() { return provider == PaymentProvider.PAYOS; }
 
     public Order getOrder() {
         return order;

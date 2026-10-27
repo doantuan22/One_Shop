@@ -33,6 +33,8 @@ public class CustomerOrderCancellationService {
         CANCELLED,
         /** cancelled and the paid ONLINE amount refunded (simulated) */
         CANCELLED_AND_REFUNDED,
+        /** cancelled; a REAL refund is owed and waits for an administrator to pay and confirm it */
+        CANCELLED_REFUND_REQUESTED,
         /** cancelled; the simulated refund failed and stays retryable by an administrator */
         CANCELLED_REFUND_FAILED,
         /** the Order was already cancelled (a repeated request, or a payment rule cancelled it first) */
@@ -103,8 +105,11 @@ public class CustomerOrderCancellationService {
             cancellation.cancelAndRestore(order, stockNote, historyNote, customer, OrderPaymentStatus.PAID);
             RefundService.Result refund = refunds.simulate(order,
                     "Khách hủy đơn trước khi chuẩn bị hàng; hoàn tiền toàn phần");
-            return refund == RefundService.Result.SIMULATION_FAILED ? Result.CANCELLED_REFUND_FAILED
-                    : Result.CANCELLED_AND_REFUNDED;
+            return switch (refund) {
+                case SIMULATION_FAILED -> Result.CANCELLED_REFUND_FAILED;
+                case REFUND_REQUESTED, ALREADY_REQUESTED -> Result.CANCELLED_REFUND_REQUESTED;
+                default -> Result.CANCELLED_AND_REFUNDED;
+            };
         }
         if (order.getPaymentStatus() != OrderPaymentStatus.UNPAID) {
             throw new PaymentConflictException(PaymentConflictException.PAYMENT_NOT_PAYABLE,

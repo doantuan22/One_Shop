@@ -103,6 +103,7 @@ public class PartialRefundService {
             return new Result(Status.NOT_APPLICABLE, BigDecimal.ZERO, BigDecimal.ZERO, false);
         }
         if (collected.getRefundStatus() == PaymentRefundStatus.SIMULATED_REFUNDED
+                || collected.getRefundStatus() == PaymentRefundStatus.REFUNDED
                 || lockedOrder.getPaymentStatus() == OrderPaymentStatus.REFUNDED) {
             throw new FulfillmentConflictException(FulfillmentConflictException.INCONSISTENT_FULFILLMENT,
                     "Khoản thanh toán của đơn đã được hoàn đủ trước đó; không thể hoàn thêm.");
@@ -232,6 +233,13 @@ public class PartialRefundService {
     }
 
     private boolean simulate(PaymentRefund row) {
+        if (row.getPayment().isPayos()) {
+            // real money: only requested here; an administrator pays it and confirms it with the bank transaction code
+            row.setStatus(PaymentRefundStatus.MANUAL_REQUESTED);
+            row.setRefundedAt(null);
+            refunds.saveAndFlush(row);
+            return true;
+        }
         try {
             simulator.simulate(row.getPayment());
             row.setStatus(PaymentRefundStatus.SIMULATED_REFUNDED);
@@ -254,6 +262,16 @@ public class PartialRefundService {
             return false;
         }
         LocalDateTime now = LocalDateTime.now().withNano(0);
+        if (collected.isPayos()) {
+            // everything is now owed back; none of it is paid until the administrator confirms each row with evidence
+            collected.setRefundStatus(PaymentRefundStatus.MANUAL_REQUESTED);
+            collected.setRefundAmount(collected.getAmount());
+            collected.setRefundRequestedAt(collected.getRefundRequestedAt() == null ? now : collected.getRefundRequestedAt());
+            collected.setRefundedAt(null);
+            collected.setRefundReason(OrderStatusWriter.abbreviate(reason));
+            payments.saveAndFlush(collected);
+            return true;
+        }
         collected.setRefundStatus(PaymentRefundStatus.SIMULATED_REFUNDED);
         collected.setRefundAmount(collected.getAmount());
         collected.setRefundRequestedAt(collected.getRefundRequestedAt() == null ? now : collected.getRefundRequestedAt());

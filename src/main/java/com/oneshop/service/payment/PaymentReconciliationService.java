@@ -48,7 +48,9 @@ public class PaymentReconciliationService {
     /** What a person's browser asked the demo gateway to enact (never a payment status). */
     public enum SimulatedResult { SUCCESS, FAILED, UNKNOWN }
 
-    public enum Trigger { CUSTOMER_CALLBACK, TIMEOUT_SCAN, CUSTOMER_CANCEL, ADMIN_RECHECK, ADMIN_GATEWAY }
+    public enum Trigger { CUSTOMER_CALLBACK, TIMEOUT_SCAN, CUSTOMER_CANCEL, ADMIN_RECHECK, ADMIN_GATEWAY,
+        /** a signature-verified provider webhook */ PROVIDER_WEBHOOK,
+        /** the customer came back from the provider's page (display only; the provider is queried) */ CUSTOMER_RETURN }
 
     private final OrderRepository orders;
     private final PaymentRepository payments;
@@ -160,13 +162,20 @@ public class PaymentReconciliationService {
         boolean paymentCase = status == OrderStatus.PENDING_PAYMENT
                 || (status == OrderStatus.NEEDS_ATTENTION && order.getPaymentStatus() == OrderPaymentStatus.UNPAID);
         if (!paymentCase) {
-            return order.getPaymentStatus() == OrderPaymentStatus.PAID ? PaymentOutcome.ALREADY_PAID
-                    : PaymentOutcome.NOT_APPLICABLE;
+            if (order.getPaymentStatus() == OrderPaymentStatus.PAID) {
+                // money that arrived on another link of an already paid Order is owed back
+                if (refunds.requestUnmatchedMoney(order, rows, null) > 0) {
+                    writer.audit(order, actor, note("DUPLICATE_PAYMENT", trigger,
+                            "kết quả", "nhận thêm tiền trên đơn đã thanh toán; chờ hoàn tiền thủ công"));
+                }
+                return PaymentOutcome.ALREADY_PAID;
+            }
+            return PaymentOutcome.NOT_APPLICABLE;
         }
 
         switch (verification.result()) {
             case SUCCESS -> {
-                Payment row = rowOf(rows, verification.reference());
+                Payment row = rowOf(rows, verification);
                 LocalDateTime at = verification.capturedAt();
                 if (at != null && at.isBefore(deadline)) {
                     return confirm(order, row, at, actor, trigger, verification);
@@ -217,9 +226,7 @@ public class PaymentReconciliationService {
                                    GatewayVerification verification) {
         requireMatchingCollection(order, row);
         if (row != null) {
-            row.setStatus(PaymentStatus.SUCCESS);
-            row.setPaidAt(at.withNano(0));
-            row.setTransactionCode(MockLedger.reference(row.getTransactionCode()));
+            gateway.applyCollected(row, at);
             payments.saveAndFlush(row);
         }
         order.setPaymentStatus(OrderPaymentStatus.PAID);
@@ -241,9 +248,8 @@ public class PaymentReconciliationService {
                                                 Trigger trigger, GatewayVerification verification,
                                                 LocalDateTime deadline) {
         if (row != null) {
-            row.setStatus(PaymentStatus.SUCCESS); // the money is collected: keep it as evidence, never confirm
-            row.setPaidAt(at == null ? deadlines.now().withNano(0) : at.withNano(0));
-            row.setTransactionCode(MockLedger.reference(row.getTransactionCode()));
+            // the money is collected: keep it as evidence, never confirm
+            gateway.applyCollected(row, at == null ? deadlines.now().withNano(0) : at);
             payments.saveAndFlush(row);
         }
         cancellation.cancelAndRestore(order,
@@ -258,6 +264,23 @@ public class PaymentReconciliationService {
     /** A collection that is visible on an Order that was cancelled: recorded and refunded once, never revived. */
     private PaymentOutcome lateOnCancelled(Order order, List<Payment> rows, GatewayVerification verification,
                                            User actor, Trigger trigger) {
+        // a provider (payOS) names the attempt it was paid on; that attempt becomes the Order's one collected payment
+        Long collectedId = null;
+        if (verification.result() == GatewayVerification.Result.SUCCESS && verification.paymentId() != null) {
+            Payment named = rowOf(rows, verification);
+            if (named != null && named.getStatus() != PaymentStatus.SUCCESS) {
+                requireMatchingCollection(order, named);
+                gateway.applyCollected(named, verification.capturedAt() != null ? verification.capturedAt()
+                        : deadlines.now().withNano(0));
+                payments.saveAndFlush(named);
+            }
+            collectedId = verification.paymentId();
+        }
+        // money that is not that payment (a partial / excess transfer, a second link) is owed back too
+        if (refunds.requestUnmatchedMoney(order, rows, collectedId) > 0) {
+            writer.audit(order, actor, note("UNMATCHED_PAYMENT", trigger,
+                    "kết quả", "nhận tiền không khớp trên đơn đã hủy; chờ hoàn tiền thủ công"));
+        }
         // a CAPTURED (unapplied) attempt on a cancelled Order cannot normally exist; handle it like a late collection
         Payment unapplied = rows.stream().filter(p -> MockLedger.stateOf(p) == LedgerState.CAPTURED).findFirst()
                 .orElse(null);
@@ -276,9 +299,11 @@ public class PaymentReconciliationService {
                 order.setPaymentStatus(OrderPaymentStatus.PAID);
                 orders.saveAndFlush(order);
             }
-            refunds.simulate(order, "Khoản thu trên đơn đã hủy; hoàn tiền");
-            writer.audit(order, actor, note("LATE_PAYMENT", trigger, "ref", verification.reference(),
-                    "kết quả", "đơn đã hủy, hoàn tiền"));
+            RefundService.Result refund = refunds.simulate(order, "Khoản thu trên đơn đã hủy; hoàn tiền");
+            if (refund != RefundService.Result.ALREADY_REQUESTED) { // a repeated check must not repeat the history
+                writer.audit(order, actor, note("LATE_PAYMENT", trigger, "ref", verification.reference(),
+                        "thu lúc", verification.capturedAt(), "kết quả", "đơn đã hủy, hoàn tiền"));
+            }
         }
         return PaymentOutcome.LATE_PAYMENT_REFUNDED;
     }
@@ -337,7 +362,12 @@ public class PaymentReconciliationService {
         return order;
     }
 
-    private static Payment rowOf(List<Payment> rows, String reference) {
+    private static Payment rowOf(List<Payment> rows, GatewayVerification verification) {
+        if (verification.paymentId() != null) { // a provider that names the row (payOS)
+            return rows.stream().filter(p -> verification.paymentId().equals(p.getId())
+                    && p.getMethod() == PaymentMethod.ONLINE).findFirst().orElse(null);
+        }
+        String reference = verification.reference();
         return rows.stream().filter(p -> reference != null
                 && reference.equals(MockLedger.reference(p.getTransactionCode()))
                 && p.getMethod() == PaymentMethod.ONLINE

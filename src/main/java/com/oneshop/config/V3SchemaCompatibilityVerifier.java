@@ -31,6 +31,26 @@ public class V3SchemaCompatibilityVerifier implements SmartInitializingSingleton
         requireRefundLedger();
         requireReturnFlow();
         requirePromotions();
+        requirePayos();
+    }
+
+    /** payOS: provider columns on payments, the webhook journal, and the keys that make a double collection impossible. */
+    private void requirePayos() {
+        Integer columns = jdbc.queryForObject("select count(*) from sys.columns where object_id=object_id(N'dbo.payments') and name in "
+                + "(N'provider',N'provider_order_code',N'provider_link_id',N'checkout_url',N'provider_status',"
+                + "N'provider_amount_paid',N'provider_reference',N'provider_paid_at',N'expires_at',N'last_synced_at')", Integer.class);
+        Integer refundColumns = jdbc.queryForObject("select count(*) from sys.columns where object_id=object_id(N'dbo.payment_refunds') and name in "
+                + "(N'evidence_reference',N'processed_by_user_id',N'processed_at',N'processed_note')", Integer.class);
+        Integer journal = jdbc.queryForObject("select count(*) from sys.tables where name=N'payment_provider_events'", Integer.class);
+        Integer keys = jdbc.queryForObject("select count(*) from sys.indexes where is_unique=1 and has_filter=1 and is_disabled=0 and "
+                + "((object_id=object_id(N'dbo.payments') and name in (N'UX_payments_provider_order_code',N'UX_payments_provider_link',N'UX_payments_one_pending_payos'))"
+                + " or (object_id=object_id(N'dbo.payment_refunds') and name=N'UX_payment_refunds_evidence'))", Integer.class);
+        if (columns == null || columns != 10 || refundColumns == null || refundColumns != 4 || journal == null || journal != 1
+                || keys == null || keys != 4) {
+            throw new IllegalStateException("V3 schema prerequisite missing: payOS payments. "
+                    + "Stop startup; back up and obtain approval for database/migrations/V009_payos_payments.sql (an existing database only; a fresh install uses database/schema/01_schema.sql). "
+                    + "No migration was executed automatically.");
+        }
     }
 
     /** Promotion codes: the two tables and the discount snapshot columns of orders / order_items. */

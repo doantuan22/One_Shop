@@ -71,6 +71,29 @@ public class PaymentRefund {
     @Column(name = "refunded_at")
     private LocalDateTime refundedAt;
 
+    /** REAL refund only: the bank transaction code of the money that was given back. */
+    @Column(name = "evidence_reference", length = 100)
+    private String evidenceReference;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "processed_by_user_id")
+    private User processedBy;
+
+    @Column(name = "processed_at")
+    private LocalDateTime processedAt;
+
+    @Column(name = "processed_note", length = 500)
+    private String processedNote;
+
+    public String getEvidenceReference() { return evidenceReference; }
+    public void setEvidenceReference(String evidenceReference) { this.evidenceReference = evidenceReference; }
+    public User getProcessedBy() { return processedBy; }
+    public void setProcessedBy(User processedBy) { this.processedBy = processedBy; }
+    public LocalDateTime getProcessedAt() { return processedAt; }
+    public void setProcessedAt(LocalDateTime processedAt) { this.processedAt = processedAt; }
+    public String getProcessedNote() { return processedNote; }
+    public void setProcessedNote(String processedNote) { this.processedNote = processedNote; }
+
     public Long getId() {
         return id;
     }

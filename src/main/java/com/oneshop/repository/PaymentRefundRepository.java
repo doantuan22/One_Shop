@@ -31,6 +31,10 @@ public interface PaymentRefundRepository extends JpaRepository<PaymentRefund, Lo
             + "com.oneshop.entity.PaymentRefundStatus.SIMULATION_FAILED")
     BigDecimal sumCommitted(@Param("paymentId") Long paymentId);
 
+    /** Money really paid out (REAL refunds confirmed with evidence) or simulated, for one Payment, by status. */
+    @Query("select coalesce(sum(r.amount), 0) from PaymentRefund r where r.payment.id = :paymentId and r.status = :status")
+    BigDecimal sumByPaymentAndStatus(@Param("paymentId") Long paymentId, @Param("status") PaymentRefundStatus status);
+
     @Query("select r from PaymentRefund r where r.fulfillment.id = :fulfillmentId and r.component = "
             + "com.oneshop.entity.PaymentRefundComponent.GOODS")
     Optional<PaymentRefund> findGoodsRefund(@Param("fulfillmentId") Long fulfillmentId);

@@ -55,6 +55,14 @@ public class OrderCancellationService {
         this.statusWriter = statusWriter;
     }
 
+    private PaymentLinkCanceller linkCanceller;
+
+    /** Present only with a real gateway: the provider link of a closed attempt is cancelled after the commit. */
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    void setLinkCanceller(PaymentLinkCanceller linkCanceller) {
+        this.linkCanceller = linkCanceller;
+    }
+
     /**
      * @param stockNote        movement note ({@code CANCEL_ORDER}); also the Fulfillment cancel reason
      * @param historyNote      note of the Order status history row
@@ -110,6 +118,9 @@ public class OrderCancellationService {
                 attempt.setStatus(PaymentStatus.FAILED);
                 attempt.setPaidAt(null);
                 attempt.setTransactionCode(MockLedger.reference(attempt.getTransactionCode()));
+                if (linkCanceller != null) {
+                    linkCanceller.cancelAfterCommit(attempt); // closing a link is not a refund and proves nothing about money
+                }
             }
         }
         payments.flush();

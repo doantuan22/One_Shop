@@ -70,21 +70,35 @@ public class PaymentServiceImpl implements PaymentService {
         boolean reconciling = false;
         if (order.getPaymentMethod() == PaymentMethod.ONLINE) {
             // the state of the attempt the customer can act on: the latest one that is still pending
-            LedgerState state = rows.stream().filter(p -> p.getStatus() == PaymentStatus.PENDING)
+            LedgerState state = rows.stream().filter(p -> p.getStatus() == PaymentStatus.PENDING && !p.isPayos())
                     .map(MockLedger::stateOf).findFirst().orElse(null);
             ledger = state == null ? null : state.name();
             reconciling = state == LedgerState.IN_DOUBT && order.getOrderStatus() == OrderStatus.PENDING_PAYMENT
                     && deadlines.isExpired(order);
+            if (realGateway() && gateway != null) {
+                // real money: "reconciling" means payOS reported money in flight / not exactly the amount
+                var verification = gateway.verify(order, rows);
+                reconciling = verification.result() == com.oneshop.service.payment.GatewayVerification.Result.UNKNOWN
+                        && order.getOrderStatus() == OrderStatus.PENDING_PAYMENT;
+            }
         }
         return new OrderPaymentResponse(order.getId(), order.getCheckoutSession().getId(), storeLabel(order),
                 order.getTotalAmount(), order.getPaymentMethod(), order.getPaymentStatus(), order.getOrderStatus(),
                 rows.stream().map(PaymentServiceImpl::response).toList(),
                 deadlines.paymentDeadline(order), deadlines.isExpired(order),
-                gateway != null && gateway.enabled(), ledger, reconciling);
+                gateway != null && gateway.enabled(), ledger, reconciling, realGateway() && gateway.onlineAvailable());
+    }
+
+    /** True while payOS (real money) is the gateway: the simulated attempt/ledger paths do not apply. */
+    private boolean realGateway() {
+        return gateway != null && gateway.provider() == com.oneshop.entity.PaymentProvider.PAYOS;
     }
 
     @Override
     public PaymentResponse createOnlinePaymentAttempt(String customerEmail, Long orderId) {
+        if (realGateway()) {
+            throw new BadRequestException("Thanh toán trực tuyến dùng payOS; không có lần thử mô phỏng.");
+        }
         Order order = ownLockedOrder(customerEmail, orderId);
         requirePayable(order);
         Payment payment = paymentRepository.findFirstByOrderIdAndStatusOrderByIdAsc(orderId, PaymentStatus.PENDING)
@@ -94,6 +108,7 @@ public class PaymentServiceImpl implements PaymentService {
                     attempt.setMethod(order.getPaymentMethod());
                     attempt.setAmount(order.getTotalAmount());
                     attempt.setStatus(PaymentStatus.PENDING);
+                    attempt.setProvider(com.oneshop.entity.PaymentProvider.MOCK);
                     attempt.setTransactionCode(mockReference());
                     return paymentRepository.saveAndFlush(attempt);
                 });
@@ -190,11 +205,16 @@ public class PaymentServiceImpl implements PaymentService {
         if (!paymentRepository.findByOrderIdOrderByIdAsc(order.getId()).isEmpty()) {
             throw new BadRequestException("Đơn hàng đã có lần thanh toán; không khởi tạo thêm.");
         }
+        if (realGateway()) {
+            // payOS: the payment link (and its unique orderCode) is made when the customer presses "pay", never here
+            return null;
+        }
         Payment attempt = new Payment();
         attempt.setOrder(order);
         attempt.setMethod(PaymentMethod.ONLINE);
         attempt.setAmount(order.getTotalAmount()); // the whole Order, never a Fulfillment or a Store
         attempt.setStatus(PaymentStatus.PENDING);
+        attempt.setProvider(com.oneshop.entity.PaymentProvider.MOCK);
         attempt.setTransactionCode(mockReference());
         return response(paymentRepository.saveAndFlush(attempt));
     }

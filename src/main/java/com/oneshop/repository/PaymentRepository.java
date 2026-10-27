@@ -29,5 +29,16 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     Optional<Payment> findByIdAndOrderId(Long paymentId, Long orderId);
 
+    Optional<Payment> findByProviderOrderCode(Long providerOrderCode);
+
+    boolean existsByProviderOrderCode(Long providerOrderCode);
+
+    @Query("select p.order.id from Payment p where p.providerOrderCode = :orderCode")
+    Optional<Long> findOrderIdByProviderOrderCode(@Param("orderCode") Long orderCode);
+
+    /** The Order id of a Payment without loading the row (so the Order lock can be taken before the row is read). */
+    @Query("select p.order.id from Payment p where p.id = :paymentId")
+    Optional<Long> findOrderIdById(@Param("paymentId") Long paymentId);
+
     Optional<Payment> findFirstByOrderIdAndStatusOrderByIdAsc(Long orderId, PaymentStatus status);
 }

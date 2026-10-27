@@ -582,6 +582,8 @@
                         <td class="text-end fw-bold text-coral"><span th:replace="~{fragments/components :: price(${line.amount})}"></span></td>
                         <td th:switch="${line.status.name()}">
                             <span class="badge os-soft os-soft-success" th:case="'SIMULATED_REFUNDED'">Đã hoàn</span>
+                            <span class="badge os-soft os-soft-success" th:case="'REFUNDED'">Đã hoàn</span>
+                            <span class="badge os-soft os-soft-warning" th:case="'MANUAL_REQUESTED'">Chờ hoàn tiền</span>
                             <span class="badge os-soft os-soft-warning" th:case="'PENDING_SIMULATION'">Đang hoàn</span>
                             <span class="badge os-soft os-soft-danger" th:case="*">Hoàn thất bại, đang chờ xử lý</span>
                         </td>

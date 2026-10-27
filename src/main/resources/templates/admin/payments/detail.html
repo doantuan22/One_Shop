@@ -99,6 +99,25 @@
             <p class="small text-secondary">Hoàn tiền toàn phần cho khoản đã thu. Không hoàn một phần.</p>
             <button class="btn btn-outline-primary" type="submit" id="action-refund-retry">Thử lại hoàn tiền</button>
         </form>
+        <div class="border rounded-3 p-3 mb-3" id="real-refunds" th:if="${!realRefunds.isEmpty()}">
+            <h2 class="h6">Hoàn tiền thật cần xử lý</h2>
+            <p class="small text-secondary">
+                Chuyển khoản hoàn tiền cho khách từ tài khoản ngân hàng, rồi nhập MÃ GIAO DỊCH THỰC TẾ của khoản hoàn.
+                Hệ thống chỉ đánh dấu &quot;Đã hoàn&quot; sau khi có mã này. Hủy link thanh toán không phải là hoàn tiền.
+            </p>
+            <form method="post" class="row g-2 align-items-end mb-3" th:each="r : ${realRefunds}"
+                  th:action="@{/admin/payments/{id}/real-refunds/{rid}/confirm(id=${c.orderId},rid=${r.refundId})}">
+                <div class="col-12 small">
+                    <strong th:text="${r.component}"></strong> &middot;
+                    <span th:replace="~{fragments/components :: price(${r.amount})}"></span> &middot;
+                    <span th:text="${r.reason}"></span>
+                    <span class="text-secondary" th:if="${r.providerOrderCode != null}" th:text="' · payOS orderCode ' + ${r.providerOrderCode}"></span>
+                </div>
+                <div class="col-md-5"><input class="form-control" name="evidenceReference" required minlength="4" maxlength="100" placeholder="Mã giao dịch ngân hàng của khoản hoàn"></div>
+                <div class="col-md-4"><input class="form-control" name="note" maxlength="500" placeholder="Ghi chú (tuỳ chọn)"></div>
+                <div class="col-md-3"><button class="btn btn-outline-success w-100" type="submit">Xác nhận đã hoàn</button></div>
+            </form>
+        </div>
         <p class="text-secondary mb-0"
            th:unless="${paymentCase.canRecheck or paymentCase.canSettleGateway or paymentCase.canRetryRefund}">
             Không có thao tác thanh toán nào cho đơn này.

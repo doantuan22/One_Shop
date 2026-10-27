@@ -155,9 +155,10 @@ public class AdminPaymentService {
     PaymentCaseCategory classify(Order order, List<Payment> rows) {
         var cutoff = deadlines.expiredBefore();
         boolean pending = order.getOrderStatus() == OrderStatus.PENDING_PAYMENT;
-        boolean refundOpen = rows.stream().anyMatch(p -> p.getStatus() == PaymentStatus.SUCCESS
+        boolean refundOpen = rows.stream().anyMatch(p -> (p.getStatus() == PaymentStatus.SUCCESS || p.isPayos())
                 && (p.getRefundStatus() == PaymentRefundStatus.SIMULATION_FAILED
-                || p.getRefundStatus() == PaymentRefundStatus.PENDING_SIMULATION));
+                || p.getRefundStatus() == PaymentRefundStatus.PENDING_SIMULATION
+                || p.getRefundStatus() == PaymentRefundStatus.MANUAL_REQUESTED));
         boolean overdue = pending && !order.getCreatedAt().isAfter(cutoff);
         refundOpen = refundOpen || ledgerOpen(order.getId());
         if (order.getOrderStatus() == OrderStatus.NEEDS_ATTENTION || overdue || refundOpen) {
@@ -285,7 +286,8 @@ public class AdminPaymentService {
     /** A refund of this Order is failed or unfinished in the ledger (whole or part). */
     private boolean ledgerOpen(Long orderId) {
         return !refundLedger.findByOrderIdAndStatus(orderId, PaymentRefundStatus.SIMULATION_FAILED).isEmpty()
-                || !refundLedger.findByOrderIdAndStatus(orderId, PaymentRefundStatus.PENDING_SIMULATION).isEmpty();
+                || !refundLedger.findByOrderIdAndStatus(orderId, PaymentRefundStatus.PENDING_SIMULATION).isEmpty()
+                || !refundLedger.findByOrderIdAndStatus(orderId, PaymentRefundStatus.MANUAL_REQUESTED).isEmpty();
     }
 
     private void auditWhenUnchanged(Order order, User admin, String tag, PaymentOutcome outcome) {

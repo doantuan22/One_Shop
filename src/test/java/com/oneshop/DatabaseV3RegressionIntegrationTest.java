@@ -12,7 +12,7 @@ class DatabaseV3RegressionIntegrationTest extends V3RegressionTestSupport {
 
     @Test void all23TablesHaveTrustedConstraintsAndHibernateOnlyValidates(){
         assertThat(ddl).isEqualTo("validate");
-        assertThat(count("select count(*) from sys.tables where is_ms_shipped=0")).isEqualTo(30);
+        assertThat(count("select count(*) from sys.tables where is_ms_shipped=0")).isEqualTo(31);
         assertThat(count("select count(*) from sys.foreign_keys where is_disabled=1 or is_not_trusted=1")).isZero();
         assertThat(count("select count(*) from sys.check_constraints where is_disabled=1 or is_not_trusted=1")).isZero();
         Integer violations=jdbc.execute((org.springframework.jdbc.core.ConnectionCallback<Integer>) connection->{

@@ -414,6 +414,17 @@ CREATE TABLE dbo.payments (
     refunded_at         DATETIME2(0)         NULL,
     refund_reason       NVARCHAR(500)        NULL,
     created_at          DATETIME2(0)         NOT NULL CONSTRAINT DF_payments_created_at DEFAULT SYSDATETIME(),
+    /* payment gateway (V009): NULL for COD / PAY_AT_STORE; MOCK = simulated; PAYOS = real payOS hosted checkout */
+    provider             NVARCHAR(20)  NULL,
+    provider_order_code  BIGINT        NULL,   -- payOS orderCode (unique, <= 2^53-1), made by the backend
+    provider_link_id     NVARCHAR(64)  NULL,   -- payOS paymentLinkId
+    checkout_url         NVARCHAR(500) NULL,
+    provider_status      NVARCHAR(20)  NULL,   -- last payOS evidence: PENDING/PROCESSING/PAID/UNDERPAID/CANCELLED/EXPIRED/FAILED
+    provider_amount_paid BIGINT        NULL,   -- VND actually received per payOS
+    provider_reference   NVARCHAR(100) NULL,   -- bank transaction reference
+    provider_paid_at     DATETIME2(0)  NULL,   -- when the BANK recorded the payment (not when the webhook arrived)
+    expires_at           DATETIME2(0)  NULL,   -- payment link expiry (= the Order payment deadline)
+    last_synced_at       DATETIME2(0)  NULL,
     CONSTRAINT PK_payments PRIMARY KEY (payment_id),
     CONSTRAINT FK_payments_order FOREIGN KEY (order_id) REFERENCES dbo.orders (order_id),
     CONSTRAINT CK_payments_method CHECK (method IN (N'ONLINE', N'COD', N'PAY_AT_STORE')),
@@ -421,8 +432,40 @@ CREATE TABLE dbo.payments (
     CONSTRAINT CK_payments_amount CHECK (amount >= 0),
     CONSTRAINT CK_payments_paid_at CHECK (status <> N'SUCCESS' OR paid_at IS NOT NULL),
     CONSTRAINT CK_payments_refund_status CHECK (refund_status IN (
-        N'NONE', N'PENDING_SIMULATION', N'SIMULATED_REFUNDED', N'SIMULATION_FAILED'))
+        N'NONE', N'PENDING_SIMULATION', N'SIMULATED_REFUNDED', N'SIMULATION_FAILED', N'MANUAL_REQUESTED', N'REFUNDED')),
+    CONSTRAINT CK_payments_provider CHECK (provider IS NULL OR provider IN (N'MOCK', N'PAYOS')),
+    CONSTRAINT CK_payments_payos_order_code CHECK (provider IS NULL OR provider <> N'PAYOS'
+        OR (provider_order_code IS NOT NULL AND provider_order_code BETWEEN 1 AND 9007199254740991)),
+    CONSTRAINT CK_payments_provider_status CHECK (provider_status IS NULL OR provider_status IN (
+        N'PENDING', N'PROCESSING', N'PAID', N'UNDERPAID', N'CANCELLED', N'EXPIRED', N'FAILED'))
 );
+GO
+CREATE UNIQUE INDEX UX_payments_provider_order_code ON dbo.payments (provider_order_code) WHERE provider_order_code IS NOT NULL;
+CREATE UNIQUE INDEX UX_payments_provider_link ON dbo.payments (provider_link_id) WHERE provider_link_id IS NOT NULL;
+CREATE UNIQUE INDEX UX_payments_one_pending_payos ON dbo.payments (order_id) WHERE provider = N'PAYOS' AND status = N'PENDING';
+GO
+
+/* payment_provider_events: durable de-duplication of payOS webhooks (unique provider + event_key) */
+CREATE TABLE dbo.payment_provider_events (
+    event_id        BIGINT IDENTITY(1,1) NOT NULL,
+    provider        NVARCHAR(20)  NOT NULL,
+    event_key       NVARCHAR(128) NOT NULL,
+    payment_id      BIGINT        NULL,
+    order_code      BIGINT        NULL,
+    payment_link_id NVARCHAR(64)  NULL,
+    reference       NVARCHAR(100) NULL,
+    amount          BIGINT        NULL,
+    event_code      NVARCHAR(10)  NULL,
+    transaction_at  DATETIME2(0)  NULL,
+    outcome         NVARCHAR(30)  NOT NULL,
+    received_at     DATETIME2(0)  NOT NULL CONSTRAINT DF_payment_provider_events_received_at DEFAULT SYSDATETIME(),
+    CONSTRAINT PK_payment_provider_events PRIMARY KEY (event_id),
+    CONSTRAINT UQ_payment_provider_events_key UNIQUE (provider, event_key),
+    CONSTRAINT FK_payment_provider_events_payment FOREIGN KEY (payment_id) REFERENCES dbo.payments (payment_id),
+    CONSTRAINT CK_payment_provider_events_outcome CHECK (outcome IN (
+        N'APPLIED', N'TRIGGERED_SYNC', N'UNKNOWN_ORDER', N'REJECTED_MISMATCH'))
+);
+CREATE INDEX IX_payment_provider_events_payment ON dbo.payment_provider_events (payment_id);
 GO
 
 /* ============================================================================
@@ -529,20 +572,27 @@ CREATE TABLE dbo.payment_refunds (
     requested_by_user_id BIGINT               NULL,
     requested_at         DATETIME2(0)         NOT NULL CONSTRAINT DF_payment_refunds_requested_at DEFAULT SYSDATETIME(),
     refunded_at          DATETIME2(0)         NULL,
+    evidence_reference   NVARCHAR(100)        NULL,      -- REAL refund: the bank transaction code of the money given back
+    processed_by_user_id BIGINT               NULL,      -- REAL refund: who confirmed it
+    processed_at         DATETIME2(0)         NULL,
+    processed_note       NVARCHAR(500)        NULL,
     CONSTRAINT PK_payment_refunds PRIMARY KEY (refund_id),
+    CONSTRAINT FK_payment_refunds_processed_by FOREIGN KEY (processed_by_user_id) REFERENCES dbo.users (user_id),
     CONSTRAINT FK_payment_refunds_payment     FOREIGN KEY (payment_id)           REFERENCES dbo.payments (payment_id),
     CONSTRAINT FK_payment_refunds_order       FOREIGN KEY (order_id)             REFERENCES dbo.orders (order_id),
     CONSTRAINT FK_payment_refunds_fulfillment FOREIGN KEY (fulfillment_id)       REFERENCES dbo.order_fulfillments (fulfillment_id),
     CONSTRAINT FK_payment_refunds_user        FOREIGN KEY (requested_by_user_id) REFERENCES dbo.users (user_id),
     CONSTRAINT FK_payment_refunds_return      FOREIGN KEY (return_id)            REFERENCES dbo.order_returns (return_id),
     CONSTRAINT CK_payment_refunds_component CHECK (component IN (N'GOODS', N'SHIPPING', N'WHOLE_ORDER', N'RETURN')),
-    CONSTRAINT CK_payment_refunds_status CHECK (status IN (N'PENDING_SIMULATION', N'SIMULATED_REFUNDED', N'SIMULATION_FAILED')),
+    CONSTRAINT CK_payment_refunds_status CHECK (status IN (N'PENDING_SIMULATION', N'SIMULATED_REFUNDED', N'SIMULATION_FAILED', N'MANUAL_REQUESTED', N'REFUNDED')),
     CONSTRAINT CK_payment_refunds_amount CHECK (amount > 0),
     CONSTRAINT CK_payment_refunds_target CHECK (
         (component = N'GOODS' AND fulfillment_id IS NOT NULL AND return_id IS NULL)
         OR (component = N'RETURN' AND fulfillment_id IS NULL AND return_id IS NOT NULL)
         OR (component IN (N'SHIPPING', N'WHOLE_ORDER') AND fulfillment_id IS NULL AND return_id IS NULL)),
-    CONSTRAINT CK_payment_refunds_refunded_at CHECK (status <> N'SIMULATED_REFUNDED' OR refunded_at IS NOT NULL)
+    CONSTRAINT CK_payment_refunds_refunded_at CHECK (status NOT IN (N'SIMULATED_REFUNDED', N'REFUNDED') OR refunded_at IS NOT NULL),
+    CONSTRAINT CK_payment_refunds_real_evidence CHECK (status <> N'REFUNDED'
+        OR (evidence_reference IS NOT NULL AND processed_by_user_id IS NOT NULL AND processed_at IS NOT NULL))
 );
 GO
 /* One goods refund per Fulfillment, one shipping refund per Order, one whole-Order refund per Payment, one return refund per Return: a repeated or
@@ -551,6 +601,7 @@ CREATE UNIQUE INDEX UX_payment_refunds_goods    ON dbo.payment_refunds (fulfillm
 CREATE UNIQUE INDEX UX_payment_refunds_shipping ON dbo.payment_refunds (order_id)       WHERE component = N'SHIPPING';
 CREATE UNIQUE INDEX UX_payment_refunds_whole    ON dbo.payment_refunds (payment_id)     WHERE component = N'WHOLE_ORDER';
 CREATE UNIQUE INDEX UX_payment_refunds_return   ON dbo.payment_refunds (return_id)      WHERE component = N'RETURN';
+CREATE UNIQUE INDEX UX_payment_refunds_evidence ON dbo.payment_refunds (evidence_reference) WHERE evidence_reference IS NOT NULL;
 CREATE INDEX IX_payment_refunds_order ON dbo.payment_refunds (order_id, requested_at);
 CREATE INDEX IX_payment_refunds_payment ON dbo.payment_refunds (payment_id);
 GO
@@ -762,7 +813,7 @@ GO
 
 /* Structural verification (read only). Any violation THROWs, so a broken install is never silent. */
 DECLARE @tables INT = (SELECT COUNT(*) FROM sys.tables WHERE is_ms_shipped = 0);
-IF @tables <> 30 THROW 50001, 'Expected exactly 30 tables (28 domain tables, the image cleanup journal and the password reset codes).', 1;
+IF @tables <> 31 THROW 50001, 'Expected exactly 31 tables (29 domain tables, the image cleanup journal and the password reset codes).', 1;
 DECLARE @expected TABLE (name SYSNAME PRIMARY KEY);
 INSERT INTO @expected VALUES
  (N'roles'),(N'users'),(N'customer_addresses'),(N'stores'),(N'staff_store_assignments'),
@@ -771,7 +822,7 @@ INSERT INTO @expected VALUES
  (N'order_fulfillment_status_history'),(N'order_items'),(N'payments'),(N'inventory_movements'),
   (N'order_status_history'),(N'reviews'),(N'review_replies'),(N'payment_refunds'),(N'image_cleanup_tasks'),
  (N'order_returns'),(N'order_return_images'),(N'order_return_items'),(N'promotions'),(N'promotion_usages'),
- (N'password_reset_otps');
+ (N'password_reset_otps'),(N'payment_provider_events');
 IF EXISTS (SELECT 1 FROM @expected e WHERE NOT EXISTS (SELECT 1 FROM sys.tables t WHERE t.name = e.name))
    OR EXISTS (SELECT 1 FROM sys.tables t WHERE t.is_ms_shipped = 0 AND NOT EXISTS (SELECT 1 FROM @expected e WHERE e.name = t.name))
     THROW 50011, 'Table set differs from the OneShop V3 specification list.', 1;
@@ -800,6 +851,10 @@ IF (SELECT COUNT(*) FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.reviews')
 IF (SELECT COUNT(*) FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.payment_refunds') AND name IN (N'UX_payment_refunds_goods', N'UX_payment_refunds_shipping', N'UX_payment_refunds_whole', N'UX_payment_refunds_return')
      AND is_unique = 1 AND has_filter = 1 AND is_disabled = 0) <> 4
     THROW 50023, 'OPEN-10.1 payment_refunds filtered unique indexes are missing.', 1;
+IF (SELECT COUNT(*) FROM sys.indexes WHERE is_unique = 1 AND has_filter = 1 AND is_disabled = 0 AND (
+      (object_id = OBJECT_ID(N'dbo.payments') AND name IN (N'UX_payments_provider_order_code', N'UX_payments_provider_link', N'UX_payments_one_pending_payos'))
+      OR (object_id = OBJECT_ID(N'dbo.payment_refunds') AND name = N'UX_payment_refunds_evidence'))) <> 4
+    THROW 50024, 'payOS filtered unique indexes are missing.', 1;
 IF EXISTS (SELECT 1 FROM sys.key_constraints WHERE name = N'UQ_reviews_user_product' AND parent_object_id = OBJECT_ID(N'dbo.reviews'))
     THROW 50022, 'The obsolete UQ_reviews_user_product constraint must not exist.', 1;
 IF COL_LENGTH('dbo.products', 'price') IS NULL OR COL_LENGTH('dbo.cart_items', 'product_id') IS NULL OR COL_LENGTH('dbo.order_items', 'fulfillment_id') IS NULL
@@ -809,5 +864,5 @@ IF EXISTS (SELECT 1 FROM sys.check_constraints WHERE is_not_trusted = 1) OR EXIS
     THROW 50090, 'Untrusted constraint found.', 1;
 GO
 
-PRINT 'OneShop V3 fresh-install schema created and verified: 30 tables including the image cleanup journal, the password reset codes, the post-delivery return flow and promotions, primary image uniqueness, DEC-26 and OPEN-10.1.';
+PRINT 'OneShop V3 fresh-install schema created and verified: 31 tables including the image cleanup journal, the password reset codes, the post-delivery return flow and promotions, primary image uniqueness, DEC-26 and OPEN-10.1.';
 GO
