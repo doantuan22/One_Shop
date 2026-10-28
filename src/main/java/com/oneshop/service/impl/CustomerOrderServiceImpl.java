@@ -35,6 +35,17 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return users.findByEmail(email).filter(u -> u.isActive() && u.getRole().getName() == RoleName.CUSTOMER)
                 .orElseThrow(() -> new AccessDeniedException("Tài khoản khách hàng không hợp lệ."));
     }
+    /** The customer's own running count per order id (oldest = 1). Reads ids only, in its own read-only transaction. */
+    @Transactional(readOnly = true)
+    public java.util.Map<Long, Integer> getOrderNumbers(String email) {
+        requireCustomer(email);
+        var list = orders.findByUserEmailOrderByCreatedAtDescIdDesc(email); // newest first
+        var numbers = new java.util.HashMap<Long, Integer>();
+        for (int i = 0; i < list.size(); i++) {
+            numbers.put(list.get(i).getId(), list.size() - i);
+        }
+        return numbers;
+    }
     public List<OrderViewResponse> getOrders(String email) {
         requireCustomer(email);
         return orders.findByUserEmailOrderByCreatedAtDescIdDesc(email).stream().map(o -> views.summary(o, false, null)).toList();
