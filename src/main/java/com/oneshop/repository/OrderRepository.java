@@ -175,6 +175,24 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("select count(o) from Order o where " + ATTENTION)
     long countAttention(@Param("cutoff") java.time.LocalDateTime cutoff);
 
+    /** Revenue report: (placed at, payment method, fulfillment type, goods total WITHOUT shipping) of the collected Orders in the range. */
+    @Query("select o.createdAt, o.paymentMethod, o.fulfillmentType, o.totalAmount - o.shippingFee from Order o"
+            + " where o.paymentStatus = com.oneshop.entity.OrderPaymentStatus.PAID and o.createdAt >= :from and o.createdAt < :to")
+    List<Object[]> collectedOrders(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
+
+    /** Revenue report per supplying Store: (name, Orders, lines minus their own discount) of the collected Orders in the range. */
+    @Query("select f.store.name, count(distinct o.id), coalesce(sum(i.subtotal - i.discountAmount), 0) from OrderItem i join i.fulfillment f join i.order o"
+            + " where o.paymentStatus = com.oneshop.entity.OrderPaymentStatus.PAID and o.createdAt >= :from and o.createdAt < :to group by f.store.id, f.store.name")
+    List<Object[]> goodsRevenueByStore(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
+
+    @Query("select c.name, count(distinct o.id), coalesce(sum(i.subtotal - i.discountAmount), 0) from OrderItem i join i.order o join i.storeProduct sp join sp.product p join p.category c"
+            + " where o.paymentStatus = com.oneshop.entity.OrderPaymentStatus.PAID and o.createdAt >= :from and o.createdAt < :to group by c.id, c.name")
+    List<Object[]> goodsRevenueByCategory(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
+
+    @Query("select b.name, count(distinct o.id), coalesce(sum(i.subtotal - i.discountAmount), 0) from OrderItem i join i.order o join i.storeProduct sp join sp.product p join p.brand b"
+            + " where o.paymentStatus = com.oneshop.entity.OrderPaymentStatus.PAID and o.createdAt >= :from and o.createdAt < :to group by b.id, b.name")
+    List<Object[]> goodsRevenueByBrand(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
+
     /** Dashboard: ONLINE Orders waiting for the gateway evidence, chain-wide. */
     @Query("select count(o) from Order o where " + RECONCILING)
     long countReconciling(@Param("cutoff") java.time.LocalDateTime cutoff);

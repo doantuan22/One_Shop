@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Báo cáo doanh thu</title></head><body>
+<div th:replace="~{fragments/components :: pageHeader('Báo cáo doanh thu', 'Doanh thu là tiền hàng của các đơn đã thu tiền, đã trừ giảm giá và chưa gồm phí vận chuyển.')}"></div>
+
+<form method="get" th:action="@{/admin/revenue}" class="os-filter card mb-4" id="revenue-filter">
+    <div class="card-body">
+        <div class="os-filter-grid os-filter-grid--compact">
+            <div class="os-filter-field">
+                <label class="form-label" for="filter-from">Từ ngày</label>
+                <input id="filter-from" name="from" type="date" class="form-control form-control-sm" th:value="${report.from}" th:max="${report.to}">
+            </div>
+            <div class="os-filter-field">
+                <label class="form-label" for="filter-to">Đến ngày</label>
+                <input id="filter-to" name="to" type="date" class="form-control form-control-sm" th:value="${report.to}" th:min="${report.from}">
+            </div>
+            <div class="os-filter-field">
+                <label class="form-label" for="filter-group">Nhóm theo</label>
+                <select id="filter-group" name="groupBy" class="form-select form-select-sm">
+                    <option th:each="g : ${groups}" th:value="${g.name()}" th:selected="${g == report.groupBy}" th:text="${g.label()}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="d-flex gap-2 mt-3">
+            <button type="submit" class="btn btn-primary btn-sm">Xem báo cáo</button>
+            <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/revenue}">Đặt lại</a>
+        </div>
+    </div>
+</form>
+
+<section class="row g-3 mb-4" id="revenue-summary" aria-label="Tổng hợp doanh thu">
+    <div class="col-12 col-md-4"><div th:replace="~{fragments/components :: statCard('Doanh thu', ${#numbers.formatDecimal(report.revenue, 1, 'POINT', 0, 'COMMA')} + ' ₫', 'Chưa gồm phí ship')}"></div></div>
+    <div class="col-6 col-md-4"><div th:replace="~{fragments/components :: statCard('Số đơn đã thu tiền', ${report.orders}, 'Không gồm đơn hủy hoặc đã hoàn tiền')}"></div></div>
+    <div class="col-6 col-md-4"><div th:replace="~{fragments/components :: statCard('Trung bình mỗi đơn', ${#numbers.formatDecimal(report.average, 1, 'POINT', 0, 'COMMA')} + ' ₫', 'Doanh thu chia số đơn')}"></div></div>
+</section>
+
+<section class="card mb-3" id="revenue-table">
+    <div class="card-header fw-semibold" th:text="'Doanh thu theo ' + ${#strings.toLowerCase(report.groupBy.label())}">Doanh thu</div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle os-table mb-0">
+            <thead><tr>
+                <th scope="col" th:text="${report.groupBy.label()}">Nhóm</th>
+                <th scope="col" class="text-end">Số đơn</th>
+                <th scope="col" class="text-end">Doanh thu</th>
+                <th scope="col" class="text-end">Tỷ trọng</th>
+            </tr></thead>
+            <tbody>
+            <tr th:each="r : ${report.rows}">
+                <th scope="row" class="fw-semibold" th:text="${r.label}"></th>
+                <td class="text-end" th:text="${r.orders}"></td>
+                <td class="text-end" th:text="${#numbers.formatDecimal(r.revenue, 1, 'POINT', 0, 'COMMA')} + ' ₫'"></td>
+                <td class="text-end" th:text="${#numbers.formatDecimal(r.share, 1, 'POINT', 1, 'COMMA')} + '%'"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(report.rows)}"><td colspan="4" class="text-center text-secondary py-4">Không có đơn nào đã thu tiền trong khoảng này.</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer small text-secondary">
+        Tính theo ngày đặt đơn. Khi nhóm theo chi nhánh, danh mục hoặc thương hiệu, một đơn có nhiều nhóm được tính vào từng nhóm theo dòng hàng nên cột "Số đơn" cộng lại có thể lớn hơn tổng số đơn.
+    </div>
+</section>
+</body></html>
