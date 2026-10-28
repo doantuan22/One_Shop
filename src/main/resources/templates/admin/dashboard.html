@@ -10,6 +10,7 @@
     <div class="col-6 col-lg" id="kpi-reconciling"><div th:replace="~{fragments/components :: statCard('Chờ đối soát', ${chain.reconcilingOrders}, 'Kết quả chưa xác định, còn trong hạn')}"></div></div>
     <div class="col-6 col-lg"><div th:replace="~{fragments/components :: statCard('SKU hết hàng tại chi nhánh', ${#aggregates.sum(overview.![outOfStockRows])}, 'Số dòng SKU–chi nhánh có tồn bằng 0')}"></div></div>
     <div class="col-12 d-flex flex-wrap gap-2" id="dashboard-quick-actions">
+        <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/revenue}">Báo cáo doanh thu</a>
         <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/orders(attention=true)}">Đơn cần Admin xử lý</a>
         <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/payments(view='attention')}">Thanh toán cần xử lý</a>
         <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/payments(view='reconciling')}">Thanh toán chờ đối soát</a>
