@@ -4,10 +4,15 @@ import com.oneshop.dto.request.LoginRequest;
 import com.oneshop.dto.request.RegisterRequest;
 import com.oneshop.dto.response.AuthResponse;
 import com.oneshop.exception.BadRequestException;
+import com.oneshop.exception.TooManyLoginAttemptsException;
+import com.oneshop.security.ClientIp;
 import com.oneshop.security.jwt.JwtCookieService;
 import com.oneshop.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,14 +41,19 @@ public class AuthController {
 
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute("loginRequest") LoginRequest request, BindingResult bindingResult,
-                        Model model, HttpServletResponse response) {
+                        Model model, HttpServletRequest http, HttpServletResponse response) {
         if (bindingResult.hasErrors()) {
             return "auth/login";
         }
         try {
-            AuthResponse auth = authService.login(request);
+            AuthResponse auth = authService.login(request, ClientIp.of(http));
             cookieService.addTokenCookie(response, auth.accessToken(), auth.expiresInSeconds());
             return "redirect:" + homeOf(auth);
+        } catch (TooManyLoginAttemptsException ex) {
+            response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
+            response.setHeader(HttpHeaders.RETRY_AFTER, String.valueOf(ex.getRetryAfterSeconds()));
+            model.addAttribute("loginError", ex.getMessage());
+            return "auth/login";
         } catch (AuthenticationException ex) {
             model.addAttribute("loginError", "Sai tài khoản hoặc mật khẩu");
             return "auth/login";

@@ -4,7 +4,9 @@ import com.oneshop.dto.request.LoginRequest;
 import com.oneshop.dto.request.RegisterRequest;
 import com.oneshop.dto.response.AuthResponse;
 import com.oneshop.dto.response.UserResponse;
+import com.oneshop.security.ClientIp;
 import com.oneshop.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +27,8 @@ public class AuthApiController {
     }
 
     @PostMapping("/login")
-    public AuthResponse login(@Valid @RequestBody LoginRequest request) {
-        return authService.login(request);
+    public AuthResponse login(@Valid @RequestBody LoginRequest request, HttpServletRequest http) {
+        return authService.login(request, ClientIp.of(http));
     }
 
     @PostMapping("/register")

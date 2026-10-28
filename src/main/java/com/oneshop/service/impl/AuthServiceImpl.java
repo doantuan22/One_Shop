@@ -10,12 +10,14 @@ import com.oneshop.entity.User;
 import com.oneshop.exception.BadRequestException;
 import com.oneshop.repository.RoleRepository;
 import com.oneshop.repository.UserRepository;
+import com.oneshop.security.LoginAttemptLimiter;
 import com.oneshop.security.jwt.JwtService;
 import com.oneshop.service.AuthService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,10 +41,12 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final LoginAttemptLimiter loginAttempts;
 
     public AuthServiceImpl(AuthenticationManager authenticationManager, JwtService jwtService,
                            UserRepository userRepository, RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder, LoginAttemptLimiter loginAttempts) {
+        this.loginAttempts = loginAttempts;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.userRepository = userRepository;
@@ -51,11 +55,21 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AuthResponse login(LoginRequest request) {
+    public AuthResponse login(LoginRequest request, String clientIp) {
         // The identifier is an e-mail or a user_name; CustomUserDetailsService decides by the presence of '@'.
         // An unknown identifier and a wrong password both end in the same BadCredentialsException.
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getIdentifier().trim(), request.getPassword()));
+        String identifier = request.getIdentifier().trim();
+        // Counted before the password is checked, for known and unknown identifiers alike
+        loginAttempts.acquire(identifier, clientIp);
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(identifier, request.getPassword()));
+        } catch (AuthenticationException ex) {
+            loginAttempts.recordFailure(clientIp);
+            throw ex;
+        }
+        loginAttempts.recordSuccess(identifier);
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         return new AuthResponse(
                 jwtService.generateToken(principal),

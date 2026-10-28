@@ -391,6 +391,12 @@ Resources:
           key="/etc/letsencrypt/live/$ip/privkey.pem"
           test -s "$cert" && test -s "$key"
           cat >/etc/nginx/conf.d/oneshop.conf.new <<NGINX
+          # Brute-force guard: POSTs to login/register/forgot-password, per client IP (other requests: empty key = unlimited)
+          map "\$request_method \$uri" \$oneshop_auth_key {
+              default "";
+              ~^POST\ /(login|api/auth/login|register|api/auth/register|forgot-password) \$binary_remote_addr;
+          }
+          limit_req_zone \$oneshop_auth_key zone=oneshop_auth:10m rate=20r/m;
           server {
               listen 80 default_server;
               server_name $ip;
@@ -405,6 +411,8 @@ Resources:
               ssl_protocols TLSv1.2 TLSv1.3;
               ssl_session_cache shared:TLS:10m;
               client_max_body_size 6m;
+              limit_req zone=oneshop_auth burst=10 nodelay;
+              limit_req_status 429;
               add_header Strict-Transport-Security "max-age=86400" always;
               location / {
                   proxy_pass http://127.0.0.1:8080;

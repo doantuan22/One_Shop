@@ -62,6 +62,15 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Định dạng nội dung không được hỗ trợ", request, null);
     }
 
+    @ExceptionHandler(TooManyLoginAttemptsException.class)
+    public ResponseEntity<ApiErrorResponse> handleTooManyLogins(TooManyLoginAttemptsException ex,
+                                                                HttpServletRequest request) {
+        ResponseEntity<ApiErrorResponse> response = build(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage(), request, null);
+        return ResponseEntity.status(response.getStatusCode())
+                .header(org.springframework.http.HttpHeaders.RETRY_AFTER, String.valueOf(ex.getRetryAfterSeconds()))
+                .body(response.getBody());
+    }
+
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiErrorResponse> handleAuthentication(AuthenticationException ex,
                                                                  HttpServletRequest request) {

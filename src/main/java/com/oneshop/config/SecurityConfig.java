@@ -24,6 +24,7 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.web.util.matcher.AnyRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
@@ -45,6 +46,23 @@ public class SecurityConfig {
             // payOS server-to-server webhook: no login, authenticated by its HMAC signature (verified before any processing)
             "/api/payments/payos/webhook"
     };
+
+    /**
+     * Pages still use inline scripts/styles/handlers, so 'unsafe-inline' stays for script and style; the policy
+     * still blocks framing, plugins, foreign form targets, base-tag hijacking and scripts from any host except
+     * the Bootstrap CDN. {@code form-action} lists the payOS checkout host because paying is a form POST that the
+     * server answers with a redirect to it (browsers enforce form-action on redirects too).
+     */
+    static final String CONTENT_SECURITY_POLICY = "default-src 'self'; "
+            + "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+            + "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+            + "font-src 'self' data: https://cdn.jsdelivr.net; "
+            + "img-src 'self' data: https:; "
+            + "connect-src 'self'; "
+            + "object-src 'none'; "
+            + "base-uri 'self'; "
+            + "form-action 'self' https://pay.payos.vn; "
+            + "frame-ancestors 'none'";
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -93,6 +111,11 @@ public class SecurityConfig {
                         .sessionAuthenticationStrategy(new NullAuthenticatedSessionStrategy())
                         .ignoringRequestMatchers(bearerRequest, paths.matcher("/api/auth/**"),
                                 paths.matcher("/api/payments/payos/webhook")))
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp.policyDirectives(CONTENT_SECURITY_POLICY))
+                        .referrerPolicy(referrer -> referrer.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+                        .permissionsPolicyHeader(permissions -> permissions
+                                .policy("camera=(), microphone=(), geolocation=(), payment=(), usb=()")))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
