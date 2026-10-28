@@ -242,6 +242,17 @@
             display: none;
         }
 
+        /* Bootstrap paints a green tick / red icon at the right edge of a validated input: it ran under the show-password button. */
+        .has-toggle .form-control.form-control-icon:valid,
+        .has-toggle .form-control.form-control-icon:invalid,
+        .has-toggle .form-control.form-control-icon.is-valid,
+        .has-toggle .form-control.form-control-icon.is-invalid,
+        .was-validated .has-toggle .form-control.form-control-icon:valid,
+        .was-validated .has-toggle .form-control.form-control-icon:invalid {
+            background-image: none !important;
+            padding-right: 3rem !important;
+        }
+
         .has-toggle .form-control-icon {
             padding-right: 3rem !important;
         }

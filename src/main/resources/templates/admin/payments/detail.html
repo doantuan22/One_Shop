@@ -16,7 +16,11 @@
     <div class="alert alert-info" th:if="${param.refund != null}" id="refund-result">
         Hoàn tiền: <strong th:text="${param.refund[0]}"></strong>
     </div>
-    <div class="alert alert-warning" th:unless="${paymentCase.gatewayEnabled}">
+    <div class="alert alert-info" th:if="${realGateway}">
+        Thanh toán thật qua payOS: kết quả được lấy từ payOS (webhook hoặc truy vấn), không có chế độ mô phỏng.
+        Dùng &quot;Kiểm tra lại&quot; để hỏi payOS và đối soát.
+    </div>
+    <div class="alert alert-warning" th:unless="${paymentCase.gatewayEnabled or realGateway}">
         Cổng thanh toán đang tắt trong môi trường này: không thể ghi nhận kết quả.
     </div>
 

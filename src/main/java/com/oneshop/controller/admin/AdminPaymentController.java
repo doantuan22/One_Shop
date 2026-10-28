@@ -68,6 +68,7 @@ public class AdminPaymentController {
         model.addAttribute("paymentCase", payments.getCase(orderId));
         model.addAttribute("refund", refundView.forAdmin(orderId));
         model.addAttribute("realRefunds", manualRefunds.pending(orderId));
+        model.addAttribute("realGateway", refresher.getIfAvailable() != null); // payOS: the mock gateway is off by design
         return "admin/payments/detail";
     }
 
