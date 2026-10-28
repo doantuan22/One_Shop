@@ -1958,5 +1958,46 @@
    }
   ],
   "capturedAt": "2026-10-25T03:36:08.141Z"
+ },
+ "A22": {
+  "group": "admin",
+  "role": "admin",
+  "url": "/admin/revenue",
+  "title": "Giao diện báo cáo doanh thu",
+  "tableTitle": "Mô tả các thành phần giao diện báo cáo doanh thu",
+  "width": 1280,
+  "height": 900,
+  "y": 0,
+  "notes": [
+   {
+    "label": "Tiêu đề trang",
+    "desc": "Báo cáo doanh thu cùng mô tả cách tính: tiền hàng của đơn đã thu tiền, đã trừ giảm giá, chưa gồm phí vận chuyển."
+   },
+   {
+    "label": "Ô Từ ngày",
+    "desc": "Ngày bắt đầu của khoảng báo cáo (mặc định là ngày đầu tháng)."
+   },
+   {
+    "label": "Ô Đến ngày",
+    "desc": "Ngày kết thúc của khoảng báo cáo (mặc định là hôm nay)."
+   },
+   {
+    "label": "Ô Nhóm theo",
+    "desc": "Chọn nhóm theo ngày, tuần, tháng, chi nhánh, danh mục, thương hiệu, phương thức thanh toán hoặc hình thức nhận hàng."
+   },
+   {
+    "label": "Nút Xem báo cáo",
+    "desc": "Áp dụng khoảng ngày và cách nhóm đã chọn."
+   },
+   {
+    "label": "Chỉ số tổng hợp",
+    "desc": "Doanh thu, số đơn đã thu tiền và doanh thu trung bình mỗi đơn trong khoảng đã chọn."
+   },
+   {
+    "label": "Bảng doanh thu theo nhóm",
+    "desc": "Số đơn, doanh thu và tỷ trọng của từng nhóm; ghi chú cuối bảng giải thích cách tính."
+   }
+  ],
+  "capturedAt": "2026-10-28T13:49:42.754Z"
  }
 }

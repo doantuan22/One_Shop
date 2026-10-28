@@ -1,0 +1,59 @@
+{
+ "id": "QT-15",
+ "title": "Xem báo cáo doanh thu",
+ "lanes": [
+  "Quản trị viên",
+  "Hệ thống"
+ ],
+ "steps": [
+  [
+   "start",
+   "Quản trị viên"
+  ],
+  [
+   "act",
+   "Quản trị viên",
+   "Mở /admin/revenue, chọn từ ngày, đến ngày và nhóm theo"
+  ],
+  [
+   "dec",
+   "Hệ thống",
+   "Khoảng ngày hợp lệ (đến ngày không trước từ ngày)?",
+   "hợp lệ",
+   "không",
+   [
+    "400 Ngày kết thúc không được trước ngày bắt đầu"
+   ]
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Lấy các đơn đã thu tiền trong khoảng (tiền hàng, không gồm phí ship)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Gom theo nhóm: từ đơn (thời gian, thanh toán, nhận hàng) hoặc từ dòng hàng (chi nhánh, danh mục, thương hiệu)",
+   {
+    "db": true
+   }
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Tính tổng, trung bình mỗi đơn và tỷ trọng từng nhóm"
+  ],
+  [
+   "act",
+   "Hệ thống",
+   "Hiển thị admin/revenue"
+  ],
+  [
+   "end",
+   "Quản trị viên"
+  ]
+ ]
+}

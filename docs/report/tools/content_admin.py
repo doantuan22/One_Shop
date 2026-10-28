@@ -308,7 +308,7 @@ dict(
 dict(
  id="QT-14", title="Xem dashboard và thống kê chuỗi", actor="Quản trị viên",
  desc=("Trang /admin cho quản trị viên cái nhìn tổng quan chuỗi: tổng số đơn, số phần giao đang mở, số đơn cần xử lý, số đơn đang đối soát thanh toán và số dòng SKU–chi nhánh hết hàng, cùng bảng theo từng chi nhánh (kể cả chi nhánh "
-       "ngừng hoạt động): số đơn, đơn cần xử lý, đơn hoàn tất, đơn hủy, số mặt hàng, sắp hết, hết hàng và số nhân viên. Tất cả số liệu được tính trực tiếp từ dữ liệu hiện có, có thể thu hẹp theo một chi nhánh."),
+       "ngừng hoạt động): số đơn, đơn cần xử lý, đơn hoàn tất, đơn hủy, số mặt hàng, sắp hết, hết hàng và số nhân viên. Tất cả số liệu được tính trực tiếp từ dữ liệu hiện có, có thể thu hẹp theo một chi nhánh. Phần doanh thu được tách thành chức năng riêng (QT-15), trang tổng quan chỉ có nút Báo cáo doanh thu dẫn tới đó."),
  lanes=LANES,
  steps=[("start",A),("act",A,"Mở /admin, có thể chọn một chi nhánh (storeId)"),
   ("act",S,"getChainSummary: tổng đơn, phần giao mở, đơn cần xử lý, đang đối soát",DB),
@@ -324,6 +324,29 @@ dict(
           "và số nhân viên hiệu lực. Dashboard không có biểu đồ; số liệu hiển thị dạng thẻ và bảng."),
  trace=dict(controller="AdminDashboardController (GET /admin)", service="AdminOperationsService.getChainSummary / getOverview",
             ui="templates/admin/dashboard.html", data="Order, OrderFulfillment, StoreProduct, StaffStoreAssignment"),
+ status="Hoạt động",
+),
+dict(
+ id="QT-15", title="Xem báo cáo doanh thu", actor="Quản trị viên",
+ desc=("Trang /admin/revenue cho quản trị viên xem doanh thu của toàn chuỗi trong một khoảng ngày (mặc định từ ngày đầu tháng đến hôm nay) và nhóm kết quả theo ngày, tuần, tháng, chi nhánh, danh mục, thương hiệu, "
+       "phương thức thanh toán hoặc hình thức nhận hàng. Doanh thu chỉ tính các đơn đã thu tiền (trạng thái thanh toán PAID), là tiền hàng đã trừ giảm giá và không gồm phí vận chuyển; đơn chưa thanh toán, thất bại, "
+       "đã hủy hoặc đã hoàn tiền không được tính. Trang hiển thị ba chỉ số (doanh thu, số đơn đã thu tiền, trung bình mỗi đơn) và bảng số đơn, doanh thu, tỷ trọng của từng nhóm. Trang tổng quan /admin có nút Báo cáo doanh thu dẫn tới đây."),
+ lanes=LANES,
+ steps=[("start",A),("act",A,"Mở /admin/revenue, chọn từ ngày, đến ngày và nhóm theo"),
+  ("dec",S,"Khoảng ngày hợp lệ (đến ngày không trước từ ngày)?","hợp lệ","không",["400 Ngày kết thúc không được trước ngày bắt đầu"]),
+  ("act",S,"Lấy các đơn đã thu tiền trong khoảng (tiền hàng, không gồm phí ship)",DB),
+  ("act",S,"Gom theo nhóm: từ đơn (thời gian, thanh toán, nhận hàng) hoặc từ dòng hàng (chi nhánh, danh mục, thương hiệu)",DB),
+  ("act",S,"Tính tổng, trung bình mỗi đơn và tỷ trọng từng nhóm"),
+  ("act",S,"Hiển thị admin/revenue"),("end",A)],
+ codes=[("AdminRevenueController","controller/admin/AdminRevenueController.java",29,47),
+        ("AdminRevenueService.report","service/AdminRevenueService.java",71,96),
+        ("Truy vấn doanh thu trong OrderRepository","repository/OrderRepository.java",179,186)],
+ explain=("AdminRevenueController.report đặt mặc định từ ngày đầu tháng đến hôm nay (theo đồng hồ máy chủ), đọc nhóm theo và rơi về nhóm theo ngày nếu giá trị lạ, rồi gọi AdminRevenueService.report. Dịch vụ kiểm tra khoảng ngày bằng SqlDayRange, "
+          "lấy các đơn có trạng thái thanh toán PAID bằng collectedOrders (tổng tiền trừ phí vận chuyển) và cộng tổng. Khi nhóm theo thời gian, phương thức thanh toán hoặc hình thức nhận hàng, dịch vụ gom các đơn này trong bộ nhớ; "
+          "khi nhóm theo chi nhánh, danh mục hoặc thương hiệu, doanh thu được cộng từ dòng hàng (giá nhân số lượng trừ giảm giá của dòng) nên một đơn nhiều chi nhánh được chia đúng theo phần hàng của từng chi nhánh và tổng các nhóm bằng tổng doanh thu. "
+          "Tỷ trọng là doanh thu nhóm chia tổng, làm tròn một chữ số thập phân. Dịch vụ được bảo vệ bởi @PreAuthorize(\"hasRole('ADMIN')\") và chỉ đọc dữ liệu."),
+ trace=dict(controller="AdminRevenueController (GET /admin/revenue)", service="AdminRevenueService.report",
+            ui="templates/admin/revenue.html", data="Order, OrderItem, OrderFulfillment, Product; OrderRepository"),
  status="Hoạt động",
 ),
 ]

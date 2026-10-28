@@ -452,6 +452,17 @@ export const PAGES = [
       ['main table', 'Bảng đánh giá', 'Khách hàng, sản phẩm, số sao, nhận xét, phản hồi và trạng thái.'],
       [T('^Ẩn$', 'main table', 'button'), 'Nút Ẩn', 'Ẩn đánh giá khỏi trang sản phẩm (quản trị viên chỉ kiểm duyệt).'],
     ] },
+  { id: 'A22', group: 'admin', role: 'admin', url: '/admin/revenue', h: 900,
+    title: 'Giao diện báo cáo doanh thu', tableTitle: 'Mô tả các thành phần giao diện báo cáo doanh thu',
+    notes: [
+      ['.os-page-header', 'Tiêu đề trang', 'Báo cáo doanh thu cùng mô tả cách tính: tiền hàng của đơn đã thu tiền, đã trừ giảm giá, chưa gồm phí vận chuyển.'],
+      ['#filter-from', 'Ô Từ ngày', 'Ngày bắt đầu của khoảng báo cáo (mặc định là ngày đầu tháng).'],
+      ['#filter-to', 'Ô Đến ngày', 'Ngày kết thúc của khoảng báo cáo (mặc định là hôm nay).'],
+      ['#filter-group', 'Ô Nhóm theo', 'Chọn nhóm theo ngày, tuần, tháng, chi nhánh, danh mục, thương hiệu, phương thức thanh toán hoặc hình thức nhận hàng.'],
+      [T('Xem báo cáo', '#revenue-filter', 'button'), 'Nút Xem báo cáo', 'Áp dụng khoảng ngày và cách nhóm đã chọn.'],
+      ['#revenue-summary', 'Chỉ số tổng hợp', 'Doanh thu, số đơn đã thu tiền và doanh thu trung bình mỗi đơn trong khoảng đã chọn.'],
+      ['#revenue-table', 'Bảng doanh thu theo nhóm', 'Số đơn, doanh thu và tỷ trọng của từng nhóm; ghi chú cuối bảng giải thích cách tính.'],
+    ] },
 
   // ===================================================== STAFF
   { id: 'S01', group: 'staff', role: 'staff', url: '/staff', h: 1140,
