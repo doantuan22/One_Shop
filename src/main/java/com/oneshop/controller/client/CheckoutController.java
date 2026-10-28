@@ -40,8 +40,11 @@ public class CheckoutController {
 
     private final CheckoutService checkoutService;
     private final CartService cartService;
+    private final com.oneshop.service.CustomerOrderService customerOrders;
 
-    public CheckoutController(CheckoutService checkoutService, CartService cartService) {
+    public CheckoutController(CheckoutService checkoutService, CartService cartService,
+                              com.oneshop.service.CustomerOrderService customerOrders) {
+        this.customerOrders = customerOrders;
         this.checkoutService = checkoutService;
         this.cartService = cartService;
     }
@@ -102,6 +105,7 @@ public class CheckoutController {
     @GetMapping("/{checkoutId}")
     public String result(@PathVariable Long checkoutId, Principal principal, Model model) {
         model.addAttribute("checkout", checkoutService.getCheckout(principal.getName(), checkoutId));
+        model.addAttribute("orderNumbers", customerOrders.getOrderNumbers(principal.getName()));
         return "checkout/result";
     }
 

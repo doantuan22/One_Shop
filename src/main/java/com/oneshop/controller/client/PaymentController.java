@@ -33,8 +33,11 @@ public class PaymentController {
 
     private final ObjectProvider<PayosPaymentFlow> payos;
 
+    private final com.oneshop.service.CustomerOrderService customerOrders;
+
     public PaymentController(PaymentService paymentService, PaymentReconciliationService reconciliation,
-                             ObjectProvider<PayosPaymentFlow> payos) {
+                             ObjectProvider<PayosPaymentFlow> payos, com.oneshop.service.CustomerOrderService customerOrders) {
+        this.customerOrders = customerOrders;
         this.paymentService = paymentService;
         this.reconciliation = reconciliation;
         this.payos = payos;
@@ -58,6 +61,7 @@ public class PaymentController {
             info = paymentService.getOrderPayments(principal.getName(), orderId);
         }
         model.addAttribute("paymentOrder", info);
+        model.addAttribute("orderNumber", customerOrders.getOrderNumbers(principal.getName()).get(orderId));
         return "payment/index";
     }
 

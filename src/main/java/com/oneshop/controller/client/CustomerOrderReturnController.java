@@ -26,9 +26,11 @@ import java.util.List;
 public class CustomerOrderReturnController {
 
     private final CustomerOrderReturnService returns;
+    private final com.oneshop.service.CustomerOrderService customerOrders;
 
-    public CustomerOrderReturnController(CustomerOrderReturnService returns) {
+    public CustomerOrderReturnController(CustomerOrderReturnService returns, com.oneshop.service.CustomerOrderService customerOrders) {
         this.returns = returns;
+        this.customerOrders = customerOrders;
     }
 
     @GetMapping
@@ -37,6 +39,7 @@ public class CustomerOrderReturnController {
             return "redirect:/orders/" + orderId;
         }
         model.addAttribute("orderId", orderId);
+        model.addAttribute("orderNumber", customerOrders.getOrderNumbers(principal.getName()).get(orderId));
         model.addAttribute("eligibility", returns.eligibility(principal.getName(), orderId));
         model.addAttribute("windowDays", CustomerOrderReturnService.RETURN_WINDOW.toDays());
         model.addAttribute("maxImages", CustomerOrderReturnService.MAX_IMAGES);

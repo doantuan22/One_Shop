@@ -40,22 +40,11 @@ public class CustomerOrderController {
     public String list(Principal principal, Model model) {
         var customerOrders = orders.getOrders(principal.getName());
         model.addAttribute("customerOrders", customerOrders);
-        model.addAttribute("orderNumbers", orderNumbers(customerOrders));
+        model.addAttribute("orderNumbers", orders.getOrderNumbers(principal.getName()));
         model.addAttribute("orderItems", orders.getOrderItems(principal.getName()));
         return "orders/index";
     }
 
-    /**
-     * What the customer sees as the order number: their own running count (first order = 1, then 2, 3...), not the
-     * database id. The list is newest first, so the oldest order gets 1. Display only; links still use the real id.
-     */
-    private static java.util.Map<Long, Integer> orderNumbers(java.util.List<com.oneshop.dto.response.OrderViewResponse> list) {
-        java.util.Map<Long, Integer> numbers = new java.util.HashMap<>();
-        for (int i = 0; i < list.size(); i++) {
-            numbers.put(list.get(i).orderId(), list.size() - i);
-        }
-        return numbers;
-    }
     @GetMapping("/{orderId}")
     public String detail(@PathVariable Long orderId, Principal principal, Model model) {
         var detail = orders.getOrder(principal.getName(), orderId);
@@ -74,7 +63,7 @@ public class CustomerOrderController {
             }
         }
         model.addAttribute("orderDetail", detail);
-        model.addAttribute("orderNumber", orderNumbers(orders.getOrders(principal.getName())).get(orderId));
+        model.addAttribute("orderNumber", orders.getOrderNumbers(principal.getName()).get(orderId));
         var info = orders.getOrderItems(principal.getName()).get(orderId);
         model.addAttribute("orderLines", info == null ? null : info.lines());
         model.addAttribute("refund", refundView.forCustomer(principal.getName(), orderId));

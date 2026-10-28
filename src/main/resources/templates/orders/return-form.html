@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><title>Yêu cầu trả hàng</title></head><body>
 <a class="btn btn-outline-secondary btn-sm mb-3" th:href="@{/orders/{id}(id=${orderId})}">Quay lại đơn hàng</a>
-<h1 class="h3 mb-3" th:text="'Trả hàng - đơn #' + ${orderId}">Trả hàng</h1>
+<h1 class="h3 mb-3" th:text="'Trả hàng - đơn #' + ${orderNumber ?: orderId}">Trả hàng</h1>
 
 <div class="alert alert-danger" role="alert" th:if="${param.error != null}" th:switch="${param.error[0]}">
     <span th:case="'reason'" th:text="'Vui lòng nhập lý do trả hàng từ ' + ${minReason} + ' đến ' + ${maxReason} + ' ký tự.'"></span>
